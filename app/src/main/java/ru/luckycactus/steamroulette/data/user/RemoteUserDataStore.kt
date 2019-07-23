@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.data.user
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.net.SteamApiService
 import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
-import ru.luckycactus.steamroulette.domain.user.SteamId
+import ru.luckycactus.steamroulette.domain.exception.SteamIdNotFoundException
 
 class RemoteUserDataStore(
     private val steamApiService: SteamApiService,
@@ -17,6 +17,6 @@ class RemoteUserDataStore(
 
         return response.result.players.getOrNull(0)?.also {
             userCache.putUserSummary(it)
-        } ?: throw IllegalArgumentException("Failed to get user summary for user with steam64=$steam64")
+        } ?: throw SteamIdNotFoundException(steam64.toString())
     }
 }

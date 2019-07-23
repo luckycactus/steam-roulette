@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Steam Roulette</string>
+    <string name="user_with_vanity_url_not_found">Пользователь с данным Custom Url не найден</string>
+    <string name="invalid_steamid_format">Неверный формат SteamId</string>
+    <string name="steam_api_unavailable">Сервис Steam недоступен. Попробуйте позже</string>
+    <string name="check_your_connection">Проверьте своё сетевое подключение</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="user_with_steamid_not_found">Пользователь с данным SteamId не найден</string>
 </resources>

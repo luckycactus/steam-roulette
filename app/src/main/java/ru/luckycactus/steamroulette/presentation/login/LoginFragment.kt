@@ -3,12 +3,14 @@ package ru.luckycactus.steamroulette.presentation.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_login.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.observe
 import ru.luckycactus.steamroulette.presentation.visibility
+
 
 class LoginFragment : BaseFragment() {
 
@@ -45,6 +47,10 @@ class LoginFragment : BaseFragment() {
 
         observe(viewModel.loginButtonAvailableLiveData) {
             btnOk.isEnabled = it
+        }
+
+        observe(viewModel.errorLiveData) {
+            Toast.makeText(activity, it, Toast.LENGTH_SHORT).show() //todo snackbar
         }
     }
 

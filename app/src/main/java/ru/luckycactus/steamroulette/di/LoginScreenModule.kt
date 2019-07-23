@@ -16,6 +16,8 @@ import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
 import ru.luckycactus.steamroulette.data.user.*
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.domain.*
+import ru.luckycactus.steamroulette.domain.common.ResourceManager
+import ru.luckycactus.steamroulette.domain.login.SteamSignInUseCase
 
 object LoginScreenModule {
 
@@ -33,6 +35,12 @@ object LoginScreenModule {
             resolveVanityUrlUseCase,
             getUserSummaryUseCase,
             userRepository
+        )
+    }
+
+    val steamSignInUseCase by lazy {
+        SteamSignInUseCase(
+            loginRepository
         )
     }
 
