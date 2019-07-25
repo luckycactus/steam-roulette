@@ -17,7 +17,7 @@ class CacheHelper(
         timeUnit: TimeUnit = TimeUnit.HOURS
     ): Boolean {
         val savedTime = prefs.getLong(key)
-        val expireTime = savedTime + timeUnit.convert(window, TimeUnit.MILLISECONDS)
+        val expireTime = savedTime + TimeUnit.MILLISECONDS.convert(window, timeUnit)
         return System.currentTimeMillis() >= expireTime
     }
 

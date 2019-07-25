@@ -7,14 +7,16 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_login.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.presentation.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.observe
 import ru.luckycactus.steamroulette.presentation.visibility
 
 
 class LoginFragment : BaseFragment() {
 
-    private val viewModel by lazy {
+    private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this).get(LoginViewModel::class.java)
     }
 
@@ -37,10 +39,6 @@ class LoginFragment : BaseFragment() {
             viewModel.onSteamIdConfirmed(etUserId.text.toString())
         }
 
-        btnSteamSignIn.setOnClickListener {
-            viewModel.onSteamSignInClick()
-        }
-
         observe(viewModel.progressLiveData) {
             showProgress(it)
         }
@@ -51,6 +49,10 @@ class LoginFragment : BaseFragment() {
 
         observe(viewModel.errorLiveData) {
             Toast.makeText(activity, it, Toast.LENGTH_SHORT).show() //todo snackbar
+        }
+
+        observe(viewModel.signInSuccessLiveData) {
+            (activity as MainActivity).viewModel.onSignInSuccess()
         }
     }
 

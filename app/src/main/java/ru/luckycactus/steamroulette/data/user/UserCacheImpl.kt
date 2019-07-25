@@ -16,6 +16,7 @@ class UserCacheImpl(
     override fun putUserSummary(userSummary: UserSummaryEntity) {
         val json = gson.toJson(userSummary)
         prefs[userSummary.steam64] = json
+        cacheHelper.setCachedNow(userSummary.steam64)
     }
 
     override fun getUserSummary(steam64: Long): UserSummaryEntity {

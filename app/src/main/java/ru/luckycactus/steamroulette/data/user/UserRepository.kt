@@ -10,4 +10,10 @@ interface UserRepository {
     fun saveSignedInUser(steamId: SteamId)
 
     fun getSignedInUserSteamId(): SteamId
+
+    suspend fun getSignedInUserSummary(reload: Boolean): UserSummary
+
+    fun isUserSignedIn(): Boolean
+
+    suspend fun signOut()
 }
