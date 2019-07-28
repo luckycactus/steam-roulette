@@ -2,16 +2,13 @@ package ru.luckycactus.steamroulette.di
 
 import android.app.Application
 import android.content.Context
+import android.util.LruCache
 import com.google.gson.Gson
 import ru.luckycactus.steamroulette.data.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.games.SteamGamesRepository
 import ru.luckycactus.steamroulette.data.games.SteamGamesRepositoryImpl
-import ru.luckycactus.steamroulette.data.games.cache.SteamGamesCache
-import ru.luckycactus.steamroulette.data.games.cache.SteamGamesCacheImpl
 import ru.luckycactus.steamroulette.data.games.datastore.LocalSteamGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteSteamGamesDataStore
-import ru.luckycactus.steamroulette.data.games.datastore.SteamGamesDataStoreFactory
-import ru.luckycactus.steamroulette.data.games.datastore.SteamGamesDataStoreFactoryImpl
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameMapper
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.local.PreferencesStorage
@@ -19,7 +16,11 @@ import ru.luckycactus.steamroulette.data.local.SharedPreferencesStorage
 import ru.luckycactus.steamroulette.data.login.LoginRepository
 import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
+import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.user.*
+import ru.luckycactus.steamroulette.data.user.datastore.LocalUserDataStore
+import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
+import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.domain.*
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
@@ -30,7 +31,7 @@ import ru.luckycactus.steamroulette.domain.user.SignOutUserUseCase
 object AppModule {
 
     lateinit var appContext: Context
-
+    
     lateinit var cacheHelper: CacheHelper
         private set
 
@@ -87,29 +88,22 @@ object AppModule {
 
     private val userRepository: UserRepository by lazy {
         UserRepositoryImpl(
-            UserDataStoreFactoryImpl(
-                userCache,
-                remoteUserDataStore,
-                localUserDataStore
-            ),
+            localUserDataStore,
+            remoteUserDataStore,
             UserSummaryMapper(),
-            appPreferences
-        )
+            appPreferences,
+            networkBoundResourceFactory
+            )
     }
 
-    private val remoteUserDataStore: UserDataStore by lazy {
+    private val remoteUserDataStore: UserDataStore.Remote by lazy {
         RemoteUserDataStore(
-            NetworkModule.steamApiService,
-            userCache
+            NetworkModule.steamApiService
         )
     }
 
-    private val localUserDataStore: UserDataStore by lazy {
-        LocalUserDataStore(userCache)
-    }
-
-    private val userCache: UserCache by lazy {
-        UserCacheImpl(
+    private val localUserDataStore: UserDataStore.Local by lazy {
+        LocalUserDataStore(
             SharedPreferencesStorage(appContext, "user-cache"),
             cacheHelper,
             gson
@@ -125,11 +119,12 @@ object AppModule {
     }
 
     private val steamGamesRepository: SteamGamesRepository by lazy {
-        SteamGamesRepositoryImpl(steamGamesDataStoreFactory, ownedGameMapper)
-    }
-
-    private val steamGamesDataStoreFactory: SteamGamesDataStoreFactory by lazy {
-        SteamGamesDataStoreFactoryImpl(localSteamGamesDataStore, remoteSteamGamesDataStore, steamGamesCache)
+        SteamGamesRepositoryImpl(
+            localSteamGamesDataStore,
+            remoteSteamGamesDataStore,
+            ownedGameMapper,
+            networkBoundResourceFactory
+        )
     }
 
     private val localSteamGamesDataStore: LocalSteamGamesDataStore by lazy {
@@ -140,12 +135,15 @@ object AppModule {
         RemoteSteamGamesDataStore(NetworkModule.steamApiService)
     }
 
-    private val steamGamesCache: SteamGamesCache by lazy {
-        SteamGamesCacheImpl()
-    }
-
     private val ownedGameMapper by lazy {
         OwnedGameMapper()
+    }
+
+    private val networkBoundResourceFactory by lazy {
+        NetworkBoundResource.Factory(
+            cacheHelper,
+            LruCache(50)
+        )
     }
 
 }
