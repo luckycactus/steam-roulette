@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
-import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.exception.SteamIdNotFoundException
 import ru.luckycactus.steamroulette.domain.exception.VanityNotFoundException
@@ -22,44 +21,44 @@ class LoginViewModel(
     private val signInUseCase = AppModule.signInUseCase
     private val resourceManager = AppModule.resourceManager
 
-    val progressLiveData: LiveData<Boolean>
-        get() = mutableProgressLiveData
+    val progressState: LiveData<Boolean>
+        get() = _progressState
 
-    val loginButtonAvailableLiveData: LiveData<Boolean>
-        get() = mutableLoginButtonStateLiveData
+    val loginButtonAvailableState: LiveData<Boolean>
+        get() = _loginButtonAvailableState
 
-    val errorLiveData: LiveData<String>
-        get() = mutableErrorLiveData
+    val errorState: LiveData<String>
+        get() = _errorState
 
-    val signInSuccessLiveData = MutableLiveData<Event<Unit?>>() //todo refactor navigation
+    val signInSuccessEvent = MutableLiveData<Event<Unit?>>() //todo refactor navigation
 
-    private val mutableProgressLiveData = MutableLiveData<Boolean>().startWith(false)
-    private val mutableLoginButtonStateLiveData = MutableLiveData<Boolean>().startWith(false)
-    private val mutableErrorLiveData = MutableLiveData<String>()
+    private val _progressState = MutableLiveData<Boolean>().startWith(false)
+    private val _loginButtonAvailableState = MutableLiveData<Boolean>().startWith(false)
+    private val _errorState = MutableLiveData<String>()
 
     fun onSteamIdConfirmed(id: String) {
         viewModelScope.launch {
             try {
-                mutableProgressLiveData.value = true
+                _progressState.value = true
                 signInUseCase(id)
-                signInSuccessLiveData.value = Event(null)
+                signInSuccessEvent.value = Event(null)
             } catch (e: VanityNotFoundException) {
-                mutableErrorLiveData.value = resourceManager.getString(R.string.user_with_vanity_url_not_found)
+                _errorState.value = resourceManager.getString(R.string.user_with_vanity_url_not_found)
             } catch (e: InvalidSteamIdFormatException) {
-                mutableErrorLiveData.value = resourceManager.getString(R.string.invalid_steamid_format)
+                _errorState.value = resourceManager.getString(R.string.invalid_steamid_format)
             } catch (e: SteamIdNotFoundException) {
-                mutableErrorLiveData.value = resourceManager.getString(R.string.user_with_steamid_not_found)
+                _errorState.value = resourceManager.getString(R.string.user_with_steamid_not_found)
             } catch (e: Exception) {
                 e.printStackTrace()
-                mutableErrorLiveData.value = getCommonErrorDescription(resourceManager, e)
+                _errorState.value = getCommonErrorDescription(resourceManager, e)
             } finally {
-                mutableProgressLiveData.value = false
+                _progressState.value = false
             }
         }
     }
 
 
     fun onSteamIdInputChanged(userId: String) {
-        mutableLoginButtonStateLiveData.value = validateSteamIdInputUseCase(userId)
+        _loginButtonAvailableState.value = validateSteamIdInputUseCase(userId)
     }
 }

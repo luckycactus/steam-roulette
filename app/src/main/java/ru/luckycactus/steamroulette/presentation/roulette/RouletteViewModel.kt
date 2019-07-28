@@ -1,9 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.common.invoke
@@ -11,12 +12,14 @@ import ru.luckycactus.steamroulette.domain.user.GetSignedInUserUseCase
 import ru.luckycactus.steamroulette.domain.user.IsUserSignedInUseCase
 import ru.luckycactus.steamroulette.domain.user.UserSummary
 
+@ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
 class RouletteViewModel : ViewModel() {
 
-    val userSummaryLiveData: LiveData<UserSummary>
-        get() = mutableUserSummaryLiveData
+    val userSummary: LiveData<UserSummary>
+        get() = _userSummary
 
-    private val mutableUserSummaryLiveData = MutableLiveData<UserSummary>()
+    private val _userSummary = MutableLiveData<UserSummary>()
 
     private val getSignedInUserUseCase: GetSignedInUserUseCase = AppModule.getSignedInUserUseCase
     private val isUserSignedInUseCase: IsUserSignedInUseCase = AppModule.isUserSignedInUseCase
@@ -24,10 +27,16 @@ class RouletteViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             if (isUserSignedInUseCase()) {
-                mutableUserSummaryLiveData.value = getSignedInUserUseCase(GetSignedInUserUseCase.Params(false))
+                loadUserSummary()
             } else {
                 //todo
             }
+        }
+    }
+
+    private suspend fun CoroutineScope.loadUserSummary() {
+        getSignedInUserUseCase.getCacheThenRemote(this).consumeEach {
+            _userSummary.value = it
         }
     }
 }

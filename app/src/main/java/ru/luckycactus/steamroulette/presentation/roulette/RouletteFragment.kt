@@ -34,7 +34,7 @@ class RouletteFragment : BaseFragment() {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        observe(viewModel.userSummaryLiveData) {
+        observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
         }
     }

@@ -39,19 +39,19 @@ class LoginFragment : BaseFragment() {
             viewModel.onSteamIdConfirmed(etUserId.text.toString())
         }
 
-        observe(viewModel.progressLiveData) {
+        observe(viewModel.progressState) {
             showProgress(it)
         }
 
-        observe(viewModel.loginButtonAvailableLiveData) {
+        observe(viewModel.loginButtonAvailableState) {
             btnOk.isEnabled = it
         }
 
-        observe(viewModel.errorLiveData) {
+        observe(viewModel.errorState) {
             Toast.makeText(activity, it, Toast.LENGTH_SHORT).show() //todo snackbar
         }
 
-        observe(viewModel.signInSuccessLiveData) {
+        observe(viewModel.signInSuccessEvent) {
             (activity as MainActivity).viewModel.onSignInSuccess()
         }
     }

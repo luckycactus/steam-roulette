@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.data.model
 
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
 data class UserSummariesResponse(

@@ -7,10 +7,13 @@ import ru.luckycactus.steamroulette.domain.user.UserSummary
 
 class GetUserSummaryUseCase(
     private val userRepository: UserRepository
-): SuspendUseCase<GetUserSummaryUseCase.Params, UserSummary>() {
+) : SuspendUseCase<GetUserSummaryUseCase.Params, UserSummary>() {
 
     override suspend fun getResult(params: Params): UserSummary =
-        userRepository.getUserSummary(params.steamId, params.reload)
+        userRepository.getUserSummary(
+            params.steamId,
+            if (params.reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
+        )
 
     data class Params(
         val steamId: SteamId,

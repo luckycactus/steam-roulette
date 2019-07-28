@@ -24,14 +24,12 @@ class UserRepositoryImpl(
 
     override suspend fun getUserSummary(
         steamId: SteamId,
-        reload: Boolean
+        cachePolicy: CachePolicy
     ): UserSummary {
-        val cachePolicy = if (reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
         return getUserSummary(steamId.asSteam64(), cachePolicy)
     }
 
-    override suspend fun getSignedInUserSummary(reload: Boolean): UserSummary {
-        val cachePolicy = if (reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
+    override suspend fun getSignedInUserSummary(cachePolicy: CachePolicy): UserSummary {
         val steam64 = getSignedUserSteam64()
         return getUserSummary(steam64, cachePolicy)
     }
