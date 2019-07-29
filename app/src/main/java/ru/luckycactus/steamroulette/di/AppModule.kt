@@ -22,16 +22,19 @@ import ru.luckycactus.steamroulette.data.user.datastore.LocalUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
-import ru.luckycactus.steamroulette.domain.*
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.user.GetSignedInUserUseCase
-import ru.luckycactus.steamroulette.domain.user.IsUserSignedInUseCase
+import ru.luckycactus.steamroulette.domain.games.FetchOwnedGamesUseCase
+import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesUseCase
+import ru.luckycactus.steamroulette.domain.login.ResolveVanityUrlUseCase
+import ru.luckycactus.steamroulette.domain.login.SignInUseCase
+import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
+import ru.luckycactus.steamroulette.domain.user.GetSignedInUserSteamIdUseCase
+import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.SignOutUserUseCase
 
 object AppModule {
 
     lateinit var appContext: Context
-    
     lateinit var cacheHelper: CacheHelper
         private set
 
@@ -50,12 +53,16 @@ object AppModule {
         resourceManager = AndroidResourceManager(appContext)
     }
 
-    val isUserSignedInUseCase by lazy {
-        IsUserSignedInUseCase(userRepository)
+    val fetchOwnedGamesUseCase by lazy {
+        FetchOwnedGamesUseCase(
+            steamGamesRepository
+        )
     }
 
-    val getSignedInUserUseCase by lazy {
-        GetSignedInUserUseCase(userRepository)
+    val getSignedInUserSteamIdUseCase by lazy {
+        GetSignedInUserSteamIdUseCase(
+            userRepository
+        )
     }
 
     val signOutUserUserCase by lazy {
@@ -78,12 +85,12 @@ object AppModule {
         )
     }
 
-    private val resolveVanityUrlUseCase by lazy {
-        ResolveVanityUrlUseCase(loginRepository)
+    val getUserSummaryUseCase by lazy {
+        GetUserSummaryUseCase(userRepository)
     }
 
-    private val getUserSummaryUseCase by lazy {
-        GetUserSummaryUseCase(userRepository)
+    private val resolveVanityUrlUseCase by lazy {
+        ResolveVanityUrlUseCase(loginRepository)
     }
 
     private val userRepository: UserRepository by lazy {
@@ -93,7 +100,7 @@ object AppModule {
             UserSummaryMapper(),
             appPreferences,
             networkBoundResourceFactory
-            )
+        )
     }
 
     private val remoteUserDataStore: UserDataStore.Remote by lazy {
@@ -145,5 +152,4 @@ object AppModule {
             LruCache(50)
         )
     }
-
 }

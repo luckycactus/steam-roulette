@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain.user
+package ru.luckycactus.steamroulette.domain.entity
 
 data class UserSummary(
     val steamId: SteamId,

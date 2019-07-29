@@ -1,8 +1,10 @@
 package ru.luckycactus.steamroulette.data.user
 
-import ru.luckycactus.steamroulette.domain.CachePolicy
-import ru.luckycactus.steamroulette.domain.user.SteamId
-import ru.luckycactus.steamroulette.domain.user.UserSummary
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.ReceiveChannel
+import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.entity.UserSummary
 
 interface UserRepository {
 
@@ -10,11 +12,14 @@ interface UserRepository {
 
     fun saveSignedInUser(steamId: SteamId)
 
-    fun getSignedInUserSteamId(): SteamId
-
-    suspend fun getSignedInUserSummary(cachePolicy: CachePolicy): UserSummary
+    fun getSignedInUserSteamId(): SteamId?
 
     fun isUserSignedIn(): Boolean
 
     suspend fun signOut()
+
+    suspend fun getUserSummaryCacheThenRemoteIfExpired(
+        coroutineScope: CoroutineScope,
+        steam64: Long
+    ): ReceiveChannel<UserSummary>
 }

@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.login
 
 import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
-import ru.luckycactus.steamroulette.domain.user.SteamId
+import ru.luckycactus.steamroulette.domain.entity.SteamId
 
 class LoginRepositoryImpl(
     private val remoteLoginDataStore: RemoteLoginDataStore

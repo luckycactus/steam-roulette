@@ -1,14 +1,17 @@
 package ru.luckycactus.steamroulette.data.user
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
 import ru.luckycactus.steamroulette.data.local.PreferencesStorage
+import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
-import ru.luckycactus.steamroulette.data.user.datastore.LocalUserDataStore
-import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
-import ru.luckycactus.steamroulette.domain.CachePolicy
-import ru.luckycactus.steamroulette.domain.user.SteamId
-import ru.luckycactus.steamroulette.domain.user.UserSummary
+import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.entity.UserSummary
 import java.util.concurrent.TimeUnit
 
 class UserRepositoryImpl(
@@ -23,8 +26,12 @@ class UserRepositoryImpl(
         userPreferences[SIGNED_USER_KEY] = steamId.asSteam64()
     }
 
-    override fun getSignedInUserSteamId(): SteamId =
-        SteamId.fromSteam64(getSignedUserSteam64())
+    override fun getSignedInUserSteamId(): SteamId? {
+        val steam64 = userPreferences.getLong(SIGNED_USER_KEY)
+        if (steam64 == 0L)
+            return null
+        return SteamId.fromSteam64(steam64)
+    }
 
     override fun isUserSignedIn(): Boolean =
         userPreferences.getLong(SIGNED_USER_KEY) != 0L
@@ -33,20 +40,20 @@ class UserRepositoryImpl(
         steamId: SteamId,
         cachePolicy: CachePolicy
     ): UserSummary {
-        return getUserSummary(steamId.asSteam64(), cachePolicy)
+        return createUserSummaryResource(steamId.asSteam64())
+            .get(cachePolicy)
     }
 
-    override suspend fun getSignedInUserSummary(cachePolicy: CachePolicy): UserSummary {
-        val steam64 = getSignedUserSteam64()
-        return getUserSummary(steam64, cachePolicy)
-    }
+    @ExperimentalCoroutinesApi
+    override suspend fun getUserSummaryCacheThenRemoteIfExpired(
+        coroutineScope: CoroutineScope,
+        steam64: Long
+    ): ReceiveChannel<UserSummary> =
+        createUserSummaryResource(steam64).getCacheThenRemoteIfExpired(coroutineScope)
 
-    private fun getSignedUserSteam64(): Long = userPreferences.getLong(SIGNED_USER_KEY)
-
-    private suspend fun getUserSummary(
-        steam64: Long,
-        cachePolicy: CachePolicy
-    ): UserSummary {
+    private fun createUserSummaryResource(
+        steam64: Long
+    ): NetworkBoundResource<UserSummaryEntity, UserSummary> {
         val cacheKey = "user_summary_$steam64"
         return networkBoundResourceFactory.create(
             cacheKey,
@@ -58,7 +65,7 @@ class UserRepositoryImpl(
                 val userSummaryEntity = localUserDataStore.getUserSummary(steam64)
                 mapper.mapFrom(userSummaryEntity)
             }
-        ).get(cachePolicy)
+        )
     }
 
     override suspend fun signOut() {
@@ -67,6 +74,6 @@ class UserRepositoryImpl(
 
     companion object {
         const val SIGNED_USER_KEY = "signed_user_key"
-        val SUMMARY_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(4L, TimeUnit.HOURS)
+        val SUMMARY_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(4L, TimeUnit.SECONDS)
     }
 }

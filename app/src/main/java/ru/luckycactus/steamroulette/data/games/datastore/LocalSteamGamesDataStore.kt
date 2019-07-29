@@ -11,4 +11,8 @@ class LocalSteamGamesDataStore : SteamGamesDataStore.Local {
     override fun saveOwnedGamesToCache(games: List<OwnedGameEntity>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun getOwnedGamesCount(steam64: Long): Int {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

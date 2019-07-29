@@ -1,10 +1,11 @@
-package ru.luckycactus.steamroulette.domain
+package ru.luckycactus.steamroulette.domain.login
 
 import ru.luckycactus.steamroulette.data.user.UserRepository
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
-import ru.luckycactus.steamroulette.domain.user.SteamId
-import ru.luckycactus.steamroulette.domain.user.UserSummary
+import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
+import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.entity.UserSummary
 
 class SignInUseCase(
     private val resolveVanityUrlUseCase: ResolveVanityUrlUseCase, //todo remove?

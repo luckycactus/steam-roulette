@@ -1,8 +1,13 @@
 package ru.luckycactus.steamroulette.data.net
 
 import android.util.LruCache
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
 import ru.luckycactus.steamroulette.data.local.CacheHelper
-import ru.luckycactus.steamroulette.domain.CachePolicy
+import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import java.util.concurrent.TimeUnit
 
 class NetworkBoundResource<RequestType, ResultType> private constructor(
     private val cacheHelper: CacheHelper,
@@ -32,6 +37,16 @@ class NetworkBoundResource<RequestType, ResultType> private constructor(
         return getCachedData()!!
     }
 
+    @ExperimentalCoroutinesApi
+    suspend fun getCacheThenRemoteIfExpired(coroutineScope: CoroutineScope): ReceiveChannel<ResultType> =
+        coroutineScope.produce {
+            getCachedData()?.let { send(it) }
+            updateIfNeed(CachePolicy.CACHE_IF_VALID).let { updated ->
+                if (updated)
+                    send(getCachedData()!!)
+            }
+        }
+
     private suspend fun getCachedData(): ResultType? {
         var data: ResultType? = null
 
@@ -50,7 +65,7 @@ class NetworkBoundResource<RequestType, ResultType> private constructor(
     }
 
     private fun shouldFetch(cachePolicy: CachePolicy): Boolean {
-        return cacheHelper.shouldUpdate(cachePolicy, key, windowMillis)
+        return cacheHelper.shouldUpdate(cachePolicy, key, windowMillis, TimeUnit.MILLISECONDS)
     }
 
     class Factory constructor(

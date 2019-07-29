@@ -8,6 +8,8 @@ interface SteamGamesDataStore {
 
     interface Local: SteamGamesDataStore {
         fun saveOwnedGamesToCache(games: List<OwnedGameEntity>)
+
+        fun getOwnedGamesCount(steam64: Long): Int
     }
 
     interface Remote: SteamGamesDataStore

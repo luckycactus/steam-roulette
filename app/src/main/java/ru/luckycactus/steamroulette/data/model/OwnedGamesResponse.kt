@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.data.model
 
-import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
 data class OwnedGamesResponse(
@@ -12,7 +11,6 @@ data class OwnedGamesEntity(
     @SerializedName("games") val games: List<OwnedGameEntity>
 )
 
-//@Entity(tableName = "owned_game")
 data class OwnedGameEntity(
     @SerializedName("appid") val appId: Long,
     @SerializedName("name") val name: String?,

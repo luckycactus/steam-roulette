@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain.user
+package ru.luckycactus.steamroulette.domain.entity
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -163,7 +163,12 @@ class SteamId private constructor(
                 val accountId = matcherFind(input) {
                     it.group(1).toLong()
                 }
-                return from(Universe.Public, AccountType.Individual, Instance.Desktop, accountId)
+                return from(
+                    Universe.Public,
+                    AccountType.Individual,
+                    Instance.Desktop,
+                    accountId
+                )
             }
         },
 
@@ -191,7 +196,7 @@ class SteamId private constructor(
 
         Invalid("\$a") {
             override fun parseSteamId(input: String): SteamId {
-                throw IllegalStateException("${Format::class.java.simpleName}.${Format.Invalid.name} cannot parse anything!")
+                throw IllegalStateException("${Format::class.java.simpleName}.${Invalid.name} cannot parse anything!")
             }
         };
 

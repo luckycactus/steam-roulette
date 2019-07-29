@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.data.login
 
-import ru.luckycactus.steamroulette.domain.user.SteamId
+import ru.luckycactus.steamroulette.domain.entity.SteamId
 
 interface LoginRepository {
 

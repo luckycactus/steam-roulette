@@ -7,4 +7,5 @@
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="user_with_steamid_not_found">Пользователь с данным SteamId не найден</string>
     <string name="exit">Выход</string>
+    <string name="retry">Повторить</string>
 </resources>

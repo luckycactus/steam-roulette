@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.games.mapper
 
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
-import ru.luckycactus.steamroulette.domain.OwnedGame
+import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.common.Mapper
 
 class OwnedGameMapper: Mapper<OwnedGameEntity, OwnedGame>() {

@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.data.local
 
-import ru.luckycactus.steamroulette.domain.CachePolicy
+import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import java.util.concurrent.TimeUnit
 
 class CacheHelper(

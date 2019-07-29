@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain
+package ru.luckycactus.steamroulette.domain.entity
 
 data class OwnedGame(
     val appId: Long,

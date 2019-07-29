@@ -4,8 +4,9 @@ import ru.luckycactus.steamroulette.data.games.datastore.LocalSteamGamesDataStor
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteSteamGamesDataStore
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameMapper
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
-import ru.luckycactus.steamroulette.domain.CachePolicy
-import ru.luckycactus.steamroulette.domain.OwnedGame
+import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import ru.luckycactus.steamroulette.domain.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.entity.SteamId
 import java.util.concurrent.TimeUnit
 
 class SteamGamesRepositoryImpl(
@@ -15,15 +16,28 @@ class SteamGamesRepositoryImpl(
     private val networkBoundResourceFactory: NetworkBoundResource.Factory
 ) : SteamGamesRepository {
 
-    override suspend fun getOwnedGames(steam64: Long, cachePolicy: CachePolicy): List<OwnedGame> {
-        val cacheKey = "owned_games_$steam64"
+    override suspend fun getOwnedGames(steamId: SteamId, cachePolicy: CachePolicy): List<OwnedGame> {
+        val cacheKey = "owned_games_${steamId.asSteam64()}"
         return networkBoundResourceFactory.create(
             cacheKey,
             cacheKey,
             OWNED_GAMES_CACHE_WINDOW,
-            getFromNetwork = { remoteSteamGamesDataStore.getOwnedGames(steam64) },
+            getFromNetwork = { remoteSteamGamesDataStore.getOwnedGames(steamId.asSteam64()) },
             saveToCache = { localSteamGamesDataStore.saveOwnedGamesToCache(it) },
-            getFromCache = { ownedGameMapper.mapFrom(localSteamGamesDataStore.getOwnedGames(steam64)) }
+            getFromCache = { ownedGameMapper.mapFrom(localSteamGamesDataStore.getOwnedGames(steamId.asSteam64())) }
+        ).get(cachePolicy)
+    }
+
+    override suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy): Int {
+        val cacheKey = "owned_games_${steamId.asSteam64()}"
+        val memoryKey = "owned_games_count_${steamId.asSteam64()}"
+        return networkBoundResourceFactory.create(
+            cacheKey,
+            memoryKey,
+            OWNED_GAMES_CACHE_WINDOW,
+            getFromNetwork = { remoteSteamGamesDataStore.getOwnedGames(steamId.asSteam64()) },
+            saveToCache = { localSteamGamesDataStore.saveOwnedGamesToCache(it) },
+            getFromCache = { localSteamGamesDataStore.getOwnedGamesCount(steamId.asSteam64()) }
         ).get(cachePolicy)
     }
 

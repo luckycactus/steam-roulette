@@ -1,7 +1,7 @@
-package ru.luckycactus.steamroulette.domain
+package ru.luckycactus.steamroulette.domain.login
 
 import ru.luckycactus.steamroulette.domain.common.UseCase
-import ru.luckycactus.steamroulette.domain.user.SteamId
+import ru.luckycactus.steamroulette.domain.entity.SteamId
 
 class ValidateSteamIdInputUseCase : UseCase<String, Boolean>() {
 
