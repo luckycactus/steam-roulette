@@ -10,3 +10,4 @@ class SteamIdNotFoundException(val steamId: String): Exception()
 
 class InvalidSteamIdFormatException : Exception()
 
+class GetOwnedGamesPrivacyException: Exception()

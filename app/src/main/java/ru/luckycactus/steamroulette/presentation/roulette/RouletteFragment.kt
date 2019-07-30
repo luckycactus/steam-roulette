@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.roulette
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.fragment_roulette.*
@@ -34,8 +35,24 @@ class RouletteFragment : BaseFragment() {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
+        gameView.setOnNextGameListener {
+            viewModel.onNextGameClick()
+        }
+
+        gameView.setOnHideGameListener {
+            viewModel.onHideGameClick()
+        }
+
         observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
+        }
+
+        observe(viewModel.errorState) {
+            Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
+        }
+
+        observe(viewModel.currentGame) {
+            gameView.setGame(it)
         }
     }
 

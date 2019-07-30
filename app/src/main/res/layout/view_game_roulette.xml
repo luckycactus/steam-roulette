@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        >
+
+    <ImageView
+            android:id="@+id/ivGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    <Button
+            android:id="@+id/btnNextGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/next_game"
+            />
+
+    <Button
+            android:id="@+id/btnHideAndNextGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hide_this_game"
+            />
+
+</merge>

@@ -15,5 +15,4 @@ class OwnedGameMapper: Mapper<OwnedGameEntity, OwnedGame>() {
             from.iconUrl!!,
             from.logoUrl!!
         )
-
 }

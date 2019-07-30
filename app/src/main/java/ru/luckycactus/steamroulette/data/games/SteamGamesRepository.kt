@@ -8,5 +8,9 @@ interface SteamGamesRepository {
 
     suspend fun getOwnedGames(steamId: SteamId, cachePolicy: CachePolicy): List<OwnedGame>
 
-    suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy): Int
+    suspend fun getOwnedGamesNumbers(steamId: SteamId, cachePolicy: CachePolicy): List<Int>
+
+    suspend fun getOwnedGameByNumber(number: Int): OwnedGame
+
+    suspend fun markGameAsHidden(steamId: SteamId, ownedGame: OwnedGame)
 }
