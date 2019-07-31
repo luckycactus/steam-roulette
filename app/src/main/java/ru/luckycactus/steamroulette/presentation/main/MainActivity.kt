@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         observe(viewModel.screenLiveData) {
-            it.handleIfNotHandled { screen ->
+            it.ifNotHandled { screen ->
                 when (screen) {
                     MainViewModel.Screen.Login ->
                         supportFragmentManager.beginTransaction()

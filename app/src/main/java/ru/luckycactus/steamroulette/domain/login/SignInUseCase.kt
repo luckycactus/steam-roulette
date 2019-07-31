@@ -8,9 +8,9 @@ import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
 
 class SignInUseCase(
-    private val resolveVanityUrlUseCase: ResolveVanityUrlUseCase, //todo remove?
     private val getUserSummaryUseCase: GetUserSummaryUseCase,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val loginRepository: LoginRepository
 ) : SuspendUseCase<String, UserSummary>() {
 
     override suspend fun getResult(params: String): UserSummary {
@@ -30,7 +30,7 @@ class SignInUseCase(
 
     private suspend fun tryResolveVanity(input: String): SteamId? {
         return SteamId.tryGetVanityUrl(input)?.let {
-            resolveVanityUrlUseCase(it)
+            loginRepository.resolveVanityUrl(input)
         }
     }
 }

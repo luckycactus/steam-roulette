@@ -30,7 +30,6 @@ object NetworkModule {
             .client(okHttpClient)
             .baseUrl(STEAM_WEB_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            //.addCallAdapterFactory(CoroutineCallAdapterFactory()) //todo remove when migrate tp 2.6.0
             .build()
 
     private fun getOkHttpClient(interceptors: List<Interceptor>): OkHttpClient {

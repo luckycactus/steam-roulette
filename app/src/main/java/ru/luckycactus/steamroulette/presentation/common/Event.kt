@@ -15,7 +15,7 @@ class Event<out T>(
             data
         }
 
-    inline fun handleIfNotHandled(block: (T) -> Unit) {
+    inline fun ifNotHandled(block: (T) -> Unit) {
         getIfNotHandled()?.let { block(it) }
     }
 

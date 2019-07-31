@@ -127,7 +127,7 @@ class SteamId private constructor(
         /**
          * Example: 76561197960287930
          */
-        Steam64("\\d{17}") { //todo check length
+        Steam64("\\d{17}") {
             override fun parseSteamId(input: String): SteamId {
                 return fromSteam64(input.toLong())
             }

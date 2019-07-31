@@ -96,6 +96,7 @@ class RouletteViewModel : ViewModel() {
     private fun getOwnedGamesQueue() {
         viewModelScope.launch {
             try {
+                //todo fallback to cache if remote failed
                 gamesQueue = getOwnedGamesQueueUseCase(
                     GetOwnedGamesQueueUseCase.Params(
                         steamId,

@@ -5,19 +5,19 @@ import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.common.Mapper
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 
-class OwnedGameRoomEntityMapper private constructor(
-    private val steam64: Long
-): Mapper<OwnedGameEntity, OwnedGameRoomEntity>() {
+class OwnedGameRoomEntityMapper(
+    private val steam64: Long,
+    private val hiddenGameIds: Set<Long>,
+    private val timestamp: Long
+) : Mapper<OwnedGameEntity, OwnedGameRoomEntity>() {
 
     override fun mapFrom(from: OwnedGameEntity): OwnedGameRoomEntity {
         return OwnedGameRoomEntity(
             steam64,
-            false, //todo!!!
+            hiddenGameIds.contains(from.appId),
+            timestamp,
             from
         )
-    }
 
-    class Factory {
-        fun create(steam64: Long) = OwnedGameRoomEntityMapper(steam64)
     }
 }
