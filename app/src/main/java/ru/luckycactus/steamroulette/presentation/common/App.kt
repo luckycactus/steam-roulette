@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation
+package ru.luckycactus.steamroulette.presentation.common
 
 import android.app.Application
 import ru.luckycactus.steamroulette.di.DI

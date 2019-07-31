@@ -9,9 +9,9 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.lazyNonThreadSafe
-import ru.luckycactus.steamroulette.presentation.observe
-import ru.luckycactus.steamroulette.presentation.visibility
+import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
+import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 
 class LoginFragment : BaseFragment() {

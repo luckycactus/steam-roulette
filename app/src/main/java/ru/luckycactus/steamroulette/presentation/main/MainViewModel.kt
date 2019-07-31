@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.common.invoke
-import ru.luckycactus.steamroulette.presentation.Event
+import ru.luckycactus.steamroulette.presentation.common.Event
 
 class MainViewModel: ViewModel() {
 

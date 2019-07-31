@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data
+package ru.luckycactus.steamroulette.data.local
 
 import android.content.Context
 import ru.luckycactus.steamroulette.domain.common.ResourceManager

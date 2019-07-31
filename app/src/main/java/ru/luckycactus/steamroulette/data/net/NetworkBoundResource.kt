@@ -5,7 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.isActive
 import ru.luckycactus.steamroulette.data.local.CacheHelper
+import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import java.util.concurrent.TimeUnit
 
@@ -22,7 +24,7 @@ class NetworkBoundResource<RequestType, ResultType> private constructor(
 
     suspend fun updateIfNeed(cachePolicy: CachePolicy): Boolean {
         return if (shouldFetch(cachePolicy)) {
-            val data = getFromNetwork()
+            val data = wrapCommonNetworkExceptions { getFromNetwork() }
             saveToCache(data)
             cacheHelper.setCachedNow(key)
             memoryCache.remove(memoryKey)

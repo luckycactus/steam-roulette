@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.user
+package ru.luckycactus.steamroulette.domain.user
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel

@@ -10,9 +10,9 @@ import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.exception.SteamIdNotFoundException
 import ru.luckycactus.steamroulette.domain.exception.VanityNotFoundException
-import ru.luckycactus.steamroulette.presentation.Event
-import ru.luckycactus.steamroulette.presentation.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.startWith
+import ru.luckycactus.steamroulette.presentation.common.Event
+import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.startWith
 
 class LoginViewModel(
 ) : ViewModel() {

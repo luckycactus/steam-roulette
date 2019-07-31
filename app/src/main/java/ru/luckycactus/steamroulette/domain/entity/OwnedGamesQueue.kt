@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.domain.entity
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import ru.luckycactus.steamroulette.data.games.SteamGamesRepository
+import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import java.lang.IllegalStateException
 import java.util.*
 import kotlin.NoSuchElementException
@@ -19,7 +19,7 @@ interface OwnedGamesQueue {
 class OwnedGamesQueueImpl(
     private val steamId: SteamId,
     numbers: List<Int>,
-    private val gamesRepository: SteamGamesRepository
+    private val gamesRepository: GamesRepository
 ) : OwnedGamesQueue {
 
     private val numberQueue = LinkedList(numbers.shuffled())
@@ -41,7 +41,7 @@ class OwnedGamesQueueImpl(
                 currentMarkedAsHidden = false
             }
         }
-        return gamesRepository.getOwnedGameByNumber(numberQueue.first).also {
+        return gamesRepository.getLocalOwnedGameByNumber(numberQueue.first).also {
             current = it
         }
     }
@@ -51,7 +51,7 @@ class OwnedGamesQueueImpl(
             throw IllegalStateException("Cannot mark current game as hidden. You should call next() first!")
         currentMarkedAsHidden = true
         GlobalScope.launch {
-            gamesRepository.markGameAsHidden(steamId, current!!)
+            gamesRepository.markLocalGameAsHidden(steamId, current!!)
         }
     }
 

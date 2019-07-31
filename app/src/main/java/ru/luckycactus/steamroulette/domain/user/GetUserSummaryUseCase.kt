@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.domain.user
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import ru.luckycactus.steamroulette.data.user.UserRepository
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId

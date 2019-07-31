@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.data.user
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.produce
 import ru.luckycactus.steamroulette.data.local.PreferencesStorage
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
@@ -12,6 +11,7 @@ import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
+import ru.luckycactus.steamroulette.domain.user.UserRepository
 import java.util.concurrent.TimeUnit
 
 class UserRepositoryImpl(

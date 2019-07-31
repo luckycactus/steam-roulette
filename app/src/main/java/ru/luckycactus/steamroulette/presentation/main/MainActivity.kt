@@ -3,11 +3,10 @@ package ru.luckycactus.steamroulette.presentation.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.lifecycleScope
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.lazyNonThreadSafe
+import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.login.LoginFragment
-import ru.luckycactus.steamroulette.presentation.observe
+import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
 
 class MainActivity : AppCompatActivity() {

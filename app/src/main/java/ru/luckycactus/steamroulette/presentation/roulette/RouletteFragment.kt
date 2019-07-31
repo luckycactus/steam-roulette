@@ -9,8 +9,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.lazyNonThreadSafe
-import ru.luckycactus.steamroulette.presentation.observe
+import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
+import ru.luckycactus.steamroulette.presentation.utils.observe
 
 class RouletteFragment : BaseFragment() {
 

@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.login
+package ru.luckycactus.steamroulette.domain.login
 
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 

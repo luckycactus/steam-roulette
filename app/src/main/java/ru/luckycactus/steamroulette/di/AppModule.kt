@@ -5,28 +5,28 @@ import android.content.Context
 import android.util.LruCache
 import androidx.room.Room
 import com.google.gson.Gson
-import ru.luckycactus.steamroulette.data.AndroidResourceManager
-import ru.luckycactus.steamroulette.data.games.SteamGamesRepository
-import ru.luckycactus.steamroulette.data.games.SteamGamesRepositoryImpl
-import ru.luckycactus.steamroulette.data.games.datastore.LocalSteamGamesDataStore
-import ru.luckycactus.steamroulette.data.games.datastore.RemoteSteamGamesDataStore
+import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
+import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.data.games.GamesRepositoryImpl
+import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
+import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameMapper
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.local.CacheHelper
+import ru.luckycactus.steamroulette.data.local.DB
 import ru.luckycactus.steamroulette.data.local.PreferencesStorage
 import ru.luckycactus.steamroulette.data.local.SharedPreferencesStorage
-import ru.luckycactus.steamroulette.data.local.DB
-import ru.luckycactus.steamroulette.data.login.LoginRepository
+import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
-import ru.luckycactus.steamroulette.data.user.*
+import ru.luckycactus.steamroulette.domain.user.UserRepository
+import ru.luckycactus.steamroulette.data.user.UserRepositoryImpl
 import ru.luckycactus.steamroulette.data.user.datastore.LocalUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.games.FetchOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesQueueUseCase
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.login.ResolveVanityUrlUseCase
@@ -34,7 +34,7 @@ import ru.luckycactus.steamroulette.domain.login.SignInUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.user.GetSignedInUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
-import ru.luckycactus.steamroulette.domain.user.SignOutUserUseCase
+import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
 
 object AppModule {
 
@@ -57,12 +57,6 @@ object AppModule {
         resourceManager = AndroidResourceManager(appContext)
     }
 
-    val fetchOwnedGamesUseCase by lazy {
-        FetchOwnedGamesUseCase(
-            steamGamesRepository
-        )
-    }
-
     val getSignedInUserSteamIdUseCase by lazy {
         GetSignedInUserSteamIdUseCase(
             userRepository
@@ -71,7 +65,7 @@ object AppModule {
 
     val getOwnedGamesQueueUseCase by lazy {
         GetOwnedGamesQueueUseCase(
-            steamGamesRepository
+            GAMES_REPOSITORY
         )
     }
 
@@ -80,7 +74,7 @@ object AppModule {
     }
 
     val getOwnedGamesUseCase by lazy {
-        GetOwnedGamesUseCase(steamGamesRepository)
+        GetOwnedGamesUseCase(GAMES_REPOSITORY)
     }
 
     val validateSteamIdInputUseCase by lazy {
@@ -135,25 +129,23 @@ object AppModule {
         RemoteLoginDataStore(NetworkModule.steamApiService)
     }
 
-    private val steamGamesRepository: SteamGamesRepository by lazy {
-        SteamGamesRepositoryImpl(
-            localSteamGamesDataStore,
-            remoteSteamGamesDataStore,
-            ownedGameMapper,
-            OwnedGameRoomEntityMapper.Factory(),
+    private val GAMES_REPOSITORY: GamesRepository by lazy {
+        GamesRepositoryImpl(
+            LOCAL_GAMES_DATA_STORE,
+            REMOTE_GAMES_DATA_STORE,
             networkBoundResourceFactory
         )
     }
 
-    private val localSteamGamesDataStore: LocalSteamGamesDataStore by lazy {
-        LocalSteamGamesDataStore(
+    private val LOCAL_GAMES_DATA_STORE: LocalGamesDataStore by lazy {
+        LocalGamesDataStore(
             steamRouletteDb,
             OwnedGameRoomEntityMapper.Factory()
         )
     }
 
-    private val remoteSteamGamesDataStore: RemoteSteamGamesDataStore by lazy {
-        RemoteSteamGamesDataStore(NetworkModule.steamApiService)
+    private val REMOTE_GAMES_DATA_STORE: RemoteGamesDataStore by lazy {
+        RemoteGamesDataStore(NetworkModule.steamApiService)
     }
 
     private val ownedGameMapper by lazy {

@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation
+package ru.luckycactus.steamroulette.presentation.utils
 
 import android.view.View
 import androidx.lifecycle.*

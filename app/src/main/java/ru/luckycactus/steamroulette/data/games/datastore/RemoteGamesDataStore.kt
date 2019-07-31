@@ -5,9 +5,9 @@ import ru.luckycactus.steamroulette.data.net.SteamApiService
 import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
 
-class RemoteSteamGamesDataStore(
+class RemoteGamesDataStore(
     private val steamApiService: SteamApiService
-) : SteamGamesDataStore.Remote {
+) : GamesDataStore.Remote {
 
     override suspend fun getOwnedGames(steam64: Long): List<OwnedGameEntity> {
         val response = wrapCommonNetworkExceptions {

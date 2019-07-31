@@ -17,11 +17,10 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGamesQueue
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
 import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
-import ru.luckycactus.steamroulette.domain.games.FetchOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesQueueUseCase
 import ru.luckycactus.steamroulette.domain.user.GetSignedInUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
-import ru.luckycactus.steamroulette.presentation.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
@@ -66,7 +65,8 @@ class RouletteViewModel : ViewModel() {
 
     private fun showNextGame() {
         if (gamesQueue.hasNext()) {
-            viewModelScope.launch {//todo progress
+            viewModelScope.launch {
+                //todo progress
                 _currentGame.value = gamesQueue.next()
             }
         } else {

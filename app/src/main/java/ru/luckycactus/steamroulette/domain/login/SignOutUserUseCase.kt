@@ -1,7 +1,7 @@
-package ru.luckycactus.steamroulette.domain.user
+package ru.luckycactus.steamroulette.domain.login
 
-import ru.luckycactus.steamroulette.data.user.UserRepository
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
+import ru.luckycactus.steamroulette.domain.user.UserRepository
 
 class SignOutUserUseCase(
     private val userRepository: UserRepository

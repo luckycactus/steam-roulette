@@ -1,12 +1,11 @@
 package ru.luckycactus.steamroulette.data.games.datastore
 
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
-import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 
-interface SteamGamesDataStore {
+interface GamesDataStore {
 
-    interface Local: SteamGamesDataStore {
+    interface Local: GamesDataStore {
         suspend fun saveOwnedGamesToCache(steam64: Long, games: List<OwnedGameEntity>)
 
         suspend fun getOwnedGamesNumbers(steam64: Long): List<Int>
@@ -18,7 +17,7 @@ interface SteamGamesDataStore {
         suspend fun getOwnedGameByNumber(number: Int): OwnedGame
     }
 
-    interface Remote: SteamGamesDataStore {
+    interface Remote: GamesDataStore {
         suspend fun getOwnedGames(steam64: Long): List<OwnedGameEntity>
     }
 }
