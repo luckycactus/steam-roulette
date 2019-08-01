@@ -19,16 +19,20 @@ class LocalGamesDataStore(
         db.ownedGamesDao().insertGamesRemoveOthers(steam64, timestamp, mapper.mapFrom(games))
     }
 
-    override suspend fun getOwnedGamesNumbers(steam64: Long): List<Int> {
-        return db.ownedGamesDao().getVisibleGamesRowIdList(steam64)
+    override suspend fun getFilteredOwnedGamesIds(steam64: Long): List<Int> {
+        return db.ownedGamesDao().getVisibleGamesIdList(steam64)
     }
 
-    override suspend fun getOwnedGameByNumber(number: Int): OwnedGame {
-        return db.ownedGamesDao().getGameByRowId(number)
+    override suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame {
+        return db.ownedGamesDao().getGame(steam64, appId)
 
     }
 
-    override suspend fun markGameAsHidden(steam64: Long, gameId: Long) {
+    override suspend fun markGameAsHidden(steam64: Long, gameId: Int) {
         db.ownedGamesDao().markGameAsHidden(steam64, gameId)
+    }
+
+    override suspend fun isUserHasOwnedGames(steam64: Long): Boolean {
+        return db.ownedGamesDao().isUserHasOwnedGames(steam64)
     }
 }

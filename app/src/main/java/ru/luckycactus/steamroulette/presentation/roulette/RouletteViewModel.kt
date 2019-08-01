@@ -17,6 +17,7 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGamesQueue
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
 import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesQueueUseCase
 import ru.luckycactus.steamroulette.domain.user.GetSignedInUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
@@ -32,10 +33,13 @@ class RouletteViewModel : ViewModel() {
         get() = _errorState
     val currentGame: LiveData<OwnedGame>
         get() = _currentGame
+    val contentState: LiveData<ContentState>
+        get() = _contentState
 
     private val _userSummary = MutableLiveData<UserSummary>()
     private val _errorState = MutableLiveData<String>()
     private val _currentGame = MutableLiveData<OwnedGame>()
+    private val _contentState = MutableLiveData<ContentState>()
 
     private val getUserSummaryUseCase: GetUserSummaryUseCase = AppModule.getUserSummaryUseCase
     private val getSignedInUserSteamIdUseCase: GetSignedInUserSteamIdUseCase = AppModule.getSignedInUserSteamIdUseCase
@@ -61,6 +65,10 @@ class RouletteViewModel : ViewModel() {
     fun onHideGameClick() {
         gamesQueue.markCurrentAsHidden()
         showNextGame()
+    }
+
+    fun onRetryClick() {
+        getOwnedGamesQueue()
     }
 
     private fun showNextGame() {
@@ -95,8 +103,10 @@ class RouletteViewModel : ViewModel() {
 
     private fun getOwnedGamesQueue() {
         viewModelScope.launch {
+            _contentState.value = ContentState.Loading
             try {
                 //todo fallback to cache if remote failed
+                //todo use exist queue if failed
                 gamesQueue = getOwnedGamesQueueUseCase(
                     GetOwnedGamesQueueUseCase.Params(
                         steamId,
@@ -104,10 +114,19 @@ class RouletteViewModel : ViewModel() {
                     )
                 )
                 showNextGame()
+                _contentState.value = ContentState.Loaded
             } catch (e: GetOwnedGamesPrivacyException) {
-                _errorState.value = resourceManager.getString(R.string.get_owned_games_exception_description)
+                _contentState.value = ContentState.Error(
+                    resourceManager.getString(R.string.get_owned_games_exception_description)
+                )
+            } catch (e: MissingOwnedGamesException) {
+                _contentState.value = ContentState.Error(
+                    resourceManager.getString(R.string.you_dont_have_games_yet)
+                )
             } catch (e: Exception) {
-                _errorState.value = getCommonErrorDescription(resourceManager, e)
+                _contentState.value = ContentState.Error(
+                    getCommonErrorDescription(resourceManager, e)
+                )
                 e.printStackTrace()
             }
         }
@@ -115,5 +134,11 @@ class RouletteViewModel : ViewModel() {
 
     private fun userNotSignedInFallback() {
         //todo
+    }
+
+    sealed class ContentState {
+        object Loading : ContentState()
+        data class Error(val message: String) : ContentState()
+        object Loaded : ContentState()
     }
 }

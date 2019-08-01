@@ -7,7 +7,7 @@ import ru.luckycactus.steamroulette.domain.entity.SteamId
 
 class OwnedGameRoomEntityMapper(
     private val steam64: Long,
-    private val hiddenGameIds: Set<Long>,
+    private val hiddenGameIds: Set<Int>,
     private val timestamp: Long
 ) : Mapper<OwnedGameEntity, OwnedGameRoomEntity>() {
 

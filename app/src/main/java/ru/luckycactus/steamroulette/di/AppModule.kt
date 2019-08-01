@@ -81,18 +81,14 @@ object AppModule {
 
     val signInUseCase by lazy {
         SignInUseCase(
-            resolveVanityUrlUseCase,
             getUserSummaryUseCase,
-            userRepository
+            userRepository,
+            loginRepository
         )
     }
 
     val getUserSummaryUseCase by lazy {
         GetUserSummaryUseCase(userRepository)
-    }
-
-    private val resolveVanityUrlUseCase by lazy {
-        ResolveVanityUrlUseCase(loginRepository)
     }
 
     private val userRepository: UserRepository by lazy {

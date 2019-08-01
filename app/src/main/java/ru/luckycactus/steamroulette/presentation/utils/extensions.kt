@@ -1,6 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
+import android.content.Context
+import android.os.Build
 import android.view.View
+import androidx.annotation.ColorRes
+import androidx.annotation.Px
 import androidx.lifecycle.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
@@ -30,4 +34,27 @@ fun ViewModel.getCommonErrorDescription(resourceManager: ResourceManager, e: Exc
             else -> R.string.unknown_error
         }
     )
+}
+
+fun Context.getColorFromRes(@ColorRes color: Int): Int {
+    onApiAtLeast(Build.VERSION_CODES.M) {
+        return resources.getColor(color, theme)
+    }
+    return resources.getColor(color)
+}
+
+fun View.getColorFromRes(@ColorRes color: Int) = context.getColorFromRes(color)
+
+
+inline fun View.updatePadding(
+    @Px left: Int = paddingLeft,
+    @Px top: Int = paddingTop,
+    @Px right: Int = paddingRight,
+    @Px bottom: Int = paddingBottom
+) {
+    setPadding(left, top, right, bottom)
+}
+
+inline fun View.setPadding(@Px size: Int) {
+    setPadding(size, size, size, size)
 }

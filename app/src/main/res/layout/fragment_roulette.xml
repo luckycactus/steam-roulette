@@ -48,13 +48,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
+            android:animateLayoutChanges="true"
             >
 
-        <ru.luckycactus.steamroulette.presentation.widget.GameRouletteView
-                android:id="@+id/gameView"
+        <LinearLayout
+                android:id="@+id/gameRouletteLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+
+
+            <ru.luckycactus.steamroulette.presentation.widget.GameView
+                    android:id="@+id/gameView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    />
+
+            <Button
+                    android:id="@+id/btnNextGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next_game"
+                    />
+
+            <Button
+                    android:id="@+id/btnHideAndNextGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hide_this_game"
+                    />
+
+        </LinearLayout>
 
         <include layout="@layout/empty_layout"/>
 

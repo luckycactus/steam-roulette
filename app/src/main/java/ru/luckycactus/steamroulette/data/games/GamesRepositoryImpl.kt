@@ -25,12 +25,16 @@ class GamesRepositoryImpl(
             .updateIfNeed(cachePolicy)
     }
 
-    override suspend fun getLocalOwnedGamesNumbers(steamId: SteamId): List<Int> =
-        localGamesDataStore.getOwnedGamesNumbers(steamId.asSteam64())
+    override suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean {
+        return localGamesDataStore.isUserHasOwnedGames(steamId.asSteam64())
+    }
+
+    override suspend fun getFilteredLocalOwnedGamesIds(steamId: SteamId): List<Int> =
+        localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64())
 
 
-    override suspend fun getLocalOwnedGameByNumber(number: Int): OwnedGame {
-        return localGamesDataStore.getOwnedGameByNumber(number)
+    override suspend fun getLocalOwnedGame(steamId: SteamId, appId: Int): OwnedGame {
+        return localGamesDataStore.getOwnedGame(steamId.asSteam64(), appId)
     }
 
     override suspend fun markLocalGameAsHidden(steamId: SteamId, ownedGame: OwnedGame) {

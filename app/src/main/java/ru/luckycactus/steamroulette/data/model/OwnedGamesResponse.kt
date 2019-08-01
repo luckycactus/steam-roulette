@@ -12,7 +12,7 @@ data class OwnedGamesResult(
 )
 
 data class OwnedGameEntity(
-    @SerializedName("appid") val appId: Long,
+    @SerializedName("appid") val appId: Int,
     @SerializedName("name") val name: String?,
     @SerializedName("playtime_2weeks") val playtime2Weeks: Int,
     @SerializedName("playtime_forever") val playtimeForever: Int,

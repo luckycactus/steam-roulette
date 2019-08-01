@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
+import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
 
 class RouletteFragment : BaseFragment() {
 
@@ -19,6 +23,8 @@ class RouletteFragment : BaseFragment() {
     }
 
     private lateinit var behavior: BottomSheetBehavior<*>
+
+    private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
     override val layoutResId: Int = R.layout.fragment_roulette
 
@@ -35,16 +41,24 @@ class RouletteFragment : BaseFragment() {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        gameView.setOnNextGameListener {
+        btnNextGame.setOnClickListener {
             viewModel.onNextGameClick()
         }
 
-        gameView.setOnHideGameListener {
+        btnHideAndNextGame.setOnClickListener {
             viewModel.onHideGameClick()
         }
 
+        dataLoadingViewHolder = DataLoadingViewHolder(
+            emptyLayout,
+            progress,
+            gameRouletteLayout,
+            viewModel::onRetryClick
+        )
+
         observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
+            Glide.with(this).load(it.avatarFull).placeholder(R.drawable.avatar_placeholder).into(ivAvatar)
         }
 
         observe(viewModel.errorState) {
@@ -53,6 +67,16 @@ class RouletteFragment : BaseFragment() {
 
         observe(viewModel.currentGame) {
             gameView.setGame(it)
+        }
+
+        observe(viewModel.contentState) {
+            when (it) {
+                RouletteViewModel.ContentState.Loading -> dataLoadingViewHolder.showLoading()
+                is RouletteViewModel.ContentState.Error -> dataLoadingViewHolder.showErrorWithButton(
+                    msg = it.message
+                )
+                RouletteViewModel.ContentState.Loaded -> dataLoadingViewHolder.showContent()
+            }
         }
     }
 

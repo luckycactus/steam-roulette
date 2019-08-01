@@ -8,13 +8,15 @@ interface GamesDataStore {
     interface Local: GamesDataStore {
         suspend fun saveOwnedGamesToCache(steam64: Long, games: List<OwnedGameEntity>)
 
-        suspend fun getOwnedGamesNumbers(steam64: Long): List<Int>
+        suspend fun getFilteredOwnedGamesIds(steam64: Long): List<Int>
 
         suspend fun getOwnedGames(steam64: Long): List<OwnedGame>
 
-        suspend fun markGameAsHidden(steam64: Long, gameId: Long)
+        suspend fun markGameAsHidden(steam64: Long, gameId: Int)
 
-        suspend fun getOwnedGameByNumber(number: Int): OwnedGame
+        suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame
+
+        suspend fun isUserHasOwnedGames(steam64: Long): Boolean
     }
 
     interface Remote: GamesDataStore {

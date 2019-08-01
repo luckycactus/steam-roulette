@@ -9,6 +9,7 @@ import kotlinx.coroutines.isActive
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 class NetworkBoundResource<RequestType, ResultType> private constructor(
@@ -42,7 +43,11 @@ class NetworkBoundResource<RequestType, ResultType> private constructor(
     @ExperimentalCoroutinesApi
     suspend fun getCacheThenRemoteIfExpired(coroutineScope: CoroutineScope): ReceiveChannel<ResultType> =
         coroutineScope.produce {
-            getCachedData()?.let { send(it) }
+            try {
+                getCachedData()?.let { send(it) }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             updateIfNeed(CachePolicy.CACHE_IF_VALID).let { updated ->
                 if (updated)
                     send(getCachedData()!!)

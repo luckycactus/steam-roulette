@@ -2,4 +2,5 @@
 <resources>
     <dimen name="default_activity_margin">8dp</dimen>
     <dimen name="standard_progress_bar_size">48dp</dimen>
+    <dimen name="cardview_corner_radius">4dp</dimen>
 </resources>

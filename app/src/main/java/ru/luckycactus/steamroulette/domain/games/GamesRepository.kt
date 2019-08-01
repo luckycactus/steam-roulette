@@ -10,9 +10,11 @@ interface GamesRepository {
 
     suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy)
 
-    suspend fun getLocalOwnedGamesNumbers(steamId: SteamId): List<Int>
+    suspend fun getFilteredLocalOwnedGamesIds(steamId: SteamId): List<Int>
 
-    suspend fun getLocalOwnedGameByNumber(number: Int): OwnedGame
+    suspend fun getLocalOwnedGame(steamId: SteamId, appId: Int): OwnedGame
 
     suspend fun markLocalGameAsHidden(steamId: SteamId, ownedGame: OwnedGame)
+
+    suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean
 }
