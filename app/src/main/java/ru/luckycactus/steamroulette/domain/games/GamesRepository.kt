@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.domain.games
 
+import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.entity.SteamId
@@ -17,4 +18,6 @@ interface GamesRepository {
     suspend fun markLocalGameAsHidden(steamId: SteamId, ownedGame: OwnedGame)
 
     suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean
+
+    fun observeGamesCount(steamId: SteamId): LiveData<Int>
 }

@@ -8,6 +8,7 @@ import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
+import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,18 +24,16 @@ class MainActivity : AppCompatActivity() {
             viewModel.onColdStart()
         }
 
-        observe(viewModel.screenLiveData) {
-            it.ifNotHandled { screen ->
-                when (screen) {
-                    MainViewModel.Screen.Login ->
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.container, LoginFragment.newInstance())
-                            .commit()
-                    MainViewModel.Screen.Roulette ->
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.container, RouletteFragment.newInstance())
-                            .commit()
-                }
+        observeEvent(viewModel.screenLiveData) { screen ->
+            when (screen) {
+                MainViewModel.Screen.Login ->
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, LoginFragment.newInstance())
+                        .commit()
+                MainViewModel.Screen.Roulette ->
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, MainFlowFragment.newInstance())
+                        .commit()
             }
         }
     }

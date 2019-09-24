@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.data.games.datastore
 
+import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 
@@ -17,6 +18,8 @@ interface GamesDataStore {
         suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame
 
         suspend fun isUserHasOwnedGames(steam64: Long): Boolean
+
+        fun observeGameCount(steam64: Long): LiveData<Int>
     }
 
     interface Remote: GamesDataStore {

@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.domain.user
 
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
@@ -10,9 +11,13 @@ interface UserRepository {
 
     suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary
 
+    fun observeCurrentUserSummary(): LiveData<UserSummary?>
+
     fun saveSignedInUser(steamId: SteamId)
 
-    fun getSignedInUserSteamId(): SteamId?
+    fun getCurrentUserSteamId(): SteamId?
+
+    fun observeCurrentUserSteamId(): LiveData<SteamId?>
 
     fun isUserSignedIn(): Boolean
 
@@ -20,6 +25,8 @@ interface UserRepository {
 
     suspend fun getUserSummaryCacheThenRemoteIfExpired(
         coroutineScope: CoroutineScope,
-        steam64: Long
+        steamId: SteamId
     ): ReceiveChannel<UserSummary>
+
+    suspend fun refreshUserSummary(steamId: SteamId, cachePolicy: CachePolicy)
 }

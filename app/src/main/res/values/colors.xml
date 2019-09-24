@@ -9,4 +9,7 @@
 
     <color name="windowBackground">@color/primary</color>
     <color name="gameCardBackground">@color/primaryLight2</color>
+    <color name="ripple_color">#15ffffff</color>
+    <color name="ripple_color_2">#10ffffff</color>
+    <color name="divider">#141A25</color>
 </resources>

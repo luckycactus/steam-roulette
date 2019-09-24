@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.data.games
 
+import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
@@ -12,17 +13,23 @@ import java.util.concurrent.TimeUnit
 
 class GamesRepositoryImpl(
     private val localGamesDataStore: LocalGamesDataStore,
-    private val remoteGamesDataStore: RemoteGamesDataStore,
-    private val networkBoundResourceFactory: NetworkBoundResource.Factory
+    private val remoteGamesDataStore: RemoteGamesDataStore
 ) : GamesRepository {
 
-    override suspend fun getOwnedGames(steamId: SteamId, cachePolicy: CachePolicy): List<OwnedGame> =
+    override suspend fun getOwnedGames(
+        steamId: SteamId,
+        cachePolicy: CachePolicy
+    ): List<OwnedGame> =
         createOwnedGamesResource(steamId.asSteam64())
             .get(cachePolicy)
 
     override suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy) {
         createOwnedGamesResource(steamId.asSteam64())
             .updateIfNeed(cachePolicy)
+    }
+
+    override fun observeGamesCount(steamId: SteamId): LiveData<Int> {
+        return localGamesDataStore.observeGameCount(steamId.asSteam64())
     }
 
     override suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean {
@@ -43,14 +50,20 @@ class GamesRepositoryImpl(
 
     private fun createOwnedGamesResource(steam64: Long): NetworkBoundResource<List<OwnedGameEntity>, List<OwnedGame>> {
         val cacheKey = "owned_games_$steam64"
-        return networkBoundResourceFactory.create(
+        return object : NetworkBoundResource<List<OwnedGameEntity>, List<OwnedGame>>(
             cacheKey,
             cacheKey,
-            OWNED_GAMES_CACHE_WINDOW,
-            getFromNetwork = { remoteGamesDataStore.getOwnedGames(steam64) },
-            saveToCache = { localGamesDataStore.saveOwnedGamesToCache(steam64, it) },
-            getFromCache = { localGamesDataStore.getOwnedGames(steam64) }
-        )
+            OWNED_GAMES_CACHE_WINDOW
+        ) {
+            override suspend fun getFromNetwork(): List<OwnedGameEntity> =
+                remoteGamesDataStore.getOwnedGames(steam64)
+
+            override suspend fun saveToCache(data: List<OwnedGameEntity>) =
+                localGamesDataStore.saveOwnedGamesToCache(steam64, data)
+
+            override suspend fun getFromCache(): List<OwnedGame> =
+                localGamesDataStore.getOwnedGames(steam64)
+        }
     }
 
     companion object {

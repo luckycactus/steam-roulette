@@ -6,6 +6,7 @@ import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.local.PreferencesStorage
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 
+//todo db?
 class LocalUserDataStore(
     private val prefs: PreferencesStorage,
     private val cacheHelper: CacheHelper,
@@ -18,7 +19,7 @@ class LocalUserDataStore(
         return gson.fromJson(json, type)
     }
 
-    override fun saveUserSummaryToCache(userSummary: UserSummaryEntity) {
+    override suspend fun saveUserSummaryToCache(userSummary: UserSummaryEntity) {
         val json = gson.toJson(userSummary)
         prefs[userSummary.steam64] = json
         cacheHelper.setCachedNow(userSummary.steam64)

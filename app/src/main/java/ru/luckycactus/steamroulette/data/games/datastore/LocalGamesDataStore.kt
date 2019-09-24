@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.data.games.datastore
 
+import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.local.DB
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
@@ -8,8 +9,13 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 class LocalGamesDataStore(
     private val db: DB
 ) : GamesDataStore.Local {
+
     override suspend fun getOwnedGames(steam64: Long): List<OwnedGame> {
         return db.ownedGamesDao().getGames(steam64)
+    }
+
+    override fun observeGameCount(steam64: Long): LiveData<Int> {
+        return db.ownedGamesDao().observeGameCount(steam64)
     }
 
     override suspend fun saveOwnedGamesToCache(steam64: Long, games: List<OwnedGameEntity>) {

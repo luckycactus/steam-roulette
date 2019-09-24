@@ -24,20 +24,15 @@ class GetOwnedGamesQueueUseCase(
         } else if (!gamesRepository.isUserHasLocalOwnedGames(params.steamId)) {
             CachePolicy.REMOTE
         } else {
-            CachePolicy.CACHE_IF_VALID
+            CachePolicy.ONLY_CACHE
         }
 
-        try {
-            gamesRepository.fetchOwnedGames(
-                params.steamId,
-                cachePolicy
-            )
-        } catch (e: Exception) {
-            if (lastQueue != null && e !is ServerException && e !is NetworkConnectionException && e !is GetOwnedGamesPrivacyException) {
-                lastQueue?.get()?.invalidate()
-            }
-            throw e
-        }
+        lastQueue?.get()?.invalidate()
+
+        gamesRepository.fetchOwnedGames(
+            params.steamId,
+            cachePolicy
+        )
 
         if (!gamesRepository.isUserHasLocalOwnedGames(params.steamId)) {
             throw MissingOwnedGamesException()

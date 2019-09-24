@@ -3,6 +3,9 @@ package ru.luckycactus.steamroulette.data.local
 import androidx.room.*
 import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
+import androidx.lifecycle.LiveData
+
+
 
 @Database(
     entities = [OwnedGameRoomEntity::class],
@@ -62,6 +65,9 @@ abstract class OwnedGamesDao {
 
     @Query("select count(*) from owned_game where userSteam64 = :steam64")
     abstract suspend fun getGamesCount(steam64: Long): Int
+
+    @Query("SELECT COUNT(*) FROM owned_game  where userSteam64 = :steam64")
+    abstract fun observeGameCount(steam64: Long): LiveData<Int>
 
 
     @Query("select COUNT(*) from (select appId from owned_game where userSteam64 = :steam64 limit 1)")

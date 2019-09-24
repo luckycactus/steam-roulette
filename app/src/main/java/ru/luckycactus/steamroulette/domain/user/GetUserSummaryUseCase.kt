@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.domain.user
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId
@@ -17,12 +16,11 @@ class GetUserSummaryUseCase(
             if (params.reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
         )
 
-    @ExperimentalCoroutinesApi
     suspend fun getCacheThenRemoteIfExpired(
         coroutineScope: CoroutineScope,
         steamId: SteamId
     ) =
-        userRepository.getUserSummaryCacheThenRemoteIfExpired(coroutineScope, steamId.asSteam64())
+        userRepository.getUserSummaryCacheThenRemoteIfExpired(coroutineScope, steamId)
 
     data class Params(
         val steamId: SteamId,

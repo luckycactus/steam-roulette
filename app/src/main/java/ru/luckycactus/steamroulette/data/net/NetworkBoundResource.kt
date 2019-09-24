@@ -2,26 +2,28 @@ package ru.luckycactus.steamroulette.data.net
 
 import android.util.LruCache
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.isActive
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-class NetworkBoundResource<RequestType, ResultType> private constructor(
-    private val cacheHelper: CacheHelper,
-    private val memoryCache: LruCache<String, Any>,
+abstract class NetworkBoundResource<RequestType, ResultType>(
     private val key: String,
     private val memoryKey: String?,
-    private val windowMillis: Long,
-    private val getFromNetwork: suspend () -> RequestType,
-    private val saveToCache: suspend (data: RequestType) -> Unit,
-    private val getFromCache: suspend () -> ResultType
+    private val windowMillis: Long
 ) {
+
+    private val cacheHelper: CacheHelper = AppModule.cacheHelper
+    private val memoryCache: LruCache<String, Any> = AppModule.requestLruCache
+
+    abstract suspend fun getFromNetwork(): RequestType
+    abstract suspend fun saveToCache(data: RequestType)
+    abstract suspend fun getFromCache(): ResultType
 
     suspend fun updateIfNeed(cachePolicy: CachePolicy): Boolean {
         return if (shouldFetch(cachePolicy)) {
@@ -40,7 +42,6 @@ class NetworkBoundResource<RequestType, ResultType> private constructor(
         return getCachedData()!!
     }
 
-    @ExperimentalCoroutinesApi
     suspend fun getCacheThenRemoteIfExpired(coroutineScope: CoroutineScope): ReceiveChannel<ResultType> =
         coroutineScope.produce {
             try {
@@ -73,48 +74,5 @@ class NetworkBoundResource<RequestType, ResultType> private constructor(
 
     private fun shouldFetch(cachePolicy: CachePolicy): Boolean {
         return cacheHelper.shouldUpdate(cachePolicy, key, windowMillis, TimeUnit.MILLISECONDS)
-    }
-
-    class Factory constructor(
-        private val cacheHelper: CacheHelper,
-        private val memoryCache: LruCache<String, Any>
-    ) {
-
-        fun <RequestType, ResultType> create(
-            key: String,
-            memoryKey: String,
-            windowMillis: Long,
-            getFromNetwork: suspend () -> RequestType,
-            saveToCache: suspend (data: RequestType) -> Unit,
-            getFromCache: suspend () -> ResultType
-        ): NetworkBoundResource<RequestType, ResultType> {
-            return NetworkBoundResource(
-                cacheHelper,
-                memoryCache,
-                key,
-                memoryKey,
-                windowMillis,
-                getFromNetwork,
-                saveToCache,
-                getFromCache
-            )
-        }
-
-        fun <RequestType, ResultType> create(
-            key: String,
-            windowMillis: Long,
-            getFromNetwork: suspend () -> RequestType,
-            saveToCache: suspend (data: RequestType) -> Unit,
-            getFromCache: suspend () -> ResultType
-        ): NetworkBoundResource<RequestType, ResultType> {
-            return create(
-                key,
-                key,
-                windowMillis,
-                getFromNetwork,
-                saveToCache,
-                getFromCache
-            )
-        }
     }
 }

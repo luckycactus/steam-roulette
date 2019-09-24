@@ -16,4 +16,5 @@
     <string name="error_title">Error</string>
     <string name="error_description">Something went wrong. Please try again later</string>
     <string name="you_dont_have_games_yet">У Вас ещё нет игр</string>
+    <string name="user_update_error">Не удалось обновить информацию о пользователе</string>
 </resources>
