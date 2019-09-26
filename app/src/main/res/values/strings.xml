@@ -17,4 +17,5 @@
     <string name="error_description">Something went wrong. Please try again later</string>
     <string name="you_dont_have_games_yet">У Вас ещё нет игр</string>
     <string name="user_update_error">Не удалось обновить информацию о пользователе</string>
+    <string name="account_games_count">%d игр на аккаунте</string>
 </resources>

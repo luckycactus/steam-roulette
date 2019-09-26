@@ -61,15 +61,30 @@
 
         </LinearLayout>
 
-
-        <ImageView
-                android:id="@+id/btnRefreshProfile"
+        <FrameLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/selectable_item_background_oval"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_refresh_white_24dp"
-                />
+                >
+
+            <ImageView
+                    android:id="@+id/btnRefreshProfile"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/selectable_item_background_oval"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_refresh_white_24dp"
+                    />
+
+            <ProgressBar
+                    android:id="@+id/profileRefreshProgressBar"
+                    android:layout_width="@dimen/standard_progress_bar_size"
+                    android:layout_height="@dimen/standard_progress_bar_size"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:padding="12dp"
+                    />
+
+        </FrameLayout>
 
     </LinearLayout>
 

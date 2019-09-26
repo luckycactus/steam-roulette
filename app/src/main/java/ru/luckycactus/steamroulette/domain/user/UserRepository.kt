@@ -23,10 +23,5 @@ interface UserRepository {
 
     suspend fun signOut()
 
-    suspend fun getUserSummaryCacheThenRemoteIfExpired(
-        coroutineScope: CoroutineScope,
-        steamId: SteamId
-    ): ReceiveChannel<UserSummary>
-
     suspend fun refreshUserSummary(steamId: SteamId, cachePolicy: CachePolicy)
 }

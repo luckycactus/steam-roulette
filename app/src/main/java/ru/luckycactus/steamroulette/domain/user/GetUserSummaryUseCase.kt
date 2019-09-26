@@ -16,12 +16,6 @@ class GetUserSummaryUseCase(
             if (params.reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
         )
 
-    suspend fun getCacheThenRemoteIfExpired(
-        coroutineScope: CoroutineScope,
-        steamId: SteamId
-    ) =
-        userRepository.getUserSummaryCacheThenRemoteIfExpired(coroutineScope, steamId)
-
     data class Params(
         val steamId: SteamId,
         val reload: Boolean

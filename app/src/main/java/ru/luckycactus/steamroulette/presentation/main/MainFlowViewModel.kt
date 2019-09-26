@@ -20,15 +20,19 @@ class MainFlowViewModel(
     override val currentUserSteamId
         get() = userSummary.value?.steamId
     override val userSummary: LiveData<UserSummary?>
+    override val refreshUserSummaryState: LiveData<Boolean>
+        get() = _refreshUserSummaryState
 
     val errorMessage: LiveData<Event<String>>
         get() = _errorMessage
     val logonCheckedAction: LiveData<Event<Unit>>
         get() = _logonCheckedAction
 
+
     private val _currentUserSteamId: LiveData<SteamId?>
     private val _errorMessage = MutableLiveData<Event<String>>()
     private val _logonCheckedAction = MutableLiveData<Event<Unit>>()
+    private val _refreshUserSummaryState = MutableLiveData<Boolean>()
 
     private val observeCurrentUserSteamIdUseCase = AppModule.observeCurrentUserSteamIdUseCase
     private val observeCurrentUserSummaryUseCase = AppModule.observeCurrentUserSummaryUseCase
@@ -63,6 +67,9 @@ class MainFlowViewModel(
     }
 
     private fun _refreshUserSummary(reload: Boolean) {
+        if (reload) {
+            _refreshUserSummaryState.value = true
+        }
         currentUserSteamId?.let {
             viewModelScope.launch {
                 try {
@@ -80,6 +87,10 @@ class MainFlowViewModel(
                                 getCommonErrorDescription(resourceManager, e)
                             )
                         )
+                    }
+                } finally {
+                    if (reload) {
+                        _refreshUserSummaryState.value = false
                     }
                 }
             }

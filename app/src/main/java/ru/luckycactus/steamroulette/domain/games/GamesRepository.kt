@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.entity.SteamId
+import java.util.*
 
 interface GamesRepository {
 
@@ -20,4 +21,6 @@ interface GamesRepository {
     suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean
 
     fun observeGamesCount(steamId: SteamId): LiveData<Int>
+
+    fun observeGamesUpdates(steamId: SteamId): LiveData<Date>
 }

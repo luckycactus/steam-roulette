@@ -6,6 +6,7 @@ import ru.luckycactus.steamroulette.domain.entity.UserSummary
 
 interface UserViewModelDelegatePublic {
     val userSummary: LiveData<UserSummary?>
+    val refreshUserSummaryState: LiveData<Boolean>
 }
 
 interface UserViewModelDelegate : UserViewModelDelegatePublic {

@@ -8,6 +8,7 @@ import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
+import ru.luckycactus.steamroulette.domain.common.ControlledRunner
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
@@ -80,12 +81,6 @@ class UserRepositoryImpl(
             .updateIfNeed(cachePolicy)
     }
 
-    override suspend fun getUserSummaryCacheThenRemoteIfExpired(
-        coroutineScope: CoroutineScope,
-        steamId: SteamId
-    ): ReceiveChannel<UserSummary> =
-        createUserSummaryResource(steamId).getCacheThenRemoteIfExpired(coroutineScope)
-
     private fun createUserSummaryResource(
         steamId: SteamId
     ): NetworkBoundResource<UserSummaryEntity, UserSummary> {
@@ -105,10 +100,8 @@ class UserRepositoryImpl(
             override suspend fun saveToCache(data: UserSummaryEntity) {
                 localUserDataStore.saveUserSummaryToCache(data)
                 result = mapper.mapFrom(data)
-                withContext(Dispatchers.Main) {
-                    if (currentUserSteamId.value == steamId) {
-                        currentUserSummary.value = result
-                    }
+                if (currentUserSteamId.value == steamId) {
+                    currentUserSummary.value = result
                 }
             }
 
