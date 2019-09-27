@@ -2,20 +2,17 @@ package ru.luckycactus.steamroulette.di
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.LruCache
 import androidx.room.Room
 import com.google.gson.Gson
-import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
-import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.data.games.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameMapper
+import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.local.DB
-import ru.luckycactus.steamroulette.data.local.PreferencesStorage
-import ru.luckycactus.steamroulette.data.local.SharedPreferencesStorage
-import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
 import ru.luckycactus.steamroulette.data.user.UserRepositoryImpl
@@ -24,12 +21,14 @@ import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
+import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesQueueUseCase
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
+import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.login.SignInUseCase
-import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
+import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.user.*
 
 object AppModule {
@@ -39,7 +38,7 @@ object AppModule {
         private set
     lateinit var requestLruCache: LruCache<String, Any>
         private set
-    lateinit var appPreferences: PreferencesStorage
+    lateinit var appPreferences: SharedPreferences
         private set
 
     lateinit var resourceManager: ResourceManager
@@ -49,8 +48,9 @@ object AppModule {
 
     fun init(app: Application) {
         appContext = app
-        cacheHelper = CacheHelper(SharedPreferencesStorage(appContext, "cache-helper"))
-        appPreferences = SharedPreferencesStorage(appContext, "app-prefs")
+        cacheHelper =
+            CacheHelper(appContext.getSharedPreferences("cache-helper", Context.MODE_PRIVATE))
+        appPreferences = appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
         resourceManager = AndroidResourceManager(appContext)
         requestLruCache = LruCache(50)
     }
@@ -130,7 +130,7 @@ object AppModule {
 
     private val localUserDataStore: UserDataStore.Local by lazy {
         LocalUserDataStore(
-            SharedPreferencesStorage(appContext, "user-cache"),
+            appContext.getSharedPreferences("user-cache", Context.MODE_PRIVATE),
             cacheHelper,
             gson
         )

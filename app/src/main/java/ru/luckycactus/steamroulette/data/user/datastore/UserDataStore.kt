@@ -9,6 +9,8 @@ interface UserDataStore {
 
     interface Local : UserDataStore {
         suspend fun saveUserSummaryToCache(userSummary: UserSummaryEntity)
+
+        fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity>
     }
 
     interface Remote : UserDataStore

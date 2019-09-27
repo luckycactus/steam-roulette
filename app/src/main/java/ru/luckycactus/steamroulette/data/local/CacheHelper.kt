@@ -1,14 +1,17 @@
 package ru.luckycactus.steamroulette.data.local
 
+import android.content.SharedPreferences
+import ru.luckycactus.steamroulette.data.apply
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import java.util.concurrent.TimeUnit
 
 class CacheHelper(
-    private val prefs: PreferencesStorage
+    private val prefs: SharedPreferences
 ) {
+    private val prefsEditor = prefs.edit()
 
     fun isCached(key: String): Boolean {
-        return prefs.getLong(key) > 0L
+        return prefs.getLong(key, 0) > 0L
     }
 
     fun isExpired(
@@ -16,7 +19,7 @@ class CacheHelper(
         window: Long,
         timeUnit: TimeUnit = TimeUnit.HOURS
     ): Boolean {
-        val savedTime = prefs.getLong(key)
+        val savedTime = prefs.getLong(key, 0)
         val expireTime = savedTime + TimeUnit.MILLISECONDS.convert(window, timeUnit)
         return System.currentTimeMillis() >= expireTime
     }
@@ -40,10 +43,11 @@ class CacheHelper(
         !shouldUseCache(cachePolicy, key, window, timeUnit)
 
     fun setCachedNow(key: String) {
-        prefs[key] = System.currentTimeMillis()
+        //todo commit or apply?
+        prefsEditor.apply { putLong(key, System.currentTimeMillis()) }
     }
 
     fun invalidateCache(key: String) {
-        prefs.remove(key)
+        prefsEditor.apply { remove(key) }
     }
 }

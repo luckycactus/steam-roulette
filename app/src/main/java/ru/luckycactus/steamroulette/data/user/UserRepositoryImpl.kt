@@ -1,68 +1,54 @@
 package ru.luckycactus.steamroulette.data.user
 
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ReceiveChannel
-import ru.luckycactus.steamroulette.data.local.PreferencesStorage
+import ru.luckycactus.steamroulette.data.long
+import ru.luckycactus.steamroulette.data.longLiveData
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
-import ru.luckycactus.steamroulette.domain.common.ControlledRunner
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.entity.SteamId.Companion.fromSteam64
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
 import ru.luckycactus.steamroulette.domain.user.UserRepository
-import ru.luckycactus.steamroulette.presentation.utils.startWith
-import java.lang.ref.WeakReference
+import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import java.util.concurrent.TimeUnit
 
 class UserRepositoryImpl(
     private val localUserDataStore: UserDataStore.Local,
     private val remoteUserDataStore: UserDataStore.Remote,
     private val mapper: UserSummaryMapper,
-    private val userPreferences: PreferencesStorage //todo replace by room
+    private val userPreferences: SharedPreferences //todo replace by room
 ) : UserRepository {
 
-    private val currentUserSteamId = MutableLiveData<SteamId?>().startWith(getCurrentUserSteamId())
-    private val currentUserSummary = MediatorLiveData<UserSummary?>()
+    private var currentUserSteam64Pref by userPreferences.long(SIGNED_USER_KEY, 0)
+    private val currentUserSteamId: LiveData<SteamId?>
+    private val currentUserSummary: LiveData<UserSummary?>
 
     init {
-        currentUserSummary.addSource(currentUserSteamId) {
-            if (it == null) {
-                currentUserSummary.value = null
-                return@addSource
-            }
+        currentUserSteamId = userPreferences.longLiveData(SIGNED_USER_KEY, 0).map {
+            fromSteam64(it)
+        }
 
-            GlobalScope.launch {
-                val userSummary = mapper.mapFrom(localUserDataStore.getUserSummary(it.asSteam64()))
-                withContext(Dispatchers.Main) {
-                    if (currentUserSummary.value == null) {
-                        currentUserSummary.value = userSummary
-                    }
-                }
-            }
+        currentUserSummary = currentUserSteamId.nullableSwitchMap {
+            localUserDataStore.observeUserSummary(it.asSteam64()).map { mapper.mapFrom(it) }
         }
     }
 
-
     //todo move to datastore?
     override fun saveSignedInUser(steamId: SteamId) {
-        userPreferences[SIGNED_USER_KEY] = steamId.asSteam64()
-        currentUserSteamId.postValue(steamId)
+        currentUserSteam64Pref = steamId.asSteam64()
     }
 
-    override fun getCurrentUserSteamId(): SteamId? {
-        val steam64 = userPreferences.getLong(SIGNED_USER_KEY)
-        if (steam64 == 0L)
-            return null
-        return SteamId.fromSteam64(steam64)
-    }
+    override fun getCurrentUserSteamId() = fromSteam64(currentUserSteam64Pref)
 
     override fun observeCurrentUserSteamId(): LiveData<SteamId?> = currentUserSteamId
 
     override fun isUserSignedIn(): Boolean =
-        userPreferences.getLong(SIGNED_USER_KEY) != 0L
+        userPreferences.getLong(SIGNED_USER_KEY, 0L) != 0L
 
     override suspend fun getUserSummary(
         steamId: SteamId,
@@ -77,9 +63,15 @@ class UserRepositoryImpl(
     }
 
     override suspend fun refreshUserSummary(steamId: SteamId, cachePolicy: CachePolicy) {
-        createUserSummaryResource(steamId)
-            .updateIfNeed(cachePolicy)
+        createUserSummaryResource(steamId).updateIfNeed(cachePolicy)
     }
+
+    override suspend fun signOut() {
+        userPreferences.edit { remove(SIGNED_USER_KEY) }
+    }
+
+    private fun fromSteam64(steam64: Long) =
+        if (steam64 == 0L) null else SteamId.fromSteam64(steam64)
 
     private fun createUserSummaryResource(
         steamId: SteamId
@@ -100,20 +92,12 @@ class UserRepositoryImpl(
             override suspend fun saveToCache(data: UserSummaryEntity) {
                 localUserDataStore.saveUserSummaryToCache(data)
                 result = mapper.mapFrom(data)
-                if (currentUserSteamId.value == steamId) {
-                    currentUserSummary.value = result
-                }
             }
 
             override suspend fun getFromCache(): UserSummary {
                 return result ?: mapper.mapFrom(localUserDataStore.getUserSummary(steam64))
             }
         }
-    }
-
-    override suspend fun signOut() {
-        userPreferences.remove(SIGNED_USER_KEY)
-        currentUserSteamId.postValue(null)
     }
 
     companion object {

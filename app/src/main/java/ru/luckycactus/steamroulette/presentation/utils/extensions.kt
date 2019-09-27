@@ -8,7 +8,9 @@ import android.view.TouchDelegate
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.MainThread
 import androidx.annotation.Px
+import androidx.arch.core.util.Function
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
@@ -66,6 +68,30 @@ fun <T> LiveData<T>.first(block: (T) -> Unit) {
         }
 
     })
+}
+
+inline fun <X, Y> LiveData<X?>.nullableSwitchMap(
+    crossinline transform: (X) -> LiveData<Y>
+): LiveData<Y?> {
+    val result = MediatorLiveData<Y?>()
+    result.addSource(this, object : Observer<X?> {
+        var mSource: LiveData<out Y?>? = null
+
+        override fun onChanged(x: X?) {
+            val newLiveData = x?.let { transform(x) } ?: MutableLiveData(null)
+            if (mSource === newLiveData) {
+                return
+            }
+            if (mSource != null) {
+                result.removeSource(mSource!!)
+            }
+            mSource = newLiveData
+            if (mSource != null) {
+                result.addSource(mSource!!) { y -> result.value = y }
+            }
+        }
+    })
+    return result
 }
 
 fun Context.getColorFromRes(@ColorRes color: Int): Int {
