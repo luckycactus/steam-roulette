@@ -21,10 +21,7 @@ import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.games.GamesRepository
-import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesQueueUseCase
-import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesUseCase
-import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
+import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.login.SignInUseCase
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
@@ -57,6 +54,10 @@ object AppModule {
 
     val observeOwnedGamesCountUseCase by lazy {
         ObserveOwnedGamesCountUseCase(gamesRepository)
+    }
+
+    val observeOwnedGamesSyncsUseCase by lazy {
+        ObserveOwnedGamesSyncsUseCase(gamesRepository)
     }
 
     val observeCurrentUserSteamIdUseCase by lazy {
@@ -146,16 +147,16 @@ object AppModule {
 
     private val gamesRepository: GamesRepository by lazy {
         GamesRepositoryImpl(
-            LOCAL_GAMES_DATA_STORE,
-            REMOTE_GAMES_DATA_STORE
+            LocalGamesDataStore,
+            RemoteGamesDataStore
         )
     }
 
-    private val LOCAL_GAMES_DATA_STORE: LocalGamesDataStore by lazy {
-        LocalGamesDataStore(steamRouletteDb)
+    private val LocalGamesDataStore: LocalGamesDataStore by lazy {
+        LocalGamesDataStore(steamRouletteDb, appPreferences)
     }
 
-    private val REMOTE_GAMES_DATA_STORE: RemoteGamesDataStore by lazy {
+    private val RemoteGamesDataStore: RemoteGamesDataStore by lazy {
         RemoteGamesDataStore(NetworkModule.steamApiService)
     }
 

@@ -20,6 +20,8 @@ interface GamesDataStore {
         suspend fun isUserHasOwnedGames(steam64: Long): Boolean
 
         fun observeGameCount(steam64: Long): LiveData<Int>
+
+        fun observeGameSyncs(steam64: Long): LiveData<Long>
     }
 
     interface Remote: GamesDataStore {

@@ -5,9 +5,9 @@ import ru.luckycactus.steamroulette.domain.common.UseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import java.util.*
 
-class ObserveOwnedGamesUpdateUseCase(
+class ObserveOwnedGamesSyncsUseCase(
     private val gamesRepository: GamesRepository
-) : UseCase<ObserveOwnedGamesUpdateUseCase.Params, LiveData<Date>>() {
+) : UseCase<ObserveOwnedGamesSyncsUseCase.Params, LiveData<Date>>() {
 
     override fun getResult(params: Params): LiveData<Date> {
         return gamesRepository.observeGamesUpdates(params.steamId)

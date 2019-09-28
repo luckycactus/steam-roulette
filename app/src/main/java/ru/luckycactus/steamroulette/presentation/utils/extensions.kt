@@ -94,6 +94,15 @@ inline fun <X, Y> LiveData<X?>.nullableSwitchMap(
     return result
 }
 
+inline fun <X, Y> LiveData<X?>.nullableSwitchMap(
+    nullValue: Y,
+    crossinline transform: (X) -> LiveData<Y>
+): LiveData<Y> {
+    return switchMap { x ->
+        x?.let { it -> transform(it) } ?: MutableLiveData<Y>(nullValue)
+    }
+}
+
 fun Context.getColorFromRes(@ColorRes color: Int): Int {
     onApiAtLeast(Build.VERSION_CODES.M) {
         return resources.getColor(color, theme)

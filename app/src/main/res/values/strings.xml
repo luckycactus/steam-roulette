@@ -18,4 +18,7 @@
     <string name="you_dont_have_games_yet">У Вас ещё нет игр</string>
     <string name="user_update_error">Не удалось обновить информацию о пользователе</string>
     <string name="account_games_count">%d игр на аккаунте</string>
+    <string name="just_now">только что</string>
+    <string name="last_sync">Последняя синхронизация: %1$s</string>
+    <string name="never">никогда</string>
 </resources>

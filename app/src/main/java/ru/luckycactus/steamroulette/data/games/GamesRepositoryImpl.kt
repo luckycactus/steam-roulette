@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.data.games
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
@@ -34,7 +35,7 @@ class GamesRepositoryImpl(
     }
 
     override fun observeGamesUpdates(steamId: SteamId): LiveData<Date> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return localGamesDataStore.observeGameSyncs(steamId.asSteam64()).map { Date(it) }
     }
 
     override suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean {

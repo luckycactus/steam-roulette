@@ -76,6 +76,10 @@ class MenuFragment : BaseBottomSheetDialogFragment() {
         observe(viewModel.gameCount) {
             tvGamesCount.text = getString(R.string.account_games_count).format(it)
         }
+
+        observe(viewModel.gamesLastUpdate) {
+            tvGamesUpdateDate.text = it
+        }
     }
 
     companion object {
