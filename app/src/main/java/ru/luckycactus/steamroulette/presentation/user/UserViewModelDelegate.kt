@@ -13,5 +13,5 @@ interface UserViewModelDelegate : UserViewModelDelegatePublic {
     val currentUserSteamId: SteamId?
     fun observeCurrentUserSteamId(): LiveData<SteamId?>
     //todo into public?
-    fun refreshUserSummary()
+    fun refreshUserAndGames()
 }

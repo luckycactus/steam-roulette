@@ -25,7 +25,7 @@ class MenuViewModel(
     //private val
 
     fun refreshProfile() {
-        userViewModelDelegate.refreshUserSummary()
+        userViewModelDelegate.refreshUserAndGames()
     }
 
     init {

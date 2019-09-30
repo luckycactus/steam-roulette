@@ -3,6 +3,8 @@ package ru.luckycactus.steamroulette.domain.common
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 
 abstract class SuspendUseCase<in Params, Result> {
@@ -13,14 +15,14 @@ abstract class SuspendUseCase<in Params, Result> {
 
     suspend operator fun invoke(params: Params) = execute(params)
 
-    protected fun CoroutineScope.getCacheThenRemote(block: suspend (CachePolicy) -> Result): ReceiveChannel<Result> =
-        produce {
+    protected fun getCacheThenRemote(block: suspend (CachePolicy) -> Result): Flow<Result> =
+        flow {
             try {
-                send(block(CachePolicy.ONLY_CACHE))
+                emit(block(CachePolicy.ONLY_CACHE))
             } catch (e: Exception) {
                 //do nothing
             }
-            send(block(CachePolicy.REMOTE))
+            emit(block(CachePolicy.REMOTE))
         }
 }
 

@@ -8,7 +8,9 @@ import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
+import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.user.RefreshUserSummaryUseCase
+import ru.luckycactus.steamroulette.domain.user.UpdateUserAndGamesUseCase
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.first
@@ -37,15 +39,14 @@ class MainFlowViewModel(
     private val observeCurrentUserSteamIdUseCase = AppModule.observeCurrentUserSteamIdUseCase
     private val observeCurrentUserSummaryUseCase = AppModule.observeCurrentUserSummaryUseCase
     private val refreshUserSummaryUseCase = AppModule.refreshUserSummaryUseCase
+    private val updateUserAndGamesUseCase = AppModule.updateUserAndGamesUseCase
 
     private val resourceManager: ResourceManager = AppModule.resourceManager
 
 
     init {
+        _currentUserSteamId = observeCurrentUserSteamIdUseCase()
         userSummary = observeCurrentUserSummaryUseCase()
-        _currentUserSteamId = userSummary.map {
-            it?.steamId
-        }
     }
 
     override fun observeCurrentUserSteamId(): LiveData<SteamId?> {
@@ -62,14 +63,40 @@ class MainFlowViewModel(
         }
     }
 
-    override fun refreshUserSummary() {
-        _refreshUserSummary(true)
+    override fun refreshUserAndGames() {
+        viewModelScope.launch {
+            currentUserSteamId?.let {
+                _refreshUserSummaryState.value = true
+                try {
+                    updateUserAndGamesUseCase(
+                        UpdateUserAndGamesUseCase.Params(it)
+                    )
+                } catch (e: UpdateUserAndGamesUseCase.UpdateException) {
+                    _errorMessage.value = Event(
+                        if (e.gamesUpdateException != null) {
+                            val description =
+                                if (e.gamesUpdateException is GetOwnedGamesPrivacyException)
+                                    resourceManager.getString(R.string.check_your_privacy)
+                                else getCommonErrorDescription(resourceManager, e)
+                            "%s: %s".format(
+                                resourceManager.getString(R.string.games_sync_failure),
+                                description
+                            )
+                        } else {
+                            "%s: %s".format(
+                                resourceManager.getString(R.string.user_update_error),
+                                getCommonErrorDescription(resourceManager, e)
+                            )
+                        }
+                    )
+                } finally {
+                    _refreshUserSummaryState.value = false
+                }
+            }
+        }
     }
 
     private fun _refreshUserSummary(reload: Boolean) {
-        if (reload) {
-            _refreshUserSummaryState.value = true
-        }
         currentUserSteamId?.let {
             viewModelScope.launch {
                 try {
@@ -87,10 +114,6 @@ class MainFlowViewModel(
                                 getCommonErrorDescription(resourceManager, e)
                             )
                         )
-                    }
-                } finally {
-                    if (reload) {
-                        _refreshUserSummaryState.value = false
                     }
                 }
             }

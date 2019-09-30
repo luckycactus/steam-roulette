@@ -13,7 +13,9 @@ private val compositeListeners =
 
 private val SharedPreferences.compositeListener
     @Synchronized
-    get() = compositeListeners.getOrPut(this, { CompositePreferenceChangeListener() })
+    get() = compositeListeners.getOrPut(this, {
+        CompositePreferenceChangeListener().also { registerOnSharedPreferenceChangeListener(it) }
+    })
 
 
 fun SharedPreferences.Editor.apply(block: SharedPreferences.Editor.() -> Unit) {
@@ -169,12 +171,11 @@ private class SharedPreferenceLiveData<T>(
 
     private val compositeListener = prefs.compositeListener
     private val prefValue by delegate
+    private val listener = { value = prefValue }
 
     override fun onActive() {
         value = prefValue
-        compositeListener.addListener(key) {
-            value = prefValue
-        }
+        compositeListener.addListener(key, listener)
     }
 
     override fun onInactive() {

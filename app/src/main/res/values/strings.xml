@@ -9,6 +9,7 @@
     <string name="exit">Выход</string>
     <string name="retry">Повторить</string>
     <string name="get_owned_games_exception_description">Не удается получить список игр. Проверьте настройки приватности Вашего аккаунта</string>
+    <string name="check_your_privacy">Не удается получить список игр. Проверьте настройки приватности Вашего аккаунта</string>
     <string name="next_game">Дальше</string>
     <string name="hide_this_game">Больше не показывать эту игру</string>
     <string name="empty_title">Empty data</string>
@@ -21,4 +22,5 @@
     <string name="just_now">только что</string>
     <string name="last_sync">Последняя синхронизация: %1$s</string>
     <string name="never">никогда</string>
+    <string name="games_sync_failure">Не удалось обновить базу игр</string>
 </resources>

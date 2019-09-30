@@ -78,6 +78,13 @@ object AppModule {
         )
     }
 
+    val updateUserAndGamesUseCase by lazy {
+        UpdateUserAndGamesUseCase(
+            userRepository,
+            gamesRepository
+        )
+    }
+
     val getSignedInUserSteamIdUseCase by lazy {
         GetCurrentUserSteamIdUseCase(
             userRepository
