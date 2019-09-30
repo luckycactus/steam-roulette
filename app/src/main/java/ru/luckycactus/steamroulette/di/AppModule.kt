@@ -66,8 +66,8 @@ object AppModule {
         )
     }
 
-    val observeCurrentUserSummaryUseCase by lazy {
-        ObserveCurrentUserSummaryUseCase(
+    val observeUserSummaryUseCase by lazy {
+        ObserveUserSummaryUseCase(
             userRepository
         )
     }

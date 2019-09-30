@@ -173,6 +173,7 @@ private class SharedPreferenceLiveData<T>(
     private val prefValue by delegate
     private val listener = { value = prefValue }
 
+    //todo set value on livedata creation?
     override fun onActive() {
         value = prefValue
         compositeListener.addListener(key, listener)

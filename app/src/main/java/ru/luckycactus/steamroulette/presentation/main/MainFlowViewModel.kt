@@ -15,12 +15,13 @@ import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 
 class MainFlowViewModel(
 ) : ViewModel(), UserViewModelDelegate {
 
     override val currentUserSteamId
-        get() = userSummary.value?.steamId
+        get() = _currentUserSteamId.value
     override val userSummary: LiveData<UserSummary?>
     override val refreshUserSummaryState: LiveData<Boolean>
         get() = _refreshUserSummaryState
@@ -37,16 +38,17 @@ class MainFlowViewModel(
     private val _refreshUserSummaryState = MutableLiveData<Boolean>()
 
     private val observeCurrentUserSteamIdUseCase = AppModule.observeCurrentUserSteamIdUseCase
-    private val observeCurrentUserSummaryUseCase = AppModule.observeCurrentUserSummaryUseCase
+    private val observeUserSummaryUseCase = AppModule.observeUserSummaryUseCase
     private val refreshUserSummaryUseCase = AppModule.refreshUserSummaryUseCase
     private val updateUserAndGamesUseCase = AppModule.updateUserAndGamesUseCase
 
     private val resourceManager: ResourceManager = AppModule.resourceManager
 
-
     init {
         _currentUserSteamId = observeCurrentUserSteamIdUseCase()
-        userSummary = observeCurrentUserSummaryUseCase()
+        userSummary = _currentUserSteamId.nullableSwitchMap {
+            observeUserSummaryUseCase(it)
+        }
     }
 
     override fun observeCurrentUserSteamId(): LiveData<SteamId?> {

@@ -11,10 +11,8 @@ import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.SteamId
-import ru.luckycactus.steamroulette.domain.entity.SteamId.Companion.fromSteam64
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
 import ru.luckycactus.steamroulette.domain.user.UserRepository
-import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import java.util.concurrent.TimeUnit
 
 class UserRepositoryImpl(
@@ -25,18 +23,6 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     private var currentUserSteam64Pref by userPreferences.long(SIGNED_USER_KEY, 0)
-    private val currentUserSteamId: LiveData<SteamId?>
-    private val currentUserSummary: LiveData<UserSummary?>
-
-    init {
-        currentUserSteamId = userPreferences.longLiveData(SIGNED_USER_KEY, 0).map {
-            fromSteam64(it)
-        }
-
-        currentUserSummary = currentUserSteamId.nullableSwitchMap {
-            localUserDataStore.observeUserSummary(it.asSteam64()).map { mapper.mapFrom(it) }
-        }
-    }
 
     //todo move to datastore?
     override fun saveSignedInUser(steamId: SteamId) {
@@ -45,7 +31,10 @@ class UserRepositoryImpl(
 
     override fun getCurrentUserSteamId() = fromSteam64(currentUserSteam64Pref)
 
-    override fun observeCurrentUserSteamId(): LiveData<SteamId?> = currentUserSteamId
+    override fun observeCurrentUserSteamId(): LiveData<SteamId?> =
+        userPreferences.longLiveData(SIGNED_USER_KEY, 0).map {
+            fromSteam64(it)
+        }
 
     override fun isUserSignedIn(): Boolean =
         userPreferences.getLong(SIGNED_USER_KEY, 0L) != 0L
@@ -58,8 +47,10 @@ class UserRepositoryImpl(
             .get(cachePolicy)
     }
 
-    override fun observeCurrentUserSummary(): LiveData<UserSummary?> {
-        return currentUserSummary.distinctUntilChanged()
+    override fun observeUserSummary(steamId: SteamId): LiveData<UserSummary> {
+        return localUserDataStore.observeUserSummary(steamId.asSteam64())
+            .map { mapper.mapFrom(it) }
+            .distinctUntilChanged()
     }
 
     override suspend fun refreshUserSummary(steamId: SteamId, cachePolicy: CachePolicy) {

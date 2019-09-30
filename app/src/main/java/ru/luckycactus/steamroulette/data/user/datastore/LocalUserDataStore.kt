@@ -29,7 +29,7 @@ class LocalUserDataStore(
 
     override fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity> {
         return prefs.stringLiveData(steam64.toString(), null).map {
-            fromJson(it!!) //todo
+            fromJson(it!!) //todo не эмитить nulls
         }
     }
 
