@@ -60,14 +60,14 @@ class MainFlowViewModel(
     }
 
     fun coldStart() {
-        observeCurrentUserSteamId().first { it ->
+        observeCurrentUserSteamId().first {
             it?.let {
                 _logonCheckedAction.value = Event(Unit)
                 viewModelScope.launch {
-                    _fetchGames(false)
+                    fetchGames(false)
                 }
                 viewModelScope.launch {
-                    _fetchUserSummary(false)
+                    fetchUserSummary(false)
                 }
             } ?: throw IllegalStateException("The user isn't logged on") //todo fallback
         }
@@ -80,7 +80,7 @@ class MainFlowViewModel(
 
     override fun fetchGames() {
         viewModelScope.launch {
-            handleGamesFetchError(_fetchGames(true))
+            handleGamesFetchError(fetchGames(true))
         }
     }
 
@@ -88,8 +88,8 @@ class MainFlowViewModel(
     override fun fetchUserAndGames() {
         viewModelScope.launch {
             supervisorScope {
-                val userDeferred = viewModelScope.async { _fetchUserSummary(true) }
-                val gamesState = _fetchGames(true).also { handleGamesFetchError(it) }
+                val userDeferred = viewModelScope.async { fetchUserSummary(true) }
+                val gamesState = fetchGames(true).also { handleGamesFetchError(it) }
                 if (gamesState !is Result.Error) {
                     handleUserFetchError(userDeferred.await())
                 }
@@ -120,7 +120,7 @@ class MainFlowViewModel(
         }
     }
 
-    private suspend fun _fetchGames(reload: Boolean): Result<Unit> {
+    private suspend fun fetchGames(reload: Boolean): Result<Unit> {
         currentUserSteamId?.let {
             _fetchGamesState.value = Result.Loading
             return try {
@@ -140,7 +140,7 @@ class MainFlowViewModel(
     }
 
 
-    private suspend fun _fetchUserSummary(reload: Boolean): Result<Unit> {
+    private suspend fun fetchUserSummary(reload: Boolean): Result<Unit> {
         currentUserSteamId?.let {
             return try {
                 _fetchUserSummaryState.value = true

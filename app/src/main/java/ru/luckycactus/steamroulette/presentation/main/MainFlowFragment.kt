@@ -1,7 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.main
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_main_flow.*
@@ -22,24 +26,28 @@ class MainFlowFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_main_flow
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        with(activity as AppCompatActivity) {
+            setSupportActionBar(toolbar)
+            supportActionBar!!.setDisplayShowTitleEnabled(false)
+        }
 
         if (savedInstanceState == null) {
             viewModel.coldStart()
         }
 
         avatarContainer.setOnClickListener {
+            //todo можно открыть 2 раза
             MenuFragment.newInstance().show(
                 childFragmentManager,
                 MENU_FRAGMENT_TAG
-            )
-        }
-
-        btnFilter.setOnClickListener {
-            RouletteFilterFragment.newInstance().show(
-                childFragmentManager,
-                FILTER_FRAGMENT_TAG
             )
         }
 
@@ -57,6 +65,23 @@ class MainFlowFragment : BaseFragment() {
             childFragmentManager.beginTransaction()
                 .add(R.id.container, RouletteFragment.newInstance())
                 .commit()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_roulette, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_roulette_options -> {
+                RouletteFilterFragment.newInstance().show(
+                    childFragmentManager,
+                    FILTER_FRAGMENT_TAG
+                )
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         >
 
     <FrameLayout
@@ -13,7 +14,7 @@
             android:layout_marginBottom="?attr/actionBarSize"
             />
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -22,10 +23,10 @@
             android:elevation="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingLeft="4dp"
-            android:paddingEnd="4dp"
-            android:paddingRight="4dp"
+            android:contentInsetLeft="4dp"
+            android:contentInsetStart="4dp"
+            app:contentInsetLeft="4dp"
+            app:contentInsetStart="4dp"
             >
 
         <LinearLayout
@@ -58,21 +59,6 @@
 
         </LinearLayout>
 
-        <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                />
-
-        <ImageView
-                android:id="@+id/btnFilter"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/selectable_item_background_oval"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_filter_list_white_24dp"
-                />
-
-    </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
 </FrameLayout>
