@@ -55,7 +55,7 @@ class MenuFragment : BaseBottomSheetDialogFragment() {
                 .into(ivAvatar)
         }
 
-        observe(viewModel.refreshUserSummaryState) {
+        observe(viewModel.refreshProfileState) {
             btnRefreshProfile.isEnabled = !it
             btnRefreshProfile.visibility(!it)
             profileRefreshProgressBar.visibility(it)

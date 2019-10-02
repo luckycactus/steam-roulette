@@ -14,8 +14,6 @@ interface OwnedGamesQueue {
     fun markCurrentAsHidden()
 
     suspend fun next(): OwnedGame
-
-    fun invalidate()
 }
 
 class OwnedGamesQueueImpl(
@@ -27,15 +25,12 @@ class OwnedGamesQueueImpl(
 
     private var currentMarkedAsHidden = false
     private var current: OwnedGame? = null
-    private var invalidated = false
 
     override fun hasNext(): Boolean {
-        checkInvalidated()
         return numberQueue.size - (if (current != null) 1 else 0) > 0
     }
 
     override suspend fun next(): OwnedGame {
-        checkInvalidated()
         if (!hasNext())
             throw NoSuchElementException()
         if (current != null) {
@@ -52,21 +47,10 @@ class OwnedGamesQueueImpl(
     }
 
     override fun markCurrentAsHidden() {
-        checkInvalidated()
-        if (current == null)
-            throw IllegalStateException("Cannot mark current game as hidden. You should call next() first!")
+        checkNotNull(current) { "Cannot mark current game as hidden. You should call next() first!" }
         currentMarkedAsHidden = true
         GlobalScope.launch {
             gamesRepository.markLocalGameAsHidden(steamId, current!!)
         }
-    }
-
-    override fun invalidate() {
-        invalidated = true
-    }
-
-    private fun checkInvalidated() {
-        if (invalidated)
-            throw IllegalStateException("Queue was invalidated!")
     }
 }

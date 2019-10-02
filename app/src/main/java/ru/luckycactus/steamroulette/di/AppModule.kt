@@ -72,18 +72,24 @@ object AppModule {
         )
     }
 
-    val refreshUserSummaryUseCase by lazy {
-        RefreshUserSummaryUseCase(
+    val fetchUserSummaryUseCase by lazy {
+        FetchUserSummaryUseCase(
             userRepository
         )
     }
 
-    val updateUserAndGamesUseCase by lazy {
-        UpdateUserAndGamesUseCase(
-            userRepository,
+    val fetchUserOwnedGamesUseCase by lazy {
+        FetchUserOwnedGamesUseCase(
             gamesRepository
         )
     }
+
+//    val updateUserAndGamesUseCase by lazy {
+//        UpdateUserAndGamesUseCase(
+//            userRepository,
+//            gamesRepository
+//        )
+//    }
 
     val getSignedInUserSteamIdUseCase by lazy {
         GetCurrentUserSteamIdUseCase(
@@ -92,7 +98,7 @@ object AppModule {
     }
 
     val getOwnedGamesQueueUseCase by lazy {
-        GetOwnedGamesQueueUseCase(
+        GetLocalOwnedGamesQueueUseCase(
             gamesRepository
         )
     }

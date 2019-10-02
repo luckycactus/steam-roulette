@@ -103,6 +103,25 @@ inline fun <X, Y> LiveData<X?>.nullableSwitchMap(
     }
 }
 
+fun <A, B, C> LiveData<A>.combineLatest(b: LiveData<B>, combiner: (A, B) -> C): LiveData<C> {
+    return MediatorLiveData<C>().apply {
+        var lastA: A? = null
+        var lastB: B? = null
+
+        addSource(this@combineLatest) {
+            if (it == null && value != null) value = null
+            lastA = it
+            if (lastA != null && lastB != null) value = combiner(lastA!!, lastB!!)
+        }
+
+        addSource(b) {
+            if (it == null && value != null) value = null
+            lastB = it
+            if (lastA != null && lastB != null) value = combiner(lastA!!, lastB!!)
+        }
+    }
+}
+
 fun Context.getColorFromRes(@ColorRes color: Int): Int {
     onApiAtLeast(Build.VERSION_CODES.M) {
         return resources.getColor(color, theme)

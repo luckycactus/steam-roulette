@@ -4,10 +4,12 @@ import android.text.format.DateUtils
 import androidx.lifecycle.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegatePublic
+import ru.luckycactus.steamroulette.presentation.utils.combineLatest
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import java.util.*
 
@@ -17,15 +19,16 @@ class MenuViewModel(
 
     val gameCount: LiveData<Int>
     val gamesLastUpdate: LiveData<String>
+    val refreshProfileState: LiveData<Boolean>
+
+    private val _refreshProfileState = MediatorLiveData<Boolean>()
 
     private val observeOwnedGamesCount = AppModule.observeOwnedGamesCountUseCase
     private val observeOwnedGamesSyncsUseCase = AppModule.observeOwnedGamesSyncsUseCase
     private val resourceManager = AppModule.resourceManager
 
-    //private val
-
     fun refreshProfile() {
-        userViewModelDelegate.refreshUserAndGames()
+        userViewModelDelegate.fetchUserAndGames()
     }
 
     init {
@@ -48,5 +51,8 @@ class MenuViewModel(
                 resourceManager.getString(R.string.last_sync, ago)
             }
 
+        refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combineLatest(
+            userViewModelDelegate.fetchGamesState
+        ) { a, b -> a || (b is Result.Loading) }
     }
 }

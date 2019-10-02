@@ -10,8 +10,10 @@ import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
+import ru.luckycactus.steamroulette.presentation.main.MainFlowViewModel
 import ru.luckycactus.steamroulette.presentation.menu.MenuFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
@@ -60,11 +62,11 @@ class RouletteFragment : BaseFragment() {
 
         observe(viewModel.contentState) {
             when (it) {
-                RouletteViewModel.ContentState.Loading -> dataLoadingViewHolder.showLoading()
-                is RouletteViewModel.ContentState.Error -> dataLoadingViewHolder.showErrorWithButton(
+                Result.Loading -> dataLoadingViewHolder.showLoading()
+                is Result.Error -> dataLoadingViewHolder.showErrorWithButton(
                     msg = it.message
                 )
-                RouletteViewModel.ContentState.Loaded -> dataLoadingViewHolder.showContent()
+                is Result.Success -> dataLoadingViewHolder.showContent()
             }
         }
     }

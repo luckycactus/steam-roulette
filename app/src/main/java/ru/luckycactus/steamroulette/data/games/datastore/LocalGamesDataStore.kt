@@ -29,6 +29,7 @@ class LocalGamesDataStore(
         val hiddenGameIds = db.ownedGamesDao().getHiddenGamesIds(steam64).toSet()
         val timestamp = System.currentTimeMillis()
         val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds, timestamp)
+        //todo intransaction
         db.ownedGamesDao().insertGamesRemoveOthers(steam64, timestamp, mapper.mapFrom(games))
         prefs.edit { putLong(gamesSyncKey(steam64), System.currentTimeMillis()) }
     }

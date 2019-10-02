@@ -5,9 +5,9 @@ import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 
 //todo naming
-class RefreshUserSummaryUseCase(
+class FetchUserSummaryUseCase(
     private val userRepository: UserRepository
-) : SuspendUseCase<RefreshUserSummaryUseCase.Params, Unit>() {
+) : SuspendUseCase<FetchUserSummaryUseCase.Params, Unit>() {
 
     override suspend fun getResult(params: Params) {
         userRepository.refreshUserSummary(
