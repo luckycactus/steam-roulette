@@ -3,7 +3,9 @@ package ru.luckycactus.steamroulette.data
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.liveData
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory.Companion.invoke
 import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -49,7 +51,7 @@ fun SharedPreferences.intLiveData(key: String, defValue: Int) =
     liveData(Int::class.java, key, defValue)
 
 fun SharedPreferences.longLiveData(key: String, defValue: Long) =
-    liveData(Long::class.java, key, defValue)
+    liveData(Long::class.java, key, defValue).distinctUntilChanged()
 
 fun SharedPreferences.floatLiveData(key: String, defValue: Float) =
     liveData(Float::class.java, key, defValue)
@@ -163,6 +165,7 @@ private fun <T> SharedPreferences.getDelegate(
     else -> throw Exception()
 } as ReadWriteProperty<Any, T>
 
+//todo Сверять с текущим значением
 private class SharedPreferenceLiveData<T>(
     prefs: SharedPreferences,
     private val key: String,
@@ -180,26 +183,30 @@ private class SharedPreferenceLiveData<T>(
     }
 
     override fun onInactive() {
-        compositeListener.removeListener(key)
+        compositeListener.removeListener(key, listener)
     }
 }
 
 private class CompositePreferenceChangeListener :
     SharedPreferences.OnSharedPreferenceChangeListener {
-    private val listeners = mutableMapOf<String, () -> Unit>()
+    private val listeners = mutableMapOf<String, MutableSet<() -> Unit>>()
 
     override fun onSharedPreferenceChanged(
         sharedPreferences: SharedPreferences?,
         key: String
     ) {
-        listeners[key]?.invoke()
+        listeners[key]?.forEach { it.invoke() }
     }
 
     fun addListener(key: String, listener: () -> Unit) {
-        listeners[key] = listener
+        //todo synchronization
+        listeners.getOrPut(
+            key,
+            { Collections.newSetFromMap<() -> Unit>(WeakHashMap<() -> Unit, Boolean>()) }
+        ).add(listener)
     }
 
-    fun removeListener(key: String) {
-        listeners.remove(key)
+    fun removeListener(key: String, listener: () -> Unit) {
+        listeners[key]?.remove(listener)
     }
 }

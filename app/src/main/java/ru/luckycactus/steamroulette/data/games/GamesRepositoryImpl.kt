@@ -7,6 +7,7 @@ import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
@@ -43,8 +44,11 @@ class GamesRepositoryImpl(
     }
 
 
-    override suspend fun getFilteredLocalOwnedGamesIds(steamId: SteamId): List<Int> =
-        localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64())
+    override suspend fun getFilteredLocalOwnedGamesIds(
+        steamId: SteamId,
+        filter: EnPlayTimeFilter
+    ): List<Int> =
+        localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64(), filter)
 
     override suspend fun getLocalOwnedGame(steamId: SteamId, appId: Int): OwnedGame {
         return localGamesDataStore.getOwnedGame(steamId.asSteam64(), appId)

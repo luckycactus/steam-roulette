@@ -25,6 +25,6 @@ class GameView @JvmOverloads constructor(
 
     fun setGame(game: OwnedGame) {
         tvName.text = game.name
-        Glide.with(this).load(game.headerImageUrl).into(ivGame)
+        Glide.with(this).load(game.libraryPortraitImageUrl).into(ivGame)
     }
 }

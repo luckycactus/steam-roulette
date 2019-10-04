@@ -1,6 +1,9 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +18,7 @@ import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowViewModel
 import ru.luckycactus.steamroulette.presentation.menu.MenuFragment
+import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
 
@@ -37,6 +41,11 @@ class RouletteFragment : BaseFragment() {
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
     override val layoutResId: Int = R.layout.fragment_roulette
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -68,6 +77,23 @@ class RouletteFragment : BaseFragment() {
                 )
                 is Result.Success -> dataLoadingViewHolder.showContent()
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_roulette, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_roulette_options -> {
+                RouletteOptionsFragment.newInstance().show(
+                    childFragmentManager,
+                    MainFlowFragment.FILTER_FRAGMENT_TAG
+                )
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

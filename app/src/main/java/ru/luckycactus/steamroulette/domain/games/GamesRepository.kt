@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.domain.games
 
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import java.util.*
@@ -12,7 +13,10 @@ interface GamesRepository {
 
     suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy)
 
-    suspend fun getFilteredLocalOwnedGamesIds(steamId: SteamId): List<Int>
+    suspend fun getFilteredLocalOwnedGamesIds(
+        steamId: SteamId,
+        filter: EnPlayTimeFilter
+    ): List<Int>
 
     suspend fun getLocalOwnedGame(steamId: SteamId, appId: Int): OwnedGame
 

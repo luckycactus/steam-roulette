@@ -24,4 +24,5 @@
     <string name="never">никогда</string>
     <string name="games_sync_failure">Не удалось обновить базу игр</string>
     <string name="options">Опции</string>
+    <string name="roulette_game_time_filter_title">Показывать</string>
 </resources>

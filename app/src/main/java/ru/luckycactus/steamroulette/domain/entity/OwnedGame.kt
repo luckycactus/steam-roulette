@@ -10,4 +10,6 @@ data class OwnedGame(
 ) {
     val headerImageUrl
         get() = "https://steamcdn-a.akamaihd.net/steam/apps/$appId/header.jpg"
+    val libraryPortraitImageUrl
+        get() = "https://steamcdn-a.akamaihd.net/steam/apps/$appId/library_600x900.jpg"
 }

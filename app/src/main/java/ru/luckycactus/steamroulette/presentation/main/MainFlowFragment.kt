@@ -12,9 +12,8 @@ import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.menu.MenuFragment
-import ru.luckycactus.steamroulette.presentation.roulette.RouletteFilterFragment
+import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
-import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.observeNonNull
 
@@ -26,10 +25,6 @@ class MainFlowFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_main_flow
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -65,23 +60,6 @@ class MainFlowFragment : BaseFragment() {
             childFragmentManager.beginTransaction()
                 .add(R.id.container, RouletteFragment.newInstance())
                 .commit()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_roulette, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_roulette_options -> {
-                RouletteFilterFragment.newInstance().show(
-                    childFragmentManager,
-                    FILTER_FRAGMENT_TAG
-                )
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 

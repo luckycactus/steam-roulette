@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/selectable_item_background"
+        android:paddingLeft="32dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        >
+
+    <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            tools:text="Все"
+            />
+
+    <ImageView
+            android:id="@+id/ivCheck"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_check_white_24dp"
+            />
+
+</LinearLayout>

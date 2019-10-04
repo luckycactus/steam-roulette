@@ -7,6 +7,7 @@ import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.local.DB
 import ru.luckycactus.steamroulette.data.longLiveData
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
+import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 
 class LocalGamesDataStore(
@@ -34,8 +35,17 @@ class LocalGamesDataStore(
         prefs.edit { putLong(gamesSyncKey(steam64), System.currentTimeMillis()) }
     }
 
-    override suspend fun getFilteredOwnedGamesIds(steam64: Long): List<Int> {
-        return db.ownedGamesDao().getVisibleGamesIdList(steam64)
+    override suspend fun getFilteredOwnedGamesIds(
+        steam64: Long,
+        filter: EnPlayTimeFilter
+    ): List<Int> {
+        return when (filter) {
+            EnPlayTimeFilter.All -> db.ownedGamesDao().getVisibleGamesIdList(steam64)
+            EnPlayTimeFilter.NotPlayed -> db.ownedGamesDao().getVisibleNotPlayedGamesIdList(steam64)
+            EnPlayTimeFilter.NotPlayedIn2Weeks -> db.ownedGamesDao().getVisibleNotPlayed2WeeksGamesIdList(
+                steam64
+            )
+        }
     }
 
     override suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame {

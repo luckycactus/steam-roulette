@@ -20,13 +20,17 @@ import ru.luckycactus.steamroulette.data.user.datastore.LocalUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
+import ru.luckycactus.steamroulette.data.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.*
+import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.login.SignInUseCase
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.user.*
+import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 
 object AppModule {
 
@@ -50,6 +54,14 @@ object AppModule {
         appPreferences = appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
         resourceManager = AndroidResourceManager(appContext)
         requestLruCache = LruCache(50)
+    }
+
+    val observePlayTimeFilterUseCase by lazy {
+        ObservePlayTimeFilterUseCase(userSettingsRepository)
+    }
+
+    val savePlayTimeFilterUseCase by lazy {
+        SavePlayTimeFilterUseCase(userSettingsRepository)
     }
 
     val observeOwnedGamesCountUseCase by lazy {
@@ -134,6 +146,10 @@ object AppModule {
             UserSummaryMapper(),
             appPreferences
         )
+    }
+
+    private val userSettingsRepository: UserSettingsRepository by lazy {
+        UserSettingsRepositoryImpl(appContext.getSharedPreferences("user-settings", Context.MODE_PRIVATE))
     }
 
     private val remoteUserDataStore: UserDataStore.Remote by lazy {

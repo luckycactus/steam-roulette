@@ -6,7 +6,6 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import androidx.lifecycle.LiveData
 
 
-
 @Database(
     entities = [OwnedGameRoomEntity::class],
     version = 4
@@ -32,6 +31,12 @@ abstract class OwnedGamesDao {
     @Query("""SELECT appId from owned_game where userSteam64 = :steam64 and hidden = 0""")
     abstract suspend fun getVisibleGamesIdList(steam64: Long): List<Int>
 
+    @Query("""SELECT appId from owned_game where userSteam64 = :steam64 and hidden = 0 and playtime2Weeks = 0""")
+    abstract suspend fun getVisibleNotPlayed2WeeksGamesIdList(steam64: Long): List<Int>
+
+    @Query("""SELECT appId from owned_game where userSteam64 = :steam64 and hidden = 0 and playtimeForever = 0""")
+    abstract suspend fun getVisibleNotPlayedGamesIdList(steam64: Long): List<Int>
+
     @Query(
         """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
             from owned_game 
@@ -56,7 +61,11 @@ abstract class OwnedGamesDao {
     abstract suspend fun removeGamesUpdatedEarlierThen(steam64: Long, timestamp: Long)
 
     @Transaction
-    open suspend fun insertGamesRemoveOthers(steam64: Long, timestamp: Long, games: List<OwnedGameRoomEntity>) {
+    open suspend fun insertGamesRemoveOthers(
+        steam64: Long,
+        timestamp: Long,
+        games: List<OwnedGameRoomEntity>
+    ) {
         insertGames(games)
         removeGamesUpdatedEarlierThen(steam64, timestamp)
     }

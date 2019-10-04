@@ -4,12 +4,11 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.MainThread
-import androidx.annotation.Px
+import android.view.ViewGroup
+import androidx.annotation.*
 import androidx.arch.core.util.Function
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -163,4 +162,8 @@ fun View.expandTouchArea(desiredWidth: Int, desiredHeight: Int) {
         }
         parent.touchDelegate = TouchDelegate(rect, this)
     }
+}
+
+fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): View {
+    return LayoutInflater.from(context).inflate(resId, this, attachToRoot)
 }
