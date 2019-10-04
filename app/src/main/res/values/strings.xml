@@ -25,4 +25,9 @@
     <string name="games_sync_failure">Не удалось обновить базу игр</string>
     <string name="options">Опции</string>
     <string name="roulette_game_time_filter_title">Показывать</string>
+    <string name="btn_reset_hidden_games">Очистить</string>
+    <string name="playtime_filter_all_games">Все игры</string>
+    <string name="playtime_filter_not_played_games">Игры, в которые я не играл</string>
+    <string name="playtime_filter_not_played_2_weeks_games">Игры, в которые я не играл в последние 2 недели</string>
+    <string name="hidden_games_count">Скрыто игр</string>
 </resources>

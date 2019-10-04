@@ -6,10 +6,10 @@ import ru.luckycactus.steamroulette.domain.entity.SteamId
 
 class FetchUserOwnedGamesUseCase(
     private val gamesRepository: GamesRepository
-) : SuspendUseCase<FetchUserOwnedGamesUseCase.Params, Unit?>() {
+) : SuspendUseCase<FetchUserOwnedGamesUseCase.Params, Unit>() {
 
-    override suspend fun getResult(params: Params): Unit? {
-        return gamesRepository.fetchOwnedGames(
+    override suspend fun getResult(params: Params) {
+        gamesRepository.fetchOwnedGames(
             params.steamId,
             if (params.reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
         )

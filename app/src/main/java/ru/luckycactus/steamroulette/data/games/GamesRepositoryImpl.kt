@@ -35,14 +35,22 @@ class GamesRepositoryImpl(
         return localGamesDataStore.observeGameCount(steamId.asSteam64())
     }
 
+    override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> {
+        return localGamesDataStore.observeHiddenGameCount(steamId.asSteam64())
+    }
+
+    override suspend fun clearHiddenGames(steamId: SteamId) {
+        localGamesDataStore.clearHiddenGames(steamId.asSteam64())
+    }
+
     override fun observeGamesUpdates(steamId: SteamId): LiveData<Date> {
         return localGamesDataStore.observeGameSyncs(steamId.asSteam64()).map { Date(it) }
     }
 
+
     override suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean {
         return localGamesDataStore.isUserHasOwnedGames(steamId.asSteam64())
     }
-
 
     override suspend fun getFilteredLocalOwnedGamesIds(
         steamId: SteamId,

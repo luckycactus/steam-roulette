@@ -1,7 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.menu
 
 import android.text.format.DateUtils
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.Result
@@ -9,7 +12,7 @@ import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegatePublic
-import ru.luckycactus.steamroulette.presentation.utils.combineLatest
+import ru.luckycactus.steamroulette.presentation.utils.combine
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import java.util.*
 
@@ -51,7 +54,7 @@ class MenuViewModel(
                 resourceManager.getString(R.string.last_sync, ago)
             }
 
-        refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combineLatest(
+        refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combine(
             userViewModelDelegate.fetchGamesState
         ) { a, b -> a || (b is Result.Loading) }
     }

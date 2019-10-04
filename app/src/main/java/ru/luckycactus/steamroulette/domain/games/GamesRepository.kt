@@ -26,5 +26,10 @@ interface GamesRepository {
 
     fun observeGamesCount(steamId: SteamId): LiveData<Int>
 
+    fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int>
+
+    suspend fun clearHiddenGames(steamId: SteamId)
+
     fun observeGamesUpdates(steamId: SteamId): LiveData<Date>
 }
+

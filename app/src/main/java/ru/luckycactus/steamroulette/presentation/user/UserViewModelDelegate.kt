@@ -17,4 +17,5 @@ interface UserViewModelDelegate : UserViewModelDelegatePublic {
     fun observeCurrentUserSteamId(): LiveData<SteamId?>
     fun fetchUserAndGames()
     fun fetchGames()
+    fun clearHiddenGames()
 }

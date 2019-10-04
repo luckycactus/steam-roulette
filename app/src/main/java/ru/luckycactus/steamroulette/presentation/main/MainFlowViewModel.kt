@@ -45,17 +45,19 @@ class MainFlowViewModel(
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
 
-    private val observeCurrentUserSteamIdUseCase = AppModule.observeCurrentUserSteamIdUseCase
-    private val observeUserSummaryUseCase = AppModule.observeUserSummaryUseCase
-    private val fetchUserSummaryUseCase = AppModule.fetchUserSummaryUseCase
-    private val fetchUserOwnedGamesUseCase = AppModule.fetchUserOwnedGamesUseCase
+    private val observeCurrentUser = AppModule.observeCurrentUserSteamIdUseCase
+    private val observeUserSummary = AppModule.observeUserSummaryUseCase
+    private val fetchUserSummary = AppModule.fetchUserSummaryUseCase
+    private val fetchUserOwnedGames = AppModule.fetchUserOwnedGamesUseCase
+    private val clearHiddenGames = AppModule.clearHiddenGamesUseCase
+
 
     private val resourceManager: ResourceManager = AppModule.resourceManager
 
     init {
-        _currentUserSteamId = observeCurrentUserSteamIdUseCase()
+        _currentUserSteamId = observeCurrentUser()
         userSummary = _currentUserSteamId.nullableSwitchMap {
-            observeUserSummaryUseCase(it)
+            observeUserSummary(it)
         }
     }
 
@@ -77,7 +79,6 @@ class MainFlowViewModel(
         return _currentUserSteamId
     }
 
-
     override fun fetchGames() {
         viewModelScope.launch {
             handleGamesFetchError(fetchGames(true))
@@ -93,6 +94,17 @@ class MainFlowViewModel(
                 if (gamesState !is Result.Error) {
                     handleUserFetchError(userDeferred.await())
                 }
+            }
+        }
+    }
+
+
+    override fun clearHiddenGames() {
+        currentUserSteamId?.let {
+            viewModelScope.launch {
+                _fetchGamesState.value = Result.Loading
+                clearHiddenGames(it)
+                _fetchGamesState.value = Result.success
             }
         }
     }
@@ -124,7 +136,7 @@ class MainFlowViewModel(
         currentUserSteamId?.let {
             _fetchGamesState.value = Result.Loading
             return try {
-                fetchUserOwnedGamesUseCase(FetchUserOwnedGamesUseCase.Params(it, reload))
+                fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
                 Result.success.also { _fetchGamesState.value = it }
             } catch (e: Exception) {
                 Result.Error(
@@ -144,7 +156,7 @@ class MainFlowViewModel(
         currentUserSteamId?.let {
             return try {
                 _fetchUserSummaryState.value = true
-                fetchUserSummaryUseCase(
+                fetchUserSummary(
                     FetchUserSummaryUseCase.Params(
                         it,
                         reload

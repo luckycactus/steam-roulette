@@ -23,6 +23,10 @@ class LocalGamesDataStore(
         return db.ownedGamesDao().observeGameCount(steam64)
     }
 
+    override fun observeHiddenGameCount(steam64: Long): LiveData<Int> {
+        return db.ownedGamesDao().observeHiddenGameCount(steam64)
+    }
+
     override fun observeGameSyncs(steam64: Long): LiveData<Long> =
         prefs.longLiveData(gamesSyncKey(steam64), 0)
 
@@ -46,6 +50,10 @@ class LocalGamesDataStore(
                 steam64
             )
         }
+    }
+
+    override suspend fun clearHiddenGames(steam64: Long) {
+        db.ownedGamesDao().clearHiddenGames(steam64)
     }
 
     override suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame {

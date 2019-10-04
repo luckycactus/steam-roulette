@@ -78,6 +78,11 @@ abstract class OwnedGamesDao {
     @Query("SELECT COUNT(*) FROM owned_game  where userSteam64 = :steam64")
     abstract fun observeGameCount(steam64: Long): LiveData<Int>
 
+    @Query("SELECT COUNT(*) FROM owned_game  where userSteam64 = :steam64 and hidden=1")
+    abstract fun observeHiddenGameCount(steam64: Long): LiveData<Int>
+
+    @Query("UPDATE owned_game SET hidden = 0 WHERE userSteam64 =:steam64 and hidden = 1")
+    abstract suspend fun clearHiddenGames(steam64: Long)
 
     @Query("select COUNT(*) from (select appId from owned_game where userSteam64 = :steam64 limit 1)")
     abstract suspend fun _isUserHasOwnedGames(steam64: Long): Int

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -11,16 +12,56 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/roulette_game_time_filter_title"
             android:paddingLeft="@dimen/default_activity_margin"
             android:paddingRight="@dimen/default_activity_margin"
             android:paddingBottom="16dp"
+            android:text="@string/roulette_game_time_filter_title"
             />
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvGameTimeFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             />
+
+    <include layout="@layout/divider" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/default_activity_margin"
+            android:paddingTop="8dp"
+            android:paddingRight="@dimen/default_activity_margin"
+            >
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hidden_games_count"
+                />
+
+        <TextView
+                android:id="@+id/tvHiddenGamesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="15"
+                />
+
+    </LinearLayout>
+
+    <Button
+            android:id="@+id/btnClearHiddenGames"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_activity_margin"
+            android:layout_marginRight="@dimen/default_activity_margin"
+            android:background="@drawable/selectable_item_background"
+            android:text="@string/btn_reset_hidden_games"
+            />
+
 
 </LinearLayout>

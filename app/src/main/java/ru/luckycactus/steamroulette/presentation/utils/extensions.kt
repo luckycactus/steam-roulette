@@ -102,23 +102,24 @@ inline fun <X, Y> LiveData<X?>.nullableSwitchMap(
     }
 }
 
-fun <A, B, C> LiveData<A>.combineLatest(b: LiveData<B>, combiner: (A, B) -> C): LiveData<C> {
-    return MediatorLiveData<C>().apply {
-        var lastA: A? = null
-        var lastB: B? = null
-
-        addSource(this@combineLatest) {
-            if (it == null && value != null) value = null
-            lastA = it
-            if (lastA != null && lastB != null) value = combiner(lastA!!, lastB!!)
-        }
-
-        addSource(b) {
-            if (it == null && value != null) value = null
-            lastB = it
-            if (lastA != null && lastB != null) value = combiner(lastA!!, lastB!!)
+fun <A, B, Result> LiveData<A>.combine(
+    other: LiveData<B>,
+    combiner: (A, B) -> Result
+): LiveData<Result> {
+    val result = MediatorLiveData<Result>()
+    result.addSource(this) { a ->
+        val b = other.value
+        if (b != null) {
+            result.postValue(combiner(a, b))
         }
     }
+    result.addSource(other) { b ->
+        val a = this@combine.value
+        if (a != null) {
+            result.postValue(combiner(a, b))
+        }
+    }
+    return result
 }
 
 fun Context.getColorFromRes(@ColorRes color: Int): Int {

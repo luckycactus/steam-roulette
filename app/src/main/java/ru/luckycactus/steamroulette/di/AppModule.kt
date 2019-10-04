@@ -56,6 +56,14 @@ object AppModule {
         requestLruCache = LruCache(50)
     }
 
+    val clearHiddenGamesUseCase by lazy {
+        ClearHiddenGamesUseCase(gamesRepository)
+    }
+
+    val observeHiddenGamesCountUseCase by lazy {
+        ObserveHiddenGamesCountUseCase(gamesRepository)
+    }
+
     val observePlayTimeFilterUseCase by lazy {
         ObservePlayTimeFilterUseCase(userSettingsRepository)
     }
@@ -149,7 +157,12 @@ object AppModule {
     }
 
     private val userSettingsRepository: UserSettingsRepository by lazy {
-        UserSettingsRepositoryImpl(appContext.getSharedPreferences("user-settings", Context.MODE_PRIVATE))
+        UserSettingsRepositoryImpl(
+            appContext.getSharedPreferences(
+                "user-settings",
+                Context.MODE_PRIVATE
+            )
+        )
     }
 
     private val remoteUserDataStore: UserDataStore.Remote by lazy {
