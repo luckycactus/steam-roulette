@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@drawable/selectable_item_background"
@@ -27,7 +28,7 @@
             android:id="@+id/ivCheck"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_check_white_24dp"
+            app:srcCompat="@drawable/ic_check_white_24dp"
             />
 
 </LinearLayout>

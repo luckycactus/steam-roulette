@@ -2,6 +2,7 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/menuSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +27,7 @@
                 android:id="@+id/ivAvatar"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:src="@drawable/avatar_placeholder"
+                app:srcCompat="@drawable/avatar_placeholder"
                 />
 
         <LinearLayout
@@ -72,7 +73,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/selectable_item_background_oval"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_refresh_white_24dp"
+                    app:srcCompat="@drawable/ic_refresh_white_24dp"
                     />
 
             <ProgressBar

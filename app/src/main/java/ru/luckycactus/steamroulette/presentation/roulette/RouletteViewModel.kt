@@ -122,34 +122,7 @@ class RouletteViewModel(
         }
     }
 
-
-//    private fun getOwnedGamesQueue() {
-//        viewModelScope.launch {
-//            _contentState.value = MainFlowViewModel.ContentState.Loading
-//            try {
-//                //todo fallback to cache if remote failed
-//                //todo use exist queue if failed
-//                gamesQueue = getLocalOwnedGamesQueue(
-//                    userViewModelDelegate.currentUserSteamId!!//todo
-//                )
-//                showNextGame()
-//                _contentState.value = MainFlowViewModel.ContentState.Success
-//            } catch (e: GetOwnedGamesPrivacyException) {
-//                _contentState.value = MainFlowViewModel.ContentState.Error(
-//                    resourceManager.getString(R.string.get_owned_games_exception_description)
-//                )
-//            } catch (e: MissingOwnedGamesException) {
-//                _contentState.value = MainFlowViewModel.ContentState.Error(
-//                    resourceManager.getString(R.string.you_dont_have_games_yet)
-//                )
-//            } catch (e: Exception) {
-//                _contentState.value = MainFlowViewModel.ContentState.Error(
-//                    getCommonErrorDescription(resourceManager, e)
-//                )
-//                e.printStackTrace()
-//            }
-//        }
-//    }
-
-
+    fun onSteamInfoClick() {
+        //todo
+    }
 }

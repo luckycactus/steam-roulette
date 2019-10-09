@@ -6,12 +6,12 @@ import kotlinx.android.synthetic.main.empty_layout.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
-class DataLoadingViewHolder (
+class DataLoadingViewHolder(
     private val emptyLayout: ViewGroup,
     private val progress: View,
     private val content: View,
     buttonAction: () -> Unit
-){
+) {
 
     private var state = State.CONTENT
     private val res = emptyLayout.resources
@@ -23,9 +23,9 @@ class DataLoadingViewHolder (
     }
 
     fun showLoading() {
+        progress.visibility(true)
         content.visibility(false)
         emptyLayout.visibility(false)
-        progress.visibility(true)
         state = State.LOADING
     }
 
@@ -37,7 +37,11 @@ class DataLoadingViewHolder (
         )
     }
 
-    fun showEmptyWithButton(title: String? = null, msg: String? = null, buttonText: String? = null) {
+    fun showEmptyWithButton(
+        title: String? = null,
+        msg: String? = null,
+        buttonText: String? = null
+    ) {
         setupButton(buttonText)
         showEmpty(title, msg)
     }
@@ -50,7 +54,11 @@ class DataLoadingViewHolder (
         )
     }
 
-    fun showErrorWithButton(title: String? = null, msg: String? = null, buttonText: String? = null) {
+    fun showErrorWithButton(
+        title: String? = null,
+        msg: String? = null,
+        buttonText: String? = null
+    ) {
         setupButton(buttonText)
         showError(title, msg)
     }

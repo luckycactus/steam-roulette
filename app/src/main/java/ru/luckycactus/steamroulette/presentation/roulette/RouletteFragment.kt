@@ -50,18 +50,22 @@ class RouletteFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        btnNextGame.setOnClickListener {
+        fabNextGame.setOnClickListener {
             viewModel.onNextGameClick()
         }
 
-        btnHideAndNextGame.setOnClickListener {
+        fabHideGame.setOnClickListener {
             viewModel.onHideGameClick()
+        }
+
+        fabSteamInfo.setOnClickListener {
+            viewModel.onSteamInfoClick()
         }
 
         dataLoadingViewHolder = DataLoadingViewHolder(
             emptyLayout,
             progress,
-            gameRouletteLayout,
+            content,
             viewModel::onRetryClick
         )
 

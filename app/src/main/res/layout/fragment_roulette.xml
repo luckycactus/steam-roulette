@@ -1,43 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
-        android:padding="@dimen/default_activity_margin"
         >
 
-    <LinearLayout
-            android:id="@+id/gameRouletteLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="@dimen/default_activity_margin"
             >
-
 
         <ru.luckycactus.steamroulette.presentation.widget.GameView
                 android:id="@+id/gameView"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                app:layout_constraintBottom_toTopOf="@id/fabSteamInfo"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintDimensionRatio="2:3"
+                android:layout_marginBottom="16dp"
                 />
 
-        <Button
-                android:id="@+id/btnNextGame"
-                android:layout_width="match_parent"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabSteamInfo"
+                style="@style/RouletteFab"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/next_game"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/fabHideGame"
+                app:srcCompat="@drawable/ic_steam"
                 />
 
-        <Button
-                android:id="@+id/btnHideAndNextGame"
-                android:layout_width="match_parent"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabHideGame"
+                style="@style/RouletteFab"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hide_this_game"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/fabSteamInfo"
+                app:layout_constraintRight_toLeftOf="@id/fabNextGame"
+                app:srcCompat="@drawable/ic_visibility_off_white_24dp"
                 />
 
-    </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabNextGame"
+                style="@style/RouletteFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/fabHideGame"
+                app:layout_constraintRight_toRightOf="parent"
+                app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+                />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include layout="@layout/empty_layout" />
 

@@ -44,7 +44,7 @@
                     android:id="@+id/ivAvatar"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/avatar_placeholder"
+                    app:srcCompat="@drawable/avatar_placeholder"
                     />
 
             <TextView

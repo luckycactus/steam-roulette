@@ -18,4 +18,8 @@
         <item name="android:background">@drawable/bottom_sheet_background</item>
     </style>
 
+    <style name="RouletteFab" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/primaryLight2</item>
+    </style>
+
 </resources>
