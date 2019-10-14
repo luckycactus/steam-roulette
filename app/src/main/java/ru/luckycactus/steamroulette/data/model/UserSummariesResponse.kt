@@ -11,8 +11,9 @@ data class UserSummaryResult(
     @SerializedName("players") val players: List<UserSummaryEntity>
 )
 
+@Entity(tableName = "user_summary", primaryKeys = ["steam64"])
 data class UserSummaryEntity(
-    @SerializedName("steamid") val steam64: String,
+    @SerializedName("steamid") val steam64: Long,
     @SerializedName("communityvisibilitystate") val communityVisibilityState: Int,
     @SerializedName("profilestate") val profileState: Int,
     @SerializedName("personaname") val personaName: String,

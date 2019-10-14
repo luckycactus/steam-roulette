@@ -145,7 +145,6 @@ inline fun View.setPadding(@Px size: Int) {
     setPadding(size, size, size, size)
 }
 
-//todo add compositeTouchDelegate
 fun View.expandTouchArea(desiredWidth: Int, desiredHeight: Int) {
     val parent = parent as View
     parent.post {

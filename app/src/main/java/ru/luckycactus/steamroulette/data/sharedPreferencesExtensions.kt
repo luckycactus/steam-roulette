@@ -165,7 +165,6 @@ private fun <T> SharedPreferences.getDelegate(
     else -> throw Exception()
 } as ReadWriteProperty<Any, T>
 
-//todo Сверять с текущим значением
 private class SharedPreferenceLiveData<T>(
     prefs: SharedPreferences,
     private val key: String,
@@ -174,16 +173,33 @@ private class SharedPreferenceLiveData<T>(
 
     private val compositeListener = prefs.compositeListener
     private val prefValue by delegate
-    private val listener = { value = prefValue }
+    private val listener = { updateValue() }
 
-    //todo set value on livedata creation?
+    private var firstTime = true
+
+    init {
+        updateValue()
+        this.distinctUntilChanged()
+    }
+
     override fun onActive() {
-        value = prefValue
+        updateValue()
         compositeListener.addListener(key, listener)
     }
 
     override fun onInactive() {
         compositeListener.removeListener(key, listener)
+    }
+
+    private fun updateValue() {
+        val newValue = prefValue
+        if (firstTime
+            || value == null && newValue != null
+            || value != null && newValue != value
+        ) {
+            firstTime = false
+            value = newValue
+        }
     }
 }
 

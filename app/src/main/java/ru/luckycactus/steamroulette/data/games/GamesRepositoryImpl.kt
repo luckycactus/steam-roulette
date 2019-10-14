@@ -19,13 +19,6 @@ class GamesRepositoryImpl(
     private val remoteGamesDataStore: RemoteGamesDataStore
 ) : GamesRepository {
 
-    override suspend fun getOwnedGames(
-        steamId: SteamId,
-        cachePolicy: CachePolicy
-    ): List<OwnedGame> =
-        createOwnedGamesResource(steamId.asSteam64())
-            .get(cachePolicy)
-
     override suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy) {
         createOwnedGamesResource(steamId.asSteam64())
             .updateIfNeed(cachePolicy)

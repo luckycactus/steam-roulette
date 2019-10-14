@@ -4,15 +4,32 @@ import androidx.room.*
 import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import androidx.lifecycle.LiveData
+import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
+import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 
 
 @Database(
-    entities = [OwnedGameRoomEntity::class],
-    version = 4
+    entities = [OwnedGameRoomEntity::class, UserSummaryEntity::class],
+    version = 5
 )
 abstract class DB : RoomDatabase() {
 
     abstract fun ownedGamesDao(): OwnedGamesDao
+
+    abstract fun userSummaryDao(): UserSummaryDao
+}
+
+@Dao
+abstract class UserSummaryDao {
+
+    @Query("select * from user_summary where steam64 = :steam64")
+    abstract suspend fun getUserSummary(steam64: Long): UserSummaryEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun saveUserSummaryToCache(userSummary: UserSummaryEntity)
+
+    @Query("select * from user_summary where steam64 = :steam64")
+    abstract fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity>
 }
 
 @Dao

@@ -43,7 +43,6 @@ class CacheHelper(
         !shouldUseCache(cachePolicy, key, window, timeUnit)
 
     fun setCachedNow(key: String) {
-        //todo commit or apply?
         prefsEditor.apply { putLong(key, System.currentTimeMillis()) }
     }
 

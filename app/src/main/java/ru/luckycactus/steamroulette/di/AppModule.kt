@@ -45,8 +45,6 @@ object AppModule {
     lateinit var resourceManager: ResourceManager
         private set
 
-    val gson = Gson()
-
     fun init(app: Application) {
         appContext = app
         cacheHelper =
@@ -127,10 +125,6 @@ object AppModule {
         SignOutUserUseCase(userRepository)
     }
 
-    val getOwnedGamesUseCase by lazy {
-        GetOwnedGamesUseCase(gamesRepository)
-    }
-
     val validateSteamIdInputUseCase by lazy {
         ValidateSteamIdInputUseCase()
     }
@@ -151,8 +145,7 @@ object AppModule {
         UserRepositoryImpl(
             localUserDataStore,
             remoteUserDataStore,
-            UserSummaryMapper(),
-            appPreferences
+            UserSummaryMapper()
         )
     }
 
@@ -173,9 +166,8 @@ object AppModule {
 
     private val localUserDataStore: UserDataStore.Local by lazy {
         LocalUserDataStore(
-            appContext.getSharedPreferences("user-cache", Context.MODE_PRIVATE),
-            cacheHelper,
-            gson
+            steamRouletteDb,
+            appContext.getSharedPreferences("user-cache", Context.MODE_PRIVATE)
         )
     }
 

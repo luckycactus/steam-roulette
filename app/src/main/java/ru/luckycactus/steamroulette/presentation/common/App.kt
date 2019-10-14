@@ -1,13 +1,19 @@
 package ru.luckycactus.steamroulette.presentation.common
 
 import android.app.Application
+import okhttp3.internal.Internal.instance
 import ru.luckycactus.steamroulette.di.DI
 
-//todo prefetch
 class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         DI.init(this)
+    }
+
+    companion object {
+        private lateinit var instance: App
+        fun getInstance() = instance
     }
 }

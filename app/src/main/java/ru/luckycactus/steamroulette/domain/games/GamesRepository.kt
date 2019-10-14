@@ -9,8 +9,6 @@ import java.util.*
 
 interface GamesRepository {
 
-    suspend fun getOwnedGames(steamId: SteamId, cachePolicy: CachePolicy): List<OwnedGame>
-
     suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy)
 
     suspend fun getFilteredLocalOwnedGamesIds(

@@ -4,7 +4,6 @@ import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 
-//todo naming
 class FetchUserSummaryUseCase(
     private val userRepository: UserRepository
 ) : SuspendUseCase<FetchUserSummaryUseCase.Params, Unit>() {

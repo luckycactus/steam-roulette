@@ -44,18 +44,22 @@ class GameView @JvmOverloads constructor(
     fun setGame(game: OwnedGame) {
         tvName.text = game.name
 
-        val headerImageRequest = Glide.with(this)
+        val errorRequest = Glide.with(this)
             .load(game.headerImageUrl)
             .transform(headerImageTransformation)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .transition(DrawableTransitionOptions.withCrossFade())
 
-        //todo Грузить hd через wifi, обычную через мобильную сеть
+        val thumbnailRequest = errorRequest.clone()
+            .onlyRetrieveFromCache(true)
+
         Glide.with(this)
             .load(game.libraryPortraitImageUrlHD)
-            .thumbnail(headerImageRequest.onlyRetrieveFromCache(true))
-            .error(headerImageRequest)
+            .thumbnail(thumbnailRequest)
+            .error(errorRequest)
             .transition(DrawableTransitionOptions.withCrossFade())
             .diskCacheStrategy(DiskCacheStrategy.DATA)
             .into(ivGame)
+        //todo Грузить hd через wifi, обычную через мобильную сеть
     }
 }

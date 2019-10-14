@@ -1,8 +1,11 @@
 package ru.luckycactus.steamroulette.domain.entity
 
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.presentation.common.App
 import java.lang.IllegalStateException
 import java.util.*
 import kotlin.NoSuchElementException
@@ -21,10 +24,23 @@ class OwnedGamesQueueImpl(
     numbers: List<Int>,
     private val gamesRepository: GamesRepository
 ) : OwnedGamesQueue {
-    private val numberQueue = LinkedList(numbers.shuffled())
+    private val numberQueue = ArrayDeque(numbers.shuffled())
 
     private var currentMarkedAsHidden = false
     private var current: OwnedGame? = null
+
+    init {
+        GlobalScope.launch {
+            for (i in 0 until minOf(5, numberQueue.size - 1)) {
+                val n = numberQueue.elementAt(i)
+                Glide.with(App.getInstance())
+                    .load(gamesRepository.getLocalOwnedGame(steamId, n).libraryPortraitImageUrlHD)
+                    .diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .preload()
+            }
+        }
+
+    }
 
     override fun hasNext(): Boolean {
         return numberQueue.size - (if (current != null) 1 else 0) > 0

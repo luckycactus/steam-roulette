@@ -35,7 +35,6 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         return if (shouldFetch(cachePolicy)) {
             val data = wrapCommonNetworkExceptions { getFromNetwork() }
             saveToCache(data)
-            //todo transaction
             cacheHelper.setCachedNow(key)
             memoryCache.remove(memoryKey)
             true
