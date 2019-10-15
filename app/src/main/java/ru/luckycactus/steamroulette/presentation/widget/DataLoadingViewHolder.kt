@@ -14,7 +14,8 @@ class DataLoadingViewHolder(
     buttonAction: () -> Unit
 ) {
 
-    private var state = State.CONTENT
+    var state = State.CONTENT
+        private set
     private val res = placeholderLayout.resources
 
     init {
@@ -83,7 +84,7 @@ class DataLoadingViewHolder(
         state = State.HIDDEN
     }
 
-    private enum class State {
+    enum class State {
         PLACEHOLDER,
         LOADING,
         CONTENT,

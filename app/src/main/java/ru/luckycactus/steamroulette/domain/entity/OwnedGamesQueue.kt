@@ -12,6 +12,8 @@ interface OwnedGamesQueue {
     suspend fun next(): OwnedGame
 
     val size: Int
+
+    val started: Boolean
 }
 
 class OwnedGamesQueueImpl(
@@ -19,12 +21,16 @@ class OwnedGamesQueueImpl(
     numbers: List<Int>,
     private val gamesRepository: GamesRepository
 ) : OwnedGamesQueue {
+
     private val gameIds = numbers.shuffled()
 
     private var currentIndex = -1
 
     override val size
         get() = gameIds.size
+
+    override val started: Boolean
+        get() = currentIndex >= 0
 
     override fun hasNext(): Boolean {
         return size - currentIndex - 1 > 0

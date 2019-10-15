@@ -30,7 +30,7 @@
     <string name="playtime_filter_not_played_games">Игры, в которые я не играл</string>
     <string name="playtime_filter_not_played_2_weeks_games">Игры, в которые я не играл в последние 2 недели</string>
     <string name="hidden_games_count">Скрыто игр</string>
-    <string name="games_queue_ended">Вы просмотрели все игры</string>
+    <string name="games_queue_ended">Больше нет подходящих игр!</string>
     <string name="filtered_games_not_found">Игры, удовлетворяющие заданным фильтрам, не найдены</string>
     <string name="restart_queue">Начать заново</string>
 </resources>

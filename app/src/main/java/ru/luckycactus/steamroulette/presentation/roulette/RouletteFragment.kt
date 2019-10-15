@@ -23,6 +23,7 @@ import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
+import ru.luckycactus.steamroulette.presentation.widget.GameView
 
 
 class RouletteFragment : BaseFragment() {
@@ -71,9 +72,15 @@ class RouletteFragment : BaseFragment() {
             viewModel::onRetryClick
         )
 
-        observe(viewModel.currentGame) {
-            gameView.setGame(it)
+        observeEvent(viewModel.queueResetAction) {
+            viewSwitcher.reset()
         }
+
+        observe(viewModel.currentGame) {
+            (viewSwitcher.nextView as GameView).setGame(it)
+            viewSwitcher.showNext()
+        }
+
 
         observe(viewModel.contentState) {
             dataLoadingViewHolder.showContentState(it)

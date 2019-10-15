@@ -11,21 +11,40 @@
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipChildren="false"
             android:clipToPadding="false"
             android:padding="@dimen/default_activity_margin"
             >
 
-        <ru.luckycactus.steamroulette.presentation.widget.GameView
-                android:id="@+id/gameView"
+        <ViewSwitcher
+                android:id="@+id/viewSwitcher"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginBottom="16dp"
+                android:clipChildren="false"
+                android:inAnimation="@android:anim/slide_in_left"
+                android:outAnimation="@android:anim/slide_out_right"
                 app:layout_constraintBottom_toTopOf="@id/fabSteamInfo"
+                app:layout_constraintDimensionRatio="2:3"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintDimensionRatio="2:3"
-                android:layout_marginBottom="16dp"
-                />
+                >
+
+            <ru.luckycactus.steamroulette.presentation.widget.GameView
+                    android:id="@+id/gameView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+            <ru.luckycactus.steamroulette.presentation.widget.GameView
+                    android:id="@+id/gameView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+        </ViewSwitcher>
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabSteamInfo"

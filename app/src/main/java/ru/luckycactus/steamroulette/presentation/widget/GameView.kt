@@ -20,6 +20,8 @@ class GameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
 
+    private var current: OwnedGame? = null
+
     private val headerImageTransformation = MultiTransformation(
         FitCenter(),
         CoverBlurTransformation(50, 5, 0.5f)
@@ -29,9 +31,14 @@ class GameView @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.view_game_roulette, this, true)
         setCardBackgroundColor(getColorFromRes(R.color.gameCardBackground))
         radius = resources.getDimension(R.dimen.cardview_corner_radius)
+        clipChildren = false
     }
 
     fun setGame(game: OwnedGame) {
+        if (game == current)
+            return
+
+        current = game
         tvName.text = game.name
 
         val errorRequest = Glide.with(this)

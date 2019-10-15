@@ -31,11 +31,14 @@ class RouletteViewModel(
         get() = _openUrlAction
     val controlsAvailable: LiveData<Boolean>
         get() = _controlsAvailable
+    val queueResetAction: LiveData<Event<Unit>>
+        get() = _queueResetAction
 
     private val _currentGame = MutableLiveData<OwnedGame>()
     private val _contentState = MediatorLiveData<ContentState>()
     private val _openUrlAction = MutableLiveData<Event<String>>()
     private val _controlsAvailable = MutableLiveData<Boolean>()
+    private val _queueResetAction = MutableLiveData<Event<Unit>>()
     private val currentUserPlayTimeFilter: LiveData<EnPlayTimeFilter?>
 
     private val getLocalOwnedGamesQueue = AppModule.getOwnedGamesQueueUseCase
@@ -130,7 +133,12 @@ class RouletteViewModel(
                 viewModelScope.launch {
                     _controlsAvailable.value = false
                     try {
-                        _currentGame.value = it.next()
+                        val firstGame = !it.started
+                        val nextGame = it.next()
+                        if (firstGame) {
+                            _queueResetAction.value = Event(Unit)
+                        }
+                        _currentGame.value = nextGame
                         _contentState.value = ContentState.Success
                     } finally {
                         _controlsAvailable.value = true
