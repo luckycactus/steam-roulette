@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.LruCache
 import androidx.room.Room
-import com.google.gson.Gson
 import ru.luckycactus.steamroulette.data.games.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
@@ -187,7 +186,7 @@ object AppModule {
     }
 
     private val LocalGamesDataStore: LocalGamesDataStore by lazy {
-        LocalGamesDataStore(steamRouletteDb, appPreferences)
+        LocalGamesDataStore(steamRouletteDb)
     }
 
     private val RemoteGamesDataStore: RemoteGamesDataStore by lazy {

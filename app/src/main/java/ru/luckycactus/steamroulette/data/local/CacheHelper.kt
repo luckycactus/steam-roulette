@@ -1,7 +1,9 @@
 package ru.luckycactus.steamroulette.data.local
 
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.apply
+import ru.luckycactus.steamroulette.data.longLiveData
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import java.util.concurrent.TimeUnit
 
@@ -49,4 +51,6 @@ class CacheHelper(
     fun invalidateCache(key: String) {
         prefsEditor.apply { remove(key) }
     }
+
+    fun observeCacheUpdates(key: String): LiveData<Long> = prefs.longLiveData(key, 0)
 }

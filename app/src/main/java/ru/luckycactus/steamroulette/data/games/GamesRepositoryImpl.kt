@@ -36,9 +36,8 @@ class GamesRepositoryImpl(
         localGamesDataStore.clearHiddenGames(steamId.asSteam64())
     }
 
-    override fun observeGamesUpdates(steamId: SteamId): LiveData<Date> {
-        return localGamesDataStore.observeGameSyncs(steamId.asSteam64()).map { Date(it) }
-    }
+    override fun observeGamesUpdates(steamId: SteamId): LiveData<Date> =
+        createOwnedGamesResource(steamId.asSteam64()).observeCacheUpdates().map { Date(it) }
 
 
     override suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean {
@@ -55,8 +54,8 @@ class GamesRepositoryImpl(
         return localGamesDataStore.getOwnedGame(steamId.asSteam64(), appId)
     }
 
-    override suspend fun markLocalGameAsHidden(steamId: SteamId, ownedGame: OwnedGame) {
-        localGamesDataStore.markGameAsHidden(steamId.asSteam64(), ownedGame.appId)
+    override suspend fun markLocalGameAsHidden(steamId: SteamId, appId: Int) {
+        localGamesDataStore.markGameAsHidden(steamId.asSteam64(), appId)
     }
 
     private fun createOwnedGamesResource(steam64: Long): NetworkBoundResource<List<OwnedGameEntity>, List<OwnedGame>> {

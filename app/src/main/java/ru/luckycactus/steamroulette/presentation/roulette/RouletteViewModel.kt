@@ -13,6 +13,7 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGamesQueue
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetLocalOwnedGamesQueueUseCase
+import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
@@ -25,10 +26,12 @@ class RouletteViewModel(
         get() = _currentGame
     val contentState: LiveData<Result<Unit>>
         get() = _contentState
+    val openUrlAction: LiveData<Event<String>>
+        get() = _openUrlAction
 
     private val _currentGame = MutableLiveData<OwnedGame>()
     private val _contentState = MediatorLiveData<Result<Unit>>()
-
+    private val _openUrlAction = MutableLiveData<Event<String>>()
     private val currentUserPlayTimeFilter: LiveData<EnPlayTimeFilter?>
 
     private val getLocalOwnedGamesQueue = AppModule.getOwnedGamesQueueUseCase
@@ -123,6 +126,8 @@ class RouletteViewModel(
     }
 
     fun onSteamInfoClick() {
-        //todo
+        _currentGame.value?.let {
+            _openUrlAction.value = Event(it.storeUrl)
+        }
     }
 }

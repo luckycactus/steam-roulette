@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.data.net
 
 import android.util.LruCache
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.NonCancellable.isActive
@@ -60,6 +61,8 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
                     send(getCachedData()!!)
             }
         }
+
+    fun observeCacheUpdates(): LiveData<Long> = cacheHelper.observeCacheUpdates(key)
 
     private suspend fun getCachedData(): ResultType? {
         var data: ResultType? = null

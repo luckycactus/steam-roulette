@@ -1,18 +1,14 @@
 package ru.luckycactus.steamroulette.data.games.datastore
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.local.DB
-import ru.luckycactus.steamroulette.data.longLiveData
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 
 class LocalGamesDataStore(
-    private val db: DB,
-    private val prefs: SharedPreferences
+    private val db: DB
 ) : GamesDataStore.Local {
 
     override suspend fun getOwnedGames(steam64: Long): List<OwnedGame> {
@@ -27,16 +23,11 @@ class LocalGamesDataStore(
         return db.ownedGamesDao().observeHiddenGameCount(steam64)
     }
 
-    override fun observeGameSyncs(steam64: Long): LiveData<Long> =
-        prefs.longLiveData(gamesSyncKey(steam64), 0)
-
     override suspend fun saveOwnedGamesToCache(steam64: Long, games: List<OwnedGameEntity>) {
         val hiddenGameIds = db.ownedGamesDao().getHiddenGamesIds(steam64).toSet()
         val timestamp = System.currentTimeMillis()
         val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds, timestamp)
-        //todo intransaction
         db.ownedGamesDao().insertGamesRemoveOthers(steam64, timestamp, mapper.mapFrom(games))
-        prefs.edit { putLong(gamesSyncKey(steam64), System.currentTimeMillis()) }
     }
 
     override suspend fun getFilteredOwnedGamesIds(
@@ -67,6 +58,4 @@ class LocalGamesDataStore(
     override suspend fun isUserHasOwnedGames(steam64: Long): Boolean {
         return db.ownedGamesDao().isUserHasOwnedGames(steam64)
     }
-
-    private fun gamesSyncKey(steam64: Long) = "$steam64-games-sync"
 }
