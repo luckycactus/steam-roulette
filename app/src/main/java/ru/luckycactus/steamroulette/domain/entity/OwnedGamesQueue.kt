@@ -10,6 +10,8 @@ interface OwnedGamesQueue {
     fun markCurrentAsHidden()
 
     suspend fun next(): OwnedGame
+
+    val size: Int
 }
 
 class OwnedGamesQueueImpl(
@@ -21,7 +23,7 @@ class OwnedGamesQueueImpl(
 
     private var currentIndex = -1
 
-    val size
+    override val size
         get() = gameIds.size
 
     override fun hasNext(): Boolean {

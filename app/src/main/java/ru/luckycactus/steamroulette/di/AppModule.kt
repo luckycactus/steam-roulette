@@ -198,7 +198,7 @@ object AppModule {
     }
 
     private val steamRouletteDb by lazy {
-        Room.databaseBuilder(appContext, DB::class.java, "steam_roulette__db")
+        Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
             .fallbackToDestructiveMigration() //todo remove
             .build()
     }

@@ -13,6 +13,7 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGamesQueue
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetLocalOwnedGamesQueueUseCase
+import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
@@ -24,14 +25,17 @@ class RouletteViewModel(
 
     val currentGame: LiveData<OwnedGame>
         get() = _currentGame
-    val contentState: LiveData<Result<Unit>>
-        get() = _contentState
+    val contentState: LiveData<ContentState>
+        get() = _contentState.distinctUntilChanged()
     val openUrlAction: LiveData<Event<String>>
         get() = _openUrlAction
+    val controlsAvailable: LiveData<Boolean>
+        get() = _controlsAvailable
 
     private val _currentGame = MutableLiveData<OwnedGame>()
-    private val _contentState = MediatorLiveData<Result<Unit>>()
+    private val _contentState = MediatorLiveData<ContentState>()
     private val _openUrlAction = MutableLiveData<Event<String>>()
+    private val _controlsAvailable = MutableLiveData<Boolean>()
     private val currentUserPlayTimeFilter: LiveData<EnPlayTimeFilter?>
 
     private val getLocalOwnedGamesQueue = AppModule.getOwnedGamesQueueUseCase
@@ -67,7 +71,13 @@ class RouletteViewModel(
     }
 
     fun onRetryClick() {
-        userViewModelDelegate.fetchGames()
+        gamesQueue?.let {
+            if (!it.hasNext() && it.size > 0) {
+                refreshQueue()
+            } else {
+                userViewModelDelegate.fetchGames()
+            }
+        }
     }
 
     private fun refreshQueue() {
@@ -75,16 +85,16 @@ class RouletteViewModel(
         val filter = currentUserPlayTimeFilter.value
 
         gamesQueueJob?.cancel()
+        gamesQueue = null
         if (fetchGamesResult == null || filter == null)
             return
 
         if (fetchGamesResult == Result.Loading) {
-            _contentState.value = fetchGamesResult
-            gamesQueue = null
+            _contentState.value = ContentState.Loading
         } else {
             gamesQueueJob = viewModelScope.launch {
                 try {
-                    _contentState.value = Result.Loading
+                    _contentState.value = ContentState.Loading
                     gamesQueue =
                         getLocalOwnedGamesQueue(
                             GetLocalOwnedGamesQueueUseCase.Params(
@@ -94,17 +104,17 @@ class RouletteViewModel(
                         )
                     if (isActive) {
                         showNextGame()
-                        _contentState.value = Result.success
                     }
                 } catch (e: Exception) {
                     if (fetchGamesResult is Result.Error)
-                        _contentState.value = Result.Error(fetchGamesResult.message)
+                        _contentState.value =
+                            ContentState.errorPlaceholder(fetchGamesResult.message)
                     else if (e is MissingOwnedGamesException) {
-                        _contentState.value = Result.Error(
+                        _contentState.value = ContentState.errorPlaceholder(
                             resourceManager.getString(R.string.you_dont_have_games_yet)
                         )
                     } else {
-                        _contentState.value = Result.Error(
+                        _contentState.value = ContentState.errorPlaceholder(
                             getCommonErrorDescription(resourceManager, e)
                         )
                         e.printStackTrace()
@@ -115,13 +125,29 @@ class RouletteViewModel(
     }
 
     private fun showNextGame() {
-        if (gamesQueue!!.hasNext()) { //todo
-            viewModelScope.launch {
-                //todo progress
-                _currentGame.value = gamesQueue!!.next() //todo
+        gamesQueue?.let {
+            if (it.hasNext()) {
+                viewModelScope.launch {
+                    _controlsAvailable.value = false
+                    try {
+                        _currentGame.value = it.next()
+                        _contentState.value = ContentState.Success
+                    } finally {
+                        _controlsAvailable.value = true
+                    }
+                }
+            } else if (it.size > 0) {
+                _contentState.value = ContentState.emptyPlaceholder(
+                    resourceManager.getString(R.string.games_queue_ended),
+                    buttonText = resourceManager.getString(R.string.restart_queue)
+                )
+            } else {
+                _contentState.value = ContentState.Placeholder(
+                    resourceManager.getString(R.string.filtered_games_not_found),
+                    titleType = ContentState.TitleType.None,
+                    buttonType = ContentState.ButtonType.None
+                )
             }
-        } else {
-            //todo show error
         }
     }
 

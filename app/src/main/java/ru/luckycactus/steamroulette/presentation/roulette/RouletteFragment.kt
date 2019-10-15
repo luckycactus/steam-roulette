@@ -12,8 +12,10 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
@@ -40,7 +42,7 @@ class RouletteFragment : BaseFragment() {
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
-    override val layoutResId: Int = ru.luckycactus.steamroulette.R.layout.fragment_roulette
+    override val layoutResId: Int = R.layout.fragment_roulette
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,16 +76,18 @@ class RouletteFragment : BaseFragment() {
         }
 
         observe(viewModel.contentState) {
-            when (it) {
-                Result.Loading -> dataLoadingViewHolder.showLoading()
-                is Result.Error -> dataLoadingViewHolder.showErrorWithButton(
-                    msg = it.message
-                )
-                is Result.Success -> dataLoadingViewHolder.showContent()
-            }
+            dataLoadingViewHolder.showContentState(it)
+        }
+
+        observe(viewModel.controlsAvailable) {
+            fabNextGame.isClickable = it
+            fabHideGame.isClickable = it
+            fabSteamInfo.isClickable = it
         }
 
         observeEvent(viewModel.openUrlAction) {
+            //todo into navigation
+            //todo customtabs
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
             if (isAppInstalled(context!!, "com.valvesoftware.android.steam.community")) {
                 with(intent) {
@@ -97,12 +101,12 @@ class RouletteFragment : BaseFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(ru.luckycactus.steamroulette.R.menu.menu_roulette, menu)
+        inflater.inflate(R.menu.menu_roulette, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            ru.luckycactus.steamroulette.R.id.action_roulette_options -> {
+            R.id.action_roulette_options -> {
                 RouletteOptionsFragment.newInstance().show(
                     childFragmentManager,
                     MainFlowFragment.FILTER_FRAGMENT_TAG
