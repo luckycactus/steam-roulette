@@ -11,6 +11,8 @@ interface OwnedGamesQueue {
 
     suspend fun next(): OwnedGame
 
+    fun peekNext(): OwnedGame?
+
     val size: Int
 
     val started: Boolean
@@ -21,10 +23,10 @@ class OwnedGamesQueueImpl(
     numbers: List<Int>,
     private val gamesRepository: GamesRepository
 ) : OwnedGamesQueue {
-
     private val gameIds = numbers.shuffled()
 
     private var currentIndex = -1
+    private var next: OwnedGame? = null
 
     override val size
         get() = gameIds.size
@@ -40,7 +42,17 @@ class OwnedGamesQueueImpl(
         if (!hasNext())
             throw NoSuchElementException()
         currentIndex++
-        return gamesRepository.getLocalOwnedGame(steamId, gameIds[currentIndex])
+        if (currentIndex == 0)
+            next = gamesRepository.getLocalOwnedGame(steamId, gameIds[currentIndex])
+        val current = next
+        if (hasNext())
+            next = gamesRepository.getLocalOwnedGame(steamId, gameIds[currentIndex + 1])
+        return current!!
+    }
+
+    override fun peekNext(): OwnedGame? {
+        check(currentIndex >= 0) { "Cannot peek next game. You should call next() first!" }
+        return next
     }
 
     override fun markCurrentAsHidden() {

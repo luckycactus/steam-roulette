@@ -68,6 +68,13 @@ abstract class OwnedGamesDao {
     )
     abstract suspend fun getGame(steam64: Long, gameId: Int): OwnedGame
 
+    @Query(
+        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
+            from owned_game 
+            where appId in (:gameIds) and userSteam64 = :steam64"""
+    )
+    abstract suspend fun getGames(steam64: Long, gameIds: Int): List<OwnedGame>
+
     @Query("UPDATE owned_game SET hidden = 1 WHERE userSteam64 =:steam64 and appId = :gameId")
     abstract suspend fun markGameAsHidden(steam64: Long, gameId: Int)
 

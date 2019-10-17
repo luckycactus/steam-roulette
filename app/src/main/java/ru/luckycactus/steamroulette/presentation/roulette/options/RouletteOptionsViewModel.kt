@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
+import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterUseCase
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
@@ -24,6 +25,7 @@ class RouletteOptionsViewModel(
     private val observePlayTimeFilter = AppModule.observePlayTimeFilterUseCase
     private val savePlayTimeFilter = AppModule.savePlayTimeFilterUseCase
     private val observeHiddenGamesCount = AppModule.observeHiddenGamesCountUseCase
+    private val clearHiddenGames = AppModule.clearHiddenGamesUseCase
 
     private val resourceManager = AppModule.resourceManager
 
@@ -60,7 +62,12 @@ class RouletteOptionsViewModel(
 
     fun onClearHiddenGames() {
         //todo Что будет, если очистить во время обновления?
-        userViewModelDelegate.clearHiddenGames()
+        userViewModelDelegate.currentUserSteamId?.let {
+            viewModelScope.launch {
+                clearHiddenGames(it)
+            }
+        }
+
         viewModelScope.launch {
             delay(CLOSE_DELAY)
             _closeAction.value = Unit

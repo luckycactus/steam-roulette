@@ -49,8 +49,6 @@ class MainFlowViewModel(
     private val observeUserSummary = AppModule.observeUserSummaryUseCase
     private val fetchUserSummary = AppModule.fetchUserSummaryUseCase
     private val fetchUserOwnedGames = AppModule.fetchUserOwnedGamesUseCase
-    private val clearHiddenGames = AppModule.clearHiddenGamesUseCase
-
 
     private val resourceManager: ResourceManager = AppModule.resourceManager
 
@@ -97,18 +95,6 @@ class MainFlowViewModel(
             }
         }
     }
-
-
-    override fun clearHiddenGames() {
-        currentUserSteamId?.let {
-            viewModelScope.launch {
-                _fetchGamesState.value = Result.Loading
-                clearHiddenGames(it)
-                _fetchGamesState.value = Result.success
-            }
-        }
-    }
-
 
     private fun handleUserFetchError(result: Result<Unit>) {
         if (result is Result.Error) {

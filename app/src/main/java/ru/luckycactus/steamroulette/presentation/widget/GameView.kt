@@ -34,29 +34,34 @@ class GameView @JvmOverloads constructor(
         clipChildren = false
     }
 
-    fun setGame(game: OwnedGame) {
+    fun setGame(game: OwnedGame?) {
         if (game == current)
             return
 
         current = game
-        tvName.text = game.name
+        tvName.text = game?.name
 
-        val errorRequest = Glide.with(this)
-            .load(game.headerImageUrl)
-            .transform(headerImageTransformation)
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
-            .transition(DrawableTransitionOptions.with(DrawableAlwaysCrossFadeFactory()))
+        if (game != null) {
+            val errorRequest = Glide.with(this)
+                .load(game.headerImageUrl)
+                .transform(headerImageTransformation)
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .transition(DrawableTransitionOptions.with(DrawableAlwaysCrossFadeFactory()))
 
-        val thumbnailRequest = errorRequest.clone()
-            .onlyRetrieveFromCache(true)
+            val thumbnailRequest = errorRequest.clone()
+                .onlyRetrieveFromCache(true)
 
-        Glide.with(this)
-            .load(game.libraryPortraitImageUrlHD)
-            .thumbnail(thumbnailRequest)
-            .error(errorRequest)
-            .transition(DrawableTransitionOptions.with(DrawableAlwaysCrossFadeFactory()))
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
-            .into(ivGame)
+            Glide.with(this)
+                .load(game.libraryPortraitImageUrlHD)
+                .thumbnail(thumbnailRequest)
+                .error(errorRequest)
+                .transition(DrawableTransitionOptions.with(DrawableAlwaysCrossFadeFactory()))
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .into(ivGame)
+        } else {
+            Glide.with(this)
+                .clear(ivGame)
+        }
         //todo Грузить hd через wifi, обычную через мобильную сеть
     }
 }

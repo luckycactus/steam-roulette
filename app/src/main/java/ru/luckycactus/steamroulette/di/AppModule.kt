@@ -53,6 +53,10 @@ object AppModule {
         requestLruCache = LruCache(50)
     }
 
+    val observeHiddenGamesClearUseCase by lazy {
+        ObserveHiddenGamesClearUseCase(gamesRepository)
+    }
+
     val clearHiddenGamesUseCase by lazy {
         ClearHiddenGamesUseCase(gamesRepository)
     }

@@ -34,6 +34,9 @@ class RouletteViewModel(
     val queueResetAction: LiveData<Event<Unit>>
         get() = _queueResetAction
 
+    var nextGame: OwnedGame? = null
+        get() = gamesQueue?.peekNext()
+
     private val _currentGame = MutableLiveData<OwnedGame>()
     private val _contentState = MediatorLiveData<ContentState>()
     private val _openUrlAction = MutableLiveData<Event<String>>()
@@ -43,6 +46,7 @@ class RouletteViewModel(
 
     private val getLocalOwnedGamesQueue = AppModule.getOwnedGamesQueueUseCase
     private val observePlayTimeFilter = AppModule.observePlayTimeFilterUseCase
+    private val observeHiddenGamesClear = AppModule.observeHiddenGamesClearUseCase
 
     private val resourceManager: ResourceManager = AppModule.resourceManager
 
@@ -60,6 +64,14 @@ class RouletteViewModel(
         }
 
         _contentState.addSource(currentUserPlayTimeFilter) {
+            refreshQueue()
+        }
+
+        _contentState.addSource(userViewModelDelegate.observeCurrentUserSteamId().nullableSwitchMap {
+            observeHiddenGamesClear(
+                it
+            )
+        }) {
             refreshQueue()
         }
     }

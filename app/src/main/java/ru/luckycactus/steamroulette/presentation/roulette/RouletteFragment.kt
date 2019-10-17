@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.Animation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -64,6 +66,18 @@ class RouletteFragment : BaseFragment() {
         fabSteamInfo.setOnClickListener {
             viewModel.onSteamInfoClick()
         }
+
+        viewSwitcher.inAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {
+            }
+
+            override fun onAnimationStart(animation: Animation?) {
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                (viewSwitcher.nextView as GameView).setGame(viewModel.nextGame)
+            }
+        })
 
         dataLoadingViewHolder = DataLoadingViewHolder(
             emptyLayout,
