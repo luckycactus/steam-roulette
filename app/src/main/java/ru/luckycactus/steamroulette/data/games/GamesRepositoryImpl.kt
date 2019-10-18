@@ -80,6 +80,6 @@ class GamesRepositoryImpl(
     }
 
     companion object {
-        val OWNED_GAMES_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS)
+        val OWNED_GAMES_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS)
     }
 }
