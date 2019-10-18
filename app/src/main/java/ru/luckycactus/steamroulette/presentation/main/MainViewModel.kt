@@ -30,9 +30,9 @@ class MainViewModel: ViewModel() {
 
     fun onExit() {
         screenLiveData.value = Event(Screen.Login)
+        //todo progress
         viewModelScope.launch {
             signOutUserUserCase()
-            //todo почистить кэш репозитория и картинок
         }
     }
 

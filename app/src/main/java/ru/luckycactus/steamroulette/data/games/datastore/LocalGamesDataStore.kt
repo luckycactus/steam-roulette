@@ -61,4 +61,8 @@ class LocalGamesDataStore(
     override suspend fun isUserHasOwnedGames(steam64: Long): Boolean {
         return db.ownedGamesDao().isUserHasOwnedGames(steam64)
     }
+
+    override suspend fun clearGames(steam64: Long) {
+        db.ownedGamesDao().clearGames(steam64)
+    }
 }

@@ -125,7 +125,12 @@ object AppModule {
     }
 
     val signOutUserUserCase by lazy {
-        SignOutUserUseCase(userRepository)
+        SignOutUserUseCase(
+            userRepository,
+            gamesRepository,
+            userSettingsRepository,
+            glideGameCoverLoader
+        )
     }
 
     val validateSteamIdInputUseCase by lazy {
@@ -195,10 +200,6 @@ object AppModule {
 
     private val RemoteGamesDataStore: RemoteGamesDataStore by lazy {
         RemoteGamesDataStore(NetworkModule.steamApiService)
-    }
-
-    private val ownedGameMapper by lazy {
-        OwnedGameMapper()
     }
 
     private val steamRouletteDb by lazy {

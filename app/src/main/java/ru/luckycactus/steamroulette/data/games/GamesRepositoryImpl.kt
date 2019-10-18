@@ -39,6 +39,13 @@ class GamesRepositoryImpl(
     override fun observeGamesUpdates(steamId: SteamId): LiveData<Date> =
         createOwnedGamesResource(steamId.asSteam64()).observeCacheUpdates().map { Date(it) }
 
+    override suspend fun clearUser(steamId: SteamId) {
+        localGamesDataStore.clearGames(steamId.asSteam64())
+        //todo synchronization
+        createOwnedGamesResource(steamId.asSteam64())
+            .invalidateCache()
+    }
+
     override suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean {
         return localGamesDataStore.isUserHasOwnedGames(steamId.asSteam64())
     }

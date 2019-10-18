@@ -26,8 +26,8 @@ abstract class SuspendUseCase<in Params, Result> {
         }
 }
 
-suspend fun <Params, Result> SuspendUseCase<Params?, Result>.execute(): Result =
-    execute(null)
+suspend fun <Result> SuspendUseCase<Unit, Result>.execute(): Result =
+    execute(Unit)
 
-suspend operator fun <Params, Result> SuspendUseCase<Params?, Result>.invoke(): Result =
-    execute(null)
+suspend operator fun <Result> SuspendUseCase<Unit, Result>.invoke(): Result =
+    execute(Unit)

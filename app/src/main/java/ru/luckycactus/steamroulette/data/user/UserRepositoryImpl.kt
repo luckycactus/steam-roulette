@@ -55,6 +55,11 @@ class UserRepositoryImpl(
         localUserDataStore.removeCurrentUserSteam64()
     }
 
+    override suspend fun clearUser(steamId: SteamId) {
+        localUserDataStore.removeUser(steamId.asSteam64())
+        createUserSummaryResource(steamId).invalidateCache()
+    }
+
     private fun fromSteam64(steam64: Long) =
         if (steam64 == 0L) null else SteamId.fromSteam64(steam64)
 

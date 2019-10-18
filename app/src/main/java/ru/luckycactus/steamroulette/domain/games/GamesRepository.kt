@@ -31,5 +31,7 @@ interface GamesRepository {
     suspend fun clearHiddenGames(steamId: SteamId)
 
     fun observeGamesUpdates(steamId: SteamId): LiveData<Date>
+
+    suspend fun clearUser(steamId: SteamId)
 }
 

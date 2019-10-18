@@ -30,5 +30,11 @@ class UserSettingsRepositoryImpl(
         }
     }
 
+    override fun clearUser(steamId: SteamId) {
+        userSettingsPrefs.edit {
+            remove(playTimeKey(steamId))
+        }
+    }
+
     private fun playTimeKey(steamId: SteamId) = "playTimeFilter-${steamId.asSteam64()}"
 }

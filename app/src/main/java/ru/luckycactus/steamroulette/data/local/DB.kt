@@ -30,6 +30,9 @@ abstract class UserSummaryDao {
 
     @Query("select * from user_summary where steam64 = :steam64")
     abstract fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity>
+
+    @Query("delete from user_summary where steam64 = :steam64")
+    abstract suspend fun removeUser(steam64: Long)
 }
 
 @Dao
@@ -117,4 +120,7 @@ abstract class OwnedGamesDao {
             where appId in (:appIds) and userSteam64 = :steam64"""
     )
     abstract suspend fun getGames(steam64: Long, appIds: List<Int>): List<OwnedGame>
+
+    @Query("""delete from owned_game where userSteam64 = :steam64""")
+    abstract suspend fun clearGames(steam64: Long)
 }

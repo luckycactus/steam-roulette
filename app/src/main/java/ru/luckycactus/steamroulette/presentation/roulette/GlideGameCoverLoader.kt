@@ -11,6 +11,9 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.entity.GameCoverPreloader
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.common.App
@@ -19,8 +22,7 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.DrawableAlwaysCross
 
 class GlideGameCoverLoader(
     appContext: Context
-) : GameCoverPreloader {
-
+) : GameCoverPreloader, GameCoverCacheCleaner {
     //todo Грузить hd через wifi, обычную через мобильную сеть
 
     private val appContext = appContext.applicationContext
@@ -62,6 +64,15 @@ class GlideGameCoverLoader(
             .error(errorRequest)
             .transition(DrawableTransitionOptions.withCrossFade())
             .diskCacheStrategy(DiskCacheStrategy.DATA)
+    }
+
+    override suspend fun clearAllCache() {
+        withContext(Dispatchers.Main) {
+            Glide.get(appContext).clearMemory()
+        }
+        withContext(Dispatchers.IO) {
+            Glide.get(appContext).clearDiskCache()
+        }
     }
 
     fun clear(view: View) {

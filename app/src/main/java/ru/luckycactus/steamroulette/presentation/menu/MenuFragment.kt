@@ -1,6 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.menu
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.os.Bundle
+import android.view.View
+import android.view.animation.LinearInterpolator
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -18,9 +23,6 @@ import ru.luckycactus.steamroulette.presentation.utils.observeNonNull
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class MenuFragment : BaseBottomSheetDialogFragment() {
-
-    //private var refreshUserStateAnimator: Animator? = null
-
 
     private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this, object : ViewModelProvider.Factory {
@@ -49,7 +51,11 @@ class MenuFragment : BaseBottomSheetDialogFragment() {
             viewModel.refreshProfile()
         }
 
-        observeNonNull(viewModel.userSummary) {
+        observe(viewModel.closeAction) {
+            dismiss()
+        }
+
+        observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
             Glide.with(this).load(it.avatarFull).placeholder(R.drawable.avatar_placeholder)
                 .into(ivAvatar)
@@ -59,18 +65,6 @@ class MenuFragment : BaseBottomSheetDialogFragment() {
             btnRefreshProfile.isEnabled = !it
             btnRefreshProfile.visibility(!it)
             profileRefreshProgressBar.visibility(it)
-//            if (it && refreshUserStateAnimator?.isRunning != true) {
-//                refreshUserStateAnimator =
-//                    ObjectAnimator.ofFloat(btnRefreshProfile, View.ROTATION, 0f, 360f).apply {
-//                        duration = 1500
-//                        repeatCount = ValueAnimator.INFINITE
-//                        interpolator = LinearInterpolator()
-//                        start()
-//                    }
-//            } else if (!it && refreshUserStateAnimator?.isRunning == true) {
-//                refreshUserStateAnimator?.end()
-//                refreshUserStateAnimator = null
-//            }
         }
 
         observe(viewModel.gameCount) {

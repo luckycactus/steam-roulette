@@ -12,4 +12,6 @@ interface UserSettingsRepository {
     ): LiveData<EnPlayTimeFilter>
 
     fun savePlayTimeFilter(steamId: SteamId, filter: EnPlayTimeFilter)
+
+    fun clearUser(steamId: SteamId)
 }

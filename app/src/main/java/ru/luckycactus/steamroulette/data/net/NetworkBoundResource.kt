@@ -64,6 +64,11 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
 
     fun observeCacheUpdates(): LiveData<Long> = cacheHelper.observeCacheUpdates(key)
 
+    fun invalidateCache() {
+        cacheHelper.invalidateCache(key)
+        memoryCache.remove(memoryKey)
+    }
+
     private suspend fun getCachedData(): ResultType? {
         var data: ResultType? = null
 

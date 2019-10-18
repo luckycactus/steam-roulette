@@ -19,7 +19,6 @@ class LocalUserDataStore(
     private val db: DB,
     private val userPreferences: SharedPreferences
 ) : UserDataStore.Local {
-
     private var currentUserSteam64Pref by userPreferences.long(SIGNED_USER_KEY, 0)
 
     override suspend fun getUserSummary(steam64: Long): UserSummaryEntity =
@@ -27,6 +26,10 @@ class LocalUserDataStore(
 
     override suspend fun saveUserSummaryToCache(userSummary: UserSummaryEntity) {
         db.userSummaryDao().saveUserSummaryToCache(userSummary)
+    }
+
+    override suspend fun removeUser(steam64: Long) {
+        db.userSummaryDao().removeUser(steam64)
     }
 
     override fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity> =

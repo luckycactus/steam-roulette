@@ -22,4 +22,6 @@ interface UserRepository {
     suspend fun signOut()
 
     suspend fun refreshUserSummary(steamId: SteamId, cachePolicy: CachePolicy)
+
+    suspend fun clearUser(steamId: SteamId)
 }

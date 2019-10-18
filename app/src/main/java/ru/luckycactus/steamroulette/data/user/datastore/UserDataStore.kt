@@ -20,6 +20,8 @@ interface UserDataStore {
         fun observeCurrentUserSteam64(): LiveData<Long>
 
         fun removeCurrentUserSteam64()
+
+        suspend fun removeUser(steam64: Long)
     }
 
     interface Remote : UserDataStore

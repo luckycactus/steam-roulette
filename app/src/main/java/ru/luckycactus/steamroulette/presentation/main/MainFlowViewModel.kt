@@ -1,14 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.di.AppModule.resourceManager
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.entity.Result
@@ -28,8 +26,8 @@ class MainFlowViewModel(
 ) : ViewModel(), UserViewModelDelegate {
 
     override val currentUserSteamId
-        get() = _currentUserSteamId.value
-    override val userSummary: LiveData<UserSummary?>
+        get() = _currentUserSteamId.value!!
+    override val userSummary: LiveData<UserSummary>
     override val fetchGamesState: LiveData<Result<Unit>>
         get() = _fetchGamesState
     override val fetchUserSummaryState: LiveData<Boolean>
@@ -39,7 +37,7 @@ class MainFlowViewModel(
     val logonCheckedAction: LiveData<Event<Unit>>
         get() = _logonCheckedAction
 
-    private val _currentUserSteamId: LiveData<SteamId?>
+    private val _currentUserSteamId = MediatorLiveData<SteamId>()
     private val _errorMessage = MutableLiveData<Event<String>>()
     private val _logonCheckedAction = MutableLiveData<Event<Unit>>()
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
@@ -53,29 +51,29 @@ class MainFlowViewModel(
     private val resourceManager: ResourceManager = AppModule.resourceManager
 
     init {
-        _currentUserSteamId = observeCurrentUser()
-        userSummary = _currentUserSteamId.nullableSwitchMap {
+        _currentUserSteamId.addSource(observeCurrentUser()) {
+            it?.let {
+                _currentUserSteamId.value = it
+            }
+        }
+        userSummary = _currentUserSteamId.switchMap {
             observeUserSummary(it)
         }
     }
 
     fun coldStart() {
         observeCurrentUserSteamId().first {
-            it?.let {
-                _logonCheckedAction.value = Event(Unit)
-                viewModelScope.launch {
-                    fetchGames(false)
-                }
-                viewModelScope.launch {
-                    fetchUserSummary(false)
-                }
-            } ?: throw IllegalStateException("The user isn't logged on") //todo fallback
+            _logonCheckedAction.value = Event(Unit)
+            viewModelScope.launch {
+                fetchGames(false)
+            }
+            viewModelScope.launch {
+                fetchUserSummary(false)
+            }
         }
     }
 
-    override fun observeCurrentUserSteamId(): LiveData<SteamId?> {
-        return _currentUserSteamId
-    }
+    override fun observeCurrentUserSteamId() = _currentUserSteamId
 
     override fun fetchGames() {
         viewModelScope.launch {
@@ -119,7 +117,7 @@ class MainFlowViewModel(
     }
 
     private suspend fun fetchGames(reload: Boolean): Result<Unit> {
-        currentUserSteamId?.let {
+        currentUserSteamId.let {
             _fetchGamesState.value = Result.Loading
             return try {
                 fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
@@ -134,12 +132,12 @@ class MainFlowViewModel(
                     }
                 ).also { _fetchGamesState.value = it }
             }
-        } ?: throw IllegalStateException()
+        }
     }
 
 
     private suspend fun fetchUserSummary(reload: Boolean): Result<Unit> {
-        currentUserSteamId?.let {
+        currentUserSteamId.let {
             return try {
                 _fetchUserSummaryState.value = true
                 fetchUserSummary(
@@ -154,6 +152,6 @@ class MainFlowViewModel(
             } finally {
                 _fetchUserSummaryState.value = false
             }
-        } ?: throw IllegalStateException()
+        }
     }
 }

@@ -6,13 +6,11 @@ import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
-import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterUseCase
-import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 
 class RouletteOptionsViewModel(
-    private val userViewModelDelegate: UserViewModelDelegate
+    userViewModelDelegate: UserViewModelDelegate
 ) : ViewModel() {
 
     val playTimeFilterData: LiveData<List<OptionsFilterAdapter.FilterUiModel>>
@@ -29,9 +27,11 @@ class RouletteOptionsViewModel(
 
     private val resourceManager = AppModule.resourceManager
 
+    private val userSteamId = userViewModelDelegate.currentUserSteamId
+
     init {
         playTimeFilterData =
-            observePlayTimeFilter(userViewModelDelegate.currentUserSteamId!!).map { checkedFilter ->
+            observePlayTimeFilter(userSteamId).map { checkedFilter ->
                 EnPlayTimeFilter.values().asSequence()
                     .map {
                         OptionsFilterAdapter.FilterUiModel(
@@ -44,13 +44,13 @@ class RouletteOptionsViewModel(
                     }.toList()
             }
 
-        hiddenGamesCount = observeHiddenGamesCount(userViewModelDelegate.currentUserSteamId!!)
+        hiddenGamesCount = observeHiddenGamesCount(userSteamId)
     }
 
     fun onPlayTimeFilterSelect(playTimeFilter: EnPlayTimeFilter) {
         savePlayTimeFilter(
             SavePlayTimeFilterUseCase.Params(
-                userViewModelDelegate.currentUserSteamId!!,
+                userSteamId,
                 playTimeFilter
             )
         )
@@ -62,10 +62,8 @@ class RouletteOptionsViewModel(
 
     fun onClearHiddenGames() {
         //todo Что будет, если очистить во время обновления?
-        userViewModelDelegate.currentUserSteamId?.let {
-            viewModelScope.launch {
-                clearHiddenGames(it)
-            }
+        viewModelScope.launch {
+            clearHiddenGames(userSteamId)
         }
 
         viewModelScope.launch {

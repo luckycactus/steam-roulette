@@ -1,15 +1,15 @@
 package ru.luckycactus.steamroulette.presentation.menu
 
 import android.text.format.DateUtils
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
+import androidx.lifecycle.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
+import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsViewModel
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.utils.combine
@@ -23,8 +23,10 @@ class MenuViewModel(
     val gameCount: LiveData<Int>
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
+    val closeAction: LiveData<Unit>
+        get() = _closeAction
 
-    private val _refreshProfileState = MediatorLiveData<Boolean>()
+    private val _closeAction = MutableLiveData<Unit>()
 
     private val observeOwnedGamesCount = AppModule.observeOwnedGamesCountUseCase
     private val observeOwnedGamesSyncsUseCase = AppModule.observeOwnedGamesSyncsUseCase
@@ -32,15 +34,19 @@ class MenuViewModel(
 
     fun refreshProfile() {
         userViewModelDelegate.fetchUserAndGames()
+        viewModelScope.launch {
+            delay(CLOSE_DELAY)
+            _closeAction.value = Unit
+        }
     }
 
     init {
-        gameCount = userViewModelDelegate.observeCurrentUserSteamId().nullableSwitchMap(0) {
+        gameCount = userViewModelDelegate.observeCurrentUserSteamId().switchMap {
             observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it))
         }
 
         gamesLastUpdate =
-            userViewModelDelegate.observeCurrentUserSteamId().nullableSwitchMap(Date(0)) {
+            userViewModelDelegate.observeCurrentUserSteamId().switchMap {
                 observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it))
             }.map {
                 val ago = if (it.time <= 0)
@@ -57,5 +63,9 @@ class MenuViewModel(
         refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combine(
             userViewModelDelegate.fetchGamesState
         ) { a, b -> a || (b is Result.Loading) }
+    }
+
+    companion object {
+        private const val CLOSE_DELAY = 300L
     }
 }

@@ -14,6 +14,7 @@ import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.menu.MenuFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
+import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.observeNonNull
 
@@ -46,7 +47,7 @@ class MainFlowFragment : BaseFragment() {
             )
         }
 
-        observeNonNull(viewModel.userSummary) {
+        observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
             Glide.with(this).load(it.avatarFull).placeholder(R.drawable.avatar_placeholder)
                 .into(ivAvatar)

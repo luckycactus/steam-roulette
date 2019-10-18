@@ -27,6 +27,8 @@ interface GamesDataStore {
         fun observeHiddenGameCount(steam64: Long): LiveData<Int>
 
         suspend fun clearHiddenGames(steam64: Long)
+
+        suspend fun clearGames(steam64: Long)
     }
 
     interface Remote: GamesDataStore {

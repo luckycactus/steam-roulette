@@ -9,8 +9,8 @@ abstract class UseCase<in Params, Result> {
     operator fun invoke(params: Params) = execute(params)
 }
 
-fun <Params, Result> UseCase<Params?, Result>.execute(): Result =
-    execute(null)
+fun <Result> UseCase<Unit, Result>.execute(): Result =
+    execute(Unit)
 
-operator fun <Params, Result> UseCase<Params?, Result>.invoke(): Result =
-    execute(null)
+operator fun <Result> UseCase<Unit, Result>.invoke(): Result =
+    execute(Unit)
