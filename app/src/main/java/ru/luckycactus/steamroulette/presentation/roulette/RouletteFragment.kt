@@ -13,8 +13,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
+import kotlinx.android.synthetic.main.fragment_roulette.view.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.common.ContentState
@@ -43,6 +45,8 @@ class RouletteFragment : BaseFragment() {
         }).get(RouletteViewModel::class.java)
     }
 
+    private val gameCoverLoader = AppModule.glideGameCoverLoader
+
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
     override val layoutResId: Int = R.layout.fragment_roulette
@@ -67,6 +71,8 @@ class RouletteFragment : BaseFragment() {
             viewModel.onSteamInfoClick()
         }
 
+        viewSwitcher.
+
         viewSwitcher.inAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation?) {
             }
@@ -75,7 +81,7 @@ class RouletteFragment : BaseFragment() {
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                (viewSwitcher.nextView as GameView).setGame(viewModel.nextGame)
+                (viewSwitcher.nextView as GameView).setGame(viewModel.nextGame, gameCoverLoader)
             }
         })
 
@@ -91,7 +97,7 @@ class RouletteFragment : BaseFragment() {
         }
 
         observe(viewModel.currentGame) {
-            (viewSwitcher.nextView as GameView).setGame(it)
+            (viewSwitcher.nextView as GameView).setGame(it, gameCoverLoader)
             viewSwitcher.showNext()
         }
 

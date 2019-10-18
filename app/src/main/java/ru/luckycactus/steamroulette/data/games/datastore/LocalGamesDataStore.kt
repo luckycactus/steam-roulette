@@ -10,7 +10,6 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 class LocalGamesDataStore(
     private val db: DB
 ) : GamesDataStore.Local {
-
     override suspend fun getOwnedGames(steam64: Long): List<OwnedGame> {
         return db.ownedGamesDao().getGames(steam64)
     }
@@ -49,6 +48,10 @@ class LocalGamesDataStore(
 
     override suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame {
         return db.ownedGamesDao().getGame(steam64, appId)
+    }
+
+    override suspend fun getOwnedGames(steam64: Long, appIds: List<Int>): List<OwnedGame> {
+        return db.ownedGamesDao().getGames(steam64, appIds)
     }
 
     override suspend fun markGameAsHidden(steam64: Long, gameId: Int) {

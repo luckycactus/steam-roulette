@@ -110,4 +110,11 @@ abstract class OwnedGamesDao {
 
     @Query("select COUNT(*) from (select appId from owned_game where userSteam64 = :steam64 limit 1)")
     abstract suspend fun _isUserHasOwnedGames(steam64: Long): Int
+
+    @Query(
+        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
+            from owned_game 
+            where appId in (:appIds) and userSteam64 = :steam64"""
+    )
+    abstract suspend fun getGames(steam64: Long, appIds: List<Int>): List<OwnedGame>
 }

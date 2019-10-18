@@ -18,6 +18,8 @@ interface GamesRepository {
 
     suspend fun getLocalOwnedGame(steamId: SteamId, appId: Int): OwnedGame
 
+    suspend fun getLocalOwnedGames(steamId: SteamId, appIds: List<Int>): List<OwnedGame>
+
     suspend fun markLocalGameAsHidden(steamId: SteamId, appId: Int)
 
     suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean

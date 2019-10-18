@@ -21,6 +21,7 @@ import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.data.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
+import ru.luckycactus.steamroulette.domain.entity.GameCoverPreloader
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterUseCase
@@ -30,6 +31,7 @@ import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.user.*
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
+import ru.luckycactus.steamroulette.presentation.roulette.GlideGameCoverLoader
 
 object AppModule {
 
@@ -51,6 +53,10 @@ object AppModule {
         appPreferences = appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
         resourceManager = AndroidResourceManager(appContext)
         requestLruCache = LruCache(50)
+    }
+
+    val glideGameCoverLoader by lazy {
+        GlideGameCoverLoader(appContext)
     }
 
     val observeHiddenGamesClearUseCase by lazy {
@@ -105,13 +111,6 @@ object AppModule {
         )
     }
 
-//    val updateUserAndGamesUseCase by lazy {
-//        UpdateUserAndGamesUseCase(
-//            userRepository,
-//            gamesRepository
-//        )
-//    }
-
     val getSignedInUserSteamIdUseCase by lazy {
         GetCurrentUserSteamIdUseCase(
             userRepository
@@ -120,7 +119,8 @@ object AppModule {
 
     val getOwnedGamesQueueUseCase by lazy {
         GetLocalOwnedGamesQueueUseCase(
-            gamesRepository
+            gamesRepository,
+            glideGameCoverLoader
         )
     }
 

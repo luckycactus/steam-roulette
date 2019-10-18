@@ -3,6 +3,11 @@ package ru.luckycactus.steamroulette.domain.entity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import java.util.*
+import kotlin.NoSuchElementException
+import com.bumptech.glide.request.target.Target
+import kotlin.Comparator
+
 
 interface OwnedGamesQueue {
     fun hasNext(): Boolean
@@ -16,17 +21,20 @@ interface OwnedGamesQueue {
     val size: Int
 
     val started: Boolean
+
+    fun finish()
 }
 
 class OwnedGamesQueueImpl(
     private val steamId: SteamId,
     numbers: List<Int>,
-    private val gamesRepository: GamesRepository
+    private val gamesRepository: GamesRepository,
+    private val gameCoverPreloader: GameCoverPreloader
 ) : OwnedGamesQueue {
     private val gameIds = numbers.shuffled()
 
     private var currentIndex = -1
-    private var next: OwnedGame? = null
+    private val buffer = ArrayDeque<Pair<OwnedGame, Target<*>>>(BUFFER_SIZE)
 
     override val size
         get() = gameIds.size
@@ -42,17 +50,34 @@ class OwnedGamesQueueImpl(
         if (!hasNext())
             throw NoSuchElementException()
         currentIndex++
-        if (currentIndex == 0)
-            next = gamesRepository.getLocalOwnedGame(steamId, gameIds[currentIndex])
-        val current = next
-        if (hasNext())
-            next = gamesRepository.getLocalOwnedGame(steamId, gameIds[currentIndex + 1])
-        return current!!
+        return if (currentIndex == 0) {
+            val nextIds = gameIds.slice(0..BUFFER_SIZE)
+            val nextElements =
+                gamesRepository.getLocalOwnedGames(steamId, nextIds)
+                    .sortedWith(Comparator { o1, o2 ->
+                        nextIds.indexOf(o1.appId) - nextIds.indexOf(o2.appId)
+                    })
+            for (game in nextElements.slice(1..BUFFER_SIZE)) {
+                addToBuffer(game)
+            }
+            nextElements[0]
+        } else {
+            val current = buffer.removeFirst()
+            if (currentIndex + BUFFER_SIZE < gameIds.size) {
+                val next = gamesRepository.getLocalOwnedGame(
+                    steamId,
+                    gameIds[currentIndex + BUFFER_SIZE]
+                )
+                addToBuffer(next)
+            }
+            current.first
+        }
+
     }
 
     override fun peekNext(): OwnedGame? {
         check(currentIndex >= 0) { "Cannot peek next game. You should call next() first!" }
-        return next
+        return buffer.peekFirst().first
     }
 
     override fun markCurrentAsHidden() {
@@ -60,5 +85,19 @@ class OwnedGamesQueueImpl(
         GlobalScope.launch {
             gamesRepository.markLocalGameAsHidden(steamId, gameIds[currentIndex])
         }
+    }
+
+    override fun finish() {
+        buffer.forEach {
+            gameCoverPreloader.cancelPreload(it.second)
+        }
+    }
+
+    private fun addToBuffer(game: OwnedGame) {
+        buffer.addLast(game to gameCoverPreloader.preload(game))
+    }
+
+    companion object {
+        private const val BUFFER_SIZE = 2
     }
 }

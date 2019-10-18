@@ -34,7 +34,7 @@ class RouletteViewModel(
     val queueResetAction: LiveData<Event<Unit>>
         get() = _queueResetAction
 
-    var nextGame: OwnedGame? = null
+    val nextGame: OwnedGame?
         get() = gamesQueue?.peekNext()
 
     private val _currentGame = MutableLiveData<OwnedGame>()
@@ -100,6 +100,7 @@ class RouletteViewModel(
         val filter = currentUserPlayTimeFilter.value
 
         gamesQueueJob?.cancel()
+        gamesQueue?.finish()
         gamesQueue = null
         if (fetchGamesResult == null || filter == null)
             return
