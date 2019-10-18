@@ -51,7 +51,7 @@ class GlideGameCoverLoader(
             .load(game.headerImageUrl)
             .transform(headerImageTransformation)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
-            .transition(DrawableTransitionOptions.with(DrawableAlwaysCrossFadeFactory()))
+            .transition(DrawableTransitionOptions.withCrossFade())
 
         val thumbnailRequest = errorRequest.clone()
             .onlyRetrieveFromCache(true)
@@ -60,7 +60,7 @@ class GlideGameCoverLoader(
             .load(game.libraryPortraitImageUrlHD)
             .thumbnail(thumbnailRequest)
             .error(errorRequest)
-            .transition(DrawableTransitionOptions.with(DrawableAlwaysCrossFadeFactory()))
+            .transition(DrawableTransitionOptions.withCrossFade())
             .diskCacheStrategy(DiskCacheStrategy.DATA)
     }
 
