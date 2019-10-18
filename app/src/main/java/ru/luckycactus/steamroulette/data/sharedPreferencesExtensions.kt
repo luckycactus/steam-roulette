@@ -7,6 +7,7 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.liveData
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory.Companion.invoke
 import java.util.*
+import java.util.concurrent.locks.Lock
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -179,7 +180,6 @@ private class SharedPreferenceLiveData<T>(
 
     init {
         updateValue()
-        this.distinctUntilChanged()
     }
 
     override fun onActive() {
@@ -215,11 +215,12 @@ private class CompositePreferenceChangeListener :
     }
 
     fun addListener(key: String, listener: () -> Unit) {
-        //todo synchronization
-        listeners.getOrPut(
-            key,
-            { Collections.newSetFromMap<() -> Unit>(WeakHashMap<() -> Unit, Boolean>()) }
-        ).add(listener)
+        synchronized(key.intern()) {
+            listeners.getOrPut(
+                key,
+                { Collections.newSetFromMap<() -> Unit>(WeakHashMap<() -> Unit, Boolean>()) }
+            ).add(listener)
+        }
     }
 
     fun removeListener(key: String, listener: () -> Unit) {

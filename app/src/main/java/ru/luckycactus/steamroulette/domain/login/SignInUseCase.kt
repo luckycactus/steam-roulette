@@ -14,7 +14,8 @@ class SignInUseCase(
 ) : SuspendUseCase<String, UserSummary>() {
 
     override suspend fun getResult(params: String): UserSummary {
-        val steamId = tryParse(params) ?: tryResolveVanity(params) ?: throw InvalidSteamIdFormatException()
+        val steamId =
+            tryParse(params) ?: tryResolveVanity(params) ?: throw InvalidSteamIdFormatException()
         return getUserSummaryUseCase(GetUserSummaryUseCase.Params(steamId, true)).also {
             userRepository.saveSignedInUser(it.steamId)
         }

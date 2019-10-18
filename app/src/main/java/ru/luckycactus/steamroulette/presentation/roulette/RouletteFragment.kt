@@ -71,6 +71,9 @@ class RouletteFragment : BaseFragment() {
             viewModel.onSteamInfoClick()
         }
 
+        viewSwitcher.getChildAt(0).setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        viewSwitcher.getChildAt(1).setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
         viewSwitcher.inAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation?) {
             }
