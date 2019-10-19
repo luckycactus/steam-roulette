@@ -17,6 +17,7 @@ import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.observeNonNull
+import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
 
 class MainFlowFragment : BaseFragment() {
 

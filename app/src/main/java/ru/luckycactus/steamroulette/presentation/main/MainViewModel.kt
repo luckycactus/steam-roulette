@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.main
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.presentation.common.Event
+import kotlin.system.measureTimeMillis
 
 class MainViewModel: ViewModel() {
 

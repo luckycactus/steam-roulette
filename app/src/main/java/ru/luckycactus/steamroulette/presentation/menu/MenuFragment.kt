@@ -1,11 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.menu
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.os.Bundle
-import android.view.View
-import android.view.animation.LinearInterpolator
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -19,10 +14,10 @@ import ru.luckycactus.steamroulette.presentation.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.observeNonNull
 import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
 
-class MenuFragment : BaseBottomSheetDialogFragment() {
+class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
     private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this, object : ViewModelProvider.Factory {
@@ -44,7 +39,12 @@ class MenuFragment : BaseBottomSheetDialogFragment() {
         super.onActivityCreated(savedInstanceState)
 
         btnExit.setOnClickListener {
-            (activity as MainActivity).viewModel.onExit()
+            MessageDialogFragment.create(
+                context!!,
+                titleResId = R.string.exit_dialog_title,
+                messageResId = R.string.exit_warning,
+                negativeResId = R.string.cancel
+            ).show(childFragmentManager, null)
         }
 
         btnRefreshProfile.setOnClickListener {
@@ -74,6 +74,10 @@ class MenuFragment : BaseBottomSheetDialogFragment() {
         observe(viewModel.gamesLastUpdate) {
             tvGamesUpdateDate.text = it
         }
+    }
+
+    override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
+        (activity as MainActivity).viewModel.onExit()
     }
 
     companion object {

@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
@@ -20,6 +22,9 @@ import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException
 import ru.luckycactus.steamroulette.domain.exception.ServerException
 import ru.luckycactus.steamroulette.presentation.common.Event
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 fun View.visibility(visible: Boolean) {
     visibility = if (visible) View.VISIBLE else View.GONE
@@ -166,4 +171,29 @@ fun View.expandTouchArea(desiredWidth: Int, desiredHeight: Int) {
 
 fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): View {
     return LayoutInflater.from(context).inflate(resId, this, attachToRoot)
+}
+
+inline fun <reified T> argument(
+    key: String,
+    defValue: String? = null
+): ReadOnlyProperty<Fragment, T> = object : ReadOnlyProperty<Fragment, T> {
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
+        val result = thisRef.arguments?.get(key) ?: defValue
+        if (result != null && result !is T) {
+            throw ClassCastException("Property $key has different class type")
+        }
+        return result as T
+    }
+}
+
+inline fun <reified T> Fragment.getCallbacksOrThrow(): T {
+    return getCallbacks() ?: throw ClassCastException("${T::class.java} not implemented")
+}
+
+inline fun <reified T> Fragment.getCallbacks(): T? {
+    return when {
+        parentFragment is T -> parentFragment as T
+        activity is T -> activity as T
+        else -> null
+    }
 }

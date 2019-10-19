@@ -9,15 +9,17 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_options_filter.*
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.presentation.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
 
 
-class RouletteOptionsFragment : BaseBottomSheetDialogFragment() {
+class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
     private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this, object : ViewModelProvider.Factory {
@@ -40,7 +42,7 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    override val layoutResId = ru.luckycactus.steamroulette.R.layout.fragment_options_filter
+    override val layoutResId = R.layout.fragment_options_filter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -64,9 +66,16 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment() {
         }
 
         btnClearHiddenGames.setOnClickListener {
-            //todo подтверждение
-            viewModel.onClearHiddenGames()
+            MessageDialogFragment.create(
+                context!!,
+                messageResId = R.string.clear_hidden_games_warning,
+                negativeResId = R.string.cancel
+            ).show(childFragmentManager, null)
         }
+    }
+
+    override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
+        viewModel.onClearHiddenGames()
     }
 
     companion object {

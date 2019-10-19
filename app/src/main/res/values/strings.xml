@@ -33,4 +33,9 @@
     <string name="games_queue_ended">Больше нет подходящих игр!</string>
     <string name="filtered_games_not_found">Игры, удовлетворяющие заданным фильтрам, не найдены</string>
     <string name="restart_queue">Начать заново</string>
+    <string name="ok">Ok</string>
+    <string name="exit_dialog_title">Выход</string>
+    <string name="exit_warning">Вы точно хотите выйти?</string>
+    <string name="cancel">Отмена</string>
+    <string name="clear_hidden_games_warning">Вы точно хотите очистить список скрытых игр?</string>
 </resources>
