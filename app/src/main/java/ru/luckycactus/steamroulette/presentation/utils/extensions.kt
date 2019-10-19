@@ -2,29 +2,27 @@ package ru.luckycactus.steamroulette.presentation.utils
 
 import android.content.Context
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.*
-import androidx.arch.core.util.Function
-import androidx.core.view.ViewCompat
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorRes
+import androidx.annotation.LayoutRes
+import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import kotlinx.android.synthetic.main.fragment_roulette.*
-import kotlinx.android.synthetic.main.fragment_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException
 import ru.luckycactus.steamroulette.domain.exception.ServerException
 import ru.luckycactus.steamroulette.presentation.common.Event
 import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+
 
 fun View.visibility(visible: Boolean) {
     visibility = if (visible) View.VISIBLE else View.GONE
@@ -195,5 +193,14 @@ inline fun <reified T> Fragment.getCallbacks(): T? {
         parentFragment is T -> parentFragment as T
         activity is T -> activity as T
         else -> null
+    }
+}
+
+fun Context.getThemeColorOrThrow(@AttrRes resId: Int): Int {
+    val typedValue = TypedValue()
+    if (theme.resolveAttribute(resId, typedValue, true)) {
+        return typedValue.data
+    } else {
+        throw IllegalArgumentException("Attribute not set on theme")
     }
 }

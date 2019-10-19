@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.menu
 
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders

@@ -14,6 +14,7 @@
 
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
@@ -30,6 +31,7 @@
         <item name="android:background">@drawable/dialog_background</item>
         <item name="windowFixedWidthMajor">90%</item>
         <item name="windowFixedWidthMinor">90%</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnimationStyle</item>
     </style>
 
     <style name="AlertDialogStyle.Title" parent="RtlOverlay.DialogWindowTitle.AppCompat">

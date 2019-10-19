@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LuxuryProgressBar">
+        <attr name="size" format="dimension" />
+        <attr name="progressColor" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="arcCount" format="integer" />
+        <attr name="growthDuration" format="integer" />
+        <attr name="rotationDuration" format="integer" />
+        <attr name="decreasingDuration" format="integer" />
+    </declare-styleable>
+</resources>
