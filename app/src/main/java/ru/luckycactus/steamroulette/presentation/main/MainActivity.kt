@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.login.LoginFragment
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
+import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 
 class MainActivity : AppCompatActivity() {

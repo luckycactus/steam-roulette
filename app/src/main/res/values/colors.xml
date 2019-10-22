@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#192431</color>
-    <color name="primaryLight">#1C2A39</color>
-    <color name="primaryLight2">#223349</color>
-    <color name="primaryDark">#16202B</color>
-    <color name="primaryDark2">#141A25</color>
-    <color name="accent">#B4B1AF</color>
+    <color name="steam">#192431</color>
+    <color name="steam_light">#1C2A39</color>
+    <color name="steam_light_2">#223349</color>
+    <color name="steam_dark">#16202B</color>
+    <color name="steam_dark_2">#141A25</color>
 
-    <color name="windowBackground">@color/primary</color>
-    <color name="gameCardBackground">@color/primaryLight2</color>
     <color name="ripple_color">#15ffffff</color>
     <color name="ripple_color_2">#10ffffff</color>
     <color name="divider">#141A25</color>
-    <color name="dialog_background">@color/primaryLight</color>
+
+    <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
+    <!--colorSecondary colors are most often used as accents on components, such as FABs and -->
+    <!--selection controls.-->
+    <color name="color_primary">#3896CA</color>
+    <color name="color_primary_variant">#3896CA</color>
+    <color name="color_secondary">@color/steam_light_2</color>
+    <color name="color_secondary_variant">@color/steam_light</color>
+
+    <!--colorBackground appears behind scrollable content and is used for the default window-->
+    <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->
+    <!--and menus. colorError is used to indicate an error state for components such as-->
+    <!--text fields.-->
+    <color name="color_background">@color/steam</color>
+    <color name="color_surface">@color/steam_light_2</color>
+    <color name="color_error">#b00020</color>
+
+    <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
+    <!--on which they appear.-->
+    <color name="color_on_primary">#ffffff</color>
+    <color name="color_on_secondary">#ffffff</color>
+    <color name="color_on_background">#ffffff</color>
+    <color name="color_on_surface">#ffffff</color>
+    <color name="color_on_error">#ffffff</color>
 </resources>

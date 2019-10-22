@@ -1,46 +1,30 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="BaseAppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+
+    <style name="BaseBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>
+        <item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>
     </style>
 
-    <style name="AppTheme" parent="BaseAppTheme" />
+    <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="BaseBottomSheetDialog" />
 
-    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
-        <item name="colorAccent">@color/accent</item>
+    <style name="Widget.MyTheme.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.MyTheme.BottomSheet</item>
     </style>
 
-    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/bottom_sheet_background</item>
-    </style>
-
-    <style name="RouletteFab" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="backgroundTint">@color/primaryLight2</item>
-    </style>
-
-    <style name="AlertDialogStyle" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:windowTitleStyle">@style/AlertDialogStyle.Title</item>
-        <item name="android:background">@drawable/dialog_background</item>
+    <style name="ThemeOverlay.MyTheme.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:backgroundDimAmount">0.6</item>
         <item name="windowFixedWidthMajor">90%</item>
         <item name="windowFixedWidthMinor">90%</item>
-        <item name="android:windowAnimationStyle">@style/DialogAnimationStyle</item>
+        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.AlertDialog</item>
     </style>
 
-    <style name="AlertDialogStyle.Title" parent="RtlOverlay.DialogWindowTitle.AppCompat">
-        <item name="android:textColor">@color/primary</item>
-    </style>
+    <style name="Widget.MyTheme.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface" />
 
-    <style name="DialogAnimationStyle" parent="@android:style/Animation.Activity">
-        <item name="android:windowEnterAnimation">@anim/dialog_in</item>
-        <item name="android:windowExitAnimation">@anim/dialog_out</item>
+    <style name="Widget.LuxuryProgressBar" parent="">
+        <item name="progressColor">@color/color_on_surface</item>
     </style>
 
 </resources>

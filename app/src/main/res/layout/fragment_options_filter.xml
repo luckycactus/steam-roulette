@@ -59,8 +59,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/default_activity_margin"
             android:layout_marginRight="@dimen/default_activity_margin"
-            android:background="@drawable/selectable_item_background"
             android:text="@string/btn_reset_hidden_games"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             />
 
 

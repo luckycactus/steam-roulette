@@ -12,6 +12,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.utils.argument
 import ru.luckycactus.steamroulette.presentation.utils.getCallbacks
@@ -37,7 +38,7 @@ class MessageDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        with(AlertDialog.Builder(ContextThemeWrapper(context!!, R.style.AlertDialogStyle))) {
+        with(MaterialAlertDialogBuilder(context!!)) {
             setTitle(title)
             setMessage(message)
 
@@ -60,9 +61,6 @@ class MessageDialogFragment : DialogFragment() {
 
             create()
         }.apply {
-            window?.decorView?.setBackgroundResource(android.R.color.transparent)
-            window?.attributes?.windowAnimations = R.style.DialogAnimationStyle
-
             if (title == null)
                 requestWindowFeature(Window.FEATURE_NO_TITLE)
         }

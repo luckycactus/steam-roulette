@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         >
 
     <FrameLayout
@@ -19,12 +19,11 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="bottom"
-            android:background="@color/primaryLight2"
+            android:contentInsetStart="4dp"
+            android:contentInsetLeft="4dp"
             android:elevation="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:contentInsetLeft="4dp"
-            android:contentInsetStart="4dp"
             app:contentInsetLeft="4dp"
             app:contentInsetStart="4dp"
             >

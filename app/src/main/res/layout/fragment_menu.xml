@@ -84,6 +84,7 @@
                     android:visibility="gone"
                     android:padding="12dp"
                     app:size="24dp"
+                    style="@style/Widget.LuxuryProgressBar"
                     />
 
         </FrameLayout>
@@ -92,11 +93,12 @@
 
     <include layout="@layout/divider" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/btnExit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/selectable_item_background"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:text="@string/exit"
             />
 
