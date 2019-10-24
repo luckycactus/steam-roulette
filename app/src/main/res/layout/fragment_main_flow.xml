@@ -51,9 +51,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:paddingStart="8dp"
                     android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
                     tools:text="luckycactus"
+                    android:textAppearance="?textAppearanceSubtitle1"
                     />
 
         </LinearLayout>

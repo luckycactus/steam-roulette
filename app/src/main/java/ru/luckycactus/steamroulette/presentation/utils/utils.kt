@@ -33,5 +33,6 @@ fun isAppInstalled(context: Context, packageName: String): Boolean {
     } catch (e: PackageManager.NameNotFoundException) {
         false
     }
-
 }
+
+

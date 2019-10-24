@@ -19,12 +19,21 @@
         <item name="windowFixedWidthMajor">90%</item>
         <item name="windowFixedWidthMinor">90%</item>
         <item name="android:windowAnimationStyle">@style/Animation.MyTheme.AlertDialog</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.MyTheme.Title.Text</item>
+    </style>
+
+    <style name="MaterialAlertDialog.MyTheme.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">?colorOnSurface</item>
     </style>
 
     <style name="Widget.MyTheme.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface" />
 
     <style name="Widget.LuxuryProgressBar" parent="">
         <item name="progressColor">@color/color_on_surface</item>
+    </style>
+
+    <style name="Widget.MyTheme.GameView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@android:color/transparent</item>
     </style>
 
 </resources>

@@ -61,8 +61,10 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
 
         observe(viewModel.hiddenGamesCount) {
             tvHiddenGamesCount.text = it.toString()
-            btnClearHiddenGames.isEnabled = it > 0
-            //todo change color
+            val enabled = it > 0
+            btnClearHiddenGames.isEnabled = enabled
+            tvHiddenGamesCount.isEnabled = enabled
+            tvHiddenGamesLabel.isEnabled = enabled
         }
 
         btnClearHiddenGames.setOnClickListener {

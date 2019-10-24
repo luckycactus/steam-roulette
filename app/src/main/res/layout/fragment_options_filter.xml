@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="@dimen/default_activity_margin"
-        android:paddingBottom="@dimen/default_activity_margin"
+        android:paddingBottom="8dp"
         >
 
     <TextView
@@ -14,8 +14,9 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/default_activity_margin"
             android:paddingRight="@dimen/default_activity_margin"
-            android:paddingBottom="16dp"
+            android:paddingBottom="8dp"
             android:text="@string/roulette_game_time_filter_title"
+            android:textAppearance="?textAppearanceSubtitle2"
             />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -33,34 +34,39 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/default_activity_margin"
-            android:paddingTop="8dp"
+            android:paddingTop="16dp"
             android:paddingRight="@dimen/default_activity_margin"
             >
 
         <TextView
+                android:id="@+id/tvHiddenGamesLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/hidden_games_count"
+                android:textAppearance="?textAppearanceSubtitle2"
                 />
 
         <TextView
                 android:id="@+id/tvHiddenGamesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceBody2"
                 tools:text="15"
                 />
 
     </LinearLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/btnClearHiddenGames"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_activity_margin"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="@dimen/default_activity_margin"
             android:layout_marginRight="@dimen/default_activity_margin"
             android:text="@string/btn_reset_hidden_games"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             />
 
 

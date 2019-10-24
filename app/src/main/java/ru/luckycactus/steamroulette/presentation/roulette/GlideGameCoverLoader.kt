@@ -13,6 +13,7 @@ import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.entity.GameCoverPreloader
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame

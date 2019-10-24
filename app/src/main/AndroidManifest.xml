@@ -4,7 +4,7 @@
         package="ru.luckycactus.steamroulette"
         >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
             android:name=".presentation.common.App"
@@ -20,21 +20,21 @@
                 android:launchMode="singleTask"
                 >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                        android:scheme="https"
                         android:host="ru.luckycactus.steamroulette"
                         android:pathPrefix="/signin"
+                        android:scheme="https"
                         />
             </intent-filter>
         </activity>
