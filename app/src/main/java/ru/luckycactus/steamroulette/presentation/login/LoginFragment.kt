@@ -10,6 +10,7 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
 
 
 class LoginFragment : BaseFragment() {
@@ -36,6 +37,14 @@ class LoginFragment : BaseFragment() {
         btnOk.setOnClickListener {
             activity?.hideKeyboard()
             viewModel.onSteamIdConfirmed(etUserId.text.toString())
+        }
+
+        tvSteamIdHelp.setOnClickListener {
+            MessageDialogFragment.create(
+                context!!,
+                titleResId = R.string.supported_steamid_formats,
+                messageResId = R.string.steamid_help
+            ).show(childFragmentManager, null)
         }
 
         observe(viewModel.progressState) {

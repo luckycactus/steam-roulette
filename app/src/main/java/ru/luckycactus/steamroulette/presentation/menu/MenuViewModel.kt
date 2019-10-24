@@ -36,7 +36,7 @@ class MenuViewModel(
         userViewModelDelegate.fetchUserAndGames()
         viewModelScope.launch {
             delay(CLOSE_DELAY)
-            //_closeAction.value = Unit
+            _closeAction.value = Unit
         }
     }
 

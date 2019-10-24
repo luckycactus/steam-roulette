@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
@@ -8,38 +9,81 @@
 
     <ru.luckycactus.steamroulette.presentation.widget.LuxuryProgressBar
             android:id="@+id/progress"
+            style="@style/Widget.LuxuryProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            style="@style/Widget.LuxuryProgressBar"
             android:visibility="gone"
             />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:orientation="vertical"
+            android:padding="@dimen/default_activity_margin"
             >
 
-        <EditText
-                android:id="@+id/etUserId"
+        <TextView
+                android:id="@+id/tvAppName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Steam Id / Community Id"
-                android:lines="1"
-                android:maxLines="1"
+                android:text="@string/app_name"
+                android:textAppearance="?textAppearanceHeadline4"
+                android:textColor="?colorOnPrimary"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 />
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutUserId"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@id/btnOk"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvAppName"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintVertical_bias="0.5"
+                >
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUserId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/user_id_hint"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnOk"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="OK"
+                android:text="@string/ok"
+                app:layout_constraintBottom_toTopOf="@id/tvSteamIdHelp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textInputLayoutUserId"
                 />
 
-    </LinearLayout>
+        <TextView
+                android:id="@+id/tvSteamIdHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_screen_help"
+                android:textAppearance="@style/TextAppearance.MyTheme.LabelButton"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnOk"
+                />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

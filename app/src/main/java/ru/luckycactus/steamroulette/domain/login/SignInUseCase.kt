@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.domain.login
 
+import android.util.Log
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
@@ -31,7 +32,7 @@ class SignInUseCase(
 
     private suspend fun tryResolveVanity(input: String): SteamId? {
         return SteamId.tryGetVanityUrl(input)?.let {
-            loginRepository.resolveVanityUrl(input)
+            loginRepository.resolveVanityUrl(it)
         }
     }
 }

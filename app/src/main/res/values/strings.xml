@@ -38,4 +38,14 @@
     <string name="exit_warning">Вы точно хотите выйти?</string>
     <string name="cancel">Отмена</string>
     <string name="clear_hidden_games_warning">Вы точно хотите очистить список скрытых игр?</string>
+    <string name="steamid_help" translatable="false">"\u2022 gabelogannewell
+\u2022 76561197960287930
+\u2022 STEAM_0:0:11101
+\u2022 [U:1:22202]
+\u2022 https://steamcommunity.com/id/gabelogannewell/
+\u2022 https://steamcommunity.com/profiles/76561197960287930/
+\u2022 https://steamcommunity.com/profiles/[U:1:22202]/"</string>
+    <string name="login_screen_help">Что здесь вводить?</string>
+    <string name="supported_steamid_formats">Поддерживаемые форматы SteamID</string>
+    <string name="user_id_hint">SteamID / CommunityID / Profile URL</string>
 </resources>

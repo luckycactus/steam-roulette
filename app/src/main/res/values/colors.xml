@@ -14,7 +14,7 @@
     <!--colorSecondary colors are most often used as accents on components, such as FABs and -->
     <!--selection controls.-->
     <color name="color_primary">#3896CA</color>
-    <color name="color_primary_variant">#3896CA</color>
+    <color name="color_primary_variant">#46BBFC</color>
     <color name="color_secondary">@color/steam_light_2</color>
     <color name="color_secondary_variant">@color/steam_light</color>
 

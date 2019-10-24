@@ -52,7 +52,7 @@ class SteamId private constructor(
 
             VanityUrlFormat.Full.pattern.matcher(input).apply {
                 if (matches()) {
-                    find()
+                    //find()
                     return group(2)
                 }
             }

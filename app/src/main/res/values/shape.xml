@@ -2,7 +2,8 @@
 
     <!--Shape Appearance for small components like chips, buttons, text fields and FABs-->
     <style name="ShapeAppearance.MyTheme.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <!--Your custom shape here-->
+        <item name="cornerSize">@dimen/dialog_corner_radius</item>
+        <item name="cornerFamily">rounded</item>
     </style>
 
     <!--Shape Appearance for medium components like cards, alert dialogs-->
