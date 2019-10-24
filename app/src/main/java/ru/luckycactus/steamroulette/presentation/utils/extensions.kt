@@ -1,20 +1,22 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import android.os.Build
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import com.google.android.material.snackbar.Snackbar
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException
@@ -202,5 +204,27 @@ fun Context.getThemeColorOrThrow(@AttrRes resId: Int): Int {
         return typedValue.data
     } else {
         throw IllegalArgumentException("Attribute not set on theme")
+    }
+}
+
+fun Activity.hideKeyboard() {
+    currentFocus?.apply {
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+}
+
+fun Fragment.showSnackbar(message: String, duration: Int = Snackbar.LENGTH_LONG) {
+    view?.showSnackbar(message, duration)
+}
+
+fun View.showSnackbar(
+    message: String,
+    duration: Int = Snackbar.LENGTH_LONG,
+    initializer: (Snackbar.() -> Unit)? = null
+) {
+    with(Snackbar.make(this, message, duration)) {
+        initializer?.invoke(this)
+        show()
     }
 }

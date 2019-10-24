@@ -1,10 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.main
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
@@ -12,12 +8,10 @@ import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.menu.MenuFragment
-import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
-import ru.luckycactus.steamroulette.presentation.utils.observeNonNull
-import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
 
 class MainFlowFragment : BaseFragment() {
 
@@ -55,7 +49,9 @@ class MainFlowFragment : BaseFragment() {
         }
 
         observeEvent(viewModel.errorMessage) {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            container.showSnackbar(it) {
+                anchorView = toolbar
+            }
         }
 
         observeEvent(viewModel.logonCheckedAction) {

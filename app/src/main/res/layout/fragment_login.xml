@@ -3,6 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         >
 
     <ru.luckycactus.steamroulette.presentation.widget.LuxuryProgressBar
@@ -27,6 +28,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Steam Id / Community Id"
+                android:lines="1"
+                android:maxLines="1"
                 />
 
         <com.google.android.material.button.MaterialButton
@@ -34,13 +37,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="OK"
-                />
-
-        <ImageView
-                android:id="@+id/btnSteamSignIn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/steam_signin"
                 />
 
     </LinearLayout>

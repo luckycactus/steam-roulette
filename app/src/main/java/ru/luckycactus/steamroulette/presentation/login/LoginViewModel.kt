@@ -40,7 +40,7 @@ class LoginViewModel(
         viewModelScope.launch {
             try {
                 _progressState.value = true
-                signInUseCase(id)
+                signInUseCase(id.trim())
                 signInSuccessEvent.value = Event(null)
             } catch (e: VanityNotFoundException) {
                 _errorState.value = resourceManager.getString(R.string.user_with_vanity_url_not_found)
@@ -59,6 +59,6 @@ class LoginViewModel(
 
 
     fun onSteamIdInputChanged(userId: String) {
-        _loginButtonAvailableState.value = validateSteamIdInputUseCase(userId)
+        _loginButtonAvailableState.value = validateSteamIdInputUseCase(userId.trim())
     }
 }

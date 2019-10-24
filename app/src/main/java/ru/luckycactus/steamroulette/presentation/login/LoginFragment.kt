@@ -3,15 +3,13 @@ package ru.luckycactus.steamroulette.presentation.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_login.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.main.MainActivity
+import ru.luckycactus.steamroulette.presentation.utils.*
 
 
 class LoginFragment : BaseFragment() {
@@ -36,6 +34,7 @@ class LoginFragment : BaseFragment() {
         })
 
         btnOk.setOnClickListener {
+            activity?.hideKeyboard()
             viewModel.onSteamIdConfirmed(etUserId.text.toString())
         }
 
@@ -48,7 +47,7 @@ class LoginFragment : BaseFragment() {
         }
 
         observe(viewModel.errorState) {
-            Toast.makeText(activity, it, Toast.LENGTH_SHORT).show() //todo snackbar
+            showSnackbar(it)
         }
 
         observe(viewModel.signInSuccessEvent) {
@@ -57,8 +56,8 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun showProgress(show: Boolean) {
-        content.visibility(!show)
         progress.visibility(show)
+        content.visibility(!show)
     }
 
     companion object {
