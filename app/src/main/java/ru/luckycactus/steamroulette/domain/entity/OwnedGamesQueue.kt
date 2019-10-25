@@ -6,6 +6,7 @@ import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import java.util.*
 import kotlin.NoSuchElementException
 import com.bumptech.glide.request.target.Target
+import java.lang.Integer.min
 import kotlin.Comparator
 
 
@@ -51,13 +52,13 @@ class OwnedGamesQueueImpl(
             throw NoSuchElementException()
         currentIndex++
         return if (currentIndex == 0) {
-            val nextIds = gameIds.slice(0..BUFFER_SIZE)
+            val nextIds = gameIds.subList(0, minOf(gameIds.size, BUFFER_SIZE+1))
             val nextElements =
                 gamesRepository.getLocalOwnedGames(steamId, nextIds)
                     .sortedWith(Comparator { o1, o2 ->
                         nextIds.indexOf(o1.appId) - nextIds.indexOf(o2.appId)
                     })
-            for (game in nextElements.slice(1..BUFFER_SIZE)) {
+            for (game in nextElements.subList(1, nextElements.size)) {
                 addToBuffer(game)
             }
             nextElements[0]
@@ -77,13 +78,14 @@ class OwnedGamesQueueImpl(
 
     override fun peekNext(): OwnedGame? {
         check(currentIndex >= 0) { "Cannot peek next game. You should call next() first!" }
-        return buffer.peekFirst().first
+        return buffer.peekFirst()?.first
     }
 
     override fun markCurrentAsHidden() {
         check(currentIndex >= 0) { "Cannot mark current game as hidden. You should call next() first!" }
+        val gameId = gameIds[currentIndex]
         GlobalScope.launch {
-            gamesRepository.markLocalGameAsHidden(steamId, gameIds[currentIndex])
+            gamesRepository.markLocalGameAsHidden(steamId, gameId)
         }
     }
 

@@ -158,9 +158,12 @@ class RouletteViewModel(
                     }
                 }
             } else if (it.size > 0) {
-                _contentState.value = ContentState.emptyPlaceholder(
+                _contentState.value = ContentState.Placeholder(
                     resourceManager.getString(R.string.games_queue_ended),
-                    buttonText = resourceManager.getString(R.string.restart_queue)
+                    titleType = ContentState.TitleType.None,
+                    buttonType = ContentState.ButtonType.Custom(
+                        resourceManager.getString(R.string.restart_queue)
+                    )
                 )
             } else {
                 _contentState.value = ContentState.Placeholder(

@@ -60,9 +60,6 @@ class MessageDialogFragment : DialogFragment() {
             isCancelable = this@MessageDialogFragment.cancelable
 
             create()
-        }.apply {
-            if (title == null)
-                requestWindowFeature(Window.FEATURE_NO_TITLE)
         }
 
 
