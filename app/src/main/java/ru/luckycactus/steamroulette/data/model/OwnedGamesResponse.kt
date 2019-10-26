@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.data.model
 
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 
 data class OwnedGamesResponse(
@@ -8,7 +9,7 @@ data class OwnedGamesResponse(
 
 data class OwnedGamesResult(
     @SerializedName("game_count") val gameCount: Int,
-    @SerializedName("games") val games: List<OwnedGameEntity>
+    @SerializedName("games") val gamesJson: JsonElement
 )
 
 data class OwnedGameEntity(

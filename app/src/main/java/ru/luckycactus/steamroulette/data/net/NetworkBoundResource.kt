@@ -3,17 +3,10 @@ package ru.luckycactus.steamroulette.data.net
 import android.util.LruCache
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.isActive
 import ru.luckycactus.steamroulette.data.local.CacheHelper
-import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import java.lang.Exception
@@ -34,7 +27,8 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
 
     suspend fun updateIfNeed(cachePolicy: CachePolicy): Boolean {
         return if (shouldFetch(cachePolicy)) {
-            val data = wrapCommonNetworkExceptions { getFromNetwork() }
+            val data =
+                wrapCommonNetworkExceptions { getFromNetwork() }
             saveToCache(data)
             cacheHelper.setCachedNow(key)
             memoryCache.remove(memoryKey)

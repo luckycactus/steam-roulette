@@ -1,13 +1,12 @@
 package ru.luckycactus.steamroulette.di
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.net.SteamApiService
+import ru.luckycactus.steamroulette.data.utils.MyHttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
 object NetworkModule {
@@ -15,7 +14,7 @@ object NetworkModule {
     private const val STEAM_WEB_API_URL = "https://api.steampowered.com/"
 
     val steamApiService: SteamApiService by lazy {
-        val interceptors = listOf<Interceptor>(
+        val interceptors = listOf(
             getAuthInterceptor(),
             getLogInterceptor()
         )
@@ -56,10 +55,10 @@ object NetworkModule {
     }
 
     private fun getLogInterceptor() =
-        HttpLoggingInterceptor().apply {
+        MyHttpLoggingInterceptor(setOf("IPlayerService/GetOwnedGames/")).apply {
             level = if (BuildConfig.DEBUG)
-                HttpLoggingInterceptor.Level.BODY
+                MyHttpLoggingInterceptor.Level.BODY
             else
-                HttpLoggingInterceptor.Level.NONE
+                MyHttpLoggingInterceptor.Level.NONE
         }
 }

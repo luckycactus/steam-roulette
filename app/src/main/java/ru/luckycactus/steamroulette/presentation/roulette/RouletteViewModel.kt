@@ -86,12 +86,11 @@ class RouletteViewModel(
     }
 
     fun onRetryClick() {
-        gamesQueue?.let {
-            if (!it.hasNext() && it.size > 0) {
-                refreshQueue()
-            } else {
-                userViewModelDelegate.fetchGames()
-            }
+        val gamesQueue = gamesQueue
+        if (gamesQueue != null && !gamesQueue.hasNext() && gamesQueue.size > 0) {
+            refreshQueue()
+        } else {
+            userViewModelDelegate.fetchGames()
         }
     }
 

@@ -5,7 +5,6 @@ import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
-import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 
 
 @Database(
@@ -86,16 +85,6 @@ abstract class OwnedGamesDao {
 
     @Query("delete from owned_game where userSteam64 =:steam64 and updateTimeStamp < :timestamp")
     abstract suspend fun removeGamesUpdatedEarlierThen(steam64: Long, timestamp: Long)
-
-    @Transaction
-    open suspend fun insertGamesRemoveOthers(
-        steam64: Long,
-        timestamp: Long,
-        games: List<OwnedGameRoomEntity>
-    ) {
-        insertGames(games)
-        removeGamesUpdatedEarlierThen(steam64, timestamp)
-    }
 
     suspend fun isUserHasOwnedGames(steam64: Long) = _isUserHasOwnedGames(steam64) == 1
 

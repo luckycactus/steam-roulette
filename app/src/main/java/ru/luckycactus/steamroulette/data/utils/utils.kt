@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data
+package ru.luckycactus.steamroulette.data.utils
 
 import retrofit2.HttpException
 import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException

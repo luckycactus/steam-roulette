@@ -1,15 +1,21 @@
 package ru.luckycactus.steamroulette.data.games.datastore
 
 import androidx.lifecycle.LiveData
+import androidx.room.withTransaction
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.local.DB
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 
 class LocalGamesDataStore(
     private val db: DB
 ) : GamesDataStore.Local {
+
     override suspend fun getOwnedGames(steam64: Long): List<OwnedGame> {
         return db.ownedGamesDao().getGames(steam64)
     }
@@ -22,11 +28,28 @@ class LocalGamesDataStore(
         return db.ownedGamesDao().observeHiddenGameCount(steam64)
     }
 
-    override suspend fun saveOwnedGamesToCache(steam64: Long, games: List<OwnedGameEntity>) {
+    override suspend fun saveOwnedGamesToCache(steam64: Long, gamesFlow: Flow<OwnedGameEntity>) {
         val hiddenGameIds = db.ownedGamesDao().getHiddenGamesIds(steam64).toSet()
         val timestamp = System.currentTimeMillis()
         val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds, timestamp)
-        db.ownedGamesDao().insertGamesRemoveOthers(steam64, timestamp, mapper.mapFrom(games))
+
+        val buffer = ArrayList<OwnedGameRoomEntity>(GAMES_BUFFER_SIZE)
+
+        db.withTransaction {
+            gamesFlow.map { mapper.mapFrom(it) }
+                .collect {
+                    buffer.add(it)
+                    if (buffer.size == GAMES_BUFFER_SIZE) {
+                        db.ownedGamesDao().insertGames(buffer)
+                        buffer.clear()
+                    }
+                }
+
+            if (buffer.isNotEmpty())
+                db.ownedGamesDao().insertGames(buffer)
+
+            db.ownedGamesDao().removeGamesUpdatedEarlierThen(steam64, timestamp)
+        }
     }
 
     override suspend fun getFilteredOwnedGamesIds(
@@ -64,5 +87,9 @@ class LocalGamesDataStore(
 
     override suspend fun clearGames(steam64: Long) {
         db.ownedGamesDao().clearGames(steam64)
+    }
+
+    companion object {
+        private const val GAMES_BUFFER_SIZE = 500
     }
 }

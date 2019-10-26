@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.data.user.datastore
 
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.net.SteamApiService
-import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.exception.SteamIdNotFoundException
 
 class RemoteUserDataStore(

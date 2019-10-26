@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.login.datastore
 
 import ru.luckycactus.steamroulette.data.net.SteamApiService
-import ru.luckycactus.steamroulette.data.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.exception.VanityNotFoundException
 
 class RemoteLoginDataStore(

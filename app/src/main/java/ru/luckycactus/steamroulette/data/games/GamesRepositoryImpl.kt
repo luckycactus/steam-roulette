@@ -2,6 +2,8 @@ package ru.luckycactus.steamroulette.data.games
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import com.google.gson.stream.JsonReader
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
@@ -68,17 +70,17 @@ class GamesRepositoryImpl(
         localGamesDataStore.markGameAsHidden(steamId.asSteam64(), appId)
     }
 
-    private fun createOwnedGamesResource(steam64: Long): NetworkBoundResource<List<OwnedGameEntity>, List<OwnedGame>> {
+    private fun createOwnedGamesResource(steam64: Long): NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>> {
         val cacheKey = "owned_games_$steam64"
-        return object : NetworkBoundResource<List<OwnedGameEntity>, List<OwnedGame>>(
+        return object : NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>>(
             cacheKey,
             cacheKey,
             OWNED_GAMES_CACHE_WINDOW
         ) {
-            override suspend fun getFromNetwork(): List<OwnedGameEntity> =
+            override suspend fun getFromNetwork(): Flow<OwnedGameEntity> =
                 remoteGamesDataStore.getOwnedGames(steam64)
 
-            override suspend fun saveToCache(data: List<OwnedGameEntity>) =
+            override suspend fun saveToCache(data: Flow<OwnedGameEntity>) =
                 localGamesDataStore.saveOwnedGamesToCache(steam64, data)
 
             override suspend fun getFromCache(): List<OwnedGame> =
