@@ -7,7 +7,6 @@
         <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@color/divider</item>
     </style>
 
-    <!-- todo NewApi -->
     <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="BaseBottomSheetDialog">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">?colorSurface</item>

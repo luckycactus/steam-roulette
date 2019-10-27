@@ -3,23 +3,18 @@ package ru.luckycactus.steamroulette.presentation.roulette
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.animation.Animation
+import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
-import kotlinx.android.synthetic.main.fragment_roulette.view.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
-import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
-import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
@@ -28,7 +23,6 @@ import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.widget.GameView
-
 
 class RouletteFragment : BaseFragment() {
 
@@ -49,7 +43,7 @@ class RouletteFragment : BaseFragment() {
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
-    override val layoutResId: Int = R.layout.fragment_roulette
+    override val layoutResId: Int = ru.luckycactus.steamroulette.R.layout.fragment_roulette
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +64,22 @@ class RouletteFragment : BaseFragment() {
         fabSteamInfo.setOnClickListener {
             viewModel.onSteamInfoClick()
         }
+
+        //todo Заменить на popupwindow
+        val fabLongClickListener = View.OnLongClickListener {
+            val text = when (it) {
+                fabNextGame -> "Следующая игра"
+                fabHideGame -> "Скрыть игру"
+                fabSteamInfo -> "Открыть страницу в магазине"
+                else -> null
+            }
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+            true
+        }
+
+        fabNextGame.setOnLongClickListener(fabLongClickListener)
+        fabHideGame.setOnLongClickListener(fabLongClickListener)
+        fabSteamInfo.setOnLongClickListener(fabLongClickListener)
 
         viewSwitcher.getChildAt(0).setLayerType(View.LAYER_TYPE_HARDWARE, null)
         viewSwitcher.getChildAt(1).setLayerType(View.LAYER_TYPE_HARDWARE, null)
@@ -129,16 +139,17 @@ class RouletteFragment : BaseFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_roulette, menu)
+        inflater.inflate(ru.luckycactus.steamroulette.R.menu.menu_roulette, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_roulette_options -> {
-                RouletteOptionsFragment.newInstance().show(
-                    childFragmentManager,
-                    MainFlowFragment.FILTER_FRAGMENT_TAG
-                )
+            ru.luckycactus.steamroulette.R.id.action_roulette_options -> {
+                if (childFragmentManager.findFragmentByTag(MainFlowFragment.FILTER_FRAGMENT_TAG) == null)
+                    RouletteOptionsFragment.newInstance().show(
+                        childFragmentManager,
+                        MainFlowFragment.FILTER_FRAGMENT_TAG
+                    )
                 true
             }
             else -> super.onOptionsItemSelected(item)

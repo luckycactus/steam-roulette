@@ -36,11 +36,11 @@ class MainFlowFragment : BaseFragment() {
         }
 
         avatarContainer.setOnClickListener {
-            //todo можно открыть 2 раза
-            MenuFragment.newInstance().show(
-                childFragmentManager,
-                MENU_FRAGMENT_TAG
-            )
+            if (childFragmentManager.findFragmentByTag(MENU_FRAGMENT_TAG) == null)
+                MenuFragment.newInstance().show(
+                    childFragmentManager,
+                    MENU_FRAGMENT_TAG
+                )
         }
 
         observe(viewModel.userSummary) {

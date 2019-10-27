@@ -47,7 +47,7 @@ object AppModule {
         private set
 
     fun init(app: Application) {
-        appContext = app
+        appContext = app.applicationContext
         cacheHelper =
             CacheHelper(appContext.getSharedPreferences("cache-helper", Context.MODE_PRIVATE))
         appPreferences = appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)

@@ -1,9 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
@@ -52,6 +50,8 @@ class RouletteViewModel(
 
     private var gamesQueue: OwnedGamesQueue? = null
     private var gamesQueueJob: Job? = null
+    private var isNextGameAllowed = true
+    private var nextGameDelayJob: Job? = null
 
     init {
         currentUserPlayTimeFilter =
@@ -94,6 +94,12 @@ class RouletteViewModel(
         }
     }
 
+    fun onSteamInfoClick() {
+        _currentGame.value?.let {
+            _openUrlAction.value = Event(it.storeUrl)
+        }
+    }
+
     private fun refreshQueue() {
         val fetchGamesResult = userViewModelDelegate.fetchGamesState.value
         val filter = currentUserPlayTimeFilter.value
@@ -101,6 +107,9 @@ class RouletteViewModel(
         gamesQueueJob?.cancel()
         gamesQueue?.finish()
         gamesQueue = null
+        nextGameDelayJob?.cancel()
+        isNextGameAllowed = true
+
         if (fetchGamesResult == null || filter == null)
             return
 
@@ -123,14 +132,30 @@ class RouletteViewModel(
                 } catch (e: Exception) {
                     if (fetchGamesResult is Result.Error)
                         _contentState.value =
-                            ContentState.errorPlaceholder(fetchGamesResult.message)
+                            ContentState.Placeholder(
+                                message = fetchGamesResult.message,
+                                titleType = ContentState.TitleType.Custom(
+                                    resourceManager.getString(
+                                        R.string.get_owned_games_failure
+                                    )
+                                ),
+                                buttonType = ContentState.ButtonType.Default
+                            )
                     else if (e is MissingOwnedGamesException) {
-                        _contentState.value = ContentState.errorPlaceholder(
-                            resourceManager.getString(R.string.you_dont_have_games_yet)
+                        _contentState.value = ContentState.Placeholder(
+                            message = resourceManager.getString(R.string.you_dont_have_games_yet),
+                            titleType = ContentState.TitleType.None,
+                            buttonType = ContentState.ButtonType.Default
                         )
                     } else {
-                        _contentState.value = ContentState.errorPlaceholder(
-                            getCommonErrorDescription(resourceManager, e)
+                        _contentState.value = ContentState.Placeholder(
+                            message = getCommonErrorDescription(resourceManager, e),
+                            titleType = ContentState.TitleType.Custom(
+                                resourceManager.getString(
+                                    R.string.get_owned_games_failure
+                                )
+                            ),
+                            buttonType = ContentState.ButtonType.Default
                         )
                         e.printStackTrace()
                     }
@@ -140,8 +165,12 @@ class RouletteViewModel(
     }
 
     private fun showNextGame() {
+        if (!isNextGameAllowed)
+            return
+
         gamesQueue?.let {
             if (it.hasNext()) {
+                delayNextGame()
                 viewModelScope.launch {
                     _controlsAvailable.value = false
                     try {
@@ -174,9 +203,12 @@ class RouletteViewModel(
         }
     }
 
-    fun onSteamInfoClick() {
-        _currentGame.value?.let {
-            _openUrlAction.value = Event(it.storeUrl)
+    private fun delayNextGame() {
+        nextGameDelayJob?.cancel()
+        isNextGameAllowed = false
+        viewModelScope.launch {
+            delay(300)
+            isNextGameAllowed = true
         }
     }
 }

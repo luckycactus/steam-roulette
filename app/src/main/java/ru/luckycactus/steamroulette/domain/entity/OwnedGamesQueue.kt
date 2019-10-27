@@ -36,6 +36,7 @@ class OwnedGamesQueueImpl(
 
     private var currentIndex = -1
     private val buffer = ArrayDeque<Pair<OwnedGame, Target<*>>>(BUFFER_SIZE)
+    private var currentTarget: Target<*>? = null
 
     override val size
         get() = gameIds.size
@@ -63,6 +64,7 @@ class OwnedGamesQueueImpl(
             }
             nextElements[0]
         } else {
+            currentTarget?.let { gameCoverPreloader.cancelPreload(it) }
             val current = buffer.removeFirst()
             if (currentIndex + BUFFER_SIZE < gameIds.size) {
                 val next = gamesRepository.getLocalOwnedGame(
@@ -71,6 +73,7 @@ class OwnedGamesQueueImpl(
                 )
                 addToBuffer(next)
             }
+            currentTarget = current.second
             current.first
         }
 
@@ -90,6 +93,7 @@ class OwnedGamesQueueImpl(
     }
 
     override fun finish() {
+        currentTarget?.let { gameCoverPreloader.cancelPreload(it) }
         buffer.forEach {
             gameCoverPreloader.cancelPreload(it.second)
         }
