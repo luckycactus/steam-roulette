@@ -91,6 +91,6 @@ class UserRepositoryImpl(
     }
 
     companion object {
-        val SUMMARY_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(4L, TimeUnit.HOURS)
+        val SUMMARY_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(2L, TimeUnit.DAYS)
     }
 }
