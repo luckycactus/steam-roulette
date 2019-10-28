@@ -43,7 +43,7 @@ class MessageDialogFragment : DialogFragment() {
             setMessage(message)
 
 
-            setPositiveButton(positive ?: getString(R.string.ok)) { _, _ ->
+            setPositiveButton(positive ?: getString(android.R.string.ok)) { _, _ ->
                 clickListener?.onDialogPositiveClick(this@MessageDialogFragment, _tag)
                 if (dismissOnClick)
                     dismiss()

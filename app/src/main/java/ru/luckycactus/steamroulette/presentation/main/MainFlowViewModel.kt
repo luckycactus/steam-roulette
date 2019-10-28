@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
-import ru.luckycactus.steamroulette.di.AppModule.resourceManager
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.entity.Result
@@ -19,7 +18,6 @@ import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 
 //todo Отдавать Result из UseCase?
 class MainFlowViewModel(
@@ -98,7 +96,7 @@ class MainFlowViewModel(
         if (result is Result.Error) {
             _errorMessage.value = Event(
                 "%s: %s".format(
-                    resourceManager.getString(R.string.user_update_error),
+                    resourceManager.getString(R.string.error_user_update),
                     result.message
                 )
             )
@@ -109,7 +107,7 @@ class MainFlowViewModel(
         if (result is Result.Error) {
             _errorMessage.value = Event(
                 "%s: %s".format(
-                    resourceManager.getString(R.string.games_sync_failure),
+                    resourceManager.getString(R.string.error_get_owned_games),
                     result.message
                 )
             )
@@ -125,7 +123,7 @@ class MainFlowViewModel(
             } catch (e: Exception) {
                 Result.Error(
                     if (e is GetOwnedGamesPrivacyException)
-                        resourceManager.getString(R.string.get_owned_games_exception_description)
+                        resourceManager.getString(R.string.error_get_owned_games_privacy)
                     else {
                         e.printStackTrace()
                         getCommonErrorDescription(resourceManager, e)

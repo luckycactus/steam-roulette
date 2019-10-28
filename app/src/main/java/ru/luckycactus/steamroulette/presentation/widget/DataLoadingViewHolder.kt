@@ -53,8 +53,8 @@ class DataLoadingViewHolder(
         with(placeholderLayout.tvEmptyTitle) {
             text =
                 when (placeholder.titleType) {
-                    ContentState.TitleType.DefaultError -> res.getString(R.string.error_title)
-                    ContentState.TitleType.DefaultEmpty -> res.getString(R.string.empty_title)
+                    ContentState.TitleType.DefaultError -> res.getString(R.string.placeholder_error_title)
+                    ContentState.TitleType.DefaultEmpty -> res.getString(R.string.placeholder_empty_title)
                     is ContentState.TitleType.Custom -> placeholder.titleType.text
                     ContentState.TitleType.None -> null
                 }

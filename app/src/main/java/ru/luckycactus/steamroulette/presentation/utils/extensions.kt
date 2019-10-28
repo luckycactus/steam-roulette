@@ -52,9 +52,9 @@ fun Boolean?.nullIfFalse() = if (this == false) null else this
 fun ViewModel.getCommonErrorDescription(resourceManager: ResourceManager, e: Exception): String {
     return resourceManager.getString(
         when (e) {
-            is ServerException -> R.string.steam_api_unavailable
-            is NetworkConnectionException -> R.string.check_your_connection
-            else -> R.string.unknown_error
+            is ServerException -> R.string.error_steam_api_unavailable
+            is NetworkConnectionException -> R.string.error_check_your_connection
+            else -> R.string.error_unknown
         }
     )
 }

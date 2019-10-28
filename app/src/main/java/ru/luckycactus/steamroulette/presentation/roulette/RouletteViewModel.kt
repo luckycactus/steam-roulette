@@ -15,7 +15,6 @@ import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 
 class RouletteViewModel(
     private val userViewModelDelegate: UserViewModelDelegate
@@ -130,34 +129,34 @@ class RouletteViewModel(
                         showNextGame()
                     }
                 } catch (e: Exception) {
-                    if (fetchGamesResult is Result.Error)
-                        _contentState.value =
+                    when {
+                        fetchGamesResult is Result.Error -> _contentState.value =
                             ContentState.Placeholder(
                                 message = fetchGamesResult.message,
                                 titleType = ContentState.TitleType.Custom(
                                     resourceManager.getString(
-                                        R.string.get_owned_games_failure
+                                        R.string.error_get_owned_games
                                     )
                                 ),
                                 buttonType = ContentState.ButtonType.Default
                             )
-                    else if (e is MissingOwnedGamesException) {
-                        _contentState.value = ContentState.Placeholder(
-                            message = resourceManager.getString(R.string.you_dont_have_games_yet),
-                            titleType = ContentState.TitleType.None,
+                        e is MissingOwnedGamesException -> _contentState.value = ContentState.Placeholder(
+                            message = resourceManager.getString(R.string.error_zero_games),
+                            titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
                             buttonType = ContentState.ButtonType.Default
                         )
-                    } else {
-                        _contentState.value = ContentState.Placeholder(
-                            message = getCommonErrorDescription(resourceManager, e),
-                            titleType = ContentState.TitleType.Custom(
-                                resourceManager.getString(
-                                    R.string.get_owned_games_failure
-                                )
-                            ),
-                            buttonType = ContentState.ButtonType.Default
-                        )
-                        e.printStackTrace()
+                        else -> {
+                            _contentState.value = ContentState.Placeholder(
+                                message = getCommonErrorDescription(resourceManager, e),
+                                titleType = ContentState.TitleType.Custom(
+                                    resourceManager.getString(
+                                        R.string.error_get_owned_games
+                                    )
+                                ),
+                                buttonType = ContentState.ButtonType.Default
+                            )
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -195,7 +194,7 @@ class RouletteViewModel(
                 )
             } else {
                 _contentState.value = ContentState.Placeholder(
-                    resourceManager.getString(R.string.filtered_games_not_found),
+                    resourceManager.getString(R.string.error_filtered_games_not_found),
                     titleType = ContentState.TitleType.None,
                     buttonType = ContentState.ButtonType.None
                 )
@@ -206,7 +205,7 @@ class RouletteViewModel(
     private fun delayNextGame() {
         nextGameDelayJob?.cancel()
         isNextGameAllowed = false
-        viewModelScope.launch {
+        nextGameDelayJob = viewModelScope.launch {
             delay(300)
             isNextGameAllowed = true
         }

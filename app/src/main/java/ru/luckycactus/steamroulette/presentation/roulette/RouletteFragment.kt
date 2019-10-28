@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
@@ -67,12 +68,14 @@ class RouletteFragment : BaseFragment() {
 
         //todo Заменить на popupwindow
         val fabLongClickListener = View.OnLongClickListener {
-            val text = when (it) {
-                fabNextGame -> "Следующая игра"
-                fabHideGame -> "Скрыть игру"
-                fabSteamInfo -> "Открыть страницу в магазине"
-                else -> null
-            }
+            val text = getString(
+                when (it) {
+                    fabNextGame -> R.string.next_game
+                    fabHideGame -> R.string.hide_game
+                    fabSteamInfo -> R.string.open_game_store_page
+                    else -> 0
+                }
+            )
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
             true
         }

@@ -6,7 +6,7 @@
     <item
             android:id="@+id/action_roulette_options"
             android:icon="@drawable/ic_filter_list_white_24dp"
-            android:title="@string/options"
+            android:title="@string/roulette_options"
             app:showAsAction="always"
             />
 </menu>

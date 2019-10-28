@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_user_with_vanity_url_not_found">Пользователь с данным Profile URL не найден</string>
+    <string name="error_user_with_steamid_not_found">Пользователь с данным SteamID не найден</string>
+    <string name="error_invalid_steamid_format">Неверный формат SteamID</string>
+    <string name="error_steam_api_unavailable">Сервис Steam недоступен. Попробуйте позже</string>
+    <string name="error_check_your_connection">Проверьте своё сетевое подключение</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="exit">Выход</string>
+    <string name="retry">Повторить</string>
+    <string name="error_get_owned_games">Не удается получить список игр</string>
+    <string name="error_get_owned_games_privacy">Ваш профиль приватный. Пожалуйста, сделайте его публичным</string>
+    <string name="placeholder_empty_title">Нет данных</string>
+    <string name="placeholder_error_title">Ошибка</string>
+    <string name="error_zero_games">У Вас ещё нет игр</string>
+    <string name="error_user_update">Не удалось обновить информацию о пользователе</string>
+    <string name="account_games_count">%d игр на аккаунте</string>
+    <string name="games_last_sync">Последняя синхронизация: %1$s</string>
+    <string name="never">никогда</string>
+    <string name="roulette_options">Опции</string>
+    <string name="roulette_game_time_filter_title">Показывать</string>
+    <string name="btn_reset_hidden_games">Очистить</string>
+    <string name="playtime_filter_all_games">Все игры</string>
+    <string name="playtime_filter_not_played_games">Игры, в которые я не играл</string>
+    <string name="playtime_filter_not_played_2_weeks_games">Игры, в которые я не играл в последние 2 недели</string>
+    <string name="hidden_games_count">Скрыто игр</string>
+    <string name="games_queue_ended">Больше нет подходящих игр!</string>
+    <string name="error_filtered_games_not_found">Игры, удовлетворяющие заданным фильтрам, не найдены</string>
+    <string name="restart_queue">Начать заново</string>
+    <string name="exit_dialog_title">Выход</string>
+    <string name="exit_warning">Вы точно хотите выйти?</string>
+    <string name="cancel">Отмена</string>
+    <string name="dialog_message_reset_hidden_games">Вы точно хотите очистить список скрытых игр?</string>
+    <string name="login_screen_help">Что здесь вводить?</string>
+    <string name="supported_steamid_formats">Поддерживаемые форматы SteamID</string>
+    <string name="next_game">Следующая игра</string>
+    <string name="hide_game">Скрыть игру</string>
+    <string name="open_game_store_page">Открыть страницу в магазине</string>
+</resources>

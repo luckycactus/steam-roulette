@@ -1,13 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.roulette.options
 
-import android.animation.LayoutTransition
 import android.os.Bundle
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_options_filter.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
@@ -15,7 +12,6 @@ import ru.luckycactus.steamroulette.presentation.base.BaseBottomSheetDialogFragm
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.visibility
 import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
 
 
@@ -70,7 +66,7 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
         btnClearHiddenGames.setOnClickListener {
             MessageDialogFragment.create(
                 context!!,
-                messageResId = R.string.clear_hidden_games_warning,
+                messageResId = R.string.dialog_message_reset_hidden_games,
                 negativeResId = R.string.cancel
             ).show(childFragmentManager, null)
         }

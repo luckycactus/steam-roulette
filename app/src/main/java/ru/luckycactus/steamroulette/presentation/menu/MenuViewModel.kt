@@ -9,12 +9,9 @@ import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
-import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsViewModel
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.utils.combine
-import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
-import java.util.*
 
 class MenuViewModel(
     private val userViewModelDelegate: UserViewModelDelegate
@@ -57,7 +54,7 @@ class MenuViewModel(
                         System.currentTimeMillis(),
                         DateUtils.MINUTE_IN_MILLIS
                     )
-                resourceManager.getString(R.string.last_sync, ago)
+                resourceManager.getString(R.string.games_last_sync, ago)
             }
 
         refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combine(

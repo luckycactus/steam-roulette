@@ -43,11 +43,11 @@ class LoginViewModel(
                 signInUseCase(id.trim())
                 signInSuccessEvent.value = Event(null)
             } catch (e: VanityNotFoundException) {
-                _errorState.value = resourceManager.getString(R.string.user_with_vanity_url_not_found)
+                _errorState.value = resourceManager.getString(R.string.error_user_with_vanity_url_not_found)
             } catch (e: InvalidSteamIdFormatException) {
-                _errorState.value = resourceManager.getString(R.string.invalid_steamid_format)
+                _errorState.value = resourceManager.getString(R.string.error_invalid_steamid_format)
             } catch (e: SteamIdNotFoundException) {
-                _errorState.value = resourceManager.getString(R.string.user_with_steamid_not_found)
+                _errorState.value = resourceManager.getString(R.string.error_user_with_steamid_not_found)
             } catch (e: Exception) {
                 e.printStackTrace()
                 _errorState.value = getCommonErrorDescription(resourceManager, e)

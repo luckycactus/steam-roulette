@@ -1,52 +1,38 @@
 <resources>
-    <string name="app_name">Steam Roulette</string>
-    <string name="user_with_vanity_url_not_found">Пользователь с данным Custom Url не найден</string>
-    <string name="invalid_steamid_format">Неверный формат SteamId</string>
-    <string name="steam_api_unavailable">Сервис Steam недоступен. Попробуйте позже</string>
-    <string name="check_your_connection">Проверьте своё сетевое подключение</string>
-    <string name="unknown_error">Неизвестная ошибка</string>
-    <string name="user_with_steamid_not_found">Пользователь с данным SteamId не найден</string>
-    <string name="exit">Выход</string>
-    <string name="retry">Повторить</string>
-    <string name="get_owned_games_failure">Не удается получить список игр</string>
-    <string name="get_owned_games_exception_description">Проверьте настройки приватности Вашего аккаунта</string>
-    <string name="check_your_privacy">Проверьте настройки приватности Вашего аккаунта</string>
-    <string name="next_game">Дальше</string>
-    <string name="hide_this_game">Больше не показывать эту игру</string>
-    <string name="empty_title">Empty data</string>
-    <string name="empty_desription">No data for current filters</string>
-    <string name="error_title">Error</string>
-    <string name="error_description">Something went wrong. Please try again later</string>
-    <string name="you_dont_have_games_yet">У Вас ещё нет игр</string>
-    <string name="user_update_error">Не удалось обновить информацию о пользователе</string>
-    <string name="account_games_count">%d игр на аккаунте</string>
-    <string name="just_now">только что</string>
-    <string name="last_sync">Последняя синхронизация: %1$s</string>
-    <string name="never">никогда</string>
-    <string name="games_sync_failure">Не удалось обновить базу игр</string>
-    <string name="options">Опции</string>
-    <string name="roulette_game_time_filter_title">Показывать</string>
-    <string name="btn_reset_hidden_games">Очистить</string>
-    <string name="playtime_filter_all_games">Все игры</string>
-    <string name="playtime_filter_not_played_games">Игры, в которые я не играл</string>
-    <string name="playtime_filter_not_played_2_weeks_games">Игры, в которые я не играл в последние 2 недели</string>
-    <string name="hidden_games_count">Скрыто игр</string>
-    <string name="games_queue_ended">Больше нет подходящих игр!</string>
-    <string name="filtered_games_not_found">Игры, удовлетворяющие заданным фильтрам, не найдены</string>
-    <string name="restart_queue">Начать заново</string>
-    <string name="ok">Ok</string>
-    <string name="exit_dialog_title">Выход</string>
-    <string name="exit_warning">Вы точно хотите выйти?</string>
-    <string name="cancel">Отмена</string>
-    <string name="clear_hidden_games_warning">Вы точно хотите очистить список скрытых игр?</string>
-    <string name="steamid_help" translatable="false">"\u2022 gabelogannewell
-\u2022 76561197960287930
-\u2022 STEAM_0:0:11101
-\u2022 [U:1:22202]
-\u2022 https://steamcommunity.com/id/gabelogannewell/
-\u2022 https://steamcommunity.com/profiles/76561197960287930/
-\u2022 https://steamcommunity.com/profiles/[U:1:22202]/"</string>
-    <string name="login_screen_help">Что здесь вводить?</string>
-    <string name="supported_steamid_formats">Поддерживаемые форматы SteamID</string>
-    <string name="user_id_hint">SteamID / CommunityID / Profile URL</string>
+    <string name="error_user_with_vanity_url_not_found">User not found</string>
+    <string name="error_user_with_steamid_not_found">User not found</string>
+    <string name="error_invalid_steamid_format">Invalid SteamID format</string>
+    <string name="error_steam_api_unavailable">Steam service is unavailable. Please try later again</string>
+    <string name="error_check_your_connection">No connection to network. Please, check that and try again later</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="exit">Exit</string>
+    <string name="retry">Retry</string>
+    <string name="error_get_owned_games">Failed to receive your games</string>
+    <string name="error_get_owned_games_privacy">Your profile is private, please make it public</string>
+    <string name="placeholder_empty_title">Empty data</string>
+    <string name="placeholder_error_title">Error</string>
+    <string name="error_zero_games">You have no games yet</string>
+    <string name="error_user_update">Failed to update user information</string>
+    <string name="account_games_count">You have %d games</string>
+    <string name="games_last_sync">Last sync: %1$s</string>
+    <string name="never">never</string>
+    <string name="roulette_options">Options</string>
+    <string name="roulette_game_time_filter_title">Show</string>
+    <string name="btn_reset_hidden_games">Clear</string>
+    <string name="playtime_filter_all_games">All games</string>
+    <string name="playtime_filter_not_played_games">Games I have not played</string>
+    <string name="playtime_filter_not_played_2_weeks_games">Games I have not played in the last 2 weeks</string>
+    <string name="hidden_games_count">Hidden games</string>
+    <string name="games_queue_ended">No more matching games!</string>
+    <string name="error_filtered_games_not_found">No games matching the specified filters were found</string>
+    <string name="restart_queue">Restart</string>
+    <string name="exit_dialog_title">Exit</string>
+    <string name="exit_warning">Are you sure you want to exit?</string>
+    <string name="cancel">Cancel</string>
+    <string name="dialog_message_reset_hidden_games">Are you sure you want to clear hidden games?</string>
+    <string name="login_screen_help">What can I enter here?</string>
+    <string name="supported_steamid_formats">Supported SteamID Formats</string>
+    <string name="next_game">Next game</string>
+    <string name="hide_game">Hide game</string>
+    <string name="open_game_store_page">Open the page in the store</string>
 </resources>
