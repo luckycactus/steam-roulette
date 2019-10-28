@@ -15,6 +15,14 @@
     <string name="error_zero_games">У Вас ещё нет игр</string>
     <string name="error_user_update">Не удалось обновить информацию о пользователе</string>
     <string name="account_games_count">%d игр на аккаунте</string>
+    <plurals name="account_games_count_plurals">
+        <item quantity="zero">%d игр на аккаунте</item>
+        <item quantity="one">%d игра на аккаунте</item>
+        <item quantity="two">%d игры на аккаунте</item>
+        <item quantity="few">%d игры на аккаунте</item>
+        <item quantity="many">%d игр на аккаунте</item>
+        <item quantity="other">%d игр на аккаунте</item>
+    </plurals>
     <string name="games_last_sync">Последняя синхронизация: %1$s</string>
     <string name="never">никогда</string>
     <string name="roulette_options">Опции</string>

@@ -14,6 +14,14 @@
     <string name="error_zero_games">You have no games yet</string>
     <string name="error_user_update">Failed to update user information</string>
     <string name="account_games_count">You have %d games</string>
+    <plurals name="account_games_count_plurals">
+        <item quantity="zero">You have %d games</item>
+        <item quantity="one">You have %d game</item>
+        <item quantity="two">You have %d games</item>
+        <item quantity="few">You have %d games</item>
+        <item quantity="many">You have %d games</item>
+        <item quantity="other">You have %d games</item>
+    </plurals>
     <string name="games_last_sync">Last sync: %1$s</string>
     <string name="never">never</string>
     <string name="roulette_options">Options</string>

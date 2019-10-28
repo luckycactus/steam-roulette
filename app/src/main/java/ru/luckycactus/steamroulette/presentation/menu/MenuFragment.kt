@@ -70,7 +70,8 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
         }
 
         observe(viewModel.gameCount) {
-            tvGamesCount.text = getString(R.string.account_games_count).format(it)
+            tvGamesCount.text =
+                resources.getQuantityString(R.plurals.account_games_count_plurals, it, it)
         }
 
         observe(viewModel.gamesLastUpdate) {
