@@ -52,22 +52,24 @@ class MainFlowViewModel(
         _currentUserSteamId.addSource(observeCurrentUser()) {
             it?.let {
                 _currentUserSteamId.value = it
+
+                viewModelScope.launch {
+                    fetchGames(false)
+                }
+                viewModelScope.launch {
+                    fetchUserSummary(false)
+                }
             }
         }
         userSummary = _currentUserSteamId.switchMap {
             observeUserSummary(it)
         }
+
     }
 
     fun coldStart() {
-        observeCurrentUserSteamId().first {
+        _currentUserSteamId.first {
             _logonCheckedAction.value = Event(Unit)
-            viewModelScope.launch {
-                fetchGames(false)
-            }
-            viewModelScope.launch {
-                fetchUserSummary(false)
-            }
         }
     }
 
