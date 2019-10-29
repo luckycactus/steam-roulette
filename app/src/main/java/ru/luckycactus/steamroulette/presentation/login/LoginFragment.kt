@@ -46,7 +46,7 @@ class LoginFragment : BaseFragment() {
                 messageResId = R.string.steamid_help
             ).show(childFragmentManager, null)
         }
-
+viewLifecycleOwner
         observe(viewModel.progressState) {
             showProgress(it)
         }
