@@ -1,16 +1,23 @@
 package ru.luckycactus.steamroulette.data.games.datastore
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.withTransaction
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.local.DB
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
-import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
+import ru.luckycactus.steamroulette.presentation.utils.chunkBuffer
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.system.measureTimeMillis
 
 class LocalGamesDataStore(
     private val db: DB
@@ -31,22 +38,18 @@ class LocalGamesDataStore(
     override suspend fun saveOwnedGamesToCache(steam64: Long, gamesFlow: Flow<OwnedGameEntity>) {
         val hiddenGameIds = db.ownedGamesDao().getHiddenGamesIds(steam64).toSet()
         val timestamp = System.currentTimeMillis()
+
         val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds, timestamp)
 
-        val buffer = ArrayList<OwnedGameRoomEntity>(GAMES_BUFFER_SIZE)
-
         db.withTransaction {
-            gamesFlow.map { mapper.mapFrom(it) }
-                .collect {
-                    buffer.add(it)
-                    if (buffer.size == GAMES_BUFFER_SIZE) {
-                        db.ownedGamesDao().insertGames(buffer)
-                        buffer.clear()
+            withContext(Dispatchers.Default) {
+                gamesFlow
+                    .map { mapper.mapFrom(it) }
+                    .chunkBuffer(GAMES_BUFFER_SIZE)
+                    .collect {
+                        db.ownedGamesDao().insertGames(it)
                     }
-                }
-
-            if (buffer.isNotEmpty())
-                db.ownedGamesDao().insertGames(buffer)
+            }
 
             db.ownedGamesDao().removeGamesUpdatedEarlierThen(steam64, timestamp)
         }

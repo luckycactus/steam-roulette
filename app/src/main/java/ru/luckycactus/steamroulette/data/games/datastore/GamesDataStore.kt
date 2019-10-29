@@ -34,6 +34,6 @@ interface GamesDataStore {
     }
 
     interface Remote: GamesDataStore {
-        fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity>
+        suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity>
     }
 }

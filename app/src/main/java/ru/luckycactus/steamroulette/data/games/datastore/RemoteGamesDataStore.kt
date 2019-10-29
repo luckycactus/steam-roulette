@@ -19,52 +19,54 @@ class RemoteGamesDataStore(
     private val steamApiService: SteamApiService
 ) : GamesDataStore.Remote {
 
-    override fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity> = flow {
-        val response = withContext(Dispatchers.IO) {
-            wrapCommonNetworkExceptions {
-                steamApiService.getOwnedGames(
-                    steam64,
-                    includeAppInfo = true,
-                    includePlayedFreeGames = false
-                )
-            }
+    override suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity> {
+        val response = wrapCommonNetworkExceptions {
+            steamApiService.getOwnedGames(
+                steam64,
+                includeAppInfo = true,
+                includePlayedFreeGames = false
+            )
         }
-        val gson = Gson()
-        val reader = JsonReader(response.charStream())
 
-        var noGames = true
-        try {
-            while (reader.hasNext()) {
-                if (reader.peek() == JsonToken.BEGIN_OBJECT) {
-                    reader.beginObject()
-                    if (reader.nextName() == "response") {
+        val gson = Gson()
+
+        return flow {
+            val reader = JsonReader(response.charStream())
+            var noGames = true
+
+            try {
+                while (reader.hasNext()) {
+                    if (reader.peek() == JsonToken.BEGIN_OBJECT) {
                         reader.beginObject()
-                        while (reader.hasNext()) {
-                            if (reader.nextName() == "games") {
-                                noGames = false
-                                reader.beginArray()
-                                while (reader.hasNext()) {
-                                    val game = gson.fromJson<OwnedGameEntity>(
-                                        reader,
-                                        OwnedGameEntity::class.java
-                                    )
-                                    emit(game)
+                        if (reader.nextName() == "response") {
+                            reader.beginObject()
+                            while (reader.hasNext()) {
+                                if (reader.nextName() == "games") {
+                                    noGames = false
+                                    reader.beginArray()
+                                    while (reader.hasNext()) {
+                                        val game = gson.fromJson<OwnedGameEntity>(
+                                            reader,
+                                            OwnedGameEntity::class.java
+                                        )
+                                        emit(game)
+                                    }
+                                    reader.endArray()
+                                } else {
+                                    reader.skipValue()
                                 }
-                                reader.endArray()
-                            } else {
-                                reader.skipValue()
                             }
+                        } else {
+                            reader.skipValue()
                         }
-                    } else {
-                        reader.skipValue()
                     }
                 }
+            } finally {
+                reader.close()
+                response.close()
             }
-        } finally {
-            reader.close()
-            response.close()
-        }
 
-        if (noGames) throw GetOwnedGamesPrivacyException()
-    }.flowOn(Dispatchers.Default)
+            if (noGames) throw GetOwnedGamesPrivacyException()
+        }
+    }
 }
