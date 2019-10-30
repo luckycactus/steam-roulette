@@ -43,19 +43,6 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         return getCachedData()!!
     }
 
-    suspend fun getCacheThenRemoteIfExpired(coroutineScope: CoroutineScope): ReceiveChannel<ResultType> =
-        coroutineScope.produce {
-            try {
-                getCachedData()?.let { send(it) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            updateIfNeed(CachePolicy.CACHE_IF_VALID).let { updated ->
-                if (updated)
-                    send(getCachedData()!!)
-            }
-        }
-
     fun observeCacheUpdates(): LiveData<Long> = cacheHelper.observeCacheUpdates(key)
 
     fun invalidateCache() {

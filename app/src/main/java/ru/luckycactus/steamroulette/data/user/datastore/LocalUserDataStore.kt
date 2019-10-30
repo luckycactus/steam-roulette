@@ -1,19 +1,12 @@
 package ru.luckycactus.steamroulette.data.user.datastore
 
 import android.content.SharedPreferences
-import android.system.Os
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import ru.luckycactus.steamroulette.data.local.CacheHelper
-import ru.luckycactus.steamroulette.data.local.DB
+import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.long
 import ru.luckycactus.steamroulette.data.longLiveData
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
-import ru.luckycactus.steamroulette.data.stringLiveData
-import ru.luckycactus.steamroulette.data.user.UserRepositoryImpl
 
 class LocalUserDataStore(
     private val db: DB,

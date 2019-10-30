@@ -129,33 +129,38 @@ class RouletteViewModel(
                         showNextGame()
                     }
                 } catch (e: Exception) {
-                    when {
-                        fetchGamesResult is Result.Error -> _contentState.value =
-                            ContentState.Placeholder(
-                                message = fetchGamesResult.message,
-                                titleType = ContentState.TitleType.Custom(
-                                    resourceManager.getString(
-                                        R.string.error_get_owned_games
-                                    )
-                                ),
-                                buttonType = ContentState.ButtonType.Default
-                            )
-                        e is MissingOwnedGamesException -> _contentState.value = ContentState.Placeholder(
-                            message = resourceManager.getString(R.string.error_zero_games),
-                            titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
-                            buttonType = ContentState.ButtonType.Default
-                        )
-                        else -> {
-                            _contentState.value = ContentState.Placeholder(
-                                message = getCommonErrorDescription(resourceManager, e),
-                                titleType = ContentState.TitleType.Custom(
-                                    resourceManager.getString(
-                                        R.string.error_get_owned_games
-                                    )
-                                ),
-                                buttonType = ContentState.ButtonType.Default
-                            )
-                            e.printStackTrace()
+                    if (e is CancellationException) {
+                        throw e
+                    } else {
+                        when {
+                            fetchGamesResult is Result.Error -> _contentState.value =
+                                ContentState.Placeholder(
+                                    message = fetchGamesResult.message,
+                                    titleType = ContentState.TitleType.Custom(
+                                        resourceManager.getString(
+                                            R.string.error_get_owned_games
+                                        )
+                                    ),
+                                    buttonType = ContentState.ButtonType.Default
+                                )
+                            e is MissingOwnedGamesException -> _contentState.value =
+                                ContentState.Placeholder(
+                                    message = resourceManager.getString(R.string.error_zero_games),
+                                    titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
+                                    buttonType = ContentState.ButtonType.Default
+                                )
+                            else -> {
+                                _contentState.value = ContentState.Placeholder(
+                                    message = getCommonErrorDescription(resourceManager, e),
+                                    titleType = ContentState.TitleType.Custom(
+                                        resourceManager.getString(
+                                            R.string.error_get_owned_games
+                                        )
+                                    ),
+                                    buttonType = ContentState.ButtonType.Default
+                                )
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }

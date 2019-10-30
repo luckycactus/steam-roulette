@@ -4,15 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.di.AppModule.validateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.exception.SteamIdNotFoundException
 import ru.luckycactus.steamroulette.domain.exception.VanityNotFoundException
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.startWith
+import kotlin.coroutines.suspendCoroutine
 
 class LoginViewModel(
 ) : ViewModel() {
@@ -43,11 +46,15 @@ class LoginViewModel(
                 signInUseCase(id.trim())
                 signInSuccessEvent.value = Event(null)
             } catch (e: VanityNotFoundException) {
-                _errorState.value = resourceManager.getString(R.string.error_user_with_vanity_url_not_found)
+                _errorState.value =
+                    resourceManager.getString(R.string.error_user_with_vanity_url_not_found)
             } catch (e: InvalidSteamIdFormatException) {
                 _errorState.value = resourceManager.getString(R.string.error_invalid_steamid_format)
             } catch (e: SteamIdNotFoundException) {
-                _errorState.value = resourceManager.getString(R.string.error_user_with_steamid_not_found)
+                _errorState.value =
+                    resourceManager.getString(R.string.error_user_with_steamid_not_found)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 e.printStackTrace()
                 _errorState.value = getCommonErrorDescription(resourceManager, e)
@@ -56,7 +63,6 @@ class LoginViewModel(
             }
         }
     }
-
 
     fun onSteamIdInputChanged(userId: String) {
         _loginButtonAvailableState.value = validateSteamIdInputUseCase(userId.trim())

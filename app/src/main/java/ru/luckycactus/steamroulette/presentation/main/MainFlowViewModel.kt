@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.main
 
 import androidx.lifecycle.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
@@ -122,6 +123,8 @@ class MainFlowViewModel(
             return try {
                 fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
                 Result.success.also { _fetchGamesState.value = it }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Result.Error(
                     if (e is GetOwnedGamesPrivacyException)
@@ -148,7 +151,11 @@ class MainFlowViewModel(
                 )
                 Result.success
             } catch (e: Exception) {
-                Result.Error(getCommonErrorDescription(resourceManager, e))
+                if (e is CancellationException) {
+                    throw e
+                } else {
+                    Result.Error(getCommonErrorDescription(resourceManager, e))
+                }
             } finally {
                 _fetchUserSummaryState.value = false
             }

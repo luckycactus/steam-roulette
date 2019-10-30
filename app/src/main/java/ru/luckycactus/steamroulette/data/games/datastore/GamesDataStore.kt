@@ -9,31 +9,29 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 
 interface GamesDataStore {
 
-    interface Local: GamesDataStore {
-        suspend fun saveOwnedGamesToCache(steam64: Long, gamesFlow: Flow<OwnedGameEntity>)
+    interface Local : GamesDataStore {
+        suspend fun saveOwnedGames(steam64: Long, gamesFlow: Flow<OwnedGameEntity>)
 
         suspend fun getFilteredOwnedGamesIds(steam64: Long, filter: EnPlayTimeFilter): List<Int>
 
-        suspend fun getOwnedGames(steam64: Long): List<OwnedGame>
-
-        suspend fun markGameAsHidden(steam64: Long, gameId: Int)
+        suspend fun markOwnedGameAsHidden(steam64: Long, gameId: Int)
 
         suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame
 
         suspend fun getOwnedGames(steam64: Long, appIds: List<Int>): List<OwnedGame>
 
-        suspend fun isUserHasOwnedGames(steam64: Long): Boolean
+        suspend fun isUserHasGames(steam64: Long): Boolean
 
-        fun observeGameCount(steam64: Long): LiveData<Int>
+        fun observeOwnedGameCount(steam64: Long): LiveData<Int>
 
-        fun observeHiddenGameCount(steam64: Long): LiveData<Int>
+        fun observeHiddenOwnedGameCount(steam64: Long): LiveData<Int>
 
-        suspend fun clearHiddenGames(steam64: Long)
+        suspend fun clearHiddenOwnedGames(steam64: Long)
 
-        suspend fun clearGames(steam64: Long)
+        suspend fun clearOwnedGames(steam64: Long)
     }
 
-    interface Remote: GamesDataStore {
+    interface Remote : GamesDataStore {
         suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity>
     }
 }

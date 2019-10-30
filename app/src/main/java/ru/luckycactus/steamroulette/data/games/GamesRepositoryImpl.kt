@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.data.games
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import com.google.gson.stream.JsonReader
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
@@ -27,29 +26,29 @@ class GamesRepositoryImpl(
     }
 
     override fun observeGamesCount(steamId: SteamId): LiveData<Int> {
-        return localGamesDataStore.observeGameCount(steamId.asSteam64())
+        return localGamesDataStore.observeOwnedGameCount(steamId.asSteam64())
     }
 
     override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> {
-        return localGamesDataStore.observeHiddenGameCount(steamId.asSteam64())
+        return localGamesDataStore.observeHiddenOwnedGameCount(steamId.asSteam64())
     }
 
     override suspend fun clearHiddenGames(steamId: SteamId) {
-        localGamesDataStore.clearHiddenGames(steamId.asSteam64())
+        localGamesDataStore.clearHiddenOwnedGames(steamId.asSteam64())
     }
 
     override fun observeGamesUpdates(steamId: SteamId): LiveData<Date> =
         createOwnedGamesResource(steamId.asSteam64()).observeCacheUpdates().map { Date(it) }
 
     override suspend fun clearUser(steamId: SteamId) {
-        localGamesDataStore.clearGames(steamId.asSteam64())
+        localGamesDataStore.clearOwnedGames(steamId.asSteam64())
         //todo synchronization
         createOwnedGamesResource(steamId.asSteam64())
             .invalidateCache()
     }
 
-    override suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean {
-        return localGamesDataStore.isUserHasOwnedGames(steamId.asSteam64())
+    override suspend fun isUserHasGames(steamId: SteamId): Boolean {
+        return localGamesDataStore.isUserHasGames(steamId.asSteam64())
     }
 
     override suspend fun getFilteredLocalOwnedGamesIds(
@@ -67,7 +66,7 @@ class GamesRepositoryImpl(
     }
 
     override suspend fun markLocalGameAsHidden(steamId: SteamId, appId: Int) {
-        localGamesDataStore.markGameAsHidden(steamId.asSteam64(), appId)
+        localGamesDataStore.markOwnedGameAsHidden(steamId.asSteam64(), appId)
     }
 
     private fun createOwnedGamesResource(steam64: Long): NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>> {
@@ -81,10 +80,11 @@ class GamesRepositoryImpl(
                 remoteGamesDataStore.getOwnedGames(steam64)
 
             override suspend fun saveToCache(data: Flow<OwnedGameEntity>) =
-                localGamesDataStore.saveOwnedGamesToCache(steam64, data)
+                localGamesDataStore.saveOwnedGames(steam64, data)
 
-            override suspend fun getFromCache(): List<OwnedGame> =
-                localGamesDataStore.getOwnedGames(steam64)
+            override suspend fun getFromCache(): List<OwnedGame> {
+                throw UnsupportedOperationException()
+            }
         }
     }
 

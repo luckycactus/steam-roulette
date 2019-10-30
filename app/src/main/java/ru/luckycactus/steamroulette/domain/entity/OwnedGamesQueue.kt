@@ -1,13 +1,14 @@
 package ru.luckycactus.steamroulette.domain.entity
 
+import com.bumptech.glide.request.target.Target
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import java.util.*
-import kotlin.NoSuchElementException
-import com.bumptech.glide.request.target.Target
-import java.lang.Integer.min
 import kotlin.Comparator
+import kotlin.NoSuchElementException
+import kotlin.coroutines.coroutineContext
 
 
 interface OwnedGamesQueue {
@@ -53,7 +54,7 @@ class OwnedGamesQueueImpl(
             throw NoSuchElementException()
         currentIndex++
         return if (currentIndex == 0) {
-            val nextIds = gameIds.subList(0, minOf(gameIds.size, BUFFER_SIZE+1))
+            val nextIds = gameIds.subList(0, minOf(gameIds.size, BUFFER_SIZE + 1))
             val nextElements =
                 gamesRepository.getLocalOwnedGames(steamId, nextIds)
                     .sortedWith(Comparator { o1, o2 ->

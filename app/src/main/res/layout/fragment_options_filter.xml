@@ -66,6 +66,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="@dimen/default_activity_margin"
             android:layout_marginRight="@dimen/default_activity_margin"
+            android:gravity="center_vertical|start"
             android:text="@string/btn_reset_hidden_games"
             />
 

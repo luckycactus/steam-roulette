@@ -12,7 +12,7 @@ class AndroidResourceManager(
     override fun getString(@StringRes strId: Int): String =
         context.getString(strId)
 
-    override fun getString(@StringRes strId: Int, vararg formatArgs: Any) =
+    override fun getString(@StringRes strId: Int, vararg formatArgs: Any): String =
         context.getString(strId, *formatArgs)
 
     override fun getQuantityString(@PluralsRes strId: Int, num: Int): String =

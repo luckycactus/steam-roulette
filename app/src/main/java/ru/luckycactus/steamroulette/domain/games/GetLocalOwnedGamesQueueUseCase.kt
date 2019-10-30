@@ -10,7 +10,7 @@ class GetLocalOwnedGamesQueueUseCase(
 ) : SuspendUseCase<GetLocalOwnedGamesQueueUseCase.Params, OwnedGamesQueue>() {
 
     override suspend fun getResult(params: Params): OwnedGamesQueue {
-        if (!gamesRepository.isUserHasLocalOwnedGames(params.steamId)) {
+        if (!gamesRepository.isUserHasGames(params.steamId)) {
             throw MissingOwnedGamesException()
         }
 

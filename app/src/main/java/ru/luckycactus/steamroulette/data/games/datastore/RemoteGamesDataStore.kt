@@ -28,9 +28,8 @@ class RemoteGamesDataStore(
             )
         }
 
-        val gson = Gson()
-
         return flow {
+            val gson = Gson()
             val reader = JsonReader(response.charStream())
             var noGames = true
 
@@ -67,6 +66,6 @@ class RemoteGamesDataStore(
             }
 
             if (noGames) throw GetOwnedGamesPrivacyException()
-        }
+        }.flowOn(Dispatchers.IO)
     }
 }

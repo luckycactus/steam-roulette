@@ -49,11 +49,11 @@ class MainFlowFragment : BaseFragment() {
                 .into(ivAvatar)
         }
 
-        observeEvent(viewModel.errorMessage) {
-            container.showSnackbar(it) {
-                anchorView = toolbar
-            }
-        }
+//        observeEvent(viewModel.errorMessage) {
+//            container.showSnackbar(it) {
+//                anchorView = toolbar
+//            }
+//        }
 
         observeEvent(viewModel.logonCheckedAction) {
             childFragmentManager.beginTransaction()

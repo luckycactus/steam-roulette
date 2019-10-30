@@ -22,7 +22,7 @@ interface GamesRepository {
 
     suspend fun markLocalGameAsHidden(steamId: SteamId, appId: Int)
 
-    suspend fun isUserHasLocalOwnedGames(steamId: SteamId): Boolean
+    suspend fun isUserHasGames(steamId: SteamId): Boolean
 
     fun observeGamesCount(steamId: SteamId): LiveData<Int>
 

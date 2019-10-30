@@ -8,10 +8,9 @@ import androidx.room.Room
 import ru.luckycactus.steamroulette.data.games.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
-import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameMapper
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.CacheHelper
-import ru.luckycactus.steamroulette.data.local.DB
+import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
 import ru.luckycactus.steamroulette.data.user.UserRepositoryImpl
@@ -21,7 +20,6 @@ import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.data.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.entity.GameCoverPreloader
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterUseCase
@@ -204,7 +202,6 @@ object AppModule {
 
     private val steamRouletteDb by lazy {
         Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
-            .fallbackToDestructiveMigration() //todo remove
             .build()
     }
 }
