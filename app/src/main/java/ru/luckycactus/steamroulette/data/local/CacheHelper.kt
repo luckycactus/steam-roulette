@@ -12,16 +12,16 @@ class CacheHelper(
 ) {
     private val prefsEditor = prefs.edit()
 
-    fun isCached(key: String): Boolean {
-        return prefs.getLong(key, 0) > 0L
-    }
+    fun isCached(key: String) = prefs.getLong(key, 0) > 0L
 
     fun isExpired(
         key: String,
         window: Long,
         timeUnit: TimeUnit = TimeUnit.HOURS
     ): Boolean {
-        val savedTime = prefs.getLong(key, 0)
+        val savedTime = prefs.getLong(key, 0L)
+        if (savedTime == 0L)
+            return true
         val expireTime = savedTime + TimeUnit.MILLISECONDS.convert(window, timeUnit)
         return System.currentTimeMillis() >= expireTime
     }
@@ -32,8 +32,8 @@ class CacheHelper(
         window: Long,
         timeUnit: TimeUnit = TimeUnit.HOURS
     ): Boolean =
-        cachePolicy == CachePolicy.ONLY_CACHE ||
-                cachePolicy == CachePolicy.CACHE_IF_VALID && !isExpired(key, window, timeUnit)
+        cachePolicy == CachePolicy.OnlyCache ||
+                (cachePolicy == CachePolicy.CacheIfValid && !isExpired(key, window, timeUnit))
 
 
     fun shouldUpdate(
@@ -45,6 +45,7 @@ class CacheHelper(
         !shouldUseCache(cachePolicy, key, window, timeUnit)
 
     fun setCachedNow(key: String) {
+        //todo apply or commit
         prefsEditor.apply { putLong(key, System.currentTimeMillis()) }
     }
 

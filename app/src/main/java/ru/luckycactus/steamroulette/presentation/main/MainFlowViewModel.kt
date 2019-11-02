@@ -1,10 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.main
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
@@ -51,6 +48,7 @@ class MainFlowViewModel(
 
     init {
         _currentUserSteamId.addSource(observeCurrentUser()) {
+            viewModelScope.coroutineContext.cancelChildren()
             it?.let {
                 _currentUserSteamId.value = it
 

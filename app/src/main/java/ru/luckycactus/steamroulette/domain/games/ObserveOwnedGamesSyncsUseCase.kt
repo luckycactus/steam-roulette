@@ -7,9 +7,9 @@ import java.util.*
 
 class ObserveOwnedGamesSyncsUseCase(
     private val gamesRepository: GamesRepository
-) : UseCase<ObserveOwnedGamesSyncsUseCase.Params, LiveData<Date>>() {
+) : UseCase<ObserveOwnedGamesSyncsUseCase.Params, LiveData<Long>>() {
 
-    override fun getResult(params: Params): LiveData<Date> {
+    override fun getResult(params: Params): LiveData<Long> {
         return gamesRepository.observeGamesUpdates(params.steamId)
     }
 

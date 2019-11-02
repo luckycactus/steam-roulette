@@ -1,12 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.menu
 
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.fragment_menu.ivAvatar
 import kotlinx.android.synthetic.main.fragment_menu.tvNickname
@@ -17,10 +15,11 @@ import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.visibility
-import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.MessageDialogFragment
 
 class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
+    //todo di
     private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {

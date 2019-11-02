@@ -11,7 +11,7 @@ interface UserRepository {
 
     fun observeUserSummary(steamId: SteamId): LiveData<UserSummary>
 
-    fun saveSignedInUser(steamId: SteamId)
+    fun setCurrentUser(steamId: SteamId)
 
     fun getCurrentUserSteamId(): SteamId?
 
@@ -21,7 +21,7 @@ interface UserRepository {
 
     suspend fun signOut()
 
-    suspend fun refreshUserSummary(steamId: SteamId, cachePolicy: CachePolicy)
+    suspend fun fetchUserSummary(steamId: SteamId, cachePolicy: CachePolicy)
 
-    suspend fun clearUser(steamId: SteamId)
+    suspend fun clearUserSummary(steamId: SteamId)
 }

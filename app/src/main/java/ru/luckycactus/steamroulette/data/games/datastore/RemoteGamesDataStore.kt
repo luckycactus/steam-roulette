@@ -16,7 +16,8 @@ import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyExcepti
 
 
 class RemoteGamesDataStore(
-    private val steamApiService: SteamApiService
+    private val steamApiService: SteamApiService,
+    private val gson: Gson
 ) : GamesDataStore.Remote {
 
     override suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity> {
@@ -29,7 +30,6 @@ class RemoteGamesDataStore(
         }
 
         return flow {
-            val gson = Gson()
             val reader = JsonReader(response.charStream())
             var noGames = true
 

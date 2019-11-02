@@ -16,6 +16,7 @@ import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
 
 class MainFlowFragment : BaseFragment() {
 
+    //todo di
     val viewModel by lazy {
         ViewModelProviders.of(this).get(MainFlowViewModel::class.java)
     }

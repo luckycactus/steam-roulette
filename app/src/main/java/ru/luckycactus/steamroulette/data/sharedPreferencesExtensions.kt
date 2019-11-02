@@ -52,7 +52,7 @@ fun SharedPreferences.intLiveData(key: String, defValue: Int) =
     liveData(Int::class.java, key, defValue)
 
 fun SharedPreferences.longLiveData(key: String, defValue: Long) =
-    liveData(Long::class.java, key, defValue).distinctUntilChanged()
+    liveData(Long::class.java, key, defValue)
 
 fun SharedPreferences.floatLiveData(key: String, defValue: Float) =
     liveData(Float::class.java, key, defValue)

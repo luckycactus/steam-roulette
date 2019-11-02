@@ -7,6 +7,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.core.view.children
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -27,6 +28,7 @@ import ru.luckycactus.steamroulette.presentation.widget.GameView
 
 class RouletteFragment : BaseFragment() {
 
+    //todo di
     private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -44,7 +46,7 @@ class RouletteFragment : BaseFragment() {
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
-    override val layoutResId: Int = ru.luckycactus.steamroulette.R.layout.fragment_roulette
+    override val layoutResId: Int = R.layout.fragment_roulette
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,12 +144,12 @@ class RouletteFragment : BaseFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(ru.luckycactus.steamroulette.R.menu.menu_roulette, menu)
+        inflater.inflate(R.menu.menu_roulette, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            ru.luckycactus.steamroulette.R.id.action_roulette_options -> {
+            R.id.action_roulette_options -> {
                 if (childFragmentManager.findFragmentByTag(MainFlowFragment.FILTER_FRAGMENT_TAG) == null)
                     RouletteOptionsFragment.newInstance().show(
                         childFragmentManager,

@@ -11,7 +11,7 @@ class FetchUserOwnedGamesUseCase(
     override suspend fun getResult(params: Params) {
         gamesRepository.fetchOwnedGames(
             params.steamId,
-            if (params.reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
+            if (params.reload) CachePolicy.Remote else CachePolicy.CacheIfValid
         )
     }
 

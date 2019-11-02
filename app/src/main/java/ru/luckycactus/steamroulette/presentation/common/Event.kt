@@ -1,7 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.common
 
-import androidx.lifecycle.Observer
-
 class Event<out T>(
     private val data: T
 ) {

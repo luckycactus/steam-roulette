@@ -14,17 +14,17 @@ interface GamesDataStore {
 
         suspend fun getFilteredOwnedGamesIds(steam64: Long, filter: EnPlayTimeFilter): List<Int>
 
-        suspend fun markOwnedGameAsHidden(steam64: Long, gameId: Int)
+        suspend fun hideOwnedGame(steam64: Long, gameId: Int)
 
-        suspend fun getOwnedGame(steam64: Long, appId: Int): OwnedGame
+        suspend fun getOwnedGame(steam64: Long, gameId: Int): OwnedGame
 
-        suspend fun getOwnedGames(steam64: Long, appIds: List<Int>): List<OwnedGame>
+        suspend fun getOwnedGames(steam64: Long, gameIds: List<Int>): List<OwnedGame>
 
         suspend fun isUserHasGames(steam64: Long): Boolean
 
-        fun observeOwnedGameCount(steam64: Long): LiveData<Int>
+        fun observeOwnedGamesCount(steam64: Long): LiveData<Int>
 
-        fun observeHiddenOwnedGameCount(steam64: Long): LiveData<Int>
+        fun observeHiddenOwnedGamesCount(steam64: Long): LiveData<Int>
 
         suspend fun clearHiddenOwnedGames(steam64: Long)
 

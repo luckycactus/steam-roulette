@@ -54,10 +54,7 @@ class RouletteOptionsViewModel(
                 playTimeFilter
             )
         )
-        viewModelScope.launch {
-            delay(CLOSE_DELAY)
-            _closeAction.value = Unit
-        }
+        closeWithDelay()
     }
 
     fun onClearHiddenGames() {
@@ -65,7 +62,10 @@ class RouletteOptionsViewModel(
         viewModelScope.launch {
             clearHiddenGames(userSteamId)
         }
+        closeWithDelay()
+    }
 
+    private fun closeWithDelay() {
         viewModelScope.launch {
             delay(CLOSE_DELAY)
             _closeAction.value = Unit

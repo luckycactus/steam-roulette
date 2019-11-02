@@ -9,9 +9,9 @@ class FetchUserSummaryUseCase(
 ) : SuspendUseCase<FetchUserSummaryUseCase.Params, Unit>() {
 
     override suspend fun getResult(params: Params) {
-        userRepository.refreshUserSummary(
+        userRepository.fetchUserSummary(
             params.steamId,
-            if (params.reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
+            if (params.reload) CachePolicy.Remote else CachePolicy.CacheIfValid
         )
     }
 

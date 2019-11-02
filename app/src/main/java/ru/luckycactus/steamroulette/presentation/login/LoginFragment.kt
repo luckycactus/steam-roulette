@@ -4,17 +4,17 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_login.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.utils.*
-import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.MessageDialogFragment
 
 
 class LoginFragment : BaseFragment() {
 
+    //todo di
     private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this).get(LoginViewModel::class.java)
     }
@@ -46,7 +46,7 @@ class LoginFragment : BaseFragment() {
                 messageResId = R.string.steamid_help
             ).show(childFragmentManager, null)
         }
-viewLifecycleOwner
+
         observe(viewModel.progressState) {
             showProgress(it)
         }

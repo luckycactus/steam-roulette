@@ -12,16 +12,16 @@ import ru.luckycactus.steamroulette.presentation.base.BaseBottomSheetDialogFragm
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.MessageDialogFragment
 
 
 class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
+    //todo di
     private val viewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return if (modelClass.isAssignableFrom(RouletteOptionsViewModel::class.java)) {
-                    //todo!!!
                     val mainFlowViewModel =
                         (parentFragment?.parentFragment as MainFlowFragment).viewModel
                     RouletteOptionsViewModel(mainFlowViewModel) as T

@@ -9,11 +9,11 @@ interface UserDataStore {
     suspend fun getUserSummary(steam64: Long): UserSummaryEntity
 
     interface Local : UserDataStore {
-        suspend fun saveUserSummaryToCache(userSummary: UserSummaryEntity)
+        suspend fun saveUserSummary(userSummary: UserSummaryEntity)
 
         fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity>
 
-        fun saveSignedInUser(steam64: Long)
+        fun setCurrentUser(steam64: Long)
 
         fun getCurrentUserSteam64(): Long
 
@@ -21,7 +21,7 @@ interface UserDataStore {
 
         fun removeCurrentUserSteam64()
 
-        suspend fun removeUser(steam64: Long)
+        suspend fun removeUserSummary(steam64: Long)
     }
 
     interface Remote : UserDataStore

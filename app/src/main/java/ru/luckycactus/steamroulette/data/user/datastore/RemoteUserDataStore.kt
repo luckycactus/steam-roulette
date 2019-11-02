@@ -14,8 +14,7 @@ class RemoteUserDataStore(
             steamApiService.getUserSummaries(listOf(steam64))
         }
 
-        return response.result.players.getOrNull(0) ?: throw SteamIdNotFoundException(
-            steam64.toString()
-        )
+        return response.result.players.getOrNull(0)
+            ?: throw SteamIdNotFoundException(steam64.toString())
     }
 }

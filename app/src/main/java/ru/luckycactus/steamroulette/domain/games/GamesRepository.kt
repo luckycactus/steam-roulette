@@ -16,11 +16,11 @@ interface GamesRepository {
         filter: EnPlayTimeFilter
     ): List<Int>
 
-    suspend fun getLocalOwnedGame(steamId: SteamId, appId: Int): OwnedGame
+    suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame
 
-    suspend fun getLocalOwnedGames(steamId: SteamId, appIds: List<Int>): List<OwnedGame>
+    suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame>
 
-    suspend fun markLocalGameAsHidden(steamId: SteamId, appId: Int)
+    suspend fun markLocalGameAsHidden(steamId: SteamId, gameId: Int)
 
     suspend fun isUserHasGames(steamId: SteamId): Boolean
 
@@ -30,7 +30,7 @@ interface GamesRepository {
 
     suspend fun clearHiddenGames(steamId: SteamId)
 
-    fun observeGamesUpdates(steamId: SteamId): LiveData<Date>
+    fun observeGamesUpdates(steamId: SteamId): LiveData<Long>
 
     suspend fun clearUser(steamId: SteamId)
 }

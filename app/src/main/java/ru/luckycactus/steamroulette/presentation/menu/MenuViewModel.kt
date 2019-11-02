@@ -31,10 +31,7 @@ class MenuViewModel(
 
     fun refreshProfile() {
         userViewModelDelegate.fetchUserAndGames()
-        viewModelScope.launch {
-            delay(CLOSE_DELAY)
-            _closeAction.value = Unit
-        }
+        closeWithDelay()
     }
 
     init {
@@ -46,11 +43,11 @@ class MenuViewModel(
             userViewModelDelegate.observeCurrentUserSteamId().switchMap {
                 observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it))
             }.map {
-                val ago = if (it.time <= 0)
+                val ago = if (it <= 0)
                     resourceManager.getString(R.string.never)
                 else
                     DateUtils.getRelativeTimeSpanString(
-                        it.time,
+                        it,
                         System.currentTimeMillis(),
                         DateUtils.MINUTE_IN_MILLIS
                     )
@@ -60,6 +57,13 @@ class MenuViewModel(
         refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combine(
             userViewModelDelegate.fetchGamesState
         ) { a, b -> a || (b is Result.Loading) }
+    }
+
+    private fun closeWithDelay() {
+        viewModelScope.launch {
+            delay(CLOSE_DELAY)
+            _closeAction.value = Unit
+        }
     }
 
     companion object {

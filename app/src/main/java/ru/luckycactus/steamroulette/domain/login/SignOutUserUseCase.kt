@@ -20,7 +20,7 @@ class SignOutUserUseCase(
             coroutineScope {
                 launch { gamesRepository.clearUser(it) }
                 launch { settingsRepository.clearUser(it) }
-                launch { userRepository.clearUser(it) }
+                launch { userRepository.clearUserSummary(it) }
                 launch { gameCoverCacheCleaner.clearAllCache() }
             }
             userRepository.signOut()

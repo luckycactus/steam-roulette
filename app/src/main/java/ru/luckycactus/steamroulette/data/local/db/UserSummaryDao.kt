@@ -14,11 +14,11 @@ abstract class UserSummaryDao {
     abstract suspend fun getUserSummary(steam64: Long): UserSummaryEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun saveUserSummaryToCache(userSummary: UserSummaryEntity)
+    abstract suspend fun insertUserSummary(userSummary: UserSummaryEntity)
 
     @Query("select * from user_summary where steam64 = :steam64")
     abstract fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity>
 
     @Query("delete from user_summary where steam64 = :steam64")
-    abstract suspend fun removeUser(steam64: Long)
+    abstract suspend fun removeUserSummary(steam64: Long)
 }

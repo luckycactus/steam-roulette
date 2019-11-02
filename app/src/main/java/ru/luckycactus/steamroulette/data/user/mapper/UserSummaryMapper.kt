@@ -11,9 +11,7 @@ class UserSummaryMapper : Mapper<UserSummaryEntity, UserSummary>() {
 
     override fun mapFrom(from: UserSummaryEntity): UserSummary =
         UserSummary(
-            SteamId.fromSteam64(
-                from.steam64
-            ),
+            SteamId.fromSteam64(from.steam64),
             from.personaName,
             CommunityVisibleState.fromInt(from.communityVisibilityState),
             from.profileState == 1,

@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.domain.user
 
-import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId
@@ -13,7 +12,7 @@ class GetUserSummaryUseCase(
     override suspend fun getResult(params: Params): UserSummary =
         userRepository.getUserSummary(
             params.steamId,
-            if (params.reload) CachePolicy.REMOTE else CachePolicy.CACHE_IF_VALID
+            if (params.reload) CachePolicy.Remote else CachePolicy.CacheIfValid
         )
 
     data class Params(

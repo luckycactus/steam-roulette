@@ -2,14 +2,10 @@ package ru.luckycactus.steamroulette.data.net
 
 import android.util.LruCache
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.produce
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.di.AppModule
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 abstract class NetworkBoundResource<RequestType, ResultType>(
@@ -25,16 +21,12 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     abstract suspend fun saveToCache(data: RequestType)
     abstract suspend fun getFromCache(): ResultType
 
-    suspend fun updateIfNeed(cachePolicy: CachePolicy): Boolean {
-        return if (shouldFetch(cachePolicy)) {
-            val data =
-                wrapCommonNetworkExceptions { getFromNetwork() }
+    suspend fun updateIfNeed(cachePolicy: CachePolicy) {
+        if (shouldUpdate(cachePolicy)) {
+            val data = wrapCommonNetworkExceptions { getFromNetwork() }
             saveToCache(data)
             cacheHelper.setCachedNow(key)
             memoryCache.remove(memoryKey)
-            true
-        } else {
-            false
         }
     }
 
@@ -53,13 +45,13 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     private suspend fun getCachedData(): ResultType? {
         var data: ResultType? = null
 
-        memoryKey?.let {
-            data = memoryCache[it] as ResultType?
+        if (memoryKey != null) {
+            data = memoryCache[memoryKey] as ResultType?
         }
         if (data == null) {
             data = getFromCache()
             data?.let {
-                memoryKey?.let {
+                if (memoryKey != null) {
                     memoryCache.put(memoryKey, data)
                 }
             }
@@ -67,7 +59,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         return data
     }
 
-    private fun shouldFetch(cachePolicy: CachePolicy): Boolean {
+    private fun shouldUpdate(cachePolicy: CachePolicy): Boolean {
         return cacheHelper.shouldUpdate(cachePolicy, key, windowMillis, TimeUnit.MILLISECONDS)
     }
 }

@@ -19,8 +19,8 @@ class UserRepositoryImpl(
     private val mapper: UserSummaryMapper
 ) : UserRepository {
 
-    override fun saveSignedInUser(steamId: SteamId) {
-        localUserDataStore.saveSignedInUser(steamId.asSteam64())
+    override fun setCurrentUser(steamId: SteamId) {
+        localUserDataStore.setCurrentUser(steamId.asSteam64())
     }
 
     override fun getCurrentUserSteamId() = fromSteam64(localUserDataStore.getCurrentUserSteam64())
@@ -36,18 +36,13 @@ class UserRepositoryImpl(
     override suspend fun getUserSummary(
         steamId: SteamId,
         cachePolicy: CachePolicy
-    ): UserSummary {
-        return createUserSummaryResource(steamId)
-            .get(cachePolicy)
-    }
+    ): UserSummary = createUserSummaryResource(steamId).get(cachePolicy)
 
-    override fun observeUserSummary(steamId: SteamId): LiveData<UserSummary> {
-        return localUserDataStore.observeUserSummary(steamId.asSteam64())
+    override fun observeUserSummary(steamId: SteamId): LiveData<UserSummary> =
+        localUserDataStore.observeUserSummary(steamId.asSteam64())
             .map { mapper.mapFrom(it) }
-            .distinctUntilChanged()
-    }
 
-    override suspend fun refreshUserSummary(steamId: SteamId, cachePolicy: CachePolicy) {
+    override suspend fun fetchUserSummary(steamId: SteamId, cachePolicy: CachePolicy) {
         createUserSummaryResource(steamId).updateIfNeed(cachePolicy)
     }
 
@@ -55,8 +50,8 @@ class UserRepositoryImpl(
         localUserDataStore.removeCurrentUserSteam64()
     }
 
-    override suspend fun clearUser(steamId: SteamId) {
-        localUserDataStore.removeUser(steamId.asSteam64())
+    override suspend fun clearUserSummary(steamId: SteamId) {
+        localUserDataStore.removeUserSummary(steamId.asSteam64())
         createUserSummaryResource(steamId).invalidateCache()
     }
 
@@ -80,7 +75,7 @@ class UserRepositoryImpl(
             }
 
             override suspend fun saveToCache(data: UserSummaryEntity) {
-                localUserDataStore.saveUserSummaryToCache(data)
+                localUserDataStore.saveUserSummary(data)
                 result = mapper.mapFrom(data)
             }
 

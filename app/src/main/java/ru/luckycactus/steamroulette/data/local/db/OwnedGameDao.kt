@@ -31,7 +31,7 @@ abstract class OwnedGameDao {
     abstract suspend fun getGame(steam64: Long, gameId: Int): OwnedGame
 
     @Query("UPDATE owned_game SET hidden = 1 WHERE userSteam64 =:steam64 and appId = :gameId")
-    abstract suspend fun markGameAsHidden(steam64: Long, gameId: Int)
+    abstract suspend fun hideGame(steam64: Long, gameId: Int)
 
     @Query("select appId from owned_game where userSteam64 =:steam64 and hidden = 1")
     abstract suspend fun getHiddenGamesIds(steam64: Long): List<Int>
@@ -39,7 +39,7 @@ abstract class OwnedGameDao {
     @Query("delete from owned_game where userSteam64 =:steam64 and updateTimeStamp < :timestamp")
     abstract suspend fun removeGamesUpdatedEarlierThen(steam64: Long, timestamp: Long)
 
-    suspend fun isUserHasOwnedGames(steam64: Long) = _isUserHasOwnedGames(steam64) == 1
+    suspend fun isUserHasGames(steam64: Long) = _isUserHasOwnedGames(steam64) == 1
 
     @Query("SELECT COUNT(*) FROM owned_game  where userSteam64 = :steam64")
     abstract fun observeGameCount(steam64: Long): LiveData<Int>

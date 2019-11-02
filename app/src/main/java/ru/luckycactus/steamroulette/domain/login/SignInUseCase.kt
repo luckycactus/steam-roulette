@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.domain.login
 
-import android.util.Log
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
@@ -18,7 +17,7 @@ class SignInUseCase(
         val steamId =
             tryParse(params) ?: tryResolveVanity(params) ?: throw InvalidSteamIdFormatException()
         return getUserSummaryUseCase(GetUserSummaryUseCase.Params(steamId, true)).also {
-            userRepository.saveSignedInUser(it.steamId)
+            userRepository.setCurrentUser(it.steamId)
         }
     }
 

@@ -15,11 +15,10 @@ class UserSettingsRepositoryImpl(
 
     override fun observePlayTimeFilter(
         steamId: SteamId,
-        default: EnPlayTimeFilter
-    ): LiveData<EnPlayTimeFilter> {
-        return userSettingsPrefs.intLiveData(playTimeKey(steamId), default.ordinal)
+        filter: EnPlayTimeFilter
+    ): LiveData<EnPlayTimeFilter> =
+        userSettingsPrefs.intLiveData(playTimeKey(steamId), filter.ordinal)
             .map { EnPlayTimeFilter.fromOrdinal(it) }
-    }
 
     override fun savePlayTimeFilter(
         steamId: SteamId,

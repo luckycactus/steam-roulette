@@ -25,31 +25,27 @@ class GamesRepositoryImpl(
             .updateIfNeed(cachePolicy)
     }
 
-    override fun observeGamesCount(steamId: SteamId): LiveData<Int> {
-        return localGamesDataStore.observeOwnedGameCount(steamId.asSteam64())
-    }
+    override fun observeGamesCount(steamId: SteamId): LiveData<Int> =
+        localGamesDataStore.observeOwnedGamesCount(steamId.asSteam64())
 
-    override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> {
-        return localGamesDataStore.observeHiddenOwnedGameCount(steamId.asSteam64())
-    }
+    override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> =
+        localGamesDataStore.observeHiddenOwnedGamesCount(steamId.asSteam64())
 
     override suspend fun clearHiddenGames(steamId: SteamId) {
         localGamesDataStore.clearHiddenOwnedGames(steamId.asSteam64())
     }
 
-    override fun observeGamesUpdates(steamId: SteamId): LiveData<Date> =
-        createOwnedGamesResource(steamId.asSteam64()).observeCacheUpdates().map { Date(it) }
+    override fun observeGamesUpdates(steamId: SteamId): LiveData<Long> =
+        createOwnedGamesResource(steamId.asSteam64()).observeCacheUpdates()
 
     override suspend fun clearUser(steamId: SteamId) {
         localGamesDataStore.clearOwnedGames(steamId.asSteam64())
-        //todo synchronization
         createOwnedGamesResource(steamId.asSteam64())
             .invalidateCache()
     }
 
-    override suspend fun isUserHasGames(steamId: SteamId): Boolean {
-        return localGamesDataStore.isUserHasGames(steamId.asSteam64())
-    }
+    override suspend fun isUserHasGames(steamId: SteamId): Boolean =
+        localGamesDataStore.isUserHasGames(steamId.asSteam64())
 
     override suspend fun getFilteredLocalOwnedGamesIds(
         steamId: SteamId,
@@ -57,19 +53,21 @@ class GamesRepositoryImpl(
     ): List<Int> =
         localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64(), filter)
 
-    override suspend fun getLocalOwnedGame(steamId: SteamId, appId: Int): OwnedGame {
-        return localGamesDataStore.getOwnedGame(steamId.asSteam64(), appId)
+    override suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame {
+        return localGamesDataStore.getOwnedGame(steamId.asSteam64(), gameId)
     }
 
-    override suspend fun getLocalOwnedGames(steamId: SteamId, appIds: List<Int>): List<OwnedGame> {
-        return localGamesDataStore.getOwnedGames(steamId.asSteam64(), appIds)
+    override suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame> {
+        return localGamesDataStore.getOwnedGames(steamId.asSteam64(), gameIds)
     }
 
-    override suspend fun markLocalGameAsHidden(steamId: SteamId, appId: Int) {
-        localGamesDataStore.markOwnedGameAsHidden(steamId.asSteam64(), appId)
+    override suspend fun markLocalGameAsHidden(steamId: SteamId, gameId: Int) {
+        localGamesDataStore.hideOwnedGame(steamId.asSteam64(), gameId)
     }
 
-    private fun createOwnedGamesResource(steam64: Long): NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>> {
+    private fun createOwnedGamesResource(
+        steam64: Long
+    ): NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>> {
         val cacheKey = "owned_games_$steam64"
         return object : NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>>(
             cacheKey,

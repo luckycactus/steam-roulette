@@ -8,6 +8,6 @@ enum class EnPlayTimeFilter {
     companion object {
         private val values = values().associateBy { it.ordinal }
 
-        fun fromOrdinal(ordinal: Int) = values[ordinal]!!
+        fun fromOrdinal(ordinal: Int) = values.getValue(ordinal)
     }
 }

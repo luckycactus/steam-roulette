@@ -10,6 +10,7 @@ import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 
 class MainActivity : AppCompatActivity() {
 
+    //todo di
     val viewModel: MainViewModel by lazyNonThreadSafe {
         ViewModelProviders.of(this).get(MainViewModel::class.java)
     }
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
             viewModel.onColdStart()
         }
 
-        observeEvent(viewModel.screenLiveData) { screen ->
+        observeEvent(viewModel.screen) { screen ->
             when (screen) {
                 MainViewModel.Screen.Login ->
                     supportFragmentManager.beginTransaction()

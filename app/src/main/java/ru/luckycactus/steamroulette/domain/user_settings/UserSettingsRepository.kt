@@ -8,7 +8,7 @@ interface UserSettingsRepository {
 
     fun observePlayTimeFilter(
         steamId: SteamId,
-        default: EnPlayTimeFilter
+        filter: EnPlayTimeFilter
     ): LiveData<EnPlayTimeFilter>
 
     fun savePlayTimeFilter(steamId: SteamId, filter: EnPlayTimeFilter)
