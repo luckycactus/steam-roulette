@@ -25,18 +25,18 @@ class LocalUserDataStore(
     )
 
     override suspend fun getUserSummary(steam64: Long): UserSummaryEntity =
-        db.userSummaryDao().getUserSummary(steam64)
+        db.userSummaryDao().get(steam64)
 
     override suspend fun saveUserSummary(userSummary: UserSummaryEntity) {
-        db.userSummaryDao().insertUserSummary(userSummary)
+        db.userSummaryDao().upsert(userSummary)
     }
 
     override suspend fun removeUserSummary(steam64: Long) {
-        db.userSummaryDao().removeUserSummary(steam64)
+        db.userSummaryDao().delete(steam64)
     }
 
     override fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity> =
-        db.userSummaryDao().observeUserSummary(steam64).distinctUntilChanged()
+        db.userSummaryDao().observe(steam64).distinctUntilChanged()
 
     override fun setCurrentUser(steam64: Long) {
         currentUserSteam64Pref = steam64

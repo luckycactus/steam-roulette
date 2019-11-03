@@ -7,7 +7,7 @@ import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 
 @Database(
     entities = [OwnedGameRoomEntity::class, UserSummaryEntity::class],
-    version = 1
+    version = 2
 )
 abstract class DB : RoomDatabase() {
 

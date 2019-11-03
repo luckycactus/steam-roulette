@@ -46,15 +46,17 @@ class MainFlowFragment : BaseFragment() {
 
         observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
-            Glide.with(this).load(it.avatarFull).placeholder(R.drawable.avatar_placeholder)
+            Glide.with(this)
+                .load(it.avatarFull)
+                .placeholder(R.drawable.avatar_placeholder)
                 .into(ivAvatar)
         }
 
-//        observeEvent(viewModel.errorMessage) {
-//            container.showSnackbar(it) {
-//                anchorView = toolbar
-//            }
-//        }
+        observeEvent(viewModel.errorMessage) {
+            container.showSnackbar(it) {
+                anchorView = toolbar
+            }
+        }
 
         observeEvent(viewModel.logonCheckedAction) {
             childFragmentManager.beginTransaction()
