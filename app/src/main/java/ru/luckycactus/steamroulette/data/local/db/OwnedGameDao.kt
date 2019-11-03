@@ -11,9 +11,6 @@ import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 @Dao
 abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertWithReplace(games: List<OwnedGameRoomEntity>)
-
     @Query("""SELECT appId from owned_game where userSteam64 = :steam64 and hidden = 0""")
     abstract suspend fun getVisibleIds(steam64: Long): List<Int>
 
@@ -46,8 +43,8 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("select appId from owned_game where userSteam64 =:steam64 and hidden = 1")
     abstract suspend fun getHiddenIds(steam64: Long): List<Int>
 
-    @Query("delete from owned_game where userSteam64 =:steam64 and updateTimeStamp < :timestamp")
-    abstract suspend fun removeUpdatedEarlierThen(steam64: Long, timestamp: Long): Int
+    @Query("delete from owned_game where userSteam64 = :steam64")
+    abstract suspend fun deleteAll(steam64: Long)
 
     suspend fun isUserHasGames(steam64: Long) = _isUserHasOwnedGames(steam64) == 1
 

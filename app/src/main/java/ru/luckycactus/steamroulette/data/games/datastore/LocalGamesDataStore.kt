@@ -27,17 +27,16 @@ class LocalGamesDataStore(
     override suspend fun saveOwnedGames(steam64: Long, gamesFlow: Flow<OwnedGameEntity>) {
         db.withTransaction {
             val hiddenGameIds = db.ownedGamesDao().getHiddenIds(steam64).toSet()
-            val timestamp = System.currentTimeMillis()
-            val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds, timestamp)
+            val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds)
+
+            db.ownedGamesDao().deleteAll(steam64)
 
             gamesFlow
                 .map { mapper.mapFrom(it) }
                 .chunkBuffer(GAMES_BUFFER_SIZE)
                 .collect {
-                    db.ownedGamesDao().insertWithReplace(it)
+                    db.ownedGamesDao().insert(it)
                 }
-
-            db.ownedGamesDao().removeUpdatedEarlierThen(steam64, timestamp)
         }
     }
 

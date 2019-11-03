@@ -19,8 +19,6 @@ data class OwnedGameRoomEntity(
 
     val hidden: Boolean,
 
-    val updateTimeStamp: Long,
-
     @Embedded
     val ownedGameEntity: OwnedGameEntity
 )
