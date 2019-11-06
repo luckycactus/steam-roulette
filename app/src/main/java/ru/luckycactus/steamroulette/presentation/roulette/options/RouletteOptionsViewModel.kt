@@ -4,10 +4,16 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.di.common.AppModule
+import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
+import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
+import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterUseCase
+import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
+import javax.inject.Inject
 
 class RouletteOptionsViewModel(
     userViewModelDelegate: UserViewModelDelegate
@@ -20,16 +26,20 @@ class RouletteOptionsViewModel(
 
     private val _closeAction = MutableLiveData<Unit>()
 
-    private val observePlayTimeFilter = AppModule.observePlayTimeFilterUseCase
-    private val savePlayTimeFilter = AppModule.savePlayTimeFilterUseCase
-    private val observeHiddenGamesCount = AppModule.observeHiddenGamesCountUseCase
-    private val clearHiddenGames = AppModule.clearHiddenGamesUseCase
+    //todo
+    @Inject lateinit var observePlayTimeFilter: ObservePlayTimeFilterUseCase
+    @Inject lateinit var savePlayTimeFilter: SavePlayTimeFilterUseCase
+    @Inject lateinit var observeHiddenGamesCount: ObserveHiddenGamesCountUseCase
+    @Inject lateinit var clearHiddenGames: ClearHiddenGamesUseCase
 
-    private val resourceManager = AppModule.resourceManager
+    @Inject lateinit var resourceManager: ResourceManager
 
     private val userSteamId = userViewModelDelegate.currentUserSteamId
 
     init {
+        //todo
+        App.getInstance().appComponent().inject(this)
+
         playTimeFilterData =
             observePlayTimeFilter(userSteamId).map { checkedFilter ->
                 EnPlayTimeFilter.values().asSequence()

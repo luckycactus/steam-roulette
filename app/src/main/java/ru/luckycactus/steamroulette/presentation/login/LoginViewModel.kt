@@ -7,22 +7,20 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.AppModule
-import ru.luckycactus.steamroulette.di.AppModule.validateSteamIdInputUseCase
+import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.exception.SteamIdNotFoundException
 import ru.luckycactus.steamroulette.domain.exception.VanityNotFoundException
+import ru.luckycactus.steamroulette.domain.login.SignInUseCase
+import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
+import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.startWith
-import kotlin.coroutines.suspendCoroutine
+import javax.inject.Inject
 
 class LoginViewModel(
 ) : ViewModel() {
-
-    private val validateSteamIdInputUseCase = AppModule.validateSteamIdInputUseCase
-    private val signInUseCase = AppModule.signInUseCase
-    private val resourceManager = AppModule.resourceManager
 
     val progressState: LiveData<Boolean>
         get() = _progressState
@@ -35,9 +33,22 @@ class LoginViewModel(
 
     val signInSuccessEvent = MutableLiveData<Event<Unit?>>() //todo refactor navigation
 
+    //todo di
+    @Inject
+    lateinit var validateSteamIdInputUseCase: ValidateSteamIdInputUseCase
+    @Inject
+    lateinit var signInUseCase: SignInUseCase
+    @Inject
+    lateinit var resourceManager: ResourceManager
+
     private val _progressState = MutableLiveData<Boolean>().startWith(false)
     private val _loginButtonAvailableState = MutableLiveData<Boolean>().startWith(false)
     private val _errorState = MutableLiveData<String>()
+
+    init {
+        //todo di
+        App.getInstance().appComponent().inject(this)
+    }
 
     fun onSteamIdConfirmed(id: String) {
         viewModelScope.launch {

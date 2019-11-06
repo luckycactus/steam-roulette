@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.presentation.main
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.di.common.AppModule
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.entity.Result
@@ -12,10 +12,14 @@ import ru.luckycactus.steamroulette.domain.entity.UserSummary
 import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
+import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
+import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
+import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import javax.inject.Inject
 
 //todo Отдавать Result из UseCase?
 class MainFlowViewModel(
@@ -33,20 +37,23 @@ class MainFlowViewModel(
     val logonCheckedAction: LiveData<Event<Unit>>
         get() = _logonCheckedAction
 
+    //todo di
+    @Inject lateinit var observeCurrentUser: ObserveCurrentUserSteamIdUseCase
+    @Inject lateinit var observeUserSummary: ObserveUserSummaryUseCase
+    @Inject lateinit var fetchUserSummary: FetchUserSummaryUseCase
+    @Inject lateinit var fetchUserOwnedGames: FetchUserOwnedGamesUseCase
+    @Inject lateinit var resourceManager: ResourceManager
+
     private val _currentUserSteamId = MediatorLiveData<SteamId>()
     private val _errorMessage = MutableLiveData<Event<String>>()
     private val _logonCheckedAction = MutableLiveData<Event<Unit>>()
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
 
-    private val observeCurrentUser = AppModule.observeCurrentUserSteamIdUseCase
-    private val observeUserSummary = AppModule.observeUserSummaryUseCase
-    private val fetchUserSummary = AppModule.fetchUserSummaryUseCase
-    private val fetchUserOwnedGames = AppModule.fetchUserOwnedGamesUseCase
-
-    private val resourceManager: ResourceManager = AppModule.resourceManager
-
     init {
+        //todo di
+        App.getInstance().appComponent().inject(this)
+
         _currentUserSteamId.addSource(observeCurrentUser()) {
             viewModelScope.coroutineContext.cancelChildren()
             it?.let {

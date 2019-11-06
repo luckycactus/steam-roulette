@@ -5,13 +5,16 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.di.common.AppModule
+import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
+import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.utils.combine
+import javax.inject.Inject
 
 class MenuViewModel(
     private val userViewModelDelegate: UserViewModelDelegate
@@ -25,9 +28,13 @@ class MenuViewModel(
 
     private val _closeAction = MutableLiveData<Unit>()
 
-    private val observeOwnedGamesCount = AppModule.observeOwnedGamesCountUseCase
-    private val observeOwnedGamesSyncsUseCase = AppModule.observeOwnedGamesSyncsUseCase
-    private val resourceManager = AppModule.resourceManager
+    //todo di
+    @Inject
+    lateinit var observeOwnedGamesCount: ObserveOwnedGamesCountUseCase
+    @Inject
+    lateinit var observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase
+    @Inject
+    lateinit var resourceManager: ResourceManager
 
     fun refreshProfile() {
         userViewModelDelegate.fetchUserAndGames()
@@ -35,6 +42,9 @@ class MenuViewModel(
     }
 
     init {
+        //todo di
+        App.getInstance().appComponent().inject(this)
+
         gameCount = userViewModelDelegate.observeCurrentUserSteamId().switchMap {
             observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it))
         }

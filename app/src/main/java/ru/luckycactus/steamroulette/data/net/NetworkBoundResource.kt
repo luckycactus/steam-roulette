@@ -4,9 +4,11 @@ import android.util.LruCache
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
-import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.di.common.AppModule
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import ru.luckycactus.steamroulette.presentation.common.App
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 abstract class NetworkBoundResource<RequestType, ResultType>(
     private val key: String,
@@ -14,8 +16,9 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     private val windowMillis: Long
 ) {
 
-    private val cacheHelper: CacheHelper = AppModule.cacheHelper
-    private val memoryCache: LruCache<String, Any> = AppModule.requestLruCache
+    //todo di!!!
+    private val cacheHelper: CacheHelper = App.getInstance().appComponent().cacheHelper()
+    private val memoryCache: LruCache<String, Any> = App.getInstance().appComponent().lruCache()
 
     abstract suspend fun getFromNetwork(): RequestType
     abstract suspend fun saveToCache(data: RequestType)

@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.data.games
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import kotlinx.coroutines.flow.Flow
+import ru.luckycactus.steamroulette.data.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
@@ -16,8 +17,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class GamesRepositoryImpl(
-    private val localGamesDataStore: LocalGamesDataStore,
-    private val remoteGamesDataStore: RemoteGamesDataStore
+    private val localGamesDataStore: GamesDataStore.Local,
+    private val remoteGamesDataStore: GamesDataStore.Remote
 ) : GamesRepository {
 
     override suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy) {

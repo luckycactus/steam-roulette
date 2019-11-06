@@ -5,9 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.animation.Animation
-import android.widget.PopupWindow
 import android.widget.Toast
-import androidx.core.view.children
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -15,8 +13,9 @@ import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.AppModule
+import ru.luckycactus.steamroulette.di.common.AppModule
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
@@ -25,6 +24,7 @@ import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.widget.GameView
+import javax.inject.Inject
 
 class RouletteFragment : BaseFragment() {
 
@@ -42,7 +42,9 @@ class RouletteFragment : BaseFragment() {
         }).get(RouletteViewModel::class.java)
     }
 
-    private val gameCoverLoader = AppModule.glideGameCoverLoader
+    //todo di
+    @Inject
+    lateinit var gameCoverLoader: GlideGameCoverLoader
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
@@ -50,6 +52,8 @@ class RouletteFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //todo di
+        App.getInstance().appComponent().inject(this)
         setHasOptionsMenu(true)
     }
 

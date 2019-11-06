@@ -14,19 +14,19 @@ import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.entity.GameCoverPreloader
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.DrawableAlwaysCrossFadeFactory
+import javax.inject.Inject
 
-class GlideGameCoverLoader(
-    appContext: Context
+class GlideGameCoverLoader @Inject constructor(
+    @ForApplication private val appContext: Context
 ) : GameCoverPreloader, GameCoverCacheCleaner {
     //todo Грузить hd через wifi, обычную через мобильную сеть
-
-    private val appContext = appContext.applicationContext
 
     private val headerImageTransformation = MultiTransformation(
         FitCenter(),
