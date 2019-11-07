@@ -14,35 +14,24 @@ import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.AppModule
+import ru.luckycactus.steamroulette.di.common.AutoInjectable
+import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.common.App
+import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
-import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.observeEvent
+import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.widget.GameView
 import javax.inject.Inject
 
-class RouletteFragment : BaseFragment() {
+class RouletteFragment : BaseFragment(), AutoInjectable {
 
-    //todo di
-    private val viewModel by lazyNonThreadSafe {
-        ViewModelProviders.of(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return if (modelClass.isAssignableFrom(RouletteViewModel::class.java)) {
-                    val mainFlowViewModel = (parentFragment as MainFlowFragment).viewModel
-                    RouletteViewModel(mainFlowViewModel) as T
-                } else {
-                    throw IllegalArgumentException("ViewModel Not Found")
-                }
-            }
-        }).get(RouletteViewModel::class.java)
+    private val viewModel by viewModel {
+        findComponent<MainFlowComponent>().rouletteViewModel
     }
 
-    //todo di
     @Inject
     lateinit var gameCoverLoader: GlideGameCoverLoader
 
@@ -52,9 +41,11 @@ class RouletteFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //todo di
-        App.getInstance().appComponent().inject(this)
         setHasOptionsMenu(true)
+    }
+
+    override fun inject() {
+        findComponent<MainFlowComponent>().inject(this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

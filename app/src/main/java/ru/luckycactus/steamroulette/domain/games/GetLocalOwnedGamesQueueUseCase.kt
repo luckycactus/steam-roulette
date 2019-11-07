@@ -1,10 +1,13 @@
 package ru.luckycactus.steamroulette.domain.games
 
+import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.entity.*
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
+import javax.inject.Inject
 
-class GetLocalOwnedGamesQueueUseCase(
+@Reusable
+class GetLocalOwnedGamesQueueUseCase @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val gameCoverPreloader: GameCoverPreloader
 ) : SuspendUseCase<GetLocalOwnedGamesQueueUseCase.Params, OwnedGamesQueue>() {

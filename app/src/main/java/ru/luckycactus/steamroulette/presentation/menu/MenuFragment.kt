@@ -9,29 +9,17 @@ import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.fragment_menu.ivAvatar
 import kotlinx.android.synthetic.main.fragment_menu.tvNickname
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.presentation.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.main.MainActivity
+import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.visibility
-import ru.luckycactus.steamroulette.presentation.utils.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.*
 
 class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
-    //todo di
-    private val viewModel by lazyNonThreadSafe {
-        ViewModelProviders.of(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return if (modelClass.isAssignableFrom(MenuViewModel::class.java)) {
-                    val mainFlowViewModel = (parentFragment as MainFlowFragment).viewModel
-                    MenuViewModel(mainFlowViewModel) as T
-                } else {
-                    throw IllegalArgumentException("ViewModel Not Found")
-                }
-            }
-
-        }).get(MenuViewModel::class.java)
+    private val viewModel by viewModel {
+        findComponent<MainFlowComponent>().menuViewModel
     }
 
     override val layoutResId: Int = R.layout.fragment_menu

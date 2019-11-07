@@ -16,11 +16,16 @@ import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegatePubli
 import ru.luckycactus.steamroulette.presentation.utils.combine
 import javax.inject.Inject
 
-class MenuViewModel(
+class MenuViewModel @Inject constructor(
+    private val observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
+    private val observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
+    private val resourceManager: ResourceManager,
     private val userViewModelDelegate: UserViewModelDelegate
 ) : ViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
-    val gameCount: LiveData<Int>
+    val gameCount: LiveData<Int> = userViewModelDelegate.observeCurrentUserSteamId().switchMap {
+        observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it))
+    }
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
     val closeAction: LiveData<Unit>
@@ -28,26 +33,12 @@ class MenuViewModel(
 
     private val _closeAction = MutableLiveData<Unit>()
 
-    //todo di
-    @Inject
-    lateinit var observeOwnedGamesCount: ObserveOwnedGamesCountUseCase
-    @Inject
-    lateinit var observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase
-    @Inject
-    lateinit var resourceManager: ResourceManager
-
     fun refreshProfile() {
         userViewModelDelegate.fetchUserAndGames()
         closeWithDelay()
     }
 
     init {
-        //todo di
-        App.getInstance().appComponent().inject(this)
-
-        gameCount = userViewModelDelegate.observeCurrentUserSteamId().switchMap {
-            observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it))
-        }
 
         gamesLastUpdate =
             userViewModelDelegate.observeCurrentUserSteamId().switchMap {

@@ -1,10 +1,13 @@
 package ru.luckycactus.steamroulette.domain.user
 
 import androidx.lifecycle.LiveData
+import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.common.UseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId
+import javax.inject.Inject
 
-class ObserveCurrentUserSteamIdUseCase(
+@Reusable
+class ObserveCurrentUserSteamIdUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) : UseCase<Unit?, LiveData<SteamId?>>() {
 

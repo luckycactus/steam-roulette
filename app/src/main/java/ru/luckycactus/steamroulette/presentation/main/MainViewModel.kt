@@ -13,21 +13,15 @@ import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.common.Event
 import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val getSignedInUserSteamIdUseCase: GetCurrentUserSteamIdUseCase,
+    private val signOutUserUserCase: SignOutUserUseCase
+) : ViewModel() {
 
     val screen: LiveData<Event<Screen>>
         get() = _screen
 
-    //todo di
-    @Inject lateinit var getSignedInUserSteamIdUseCase: GetCurrentUserSteamIdUseCase
-    @Inject lateinit var signOutUserUserCase: SignOutUserUseCase
-
     private val _screen = MutableLiveData<Event<Screen>>()
-
-    init {
-        //todo di
-        App.getInstance().appComponent().inject(this)
-    }
 
     fun onColdStart() {
         if (getSignedInUserSteamIdUseCase() != null) {

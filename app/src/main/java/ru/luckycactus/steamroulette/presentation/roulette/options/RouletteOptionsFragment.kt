@@ -7,29 +7,21 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_options_filter.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.presentation.base.BaseBottomSheetDialogFragment
+import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
 
 class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
-    //todo di
-    private val viewModel by lazyNonThreadSafe {
-        ViewModelProviders.of(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return if (modelClass.isAssignableFrom(RouletteOptionsViewModel::class.java)) {
-                    val mainFlowViewModel =
-                        (parentFragment?.parentFragment as MainFlowFragment).viewModel
-                    RouletteOptionsViewModel(mainFlowViewModel) as T
-                } else {
-                    throw IllegalArgumentException("ViewModel Not Found")
-                }
-            }
-        }).get(RouletteOptionsViewModel::class.java)
+    private val viewModel by viewModel {
+        findComponent<MainFlowComponent>().rouletteOptionsViewModel
     }
 
     private val adapter by lazyNonThreadSafe {

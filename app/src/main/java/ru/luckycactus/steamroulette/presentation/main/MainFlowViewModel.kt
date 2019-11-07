@@ -22,7 +22,12 @@ import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import javax.inject.Inject
 
 //todo Отдавать Result из UseCase?
-class MainFlowViewModel(
+class MainFlowViewModel @Inject constructor(
+    observeCurrentUser: ObserveCurrentUserSteamIdUseCase,
+    private val observeUserSummary: ObserveUserSummaryUseCase,
+    private val fetchUserSummary: FetchUserSummaryUseCase,
+    private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
+    private val resourceManager: ResourceManager
 ) : ViewModel(), UserViewModelDelegate {
 
     override val currentUserSteamId
@@ -37,13 +42,6 @@ class MainFlowViewModel(
     val logonCheckedAction: LiveData<Event<Unit>>
         get() = _logonCheckedAction
 
-    //todo di
-    @Inject lateinit var observeCurrentUser: ObserveCurrentUserSteamIdUseCase
-    @Inject lateinit var observeUserSummary: ObserveUserSummaryUseCase
-    @Inject lateinit var fetchUserSummary: FetchUserSummaryUseCase
-    @Inject lateinit var fetchUserOwnedGames: FetchUserOwnedGamesUseCase
-    @Inject lateinit var resourceManager: ResourceManager
-
     private val _currentUserSteamId = MediatorLiveData<SteamId>()
     private val _errorMessage = MutableLiveData<Event<String>>()
     private val _logonCheckedAction = MutableLiveData<Event<Unit>>()
@@ -51,9 +49,6 @@ class MainFlowViewModel(
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
 
     init {
-        //todo di
-        App.getInstance().appComponent().inject(this)
-
         _currentUserSteamId.addSource(observeCurrentUser()) {
             viewModelScope.coroutineContext.cancelChildren()
             it?.let {

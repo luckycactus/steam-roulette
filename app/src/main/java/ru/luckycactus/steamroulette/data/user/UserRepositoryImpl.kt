@@ -12,8 +12,11 @@ import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserRepositoryImpl(
+@Singleton
+class UserRepositoryImpl @Inject constructor(
     private val localUserDataStore: UserDataStore.Local,
     private val remoteUserDataStore: UserDataStore.Remote,
     private val mapper: UserSummaryMapper

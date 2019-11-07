@@ -1,11 +1,14 @@
 package ru.luckycactus.steamroulette.data.user.datastore
 
+import dagger.Reusable
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.net.SteamApiService
 import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.exception.SteamIdNotFoundException
+import javax.inject.Inject
 
-class RemoteUserDataStore(
+@Reusable
+class RemoteUserDataStore @Inject constructor(
     private val steamApiService: SteamApiService
 ) : UserDataStore.Remote {
 

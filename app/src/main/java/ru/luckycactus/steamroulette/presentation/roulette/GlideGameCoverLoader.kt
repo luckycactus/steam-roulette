@@ -23,6 +23,7 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransforma
 import ru.luckycactus.steamroulette.presentation.utils.glide.DrawableAlwaysCrossFadeFactory
 import javax.inject.Inject
 
+
 class GlideGameCoverLoader @Inject constructor(
     @ForApplication private val appContext: Context
 ) : GameCoverPreloader, GameCoverCacheCleaner {
@@ -38,7 +39,7 @@ class GlideGameCoverLoader @Inject constructor(
             .load(game.headerImageUrl)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
 
-        return Glide.with(App.getInstance())
+        return Glide.with(appContext)
             .load(game.libraryPortraitImageUrlHD)
             .error(errorRequest)
             .diskCacheStrategy(DiskCacheStrategy.DATA)

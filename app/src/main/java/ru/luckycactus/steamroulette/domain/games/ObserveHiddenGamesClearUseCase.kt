@@ -4,11 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
+import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.common.UseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.presentation.common.Event
+import javax.inject.Inject
 
-class ObserveHiddenGamesClearUseCase(
+@Reusable
+class ObserveHiddenGamesClearUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
 ) : UseCase<SteamId, LiveData<Event<Unit>>>() {
 

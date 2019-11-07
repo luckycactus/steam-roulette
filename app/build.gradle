@@ -61,6 +61,12 @@ android {
             }
         }
     }
+    kapt {
+        arguments {
+            arg("dagger.formatGeneratedSource", "disabled")
+            arg("dagger.gradle.incremental", "enabled")
+        }
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -111,6 +117,11 @@ dependencies {
     implementation "com.google.dagger:dagger:2.24"
     kapt "com.google.dagger:dagger-compiler:2.24"
     compileOnly "javax.annotation:jsr250-api:1.0"
+    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.5.1'
+    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.5.1'
+
+    implementation 'androidx.activity:activity-ktx:1.1.0-rc01'
+    implementation 'androidx.fragment:fragment-ktx:1.2.0-rc01'
 }
 
 apply plugin: 'com.google.gms.google-services'

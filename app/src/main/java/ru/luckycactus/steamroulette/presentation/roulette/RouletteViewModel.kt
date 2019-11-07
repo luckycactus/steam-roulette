@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.roulette
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.AppModule
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
@@ -13,15 +12,18 @@ import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetLocalOwnedGamesQueueUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesClearUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
-import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import javax.inject.Inject
 
-class RouletteViewModel(
-    private val userViewModelDelegate: UserViewModelDelegate
+class RouletteViewModel @Inject constructor(
+    private val userViewModelDelegate: UserViewModelDelegate,
+    private val getLocalOwnedGamesQueue: GetLocalOwnedGamesQueueUseCase,
+    private val observePlayTimeFilter: ObservePlayTimeFilterUseCase,
+    private val observeHiddenGamesClear: ObserveHiddenGamesClearUseCase,
+    private val resourceManager: ResourceManager
 ) : ViewModel() {
 
     val currentGame: LiveData<OwnedGame>
@@ -45,25 +47,12 @@ class RouletteViewModel(
     private val _queueResetAction = MutableLiveData<Event<Unit>>()
     private val currentUserPlayTimeFilter: LiveData<EnPlayTimeFilter>
 
-    //todo di
-    @Inject
-    lateinit var getLocalOwnedGamesQueue: GetLocalOwnedGamesQueueUseCase
-    @Inject
-    lateinit var observePlayTimeFilter: ObservePlayTimeFilterUseCase
-    @Inject
-    lateinit var observeHiddenGamesClear: ObserveHiddenGamesClearUseCase
-    @Inject
-    lateinit var resourceManager: ResourceManager
-
     private var gamesQueue: OwnedGamesQueue? = null
     private var gamesQueueJob: Job? = null
     private var isNextGameAllowed = true
     private var nextGameDelayJob: Job? = null
 
     init {
-        //todo di
-        App.getInstance().appComponent().inject(this)
-
         currentUserPlayTimeFilter =
             userViewModelDelegate.observeCurrentUserSteamId().switchMap {
                 observePlayTimeFilter(it).distinctUntilChanged()

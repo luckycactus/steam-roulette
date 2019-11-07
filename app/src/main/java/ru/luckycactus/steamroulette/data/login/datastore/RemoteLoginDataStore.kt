@@ -1,10 +1,13 @@
 package ru.luckycactus.steamroulette.data.login.datastore
 
+import dagger.Reusable
 import ru.luckycactus.steamroulette.data.net.SteamApiService
 import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.exception.VanityNotFoundException
+import javax.inject.Inject
 
-class RemoteLoginDataStore(
+@Reusable
+class RemoteLoginDataStore @Inject constructor(
     private val steamApiService: SteamApiService
 ) : LoginDataStore {
 

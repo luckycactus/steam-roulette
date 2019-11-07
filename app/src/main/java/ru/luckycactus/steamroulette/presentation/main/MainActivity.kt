@@ -2,18 +2,18 @@ package ru.luckycactus.steamroulette.presentation.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.common.AppComponent
+import ru.luckycactus.steamroulette.di.common.ComponentOwner
+import ru.luckycactus.steamroulette.di.common.InjectionManager
+import ru.luckycactus.steamroulette.di.common.component
 import ru.luckycactus.steamroulette.presentation.login.LoginFragment
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
+import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent> {
 
-    //todo di
-    val viewModel: MainViewModel by lazyNonThreadSafe {
-        ViewModelProviders.of(this).get(MainViewModel::class.java)
-    }
+    val viewModel by viewModel { component.mainViewModel }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,4 +36,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun createComponent(): MainActivityComponent =
+        InjectionManager.findComponent<AppComponent>()
+            .mainActivityComponentFactory()
+            .create(this)
 }

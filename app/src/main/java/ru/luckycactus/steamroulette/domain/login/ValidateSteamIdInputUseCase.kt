@@ -1,9 +1,12 @@
 package ru.luckycactus.steamroulette.domain.login
 
+import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.common.UseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId
+import javax.inject.Inject
 
-class ValidateSteamIdInputUseCase : UseCase<String, Boolean>() {
+@Reusable
+class ValidateSteamIdInputUseCase @Inject constructor() : UseCase<String, Boolean>() {
 
     override fun getResult(params: String): Boolean {
         with(params.trim()) {

@@ -27,7 +27,7 @@ abstract class NetworkModule {
         @JvmStatic
         @Provides
         @Singleton
-        fun provideRetrofit(okHttpClient: OkHttpClient) =
+        fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
             Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://api.steampowered.com/")

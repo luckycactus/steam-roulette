@@ -19,7 +19,10 @@ import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.startWith
 import javax.inject.Inject
 
-class LoginViewModel(
+class LoginViewModel @Inject constructor(
+    private val validateSteamIdInputUseCase: ValidateSteamIdInputUseCase,
+    private val signInUseCase: SignInUseCase,
+    private val resourceManager: ResourceManager
 ) : ViewModel() {
 
     val progressState: LiveData<Boolean>
@@ -33,22 +36,9 @@ class LoginViewModel(
 
     val signInSuccessEvent = MutableLiveData<Event<Unit?>>() //todo refactor navigation
 
-    //todo di
-    @Inject
-    lateinit var validateSteamIdInputUseCase: ValidateSteamIdInputUseCase
-    @Inject
-    lateinit var signInUseCase: SignInUseCase
-    @Inject
-    lateinit var resourceManager: ResourceManager
-
     private val _progressState = MutableLiveData<Boolean>().startWith(false)
     private val _loginButtonAvailableState = MutableLiveData<Boolean>().startWith(false)
     private val _errorState = MutableLiveData<String>()
-
-    init {
-        //todo di
-        App.getInstance().appComponent().inject(this)
-    }
 
     fun onSteamIdConfirmed(id: String) {
         viewModelScope.launch {

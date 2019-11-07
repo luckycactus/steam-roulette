@@ -2,13 +2,18 @@ package ru.luckycactus.steamroulette.data.local
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.apply
 import ru.luckycactus.steamroulette.data.longLiveData
+import ru.luckycactus.steamroulette.di.common.Identified
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CacheHelper(
-    private val prefs: SharedPreferences
+@Singleton
+class CacheHelper @Inject constructor(
+    @Identified(R.id.cacheHelperPrefs) private val prefs: SharedPreferences
 ) {
     private val prefsEditor = prefs.edit()
 

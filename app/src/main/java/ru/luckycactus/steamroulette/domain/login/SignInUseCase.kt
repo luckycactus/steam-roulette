@@ -1,13 +1,17 @@
 package ru.luckycactus.steamroulette.domain.login
 
+import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.entity.SteamId.Companion.tryParse
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
+import javax.inject.Inject
 
-class SignInUseCase(
+@Reusable
+class SignInUseCase @Inject constructor(
     private val getUserSummaryUseCase: GetUserSummaryUseCase,
     private val userRepository: UserRepository,
     private val loginRepository: LoginRepository

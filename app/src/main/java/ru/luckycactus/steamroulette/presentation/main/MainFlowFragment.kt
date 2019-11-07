@@ -7,22 +7,22 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.common.ComponentOwner
+import ru.luckycactus.steamroulette.di.common.component
+import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.menu.MenuFragment
 import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
+import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
-class MainFlowFragment : BaseFragment() {
+class MainFlowFragment : BaseFragment(), ComponentOwner<MainFlowComponent> {
 
-    //todo di
-    val viewModel by lazy {
-        ViewModelProviders.of(this).get(MainFlowViewModel::class.java)
-    }
+    val viewModel by viewModel { component.mainFlowViewModel }
 
     override val layoutResId = R.layout.fragment_main_flow
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -64,6 +64,12 @@ class MainFlowFragment : BaseFragment() {
                 .commit()
         }
     }
+
+    override fun createComponent(): MainFlowComponent =
+        findComponent<MainActivityComponent>()
+            .mainFlowComponentFactory()
+            .create(this)
+
 
     companion object {
         fun newInstance() = MainFlowFragment()

@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.data.games.datastore
 
 import androidx.lifecycle.LiveData
 import androidx.room.withTransaction
+import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -11,8 +12,10 @@ import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.utils.chunkBuffer
+import javax.inject.Inject
 
-class LocalGamesDataStore(
+@Reusable
+class LocalGamesDataStore @Inject constructor(
     private val db: DB
 ) : GamesDataStore.Local {
 

@@ -6,8 +6,9 @@ import ru.luckycactus.steamroulette.domain.entity.CommunityVisibleState
 import ru.luckycactus.steamroulette.domain.entity.PersonaState
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.entity.UserSummary
+import javax.inject.Inject
 
-class UserSummaryMapper : Mapper<UserSummaryEntity, UserSummary>() {
+class UserSummaryMapper @Inject constructor() : Mapper<UserSummaryEntity, UserSummary>() {
 
     override fun mapFrom(from: UserSummaryEntity): UserSummary =
         UserSummary(

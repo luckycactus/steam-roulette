@@ -15,8 +15,13 @@ import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import javax.inject.Inject
 
-class RouletteOptionsViewModel(
-    userViewModelDelegate: UserViewModelDelegate
+class RouletteOptionsViewModel @Inject constructor(
+    userViewModelDelegate: UserViewModelDelegate,
+    observePlayTimeFilter: ObservePlayTimeFilterUseCase,
+    observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
+    private val savePlayTimeFilter: SavePlayTimeFilterUseCase,
+    private val clearHiddenGames: ClearHiddenGamesUseCase,
+    private val resourceManager: ResourceManager
 ) : ViewModel() {
 
     val playTimeFilterData: LiveData<List<OptionsFilterAdapter.FilterUiModel>>
@@ -26,20 +31,9 @@ class RouletteOptionsViewModel(
 
     private val _closeAction = MutableLiveData<Unit>()
 
-    //todo
-    @Inject lateinit var observePlayTimeFilter: ObservePlayTimeFilterUseCase
-    @Inject lateinit var savePlayTimeFilter: SavePlayTimeFilterUseCase
-    @Inject lateinit var observeHiddenGamesCount: ObserveHiddenGamesCountUseCase
-    @Inject lateinit var clearHiddenGames: ClearHiddenGamesUseCase
-
-    @Inject lateinit var resourceManager: ResourceManager
-
     private val userSteamId = userViewModelDelegate.currentUserSteamId
 
     init {
-        //todo
-        App.getInstance().appComponent().inject(this)
-
         playTimeFilterData =
             observePlayTimeFilter(userSteamId).map { checkedFilter ->
                 EnPlayTimeFilter.values().asSequence()

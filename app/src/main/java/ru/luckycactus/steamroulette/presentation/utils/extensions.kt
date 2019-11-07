@@ -10,11 +10,15 @@ import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -264,3 +268,59 @@ fun <R> Flow<R>.chunkBuffer(bufferSize: Int) =
             buffer.set(ArrayList(bufferSize))
         }
     }
+
+
+val Fragment.isFinishing: Boolean
+    get() {
+        if (requireActivity().isFinishing) {
+            return true
+        }
+
+        if (isStateSaved) {
+            return false
+        }
+
+        if (isRemoving) {
+            return true
+        }
+
+        var anyParentRemoving = false
+        var parent = parentFragment
+        while (parent != null && !anyParentRemoving) {
+            anyParentRemoving = parent.isRemoving
+            parent = parent.parentFragment
+        }
+
+        if (anyParentRemoving) {
+            return true
+        }
+
+        return false
+    }
+
+inline fun <reified T : ViewModel> ComponentActivity.viewModel(
+    crossinline provider: () -> T
+) = viewModels<T> {
+    object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>) =
+            provider() as T
+    }
+}
+
+inline fun <reified T : ViewModel> Fragment.viewModel(
+    crossinline provider: () -> T
+) = viewModels<T> {
+    object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>) =
+            provider() as T
+    }
+}
+
+inline fun <reified T : ViewModel> Fragment.activityViewModel(
+    crossinline provider: () -> T
+) = activityViewModels<T> {
+    object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>) =
+            provider() as T
+    }
+}

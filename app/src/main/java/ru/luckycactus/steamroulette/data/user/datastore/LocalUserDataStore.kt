@@ -4,14 +4,20 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.distinctUntilChanged
+import dagger.Reusable
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.long
 import ru.luckycactus.steamroulette.data.longLiveData
 import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
+import ru.luckycactus.steamroulette.di.common.Identified
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocalUserDataStore(
+@Singleton
+class LocalUserDataStore @Inject constructor(
     private val db: DB,
-    private val userPreferences: SharedPreferences
+    @Identified(R.id.userCachePrefs) private val userPreferences: SharedPreferences
 ) : UserDataStore.Local {
 
     private var currentUserSteam64Pref by userPreferences.long(

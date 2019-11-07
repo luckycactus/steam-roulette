@@ -8,6 +8,7 @@ import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.login.LoginViewModel
+import ru.luckycactus.steamroulette.presentation.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.main.MainFlowViewModel
 import ru.luckycactus.steamroulette.presentation.main.MainViewModel
 import ru.luckycactus.steamroulette.presentation.menu.MenuViewModel
@@ -34,16 +35,9 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
+    fun mainActivityComponentFactory(): MainActivityComponent.Factory
+
     fun inject(app: App)
 
-    fun inject(menuViewModel: MenuViewModel)
-    fun inject(rouletteFragment: RouletteFragment)
-    fun inject(rouletteViewModel: RouletteViewModel)
-    fun inject(rouletteOptionsViewModel: RouletteOptionsViewModel)
-    fun inject(loginViewModel: LoginViewModel)
-    fun inject(mainFlowViewModel: MainFlowViewModel)
-    fun inject(mainViewModel: MainViewModel)
-
-    fun cacheHelper(): CacheHelper
-    fun lruCache(): LruCache<String, Any>
+    val cacheHelper: CacheHelper
 }
