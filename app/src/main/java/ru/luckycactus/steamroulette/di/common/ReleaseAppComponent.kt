@@ -24,7 +24,7 @@ import javax.inject.Singleton
         NetworkModule::class
     ]
 )
-interface AppComponent {
+interface AppComponent: BaseAppComponent {
 
     @Component.Builder
     interface Builder {
@@ -34,10 +34,4 @@ interface AppComponent {
 
         fun build(): AppComponent
     }
-
-    fun mainActivityComponentFactory(): MainActivityComponent.Factory
-
-    fun inject(app: App)
-
-    val cacheHelper: CacheHelper
 }
