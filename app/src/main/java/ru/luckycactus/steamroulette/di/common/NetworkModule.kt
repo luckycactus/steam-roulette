@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.di.common
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import dagger.Module
 import dagger.Provides
 import okhttp3.Interceptor
@@ -42,11 +43,13 @@ abstract class NetworkModule {
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
 
-            //todo multibindings
+            //todo di multibindings
             listOf(
                 getAuthInterceptor(),
                 getLogInterceptor()
             ).forEach { builder.addInterceptor(it) }
+
+            builder.addNetworkInterceptor(StethoInterceptor())
             return builder.build()
         }
 
