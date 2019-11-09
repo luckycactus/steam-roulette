@@ -7,6 +7,10 @@
     <application
             android:name=".DebugApp"
             tools:replace="android:name"
-            />
+            >
+
+        <meta-data android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule" tools:node="remove" />
+
+    </application>
 
 </manifest>

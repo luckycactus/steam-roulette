@@ -1,4 +1,4 @@
-package com.luckycactus.launchschedule.di.qualifiers
+package ru.luckycactus.steamroulette.di.qualifier
 
 import javax.inject.Qualifier
 
