@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.utils.glide
+package ru.luckycactus.steamroulette
 
 import android.content.Context
 import com.bumptech.glide.Glide

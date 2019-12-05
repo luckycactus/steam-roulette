@@ -147,7 +147,7 @@ class LuxuryProgressBar : View {
             currentState = (currentState + 1) % STATE_COUNT
         }
 
-        invalidate()
+        postInvalidateOnAnimation()
     }
 
     companion object {

@@ -58,5 +58,5 @@ class CacheHelper @Inject constructor(
         prefsEditor.apply { remove(key) }
     }
 
-    fun observeCacheUpdates(key: String): LiveData<Long> = prefs.longLiveData(key, 0)
+    fun observeCacheUpdates(key: String): LiveData<Long> = prefs.longLiveData(key, 0L)
 }
