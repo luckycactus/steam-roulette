@@ -14,6 +14,7 @@ import ru.luckycactus.steamroulette.data.games.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
+import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
@@ -25,6 +26,7 @@ import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
+import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.entity.GameCoverPreloader
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
@@ -40,6 +42,9 @@ abstract class AppModule {
     @Binds
     @ForApplication
     abstract fun bindContext(application: Application): Context
+
+    @Binds
+    abstract fun bindResourceManager(androidResourceManager: AndroidResourceManager): ResourceManager
 
     @Binds
     abstract fun bindUserRepository(userRepository: UserRepositoryImpl): UserRepository
