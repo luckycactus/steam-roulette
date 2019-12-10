@@ -57,6 +57,9 @@ object InjectionManager {
         override fun onActivityStopped(activity: Activity?) {}
 
         override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+            if (activity is ComponentOwner<*>) {
+                getComponentOrCreate(activity)
+            }
             if (activity is AutoInjectable) {
                 activity.inject()
             }
@@ -72,6 +75,9 @@ object InjectionManager {
     private val fragmentLifecycleHelper = object : FragmentManager.FragmentLifecycleCallbacks() {
 
         override fun onFragmentPreAttached(fm: FragmentManager, f: Fragment, context: Context) {
+            if (f is ComponentOwner<*>) {
+                getComponentOrCreate(f)
+            }
             if (f is AutoInjectable) {
                 f.inject()
             }

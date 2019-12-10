@@ -11,7 +11,8 @@ import kotlin.NoSuchElementException
 import kotlin.coroutines.coroutineContext
 
 
-interface OwnedGamesQueue {
+interface
+OwnedGamesQueue {
     fun hasNext(): Boolean
 
     fun markCurrentAsHidden()

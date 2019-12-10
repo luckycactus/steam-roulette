@@ -1,30 +1,30 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.view.animation.Animation
 import android.widget.Toast
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.AppModule
 import ru.luckycactus.steamroulette.di.common.AutoInjectable
 import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
-import ru.luckycactus.steamroulette.presentation.widget.GameView
+import ru.luckycactus.steamroulette.presentation.widget.card_stack.CardStackLayoutManager
+import ru.luckycactus.steamroulette.presentation.widget.card_stack.CardStackTouchHelperCallback
+import ru.luckycactus.steamroulette.presentation.widget.touchhelper.ItemTouchHelper
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 class RouletteFragment : BaseFragment(), AutoInjectable {
 
@@ -33,9 +33,13 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
     }
 
     @Inject
-    lateinit var gameCoverLoader: GlideGameCoverLoader
+    lateinit var rouletteAdapter: RouletteAdapter
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
+
+    private var fabsAlphaRecoveryAnimator: Animator? = null
+
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     override val layoutResId: Int = R.layout.fragment_roulette
 
@@ -51,17 +55,6 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        fabNextGame.setOnClickListener {
-            viewModel.onNextGameClick()
-        }
-
-        fabHideGame.setOnClickListener {
-            viewModel.onHideGameClick()
-        }
-
-        fabSteamInfo.setOnClickListener {
-            viewModel.onSteamInfoClick()
-        }
 
         //todo Заменить на popupwindow
         val fabLongClickListener = View.OnLongClickListener {
@@ -81,20 +74,49 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
         fabHideGame.setOnLongClickListener(fabLongClickListener)
         fabSteamInfo.setOnLongClickListener(fabLongClickListener)
 
-        viewSwitcher.getChildAt(0).setLayerType(View.LAYER_TYPE_HARDWARE, null)
-        viewSwitcher.getChildAt(1).setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
-        viewSwitcher.inAnimation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation?) {
+        itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
+            onSwiped = {
+                animateFabsAlphaRecovery()
+            },
+            onSwipedRight = {
+                viewModel.onGameSwiped(false)
+                rouletteAdapter.notifyItemRemoved(0)
+                viewModel.onAdapterUpdatedAfterSwipe()
+            },
+            onSwipedLeft = {
+                viewModel.onGameSwiped(true)
+                rouletteAdapter.notifyItemRemoved(0)
+                viewModel.onAdapterUpdatedAfterSwipe()
+            },
+            onSwipeProgress = { progress, _ ->
+                fabsAlphaRecoveryAnimator?.let {
+                    it.cancel()
+                    fabsAlphaRecoveryAnimator = null
+                }
+                val fraction = 0.8f * progress
+                fabNextGame.alpha = 1f + fraction
+                fabHideGame.alpha = 1f - fraction
+                fabSteamInfo.alpha = 1f - fraction.absoluteValue
+                viewModel.onSwipeProgress(progress)
             }
+        ), 1.5f)
+        itemTouchHelper.attachToRecyclerView(rvRoulette)
+        rvRoulette.layoutManager =
+            CardStackLayoutManager()
+        rvRoulette.adapter = rouletteAdapter
 
-            override fun onAnimationStart(animation: Animation?) {
-            }
+        fabNextGame.setOnClickListener {
+            swipeTop(ItemTouchHelper.RIGHT)
+        }
 
-            override fun onAnimationEnd(animation: Animation?) {
-                (viewSwitcher.nextView as GameView).setGame(viewModel.nextGame, gameCoverLoader)
-            }
-        })
+        fabHideGame.setOnClickListener {
+            swipeTop(ItemTouchHelper.LEFT)
+        }
+
+        fabSteamInfo.setOnClickListener {
+            viewModel.onSteamInfoClick()
+        }
 
         dataLoadingViewHolder = DataLoadingViewHolder(
             emptyLayout,
@@ -104,12 +126,11 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
         )
 
         observeEvent(viewModel.queueResetAction) {
-            viewSwitcher.reset()
+            rouletteAdapter.items = null
         }
 
-        observe(viewModel.currentGame) {
-            (viewSwitcher.nextView as GameView).setGame(it, gameCoverLoader)
-            viewSwitcher.showNext()
+        observe(viewModel.games) {
+            rouletteAdapter.items = it
         }
 
 
@@ -118,9 +139,9 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
         }
 
         observe(viewModel.controlsAvailable) {
-            fabNextGame.isClickable = it
-            fabHideGame.isClickable = it
-            fabSteamInfo.isClickable = it
+            fabNextGame.isEnabled = it
+            fabHideGame.isEnabled = it
+            fabSteamInfo.isEnabled = it
         }
 
         observeEvent(viewModel.openUrlAction) {
@@ -153,6 +174,22 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun animateFabsAlphaRecovery() {
+        fabsAlphaRecoveryAnimator = AnimatorSet().apply {
+            play(ObjectAnimator.ofFloat(fabNextGame, View.ALPHA, 1f))
+                .with(ObjectAnimator.ofFloat(fabHideGame, View.ALPHA, 1f))
+                .with(ObjectAnimator.ofFloat(fabSteamInfo, View.ALPHA, 1f))
+            setDuration(200L)
+                .start()
+        }
+    }
+
+    private fun swipeTop(direction: Int) {
+        rvRoulette.findViewHolderForAdapterPosition(0)?.let {
+            itemTouchHelper.swipe(it, direction)
         }
     }
 

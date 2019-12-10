@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.di.common
 
-interface ComponentOwner<T> {
+interface ComponentOwner<T: Any> {
 
     fun createComponent(): T
 

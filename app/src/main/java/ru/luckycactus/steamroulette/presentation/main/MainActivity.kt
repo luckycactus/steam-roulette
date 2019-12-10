@@ -3,10 +3,7 @@ package ru.luckycactus.steamroulette.presentation.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.AppComponent
-import ru.luckycactus.steamroulette.di.common.ComponentOwner
-import ru.luckycactus.steamroulette.di.common.InjectionManager
-import ru.luckycactus.steamroulette.di.common.component
+import ru.luckycactus.steamroulette.di.common.*
 import ru.luckycactus.steamroulette.presentation.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.viewModel

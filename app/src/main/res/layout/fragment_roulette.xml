@@ -16,37 +16,18 @@
             android:padding="@dimen/default_activity_margin"
             >
 
-        <ViewSwitcher
-                android:id="@+id/viewSwitcher"
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRoulette"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="16dp"
                 android:clipChildren="false"
-                android:inAnimation="@anim/game_switcher_in"
-                android:outAnimation="@anim/game_switcher_out"
                 app:layout_constraintBottom_toTopOf="@id/fabSteamInfo"
                 app:layout_constraintDimensionRatio="2:3"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                >
-
-            <ru.luckycactus.steamroulette.presentation.widget.GameView
-                    android:id="@+id/gameView1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    style="@style/Widget.MyTheme.GameView"
-                    />
-
-            <ru.luckycactus.steamroulette.presentation.widget.GameView
-                    android:id="@+id/gameView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    style="@style/Widget.MyTheme.GameView"
-                    />
-
-        </ViewSwitcher>
-
+                />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabSteamInfo"

@@ -20,6 +20,29 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("""SELECT appId from owned_game where userSteam64 = :steam64 and hidden = 0 and playtimeForever = 0""")
     abstract suspend fun getVisibleNotPlayedIds(steam64: Long): List<Int>
 
+
+    @Query(
+        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl
+        from owned_game 
+        where userSteam64 = :steam64 and hidden = 0"""
+    )
+    abstract suspend fun getVisible(steam64: Long): List<OwnedGame>
+
+    @Query(
+        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl
+        from owned_game 
+        where userSteam64 = :steam64 and hidden = 0 and playtime2Weeks = 0"""
+    )
+    abstract suspend fun getVisibleNotPlayed2Weeks(steam64: Long): List<OwnedGame>
+
+    @Query(
+        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl
+        from owned_game 
+        where userSteam64 = :steam64 and hidden = 0 and playtimeForever = 0"""
+    )
+    abstract suspend fun getVisibleNotPlayed(steam64: Long): List<OwnedGame>
+
+
     @Query(
         """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
             from owned_game 

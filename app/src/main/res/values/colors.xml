@@ -38,4 +38,7 @@
     <dimen name="alpha_emphasis_high">@dimen/material_emphasis_high_type</dimen>
     <dimen name="alpha_emphasis_medium">@dimen/material_emphasis_medium</dimen>
     <dimen name="alpha_emphasis_disabled">@dimen/material_emphasis_disabled</dimen>
+
+    <color name="color_overlay_next">#537F3A</color>
+    <color name="color_overlay_hide">#951823</color>
 </resources>

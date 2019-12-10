@@ -1,15 +1,16 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
-import ru.luckycactus.steamroulette.domain.entity.OwnedGamesQueue
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
-import ru.luckycactus.steamroulette.domain.games.GetLocalOwnedGamesQueueUseCase
+import ru.luckycactus.steamroulette.domain.games.GetAllLocalOwnedGamesUseCase
+import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesClearUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
 import ru.luckycactus.steamroulette.presentation.common.ContentState
@@ -20,37 +21,35 @@ import javax.inject.Inject
 
 class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
-    private val getLocalOwnedGamesQueue: GetLocalOwnedGamesQueueUseCase,
+    private val getAllLocalOwnedGamesUseCase: GetAllLocalOwnedGamesUseCase,
     private val observePlayTimeFilter: ObservePlayTimeFilterUseCase,
     private val observeHiddenGamesClear: ObserveHiddenGamesClearUseCase,
+    private val hideGame: HideGameUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel() {
 
-    val currentGame: LiveData<OwnedGame>
-        get() = _currentGame
+    val games: LiveData<out List<OwnedGame>>
+        get() = _games
     val contentState: LiveData<ContentState>
         get() = _contentState.distinctUntilChanged()
     val openUrlAction: LiveData<Event<String>>
         get() = _openUrlAction
     val controlsAvailable: LiveData<Boolean>
-        get() = _controlsAvailable
+        get() = _controlsAvailable.distinctUntilChanged()
     val queueResetAction: LiveData<Event<Unit>>
         get() = _queueResetAction
 
-    val nextGame: OwnedGame?
-        get() = gamesQueue?.peekNext()
-
-    private val _currentGame = MutableLiveData<OwnedGame>()
+    private val _games = MutableLiveData<MutableList<OwnedGame>>()
     private val _contentState = MediatorLiveData<ContentState>()
     private val _openUrlAction = MutableLiveData<Event<String>>()
     private val _controlsAvailable = MutableLiveData<Boolean>()
     private val _queueResetAction = MutableLiveData<Event<Unit>>()
     private val currentUserPlayTimeFilter: LiveData<EnPlayTimeFilter>
 
-    private var gamesQueue: OwnedGamesQueue? = null
     private var gamesQueueJob: Job? = null
     private var isNextGameAllowed = true
     private var nextGameDelayJob: Job? = null
+    private var gamesEnded = false
 
     init {
         currentUserPlayTimeFilter =
@@ -59,11 +58,11 @@ class RouletteViewModel @Inject constructor(
             }
 
         _contentState.addSource(userViewModelDelegate.fetchGamesState) {
-            refreshQueue()
+            refreshGames()
         }
 
         _contentState.addSource(currentUserPlayTimeFilter) {
-            refreshQueue()
+            refreshGames()
         }
 
         _contentState.addSource(userViewModelDelegate.observeCurrentUserSteamId().switchMap {
@@ -71,43 +70,69 @@ class RouletteViewModel @Inject constructor(
                 it
             )
         }) {
-            refreshQueue()
+            refreshGames()
         }
     }
 
-    fun onNextGameClick() {
-        showNextGame()
-    }
+    fun onGameSwiped(hide: Boolean) {
+        _games.value?.let {
+            if (it.isNotEmpty()) {
+                val game = it.removeAt(0)
+                if (hide) {
+                    GlobalScope.launch {
+                        hideGame(
+                            HideGameUseCase.Params(
+                                userViewModelDelegate.currentUserSteamId,
+                                game.appId
+                            )
+                        )
+                    }
+                }
 
-    fun onHideGameClick() {
-        gamesQueue?.markCurrentAsHidden()
-        showNextGame()
+                if (it.isEmpty()) {
+                    gamesEnded = true
+                    _contentState.value = ContentState.Placeholder(
+                        resourceManager.getString(R.string.games_queue_ended),
+                        titleType = ContentState.TitleType.None,
+                        buttonType = ContentState.ButtonType.Custom(
+                            resourceManager.getString(R.string.restart_queue)
+                        )
+                    )
+                }
+            }
+        }
     }
 
     fun onRetryClick() {
-        val gamesQueue = gamesQueue
-        if (gamesQueue != null && !gamesQueue.hasNext() && gamesQueue.size > 0) {
-            refreshQueue()
+        if (gamesEnded) {
+            refreshGames()
         } else {
             userViewModelDelegate.fetchGames()
         }
     }
 
     fun onSteamInfoClick() {
-        _currentGame.value?.let {
+        _games.value?.getOrNull(0)?.let {
             _openUrlAction.value = Event(it.storeUrl)
         }
     }
 
-    private fun refreshQueue() {
+    fun onSwipeProgress(progress: Float) {
+        _controlsAvailable.value = (progress == 0f)
+    }
+
+    fun onAdapterUpdatedAfterSwipe() {
+        _controlsAvailable.value = true
+    }
+
+    private fun refreshGames() {
         val fetchGamesResult = userViewModelDelegate.fetchGamesState.value
         val filter = currentUserPlayTimeFilter.value
 
         gamesQueueJob?.cancel()
-        gamesQueue?.finish()
-        gamesQueue = null
         nextGameDelayJob?.cancel()
         isNextGameAllowed = true
+        gamesEnded = false
 
         if (fetchGamesResult == null || filter == null)
             return
@@ -118,15 +143,23 @@ class RouletteViewModel @Inject constructor(
             gamesQueueJob = viewModelScope.launch {
                 try {
                     _contentState.value = ContentState.Loading
-                    gamesQueue =
-                        getLocalOwnedGamesQueue(
-                            GetLocalOwnedGamesQueueUseCase.Params(
-                                userViewModelDelegate.currentUserSteamId,
-                                filter
-                            )
+                    val newGames = getAllLocalOwnedGamesUseCase(
+                        GetAllLocalOwnedGamesUseCase.Params(
+                            userViewModelDelegate.currentUserSteamId,
+                            filter
                         )
+                    ).toMutableList()
+                    _games.value = newGames
                     if (isActive) {
-                        showNextGame()
+                        if (!newGames.isNullOrEmpty()) {
+                            _contentState.value = ContentState.Success
+                        } else {
+                            _contentState.value = ContentState.Placeholder(
+                                resourceManager.getString(R.string.error_filtered_games_not_found),
+                                titleType = ContentState.TitleType.None,
+                                buttonType = ContentState.ButtonType.None
+                            )
+                        }
                     }
                 } catch (e: Exception) {
                     if (e is CancellationException) {
@@ -164,45 +197,6 @@ class RouletteViewModel @Inject constructor(
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private fun showNextGame() {
-        if (!isNextGameAllowed)
-            return
-
-        gamesQueue?.let {
-            if (it.hasNext()) {
-                delayNextGame()
-                viewModelScope.launch {
-                    _controlsAvailable.value = false
-                    try {
-                        val firstGame = !it.started
-                        val nextGame = it.next()
-                        if (firstGame) {
-                            _queueResetAction.value = Event(Unit)
-                        }
-                        _currentGame.value = nextGame
-                        _contentState.value = ContentState.Success
-                    } finally {
-                        _controlsAvailable.value = true
-                    }
-                }
-            } else if (it.size > 0) {
-                _contentState.value = ContentState.Placeholder(
-                    resourceManager.getString(R.string.games_queue_ended),
-                    titleType = ContentState.TitleType.None,
-                    buttonType = ContentState.ButtonType.Custom(
-                        resourceManager.getString(R.string.restart_queue)
-                    )
-                )
-            } else {
-                _contentState.value = ContentState.Placeholder(
-                    resourceManager.getString(R.string.error_filtered_games_not_found),
-                    titleType = ContentState.TitleType.None,
-                    buttonType = ContentState.ButtonType.None
-                )
             }
         }
     }

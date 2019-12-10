@@ -1,12 +1,8 @@
 package ru.luckycactus.steamroulette.data.games
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
-import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.games.datastore.GamesDataStore
-import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
-import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
 import ru.luckycactus.steamroulette.domain.entity.CachePolicy
@@ -14,7 +10,6 @@ import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -57,6 +52,12 @@ class GamesRepositoryImpl @Inject constructor(
         filter: EnPlayTimeFilter
     ): List<Int> =
         localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64(), filter)
+
+    override suspend fun getFilteredLocalOwnedGames(
+        steamId: SteamId,
+        filter: EnPlayTimeFilter
+    ): List<OwnedGame> =
+        localGamesDataStore.getFilteredOwnedGames(steamId.asSteam64(), filter)
 
     override suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame {
         return localGamesDataStore.getOwnedGame(steamId.asSteam64(), gameId)
