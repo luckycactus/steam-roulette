@@ -3,25 +3,34 @@ package ru.luckycactus.steamroulette.presentation.roulette
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.entity.SteamId
-import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.presentation.common.Event
 
-class PagingGameList @AssistedInject constructor(
-    private val gamesRepository: GamesRepository,
-    @Assisted private val steamId: SteamId,
-    @Assisted private val gameIds: List<Int>,
-    @Assisted private val minSize: Int,
-    @Assisted private val fetchDistance: Int,
-    @Assisted private val coroutineScope: CoroutineScope
-) {
+interface PagingGameList {
     val list: List<OwnedGame>
-        get() = _list
     val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>>
+    fun isEmpty(): Boolean
+    fun gamesEnded(): Boolean
+    @MainThread
+    fun removeTop(): OwnedGame
+
+    @MainThread
+    fun finish()
+}
+
+class PagingGameListImpl constructor(
+    private val gamesFactory: suspend (List<Int>) -> List<OwnedGame>,
+    private val gameIds: List<Int>,
+    private val minSize: Int,
+    private val fetchDistance: Int,
+    private val coroutineScope: CoroutineScope
+) : PagingGameList {
+
+    override val list: List<OwnedGame>
+        get() = _list
+    override val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>>
         get() = _itemsInsertedLiveData
 
     private val _list = mutableListOf<OwnedGame>()
@@ -35,12 +44,12 @@ class PagingGameList @AssistedInject constructor(
             fetch()
     }
 
-    fun isEmpty() = gameIds.isEmpty()
+    override fun isEmpty() = gameIds.isEmpty()
 
-    fun gamesEnded() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
+    override fun gamesEnded() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
 
     @MainThread
-    fun removeTop(): OwnedGame {
+    override fun removeTop(): OwnedGame {
         val removedItem = _list.removeAt(0)
         if (_list.size <= minSize && !fetching && nextFetchIndex < gameIds.size)
             fetch()
@@ -48,7 +57,7 @@ class PagingGameList @AssistedInject constructor(
     }
 
     @MainThread
-    fun finish() {
+    override fun finish() {
         fetchJob?.cancel()
     }
 
@@ -57,8 +66,7 @@ class PagingGameList @AssistedInject constructor(
         if (fetchJob?.isActive != true) {
             fetchJob = coroutineScope.launch(context = Dispatchers.Main) {
                 val fetchEnd = minOf(nextFetchIndex + fetchDistance, gameIds.size)
-                val games = gamesRepository.getLocalOwnedGames(
-                    steamId,
+                val games = gamesFactory(
                     gameIds.subList(
                         nextFetchIndex,
                         fetchEnd
@@ -72,16 +80,5 @@ class PagingGameList @AssistedInject constructor(
                 }
             }
         }
-    }
-
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(
-            coroutineScope: CoroutineScope,
-            steamId: SteamId,
-            gameIds: List<Int>,
-            minSize: Int = 3,
-            fetchDistance: Int = 10
-        ): PagingGameList
     }
 }

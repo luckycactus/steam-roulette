@@ -7,12 +7,12 @@ import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.presentation.roulette.PagingGameList
+import ru.luckycactus.steamroulette.presentation.roulette.PagingGameListImpl
 import javax.inject.Inject
 
 @Reusable
 class GetOwnedGamesPagingList @Inject constructor(
-    private val gamesRepository: GamesRepository,
-    private val pagingGameListFactory: PagingGameList.Factory
+    private val gamesRepository: GamesRepository
 ) : SuspendUseCase<GetOwnedGamesPagingList.Params, PagingGameList>() {
 
     override suspend fun getResult(params: Params): PagingGameList {
@@ -21,12 +21,12 @@ class GetOwnedGamesPagingList @Inject constructor(
         }
         val gameIds = gamesRepository.getFilteredLocalOwnedGamesIds(params.steamId, params.filter)
             .shuffled()
-        return pagingGameListFactory.create(
-            params.pagingCoroutineScope,
-            params.steamId,
+        return PagingGameListImpl(
+            { gamesRepository.getLocalOwnedGames(params.steamId, it) },
             gameIds,
             5,
-            10
+            10,
+            params.pagingCoroutineScope
         )
     }
 
