@@ -14,8 +14,6 @@ interface GamesDataStore {
 
         suspend fun getFilteredOwnedGamesIds(steam64: Long, filter: EnPlayTimeFilter): List<Int>
 
-        suspend fun getFilteredOwnedGames(steam64: Long, filter: EnPlayTimeFilter): List<OwnedGame>
-
         suspend fun hideOwnedGame(steam64: Long, gameId: Int)
 
         suspend fun getOwnedGame(steam64: Long, gameId: Int): OwnedGame

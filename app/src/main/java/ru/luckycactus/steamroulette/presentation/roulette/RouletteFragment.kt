@@ -1,12 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
-import android.animation.Animator
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
@@ -18,13 +19,15 @@ import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
-import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
+import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.utils.observeEvent
+import ru.luckycactus.steamroulette.presentation.utils.viewModel
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.widget.card_stack.CardStackLayoutManager
 import ru.luckycactus.steamroulette.presentation.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.widget.touchhelper.ItemTouchHelper
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 class RouletteFragment : BaseFragment(), AutoInjectable {
 
@@ -81,16 +84,16 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
             },
             onSwipedRight = {
                 viewModel.onGameSwiped(false)
-                rouletteAdapter.notifyItemRemoved(0)
+                //rouletteAdapter.notifyItemRemoved(0)
                 viewModel.onAdapterUpdatedAfterSwipe()
             },
             onSwipedLeft = {
                 viewModel.onGameSwiped(true)
-                rouletteAdapter.notifyItemRemoved(0)
+                //rouletteAdapter.notifyItemRemoved(0)
                 viewModel.onAdapterUpdatedAfterSwipe()
             },
             onSwipeProgress = { progress, _ ->
-//                fabsAlphaRecoveryAnimator?.let {
+                //                fabsAlphaRecoveryAnimator?.let {
 //                    it.cancel()
 //                    fabsAlphaRecoveryAnimator = null
 //                }
@@ -125,9 +128,22 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
             viewModel::onRetryClick
         )
 
-        observeEvent(viewModel.queueResetAction) {
-            rouletteAdapter.items = null
+        observe(
+            viewModel.itemRemoved
+        ) {
+            it?.ifNotHandled {
+                rouletteAdapter.notifyItemRemoved(it)
+            }
         }
+
+        observe(
+            viewModel.itemsInserted
+        ) {
+            it?.ifNotHandled {
+                rouletteAdapter.notifyItemRangeInserted(it.first, it.second)
+            }
+        }
+
 
         observe(viewModel.games) {
             rouletteAdapter.items = it

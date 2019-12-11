@@ -56,16 +56,6 @@ class LocalGamesDataStore @Inject constructor(
         }
     }
 
-    override suspend fun getFilteredOwnedGames(steam64: Long, filter: EnPlayTimeFilter): List<OwnedGame> {
-        return db.ownedGamesDao().run {
-            when (filter) {
-                EnPlayTimeFilter.All -> getVisible(steam64)
-                EnPlayTimeFilter.NotPlayed -> getVisibleNotPlayed(steam64)
-                EnPlayTimeFilter.NotPlayedIn2Weeks -> getVisibleNotPlayed2Weeks(steam64)
-            }
-        }
-    }
-
     override suspend fun clearHiddenOwnedGames(steam64: Long) {
         db.ownedGamesDao().clearHidden(steam64)
     }

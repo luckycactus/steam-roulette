@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

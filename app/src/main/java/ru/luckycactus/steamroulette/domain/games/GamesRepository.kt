@@ -16,12 +16,6 @@ interface GamesRepository {
         filter: EnPlayTimeFilter
     ): List<Int>
 
-    @Deprecated("")
-    suspend fun getFilteredLocalOwnedGames(
-        steamId: SteamId,
-        filter: EnPlayTimeFilter
-    ): List<OwnedGame>
-
     suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame
 
     suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame>

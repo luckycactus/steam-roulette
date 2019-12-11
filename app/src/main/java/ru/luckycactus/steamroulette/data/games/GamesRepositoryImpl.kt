@@ -53,12 +53,6 @@ class GamesRepositoryImpl @Inject constructor(
     ): List<Int> =
         localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64(), filter)
 
-    override suspend fun getFilteredLocalOwnedGames(
-        steamId: SteamId,
-        filter: EnPlayTimeFilter
-    ): List<OwnedGame> =
-        localGamesDataStore.getFilteredOwnedGames(steamId.asSteam64(), filter)
-
     override suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame {
         return localGamesDataStore.getOwnedGame(steamId.asSteam64(), gameId)
     }

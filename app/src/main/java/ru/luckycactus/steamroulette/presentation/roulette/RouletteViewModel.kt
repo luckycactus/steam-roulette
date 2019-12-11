@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.roulette
 
-import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
@@ -9,7 +8,7 @@ import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
-import ru.luckycactus.steamroulette.domain.games.GetAllLocalOwnedGamesUseCase
+import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
 import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesClearUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
@@ -17,38 +16,37 @@ import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import javax.inject.Inject
 
 class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
-    private val getAllLocalOwnedGamesUseCase: GetAllLocalOwnedGamesUseCase,
+    private val getOwnedGamesPagingList: GetOwnedGamesPagingList,
     private val observePlayTimeFilter: ObservePlayTimeFilterUseCase,
     private val observeHiddenGamesClear: ObserveHiddenGamesClearUseCase,
     private val hideGame: HideGameUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel() {
 
-    val games: LiveData<out List<OwnedGame>>
-        get() = _games
+    val games: LiveData<List<OwnedGame>?>
+    val itemRemoved: LiveData<Event<Int>?>
+        get() = _itemRemoved
+    val itemsInserted: LiveData<Event<Pair<Int, Int>>?>
     val contentState: LiveData<ContentState>
         get() = _contentState.distinctUntilChanged()
     val openUrlAction: LiveData<Event<String>>
         get() = _openUrlAction
     val controlsAvailable: LiveData<Boolean>
         get() = _controlsAvailable.distinctUntilChanged()
-    val queueResetAction: LiveData<Event<Unit>>
-        get() = _queueResetAction
 
-    private val _games = MutableLiveData<MutableList<OwnedGame>>()
+    private val _gamesPagingList = MutableLiveData<PagingGameList?>()
     private val _contentState = MediatorLiveData<ContentState>()
     private val _openUrlAction = MutableLiveData<Event<String>>()
     private val _controlsAvailable = MutableLiveData<Boolean>()
-    private val _queueResetAction = MutableLiveData<Event<Unit>>()
+    private val _itemRemoved = MediatorLiveData<Event<Int>>()
     private val currentUserPlayTimeFilter: LiveData<EnPlayTimeFilter>
 
-    private var gamesQueueJob: Job? = null
-    private var isNextGameAllowed = true
-    private var nextGameDelayJob: Job? = null
+    private var getPagingListJob: Job? = null
     private var gamesEnded = false
 
     init {
@@ -72,12 +70,21 @@ class RouletteViewModel @Inject constructor(
         }) {
             refreshGames()
         }
+
+        games = _gamesPagingList.map { it?.list }
+        itemsInserted = _gamesPagingList.nullableSwitchMap { it.itemsInsertedLiveData }
+        _itemRemoved.addSource(_gamesPagingList) {
+            if (it == null) {
+                _itemRemoved.value = null
+            }
+        }
     }
 
     fun onGameSwiped(hide: Boolean) {
-        _games.value?.let {
-            if (it.isNotEmpty()) {
-                val game = it.removeAt(0)
+        _gamesPagingList.value?.let {
+            if (!it.isEmpty()) {
+                val game = it.removeTop()
+                _itemRemoved.value = Event(0)
                 if (hide) {
                     GlobalScope.launch {
                         hideGame(
@@ -89,7 +96,7 @@ class RouletteViewModel @Inject constructor(
                     }
                 }
 
-                if (it.isEmpty()) {
+                if (it.gamesEnded()) {
                     gamesEnded = true
                     _contentState.value = ContentState.Placeholder(
                         resourceManager.getString(R.string.games_queue_ended),
@@ -98,6 +105,7 @@ class RouletteViewModel @Inject constructor(
                             resourceManager.getString(R.string.restart_queue)
                         )
                     )
+                    _gamesPagingList.value = null
                 }
             }
         }
@@ -112,7 +120,7 @@ class RouletteViewModel @Inject constructor(
     }
 
     fun onSteamInfoClick() {
-        _games.value?.getOrNull(0)?.let {
+        games.value?.get(0)?.let {
             _openUrlAction.value = Event(it.storeUrl)
         }
     }
@@ -129,9 +137,10 @@ class RouletteViewModel @Inject constructor(
         val fetchGamesResult = userViewModelDelegate.fetchGamesState.value
         val filter = currentUserPlayTimeFilter.value
 
-        gamesQueueJob?.cancel()
-        nextGameDelayJob?.cancel()
-        isNextGameAllowed = true
+        getPagingListJob?.cancel()
+        _gamesPagingList.value?.finish()
+        _gamesPagingList.value = null
+
         gamesEnded = false
 
         if (fetchGamesResult == null || filter == null)
@@ -140,18 +149,20 @@ class RouletteViewModel @Inject constructor(
         if (fetchGamesResult == Result.Loading) {
             _contentState.value = ContentState.Loading
         } else {
-            gamesQueueJob = viewModelScope.launch {
+            getPagingListJob = viewModelScope.launch {
                 try {
                     _contentState.value = ContentState.Loading
-                    val newGames = getAllLocalOwnedGamesUseCase(
-                        GetAllLocalOwnedGamesUseCase.Params(
+
+                    val pagingGameList = getOwnedGamesPagingList(
+                        GetOwnedGamesPagingList.Params(
                             userViewModelDelegate.currentUserSteamId,
-                            filter
+                            filter,
+                            viewModelScope
                         )
-                    ).toMutableList()
-                    _games.value = newGames
+                    )
+                    _gamesPagingList.value = pagingGameList
                     if (isActive) {
-                        if (!newGames.isNullOrEmpty()) {
+                        if (!pagingGameList.isEmpty()) {
                             _contentState.value = ContentState.Success
                         } else {
                             _contentState.value = ContentState.Placeholder(
@@ -198,15 +209,6 @@ class RouletteViewModel @Inject constructor(
                     }
                 }
             }
-        }
-    }
-
-    private fun delayNextGame() {
-        nextGameDelayJob?.cancel()
-        isNextGameAllowed = false
-        nextGameDelayJob = viewModelScope.launch {
-            delay(300)
-            isNextGameAllowed = true
         }
     }
 }
