@@ -63,7 +63,7 @@ class CardStackTouchHelperCallback(
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         if (viewHolder.adapterPosition == 0) {
             val swipeProgress = (dX / recyclerView.width).coerceIn(-1f, 1f)
-            viewHolder.itemView.rotation = -15 * swipeProgress
+            viewHolder.itemView.rotation = 15 * swipeProgress
             onSwipeProgress?.invoke(swipeProgress, getSwipeThreshold(viewHolder))
             if (viewHolder is ViewHolderSwipeProgressListener) {
                 viewHolder.onSwipeProgress(swipeProgress, getSwipeThreshold(viewHolder))

@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.widget.card_stack
 
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.absoluteValue
 
@@ -17,6 +18,7 @@ class CardStackLayoutManager : RecyclerView.LayoutManager() {
             field = value.coerceIn(0f, 1f)
         }
 
+    private val interpolator = DecelerateInterpolator()
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams =
         RecyclerView.LayoutParams(
@@ -46,7 +48,7 @@ class CardStackLayoutManager : RecyclerView.LayoutManager() {
     fun setChildGaps(view: View, layer: Int, swipeProgress: Float) {
         var scale = 1f
         if (layer > 0)
-            scale -= (layer - swipeProgress.absoluteValue) * scaleGap
+            scale -= (layer - interpolator.getInterpolation(swipeProgress.absoluteValue)) * scaleGap
         view.scaleX = scale
         view.scaleY = scale
     }

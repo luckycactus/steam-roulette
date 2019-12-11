@@ -3,11 +3,7 @@ package ru.luckycactus.steamroulette.data
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.liveData
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory.Companion.invoke
 import java.util.*
-import java.util.concurrent.locks.Lock
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
