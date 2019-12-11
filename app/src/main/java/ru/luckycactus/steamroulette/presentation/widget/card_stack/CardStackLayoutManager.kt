@@ -7,12 +7,12 @@ import kotlin.math.absoluteValue
 
 class CardStackLayoutManager : RecyclerView.LayoutManager() {
 
-    var maxChildrenCount: Int = 5
+    var maxChildrenCount: Int = 3
         set(value) {
             field = maxOf(1, value)
         }
 
-    var scaleGap: Float = 0.1f
+    var scaleGap: Float = 0.2f
         set(value) {
             field = value.coerceIn(0f, 1f)
         }

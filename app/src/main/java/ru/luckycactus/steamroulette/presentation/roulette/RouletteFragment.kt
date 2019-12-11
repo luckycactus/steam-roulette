@@ -37,7 +37,7 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
-    private var fabsAlphaRecoveryAnimator: Animator? = null
+    //private var fabsAlphaRecoveryAnimator: Animator? = null
 
     private lateinit var itemTouchHelper: ItemTouchHelper
 
@@ -77,7 +77,7 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
 
         itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
             onSwiped = {
-                animateFabsAlphaRecovery()
+                //animateFabsAlphaRecovery()
             },
             onSwipedRight = {
                 viewModel.onGameSwiped(false)
@@ -90,14 +90,14 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
                 viewModel.onAdapterUpdatedAfterSwipe()
             },
             onSwipeProgress = { progress, _ ->
-                fabsAlphaRecoveryAnimator?.let {
-                    it.cancel()
-                    fabsAlphaRecoveryAnimator = null
-                }
-                val fraction = 0.8f * progress
-                fabNextGame.alpha = 1f + fraction
-                fabHideGame.alpha = 1f - fraction
-                fabSteamInfo.alpha = 1f - fraction.absoluteValue
+//                fabsAlphaRecoveryAnimator?.let {
+//                    it.cancel()
+//                    fabsAlphaRecoveryAnimator = null
+//                }
+//                val fraction = 0.8f * progress
+//                fabNextGame.alpha = 1f + fraction
+//                fabHideGame.alpha = 1f - fraction
+//                fabSteamInfo.alpha = 1f - fraction.absoluteValue
                 viewModel.onSwipeProgress(progress)
             }
         ), 1.5f)
@@ -177,15 +177,15 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
         }
     }
 
-    private fun animateFabsAlphaRecovery() {
-        fabsAlphaRecoveryAnimator = AnimatorSet().apply {
-            play(ObjectAnimator.ofFloat(fabNextGame, View.ALPHA, 1f))
-                .with(ObjectAnimator.ofFloat(fabHideGame, View.ALPHA, 1f))
-                .with(ObjectAnimator.ofFloat(fabSteamInfo, View.ALPHA, 1f))
-            setDuration(200L)
-                .start()
-        }
-    }
+//    private fun animateFabsAlphaRecovery() {
+//        fabsAlphaRecoveryAnimator = AnimatorSet().apply {
+//            play(ObjectAnimator.ofFloat(fabNextGame, View.ALPHA, 1f))
+//                .with(ObjectAnimator.ofFloat(fabHideGame, View.ALPHA, 1f))
+//                .with(ObjectAnimator.ofFloat(fabSteamInfo, View.ALPHA, 1f))
+//            setDuration(200L)
+//                .start()
+//        }
+//    }
 
     private fun swipeTop(direction: Int) {
         rvRoulette.findViewHolderForAdapterPosition(0)?.let {

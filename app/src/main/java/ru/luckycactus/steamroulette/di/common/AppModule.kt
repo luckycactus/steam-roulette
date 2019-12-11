@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.di.common
 
 import android.app.Application
 import android.content.Context
-import android.util.LruCache
 import androidx.room.Room
 import com.google.gson.Gson
 import dagger.Binds
@@ -15,7 +14,6 @@ import ru.luckycactus.steamroulette.data.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
-import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.login.datastore.LoginDataStore
@@ -28,7 +26,6 @@ import ru.luckycactus.steamroulette.data.user_settings.UserSettingsRepositoryImp
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
-import ru.luckycactus.steamroulette.domain.entity.GameCoverPreloader
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
@@ -60,9 +57,6 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindGamesRepository(gamesRepository: GamesRepositoryImpl): GamesRepository
-
-    @Binds
-    abstract fun bindGameCoverPreloader(glideGameCoverLoader: GlideGameCoverLoader): GameCoverPreloader
 
     @Binds
     abstract fun bindGameCoverCacheCleaner(glideGameCoverLoader: GlideGameCoverLoader): GameCoverCacheCleaner
