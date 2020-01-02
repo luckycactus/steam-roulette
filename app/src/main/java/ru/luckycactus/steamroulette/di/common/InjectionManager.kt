@@ -60,7 +60,7 @@ object InjectionManager {
             if (activity is ComponentOwner<*>) {
                 getComponentOrCreate(activity)
             }
-            if (activity is AutoInjectable) {
+            if (activity is Injectable) {
                 activity.inject()
             }
             if (activity is FragmentActivity) {
@@ -78,7 +78,7 @@ object InjectionManager {
             if (f is ComponentOwner<*>) {
                 getComponentOrCreate(f)
             }
-            if (f is AutoInjectable) {
+            if (f is Injectable) {
                 f.inject()
             }
         }

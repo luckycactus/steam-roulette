@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.di.common
 
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
@@ -9,6 +10,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
+import ru.luckycactus.steamroulette.data.net.AuthInterceptor
 import ru.luckycactus.steamroulette.data.net.SteamApiService
 import ru.luckycactus.steamroulette.data.utils.MyHttpLoggingInterceptor
 import ru.luckycactus.steamroulette.di.qualifier.InterceptorSet
@@ -22,7 +24,12 @@ abstract class NetworkModule {
 
     @Multibinds
     @NetworkInterceptorSet
-    internal abstract fun networkInterceptorSet(): Set<Interceptor>
+    abstract fun networkInterceptorSet(): Set<Interceptor>
+
+    @IntoSet
+    @InterceptorSet
+    @Binds
+    abstract fun provideAuthInterceptor(authInterceptor: AuthInterceptor): Interceptor
 
     @Module
     companion object {
@@ -56,25 +63,6 @@ abstract class NetworkModule {
                 interceptors.forEach { addInterceptor(it) }
                 networkInterceptors.forEach { addNetworkInterceptor(it) }
             }.build()
-
-        //todo Вынести в отдельный класс
-        @JvmStatic
-        @IntoSet
-        @InterceptorSet
-        @Provides
-        fun provideAuthInterceptor(): Interceptor = Interceptor { chain ->
-            val newUrl = chain.request().url()
-                .newBuilder()
-                .addQueryParameter("key", BuildConfig.STEAM_WEB_API_KEY)
-                .build()
-
-            val newRequest = chain.request()
-                .newBuilder()
-                .url(newUrl)
-                .build()
-
-            chain.proceed(newRequest)
-        }
 
         @JvmStatic
         @IntoSet

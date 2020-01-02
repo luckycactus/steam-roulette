@@ -79,18 +79,21 @@ abstract class AppModule {
         //todo merge userSettingsPrefs and userCachePrefs
         @Identified(R.id.userSettingsPrefs)
         @JvmStatic
+        @Singleton
         @Provides
         fun provideUserSettingsSharedPreferences(@ForApplication appContext: Context) =
             appContext.getSharedPreferences("user-settings", Context.MODE_PRIVATE)
 
         @Identified(R.id.userCachePrefs)
         @JvmStatic
+        @Singleton
         @Provides
         fun provideUserCacheSharedPreferences(@ForApplication appContext: Context) =
             appContext.getSharedPreferences("user-cache", Context.MODE_PRIVATE)
 
         @Identified(R.id.cacheHelperPrefs)
         @JvmStatic
+        @Singleton
         @Provides
         fun provideCacheHelperSharedPreferences(@ForApplication appContext: Context) =
             appContext.getSharedPreferences("cache-helper", Context.MODE_PRIVATE)

@@ -50,7 +50,6 @@ class CacheHelper @Inject constructor(
         !shouldUseCache(cachePolicy, key, window, timeUnit)
 
     fun setCachedNow(key: String) {
-        //todo apply or commit
         prefsEditor.apply { putLong(key, System.currentTimeMillis()) }
     }
 

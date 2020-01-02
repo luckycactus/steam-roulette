@@ -37,6 +37,7 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
 
         rvGameTimeFilter.layoutManager = LinearLayoutManager(context)
         rvGameTimeFilter.adapter = adapter
+        rvGameTimeFilter.isNestedScrollingEnabled = false
 
 
         observe(viewModel.playTimeFilterData) {

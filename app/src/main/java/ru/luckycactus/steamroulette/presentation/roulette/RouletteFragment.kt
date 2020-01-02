@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.roulette
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -13,7 +12,7 @@ import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.AutoInjectable
+import ru.luckycactus.steamroulette.di.common.Injectable
 import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
@@ -29,7 +28,7 @@ import ru.luckycactus.steamroulette.presentation.widget.card_stack.CardStackTouc
 import ru.luckycactus.steamroulette.presentation.widget.touchhelper.ItemTouchHelper
 import javax.inject.Inject
 
-class RouletteFragment : BaseFragment(), AutoInjectable {
+class RouletteFragment : BaseFragment(), Injectable {
 
     private val viewModel by viewModel {
         findComponent<MainFlowComponent>().rouletteViewModel
@@ -57,7 +56,6 @@ class RouletteFragment : BaseFragment(), AutoInjectable {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
 
         //todo Заменить на popupwindow
         val fabLongClickListener = View.OnLongClickListener {
