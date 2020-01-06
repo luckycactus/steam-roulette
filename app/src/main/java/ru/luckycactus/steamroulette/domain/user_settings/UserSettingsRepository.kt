@@ -18,4 +18,6 @@ interface UserSettingsRepository {
     fun observeMaxPlaytime(steamId: SteamId, default: Int): LiveData<Int>
 
     fun clearUser(steamId: SteamId)
+
+    fun migrateEnPlayTimeFilter(steamId: SteamId)
 }

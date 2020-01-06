@@ -18,6 +18,7 @@ import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.login.datastore.LoginDataStore
 import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
+import ru.luckycactus.steamroulette.data.update.AppSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.data.user.UserRepositoryImpl
 import ru.luckycactus.steamroulette.data.user.datastore.LocalUserDataStore
 import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
@@ -28,6 +29,7 @@ import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
+import ru.luckycactus.steamroulette.domain.update.AppSettingsRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.roulette.GlideGameCoverLoader
@@ -42,6 +44,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindResourceManager(androidResourceManager: AndroidResourceManager): ResourceManager
+
+    @Binds
+    abstract fun bindAppSettingsRepository(appSettingsRepositoryImpl: AppSettingsRepositoryImpl): AppSettingsRepository
 
     @Binds
     abstract fun bindUserRepository(userRepository: UserRepositoryImpl): UserRepository
@@ -75,6 +80,12 @@ abstract class AppModule {
 
     @Module
     companion object {
+        @Identified(R.id.appPrefs)
+        @JvmStatic
+        @Singleton
+        @Provides
+        fun provideAppsSharedPreferences(@ForApplication appContext: Context) =
+            appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
         //todo merge userSettingsPrefs and userCachePrefs
         @Identified(R.id.userSettingsPrefs)
@@ -104,6 +115,7 @@ abstract class AppModule {
         fun provideSteamRouletteDb(@ForApplication appContext: Context) =
             Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
                 .fallbackToDestructiveMigrationFrom(1)
+                .addMigrations()
                 .build()
 
 

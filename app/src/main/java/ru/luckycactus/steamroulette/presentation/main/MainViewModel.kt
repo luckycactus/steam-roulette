@@ -5,17 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.luckycactus.steamroulette.di.common.AppModule
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
+import ru.luckycactus.steamroulette.domain.update.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
-import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.common.Event
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val getSignedInUserSteamIdUseCase: GetCurrentUserSteamIdUseCase,
-    private val signOutUserUserCase: SignOutUserUseCase
+    private val getSignedInUserSteamId: GetCurrentUserSteamIdUseCase,
+    private val signOutUser: SignOutUserUseCase,
+    private val migrateApp: MigrateAppUseCase
 ) : ViewModel() {
 
     val screen: LiveData<Event<Screen>>
@@ -24,10 +24,13 @@ class MainViewModel @Inject constructor(
     private val _screen = MutableLiveData<Event<Screen>>()
 
     fun onColdStart() {
-        if (getSignedInUserSteamIdUseCase() != null) {
-            _screen.value = Event(Screen.Roulette)
-        } else {
-            _screen.value = Event(Screen.Login)
+        viewModelScope.launch {
+            migrateApp()
+            if (getSignedInUserSteamId() != null) {
+                _screen.value = Event(Screen.Roulette)
+            } else {
+                _screen.value = Event(Screen.Login)
+            }
         }
     }
 
@@ -39,7 +42,7 @@ class MainViewModel @Inject constructor(
         _screen.value = Event(Screen.Login)
         //todo progress
         viewModelScope.launch {
-            signOutUserUserCase()
+            signOutUser()
         }
     }
 

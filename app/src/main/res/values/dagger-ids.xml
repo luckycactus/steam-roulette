@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="appPrefs" type="id" />
     <item name="userSettingsPrefs" type="id" />
     <item name="userCachePrefs" type="id" />
     <item name="cacheHelperPrefs" type="id" />

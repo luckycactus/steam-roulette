@@ -49,6 +49,17 @@ class UserSettingsRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Migration of old EnPlayTimeFilter to new PlaytimeFilter.Type
+     */
+    override fun migrateEnPlayTimeFilter(steamId: SteamId) {
+        val key = playTimeKey(steamId)
+        // EnPlayTimeFilter.NotPlayedIn2Weeks.ordinal == 2
+        if (userSettingsPrefs.getInt(key, -1) == 2) {
+            savePlayTimeFilterType(steamId, PlaytimeFilter.Type.All)
+        }
+    }
+
     private fun playTimeKey(steamId: SteamId) = "playTimeFilter-${steamId.asSteam64()}"
     private fun maximumPlayTimeKey(steamId: SteamId) = "maximumPlayTime-${steamId.asSteam64()}"
 }
