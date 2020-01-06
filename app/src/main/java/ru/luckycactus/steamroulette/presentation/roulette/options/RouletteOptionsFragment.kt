@@ -1,20 +1,14 @@
 package ru.luckycactus.steamroulette.presentation.roulette.options
 
 import android.os.Bundle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_options_filter.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.findComponent
-import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.presentation.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
-import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
-import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.utils.showIfNotExist
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
 
@@ -24,28 +18,24 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
         findComponent<MainFlowComponent>().rouletteOptionsViewModel
     }
 
-    private val adapter by lazyNonThreadSafe {
-        OptionsFilterAdapter {
-            viewModel.onPlayTimeFilterSelect(it.tag as EnPlayTimeFilter)
-        }
-    }
-
     override val layoutResId = R.layout.fragment_options_filter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        rvGameTimeFilter.layoutManager = LinearLayoutManager(context)
-        rvGameTimeFilter.adapter = adapter
-        rvGameTimeFilter.isNestedScrollingEnabled = false
-
-
-        observe(viewModel.playTimeFilterData) {
-            adapter.submitList(it)
+        prefViewMaxPlaytime.setOnClickListener {
+            dismiss()
+            parentFragmentManager.showIfNotExist(PLAYTIME_DIALOG_TAG) {
+                PlaytimePrefDialog.newInstance()
+            }
         }
 
         observe(viewModel.closeAction) {
             dismiss()
+        }
+
+        observe(viewModel.playTimePrefValue) {
+            prefViewMaxPlaytime.value = it
         }
 
         observe(viewModel.hiddenGamesCount) {
@@ -70,7 +60,7 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
     }
 
     companion object {
-        fun newInstance() =
-            RouletteOptionsFragment()
+        fun newInstance() = RouletteOptionsFragment()
+        private const val PLAYTIME_DIALOG_TAG = "playtime_dialog_tag"
     }
 }

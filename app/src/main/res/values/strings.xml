@@ -25,11 +25,7 @@
     <string name="games_last_sync">Last sync: %1$s</string>
     <string name="never">never</string>
     <string name="roulette_options">Options</string>
-    <string name="roulette_game_time_filter_title">Show</string>
     <string name="btn_reset_hidden_games">Clear</string>
-    <string name="playtime_filter_all_games">All games</string>
-    <string name="playtime_filter_not_played_games">Games I have not played</string>
-    <string name="playtime_filter_not_played_2_weeks_games">Games I have not played in the last 2 weeks</string>
     <string name="hidden_games_count">Hidden games</string>
     <string name="games_queue_ended">No more matching games!</string>
     <string name="error_filtered_games_not_found">No games matching the specified filters were found</string>
@@ -43,4 +39,17 @@
     <string name="next_game">Next game</string>
     <string name="hide_game">Hide game</string>
     <string name="open_game_store_page">Open the page in the store</string>
+    <string name="playtime">Show</string>
+    <string name="playtime_pref_all">All games</string>
+    <string name="playtime_pref_not_played">Games I have not played</string>
+    <string name="playtime_pref_max_time">Games I played for no more than:</string>
+    <string name="playtime_hours_label">hour(s)</string>
+    <plurals name="playtime_pref_max_time_full_plurals">
+        <item quantity="zero">Games I played for no more than %d hours</item>
+        <item quantity="one">Games I played for no more than %d hour</item>
+        <item quantity="two">Games I played for no more than %d hours</item>
+        <item quantity="few">Games I played for no more than %d hours</item>
+        <item quantity="many">Games I played for no more than %d hours</item>
+        <item quantity="other">Games I played for no more than %d hours</item>
+    </plurals>
 </resources>

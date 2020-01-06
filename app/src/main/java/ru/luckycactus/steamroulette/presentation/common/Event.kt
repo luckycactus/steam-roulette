@@ -1,5 +1,8 @@
 package ru.luckycactus.steamroulette.presentation.common
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
+
 class Event<out T>(
     private val data: T
 ) {
@@ -21,3 +24,5 @@ class Event<out T>(
 
     fun peek(): T = data
 }
+
+fun <T> LiveData<T>.toEvent(): LiveData<Event<T>> = map { Event(it) }

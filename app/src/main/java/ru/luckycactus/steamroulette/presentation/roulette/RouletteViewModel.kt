@@ -4,14 +4,14 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.entity.Result
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
 import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesClearUseCase
-import ru.luckycactus.steamroulette.domain.games_filter.ObservePlayTimeFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.common.Event
 import ru.luckycactus.steamroulette.presentation.user.UserViewModelDelegate
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingList,
-    private val observePlayTimeFilter: ObservePlayTimeFilterUseCase,
+    private val observePlayTimeFilter: ObservePlaytimeFilterUseCase,
     private val observeHiddenGamesClear: ObserveHiddenGamesClearUseCase,
     private val hideGame: HideGameUseCase,
     private val resourceManager: ResourceManager
@@ -44,7 +44,7 @@ class RouletteViewModel @Inject constructor(
     private val _openUrlAction = MutableLiveData<Event<String>>()
     private val _controlsAvailable = MutableLiveData<Boolean>()
     private val _itemRemoved = MediatorLiveData<Event<Int>>()
-    private val currentUserPlayTimeFilter: LiveData<EnPlayTimeFilter>
+    private val currentUserPlayTimeFilter: LiveData<PlaytimeFilter>
 
     private var getPagingListJob: Job? = null
     private var gamesEnded = false

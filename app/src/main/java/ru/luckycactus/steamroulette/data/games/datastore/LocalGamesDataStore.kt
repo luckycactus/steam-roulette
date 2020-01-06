@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.data.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
-import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
 import ru.luckycactus.steamroulette.domain.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.utils.chunkBuffer
 import javax.inject.Inject
 
@@ -45,13 +45,13 @@ class LocalGamesDataStore @Inject constructor(
 
     override suspend fun getFilteredOwnedGamesIds(
         steam64: Long,
-        filter: EnPlayTimeFilter
+        filter: PlaytimeFilter
     ): List<Int> {
         return db.ownedGamesDao().run {
             when (filter) {
-                EnPlayTimeFilter.All -> getVisibleIds(steam64)
-                EnPlayTimeFilter.NotPlayed -> getVisibleNotPlayedIds(steam64)
-                EnPlayTimeFilter.NotPlayedIn2Weeks -> getVisibleNotPlayed2WeeksIds(steam64)
+                PlaytimeFilter.All -> getVisibleIds(steam64)
+                PlaytimeFilter.NotPlayed -> getVisibleLimitedByPlaytimeIds(steam64, 0)
+                is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(steam64, filter.maxTime)
             }
         }
     }

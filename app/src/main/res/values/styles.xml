@@ -36,4 +36,7 @@
         <item name="cardBackgroundColor">@android:color/transparent</item>
     </style>
 
+    <style name="Widget.MyTheme.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+    </style>
+
 </resources>

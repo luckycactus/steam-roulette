@@ -5,10 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.model.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
-import ru.luckycactus.steamroulette.domain.entity.CachePolicy
-import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
-import ru.luckycactus.steamroulette.domain.entity.OwnedGame
-import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.entity.*
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -49,7 +46,7 @@ class GamesRepositoryImpl @Inject constructor(
 
     override suspend fun getFilteredLocalOwnedGamesIds(
         steamId: SteamId,
-        filter: EnPlayTimeFilter
+        filter: PlaytimeFilter
     ): List<Int> =
         localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64(), filter)
 

@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.main
 
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R

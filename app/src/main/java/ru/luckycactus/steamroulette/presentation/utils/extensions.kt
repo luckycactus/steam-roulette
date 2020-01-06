@@ -12,13 +12,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorRes
-import androidx.annotation.LayoutRes
-import androidx.annotation.Px
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.annotation.*
+import androidx.fragment.app.*
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -46,6 +41,17 @@ fun <T> MutableLiveData<T>.startWith(item: T): MutableLiveData<T> {
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit) {
     liveData.observe(this, Observer { body(it) })
+}
+
+fun <T> LifecycleOwner.observeFirst(liveData: LiveData<T>, body: (T) -> Unit) {
+    val observer = object : Observer<T> {
+        override fun onChanged(t: T) {
+            body(t)
+            liveData.removeObserver(this)
+        }
+
+    }
+    liveData.observe(this, observer)
 }
 
 fun <T> LifecycleOwner.observeNonNull(liveData: LiveData<T?>, body: (T) -> Unit) {
@@ -322,5 +328,11 @@ inline fun <reified T : ViewModel> Fragment.activityViewModel(
     object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>) =
             provider() as T
+    }
+}
+
+fun FragmentManager.showIfNotExist(tag: String, createDialogFragment: () -> DialogFragment) {
+    if (findFragmentByTag(tag) == null) {
+        createDialogFragment().show(this, tag)
     }
 }

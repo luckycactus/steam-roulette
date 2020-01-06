@@ -18,10 +18,7 @@ import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.roulette.options.RouletteOptionsFragment
-import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.observeEvent
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
+import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.widget.card_stack.CardStackLayoutManager
 import ru.luckycactus.steamroulette.presentation.widget.card_stack.CardStackTouchHelperCallback
@@ -180,11 +177,9 @@ class RouletteFragment : BaseFragment(), Injectable {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_roulette_options -> {
-                if (childFragmentManager.findFragmentByTag(MainFlowFragment.FILTER_FRAGMENT_TAG) == null)
-                    RouletteOptionsFragment.newInstance().show(
-                        childFragmentManager,
-                        MainFlowFragment.FILTER_FRAGMENT_TAG
-                    )
+                childFragmentManager.showIfNotExist(MainFlowFragment.FILTER_FRAGMENT_TAG) {
+                    RouletteOptionsFragment.newInstance()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)

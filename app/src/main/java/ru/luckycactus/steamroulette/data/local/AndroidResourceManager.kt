@@ -21,4 +21,7 @@ class AndroidResourceManager @Inject constructor(
 
     override fun getQuantityString(@PluralsRes strId: Int, num: Int): String =
         context.resources.getQuantityString(strId, num)
+
+    override fun getQuantityString(@PluralsRes strId: Int, num: Int, vararg formatArgs: Any): String =
+        context.resources.getQuantityString(strId, num, *formatArgs)
 }

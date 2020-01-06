@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.main
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
@@ -13,10 +14,7 @@ import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.presentation.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.menu.MenuFragment
 import ru.luckycactus.steamroulette.presentation.roulette.RouletteFragment
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.observeEvent
-import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
+import ru.luckycactus.steamroulette.presentation.utils.*
 
 class MainFlowFragment : BaseFragment(), ComponentOwner<MainFlowComponent> {
 
@@ -26,6 +24,8 @@ class MainFlowFragment : BaseFragment(), ComponentOwner<MainFlowComponent> {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         with(activity as AppCompatActivity) {
             setSupportActionBar(toolbar)
@@ -37,11 +37,9 @@ class MainFlowFragment : BaseFragment(), ComponentOwner<MainFlowComponent> {
         }
 
         avatarContainer.setOnClickListener {
-            if (childFragmentManager.findFragmentByTag(MENU_FRAGMENT_TAG) == null)
-                MenuFragment.newInstance().show(
-                    childFragmentManager,
-                    MENU_FRAGMENT_TAG
-                )
+            childFragmentManager.showIfNotExist(MENU_FRAGMENT_TAG) {
+                MenuFragment.newInstance()
+            }
         }
 
         observe(viewModel.userSummary) {

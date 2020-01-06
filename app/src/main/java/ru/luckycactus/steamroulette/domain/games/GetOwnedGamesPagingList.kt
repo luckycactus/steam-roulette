@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.domain.games
 import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
+import ru.luckycactus.steamroulette.domain.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.entity.SteamId
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.presentation.roulette.PagingGameList
@@ -32,7 +32,7 @@ class GetOwnedGamesPagingList @Inject constructor(
 
     data class Params(
         val steamId: SteamId,
-        val filter: EnPlayTimeFilter,
+        val filter: PlaytimeFilter,
         val pagingCoroutineScope: CoroutineScope
     )
 }

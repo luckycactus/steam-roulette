@@ -16,9 +16,7 @@
     <string name="error_user_update">Не удалось обновить информацию о пользователе</string>
     <string name="account_games_count">%d игр на аккаунте</string>
     <plurals name="account_games_count_plurals">
-        <item quantity="zero">%d игр на аккаунте</item>
         <item quantity="one">%d игра на аккаунте</item>
-        <item quantity="two">%d игры на аккаунте</item>
         <item quantity="few">%d игры на аккаунте</item>
         <item quantity="many">%d игр на аккаунте</item>
         <item quantity="other">%d игр на аккаунте</item>
@@ -26,11 +24,7 @@
     <string name="games_last_sync">Последняя синхронизация: %1$s</string>
     <string name="never">никогда</string>
     <string name="roulette_options">Опции</string>
-    <string name="roulette_game_time_filter_title">Показывать</string>
     <string name="btn_reset_hidden_games">Очистить</string>
-    <string name="playtime_filter_all_games">Все игры</string>
-    <string name="playtime_filter_not_played_games">Игры, в которые я не играл</string>
-    <string name="playtime_filter_not_played_2_weeks_games">Игры, в которые я не играл в последние 2 недели</string>
     <string name="hidden_games_count">Скрыто игр</string>
     <string name="games_queue_ended">Больше нет подходящих игр!</string>
     <string name="error_filtered_games_not_found">Игры, удовлетворяющие заданным фильтрам, не найдены</string>
@@ -44,4 +38,15 @@
     <string name="next_game">Следующая игра</string>
     <string name="hide_game">Скрыть игру</string>
     <string name="open_game_store_page">Открыть страницу в магазине</string>
+    <string name="playtime">Показывать</string>
+    <string name="playtime_pref_all">Все игры</string>
+    <string name="playtime_pref_not_played">Игры, в которые я не играл</string>
+    <string name="playtime_pref_max_time">Игры, в которые я играл не более:</string>
+    <string name="playtime_hours_label">часа(ов)</string>
+    <plurals name="playtime_pref_max_time_full_plurals">
+        <item quantity="one">Игры, в которые я играл не более %d часа</item>
+        <item quantity="few">Игры, в которые я играл не более %d часов</item>
+        <item quantity="many">Игры, в которые я играл не более %d часов</item>
+        <item quantity="other">Игры, в которые я играл не более %d часов</item>
+    </plurals>
 </resources>

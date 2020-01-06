@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.WindowManager
 import kotlinx.android.synthetic.main.fragment_login.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.ComponentOwner
@@ -22,6 +23,8 @@ class LoginFragment : BaseFragment(), ComponentOwner<LoginComponent> {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         etUserId.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
