@@ -1,16 +1,19 @@
 package ru.luckycactus.steamroulette.domain.update
 
+import ru.luckycactus.steamroulette.domain.common.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import javax.inject.Inject
+import javax.inject.Provider
 
 class MigrateAppUseCase @Inject constructor(
     private val appSettingsRepository: AppSettingsRepository,
     private val getCurrentUserSteamId: GetCurrentUserSteamIdUseCase,
-    private val userSettingsRepository: UserSettingsRepository
+    private val userSettingsRepository: UserSettingsRepository,
+    private val gameCoverCacheCleaner: Provider<GameCoverCacheCleaner>
 ) : SuspendUseCase<Unit, Unit>() {
 
     private val migrations by lazyNonThreadSafe {
@@ -32,9 +35,10 @@ class MigrateAppUseCase @Inject constructor(
         }
     }
 
-    fun migrate4to5() {
+    suspend fun migrate4to5() {
         getCurrentUserSteamId()?.let {
             userSettingsRepository.migrateEnPlayTimeFilter(it)
         }
+        gameCoverCacheCleaner.get().clearAllCache()
     }
 }

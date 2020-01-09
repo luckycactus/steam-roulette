@@ -31,18 +31,18 @@ class GlideGameCoverLoader @Inject constructor(
         val errorRequest = Glide.with(view)
             .load(game.headerImageUrl)
             .transform(headerImageTransformation)
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .transition(DrawableTransitionOptions.withCrossFade())
 
-        val thumbnailRequest = errorRequest.clone()
-            .onlyRetrieveFromCache(true)
+//        val thumbnailRequest = errorRequest.clone()
+//            .onlyRetrieveFromCache(true)
 
         return Glide.with(view)
             .load(game.libraryPortraitImageUrlHD)
-            .thumbnail(thumbnailRequest)
+            //.thumbnail(thumbnailRequest)
             .error(errorRequest)
             .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
     }
 
     override suspend fun clearAllCache() {
