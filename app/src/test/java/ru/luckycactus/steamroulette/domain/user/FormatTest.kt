@@ -1,9 +1,9 @@
 package ru.luckycactus.steamroulette.domain.user
 
 import org.junit.Test
-import ru.luckycactus.steamroulette.domain.entity.SteamId
-import ru.luckycactus.steamroulette.domain.entity.SteamId.Format.*
-import ru.luckycactus.steamroulette.domain.entity.SteamId.VanityUrlFormat.Full
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.common.SteamId.Format.*
+import ru.luckycactus.steamroulette.domain.common.SteamId.VanityUrlFormat.Full
 
 class FormatTest {
 

@@ -1,7 +1,5 @@
 package ru.luckycactus.steamroulette.domain.common
 
-import kotlinx.coroutines.*
-
 abstract class SuspendUseCase<in Params, Result> {
 
     internal abstract suspend fun getResult(params: Params): Result

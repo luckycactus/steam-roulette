@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.net.AuthInterceptor
 import ru.luckycactus.steamroulette.data.net.SteamApiService
-import ru.luckycactus.steamroulette.data.utils.MyHttpLoggingInterceptor
+import ru.luckycactus.steamroulette.data.net.MyHttpLoggingInterceptor
 import ru.luckycactus.steamroulette.di.qualifier.InterceptorSet
 import ru.luckycactus.steamroulette.di.qualifier.NetworkInterceptorSet
 import java.util.concurrent.TimeUnit
@@ -69,7 +69,11 @@ abstract class NetworkModule {
         @InterceptorSet
         @Provides
         fun provideLogInterceptor(): Interceptor =
-            MyHttpLoggingInterceptor(setOf("IPlayerService/GetOwnedGames/")).apply {
+            MyHttpLoggingInterceptor(
+                setOf(
+                    "IPlayerService/GetOwnedGames/"
+                )
+            ).apply {
                 level = if (BuildConfig.DEBUG)
                     MyHttpLoggingInterceptor.Level.BODY
                 else

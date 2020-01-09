@@ -15,7 +15,7 @@
             android:paddingBottom="8dp"
             >
 
-        <ru.luckycactus.steamroulette.presentation.widget.PreferenceView
+        <ru.luckycactus.steamroulette.presentation.ui.widget.PreferenceView
                 android:id="@+id/prefViewMaxPlaytime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

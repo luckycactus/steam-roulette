@@ -3,8 +3,8 @@ package ru.luckycactus.steamroulette.domain.games_filter
 import androidx.lifecycle.LiveData
 import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.common.UseCase
-import ru.luckycactus.steamroulette.domain.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.utils.combine
 import javax.inject.Inject

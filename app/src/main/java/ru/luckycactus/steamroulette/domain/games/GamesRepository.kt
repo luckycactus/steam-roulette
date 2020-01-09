@@ -1,8 +1,10 @@
 package ru.luckycactus.steamroulette.domain.games
 
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.entity.*
-import java.util.*
+import ru.luckycactus.steamroulette.domain.common.CachePolicy
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 interface GamesRepository {
 

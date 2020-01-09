@@ -3,11 +3,11 @@ package ru.luckycactus.steamroulette.domain.games
 import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
-import ru.luckycactus.steamroulette.presentation.roulette.PagingGameList
-import ru.luckycactus.steamroulette.presentation.roulette.PagingGameListImpl
+import ru.luckycactus.steamroulette.presentation.features.roulette.PagingGameList
+import ru.luckycactus.steamroulette.presentation.features.roulette.PagingGameListImpl
 import javax.inject.Inject
 
 @Reusable

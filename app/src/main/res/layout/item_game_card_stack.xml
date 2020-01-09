@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         >
 
-    <ru.luckycactus.steamroulette.presentation.widget.GameView
+    <ru.luckycactus.steamroulette.presentation.ui.widget.GameView
             android:id="@+id/gameView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

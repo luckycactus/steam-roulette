@@ -9,30 +9,31 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.games.GamesRepositoryImpl
-import ru.luckycactus.steamroulette.data.games.datastore.GamesDataStore
-import ru.luckycactus.steamroulette.data.games.datastore.LocalGamesDataStore
-import ru.luckycactus.steamroulette.data.games.datastore.RemoteGamesDataStore
+import ru.luckycactus.steamroulette.data.repositories.games.GamesRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
+import ru.luckycactus.steamroulette.data.repositories.games.datastore.LocalGamesDataStore
+import ru.luckycactus.steamroulette.data.repositories.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.db.DB
-import ru.luckycactus.steamroulette.data.login.LoginRepositoryImpl
-import ru.luckycactus.steamroulette.data.login.datastore.LoginDataStore
-import ru.luckycactus.steamroulette.data.login.datastore.RemoteLoginDataStore
-import ru.luckycactus.steamroulette.data.update.AppSettingsRepositoryImpl
-import ru.luckycactus.steamroulette.data.user.UserRepositoryImpl
-import ru.luckycactus.steamroulette.data.user.datastore.LocalUserDataStore
-import ru.luckycactus.steamroulette.data.user.datastore.RemoteUserDataStore
-import ru.luckycactus.steamroulette.data.user.datastore.UserDataStore
-import ru.luckycactus.steamroulette.data.user_settings.UserSettingsRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
+import ru.luckycactus.steamroulette.data.repositories.login.datastore.RemoteLoginDataStore
+import ru.luckycactus.steamroulette.data.repositories.update.AppSettingsRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.user.UserRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
+import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserDataStore
+import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
+import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
+import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
+import ru.luckycactus.steamroulette.domain.common.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.update.AppSettingsRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
-import ru.luckycactus.steamroulette.presentation.roulette.GlideGameCoverLoader
+import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverLoader
 import javax.inject.Singleton
 
 @Module
@@ -87,7 +88,6 @@ abstract class AppModule {
         fun provideAppsSharedPreferences(@ForApplication appContext: Context) =
             appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
-        //todo merge userSettingsPrefs and userCachePrefs
         @Identified(R.id.userSettingsPrefs)
         @JvmStatic
         @Singleton

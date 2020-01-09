@@ -1,8 +1,8 @@
 package ru.luckycactus.steamroulette.domain.user_settings
 
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.common.SteamId
 
 interface UserSettingsRepository {
 

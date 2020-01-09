@@ -69,6 +69,11 @@ android {
             arg("dagger.formatGeneratedSource", "disabled")
             arg("dagger.gradle.incremental", "enabled")
         }
+        javacOptions {
+            // Increase the max count of errors from annotation processors.
+            // Default is 100.
+            option("-Xmaxerrs", 500)
+        }
     }
 }
 

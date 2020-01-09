@@ -2,8 +2,11 @@ package ru.luckycactus.steamroulette.presentation.common
 
 import android.app.Application
 import ru.luckycactus.steamroulette.di.common.*
+import ru.luckycactus.steamroulette.di.core.ComponentOwner
+import ru.luckycactus.steamroulette.di.core.InjectionManager
 
-open class App : Application(), ComponentOwner<AppComponent> {
+open class App : Application(),
+    ComponentOwner<AppComponent> {
 
     override fun onCreate() {
         super.onCreate()

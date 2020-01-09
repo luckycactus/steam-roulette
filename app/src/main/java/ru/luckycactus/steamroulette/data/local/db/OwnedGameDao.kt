@@ -2,11 +2,9 @@ package ru.luckycactus.steamroulette.data.local.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import ru.luckycactus.steamroulette.data.model.OwnedGameRoomEntity
-import ru.luckycactus.steamroulette.domain.entity.OwnedGame
+import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
+import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 
 @Dao
 abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {

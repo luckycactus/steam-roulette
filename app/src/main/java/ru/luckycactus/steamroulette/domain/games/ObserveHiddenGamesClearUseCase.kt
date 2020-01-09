@@ -2,12 +2,10 @@ package ru.luckycactus.steamroulette.domain.games
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.common.UseCase
-import ru.luckycactus.steamroulette.domain.entity.SteamId
-import ru.luckycactus.steamroulette.presentation.common.Event
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.common.Event
 import javax.inject.Inject
 
 @Reusable
@@ -21,7 +19,8 @@ class ObserveHiddenGamesClearUseCase @Inject constructor(
         }.apply {
             addSource(gamesRepository.observeHiddenGamesCount(params)) { newHiddenCount ->
                 if (lastHiddenCount > 0 && newHiddenCount == 0)
-                    value = Event(Unit)
+                    value =
+                        Event(Unit)
                 lastHiddenCount = newHiddenCount
             }
         }

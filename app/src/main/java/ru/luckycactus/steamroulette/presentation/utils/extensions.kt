@@ -24,7 +24,7 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException
 import ru.luckycactus.steamroulette.domain.exception.ServerException
-import ru.luckycactus.steamroulette.presentation.common.Event
+import ru.luckycactus.steamroulette.domain.common.Event
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty

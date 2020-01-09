@@ -4,7 +4,7 @@ import dagger.Reusable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.entity.GameCoverCacheCleaner
+import ru.luckycactus.steamroulette.domain.common.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository

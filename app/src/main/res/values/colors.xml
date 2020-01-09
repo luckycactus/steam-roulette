@@ -6,8 +6,8 @@
     <color name="steam_dark">#16202B</color>
     <color name="steam_dark_2">#141A25</color>
 
-    <color name="ripple_color">#15ffffff</color>
-    <color name="ripple_color_2">#10ffffff</color>
+    <color name="holo_ripple_color">#15ffffff</color>
+    <color name="holo_focused_color">#10ffffff</color>
     <color name="divider">#141A25</color>
 
     <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
