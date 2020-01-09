@@ -14,7 +14,7 @@ class FetchUserOwnedGamesUseCase @Inject constructor(
     override suspend fun getResult(params: Params) {
         gamesRepository.fetchOwnedGames(
             params.steamId,
-            if (params.reload) CachePolicy.Remote else CachePolicy.CacheIfValid
+            if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
         )
     }
 

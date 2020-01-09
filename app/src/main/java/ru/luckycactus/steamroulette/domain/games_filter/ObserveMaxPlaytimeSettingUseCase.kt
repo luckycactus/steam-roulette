@@ -8,7 +8,7 @@ import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import javax.inject.Inject
 
 @Reusable
-class ObserveMaximumPlayTimeSettingUseCase @Inject constructor(
+class ObserveMaxPlaytimeSettingUseCase @Inject constructor(
     private val userSettingsRepository: UserSettingsRepository
 ) : UseCase<SteamId, LiveData<Int>>() {
 

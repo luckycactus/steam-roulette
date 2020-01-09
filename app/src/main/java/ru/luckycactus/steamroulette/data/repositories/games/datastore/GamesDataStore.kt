@@ -11,7 +11,7 @@ interface GamesDataStore {
     interface Local : GamesDataStore {
         suspend fun saveOwnedGames(steam64: Long, gamesFlow: Flow<OwnedGameEntity>)
 
-        suspend fun getFilteredOwnedGamesIds(steam64: Long, filter: PlaytimeFilter): List<Int>
+        suspend fun getOwnedGamesIds(steam64: Long, filter: PlaytimeFilter): List<Int>
 
         suspend fun hideOwnedGame(steam64: Long, gameId: Int)
 
@@ -25,7 +25,8 @@ interface GamesDataStore {
 
         fun observeHiddenOwnedGamesCount(steam64: Long): LiveData<Int>
 
-        suspend fun clearHiddenOwnedGames(steam64: Long)
+        suspend fun resetHiddenOwnedGames(steam64: Long)
+
         suspend fun clearOwnedGames(steam64: Long)
     }
 

@@ -22,7 +22,7 @@ interface SteamApiService {
         @Query("vanityurl") vanityUrl: String
     ): ResolveVanityUrlResponse
 
-    @GET("/ISteamUser/GetPlayerSummaries/v0002")
+    @GET("ISteamUser/GetPlayerSummaries/v0002")
     suspend fun getUserSummaries(
         @Query("steamids") steamIds: List<Long>
     ): UserSummariesResponse

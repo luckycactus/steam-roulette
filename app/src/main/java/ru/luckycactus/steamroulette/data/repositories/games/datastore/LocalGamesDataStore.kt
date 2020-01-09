@@ -19,13 +19,11 @@ class LocalGamesDataStore @Inject constructor(
     private val db: DB
 ) : GamesDataStore.Local {
 
-    override fun observeOwnedGamesCount(steam64: Long): LiveData<Int> {
-        return db.ownedGamesDao().observeCount(steam64)
-    }
+    override fun observeOwnedGamesCount(steam64: Long): LiveData<Int> =
+        db.ownedGamesDao().observeCount(steam64)
 
-    override fun observeHiddenOwnedGamesCount(steam64: Long): LiveData<Int> {
-        return db.ownedGamesDao().observeHiddenCount(steam64)
-    }
+    override fun observeHiddenOwnedGamesCount(steam64: Long): LiveData<Int> =
+        db.ownedGamesDao().observeHiddenCount(steam64)
 
     override suspend fun saveOwnedGames(steam64: Long, gamesFlow: Flow<OwnedGameEntity>) {
         db.withTransaction {
@@ -43,38 +41,33 @@ class LocalGamesDataStore @Inject constructor(
         }
     }
 
-    override suspend fun getFilteredOwnedGamesIds(
+    override suspend fun getOwnedGamesIds(
         steam64: Long,
         filter: PlaytimeFilter
-    ): List<Int> {
-        return db.ownedGamesDao().run {
-            when (filter) {
-                PlaytimeFilter.All -> getVisibleIds(steam64)
-                PlaytimeFilter.NotPlayed -> getVisibleLimitedByPlaytimeIds(steam64, 0)
-                is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(steam64, filter.maxTime)
-            }
+    ): List<Int> = db.ownedGamesDao().run {
+        when (filter) {
+            PlaytimeFilter.All -> getVisibleIds(steam64)
+            PlaytimeFilter.NotPlayed -> getVisibleLimitedByPlaytimeIds(steam64, 0)
+            is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(steam64, filter.maxTime)
         }
     }
 
-    override suspend fun clearHiddenOwnedGames(steam64: Long) {
-        db.ownedGamesDao().clearHidden(steam64)
+    override suspend fun resetHiddenOwnedGames(steam64: Long) {
+        db.ownedGamesDao().resetHidden(steam64)
     }
 
-    override suspend fun getOwnedGame(steam64: Long, gameId: Int): OwnedGame {
-        return db.ownedGamesDao().get(steam64, gameId)
-    }
+    override suspend fun getOwnedGame(steam64: Long, gameId: Int): OwnedGame =
+        db.ownedGamesDao().get(steam64, gameId)
 
-    override suspend fun getOwnedGames(steam64: Long, gameIds: List<Int>): List<OwnedGame> {
-        return db.ownedGamesDao().get(steam64, gameIds)
-    }
+    override suspend fun getOwnedGames(steam64: Long, gameIds: List<Int>): List<OwnedGame> =
+        db.ownedGamesDao().get(steam64, gameIds)
 
     override suspend fun hideOwnedGame(steam64: Long, gameId: Int) {
         db.ownedGamesDao().hide(steam64, gameId)
     }
 
-    override suspend fun isUserHasGames(steam64: Long): Boolean {
-        return db.ownedGamesDao().isUserHasGames(steam64)
-    }
+    override suspend fun isUserHasGames(steam64: Long): Boolean =
+        db.ownedGamesDao().isUserHasGames(steam64)
 
     override suspend fun clearOwnedGames(steam64: Long) {
         db.ownedGamesDao().delete(steam64)

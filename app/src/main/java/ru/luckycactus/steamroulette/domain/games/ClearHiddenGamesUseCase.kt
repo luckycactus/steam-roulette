@@ -11,6 +11,6 @@ class ClearHiddenGamesUseCase @Inject constructor(
 ): SuspendUseCase<SteamId, Unit>() {
 
     override suspend fun getResult(params: SteamId) {
-        gamesRepository.clearHiddenGames(params)
+        gamesRepository.resetHiddenGames(params)
     }
 }

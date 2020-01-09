@@ -10,7 +10,7 @@ interface GamesRepository {
 
     suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy)
 
-    suspend fun getFilteredLocalOwnedGamesIds(
+    suspend fun getLocalOwnedGamesIds(
         steamId: SteamId,
         filter: PlaytimeFilter
     ): List<Int>
@@ -19,7 +19,7 @@ interface GamesRepository {
 
     suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame>
 
-    suspend fun markLocalGameAsHidden(steamId: SteamId, gameId: Int)
+    suspend fun hideLocalOwnedGame(steamId: SteamId, gameId: Int)
 
     suspend fun isUserHasGames(steamId: SteamId): Boolean
 
@@ -27,7 +27,7 @@ interface GamesRepository {
 
     fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int>
 
-    suspend fun clearHiddenGames(steamId: SteamId)
+    suspend fun resetHiddenGames(steamId: SteamId)
 
     fun observeGamesUpdates(steamId: SteamId): LiveData<Long>
 

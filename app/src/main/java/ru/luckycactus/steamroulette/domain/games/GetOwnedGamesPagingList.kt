@@ -19,7 +19,7 @@ class GetOwnedGamesPagingList @Inject constructor(
         if (!gamesRepository.isUserHasGames(params.steamId)) {
             throw MissingOwnedGamesException()
         }
-        val gameIds = gamesRepository.getFilteredLocalOwnedGamesIds(params.steamId, params.filter)
+        val gameIds = gamesRepository.getLocalOwnedGamesIds(params.steamId, params.filter)
             .shuffled()
         return PagingGameListImpl(
             { gamesRepository.getLocalOwnedGames(params.steamId, it) },

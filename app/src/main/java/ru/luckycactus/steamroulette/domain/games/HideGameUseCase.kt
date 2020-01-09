@@ -11,7 +11,7 @@ class HideGameUseCase @Inject constructor(
 ) : SuspendUseCase<HideGameUseCase.Params, Unit>() {
 
     override suspend fun getResult(params: Params) {
-        gamesRepository.markLocalGameAsHidden(params.steamId, params.gameId)
+        gamesRepository.hideLocalOwnedGame(params.steamId, params.gameId)
     }
 
     data class Params(

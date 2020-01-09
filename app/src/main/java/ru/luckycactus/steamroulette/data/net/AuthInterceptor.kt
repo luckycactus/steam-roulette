@@ -5,7 +5,7 @@ import okhttp3.Response
 import ru.luckycactus.steamroulette.BuildConfig
 import javax.inject.Inject
 
-class AuthInterceptor @Inject constructor(): Interceptor {
+class AuthInterceptor @Inject constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val newUrl = chain.request().url()
             .newBuilder()

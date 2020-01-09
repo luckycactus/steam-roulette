@@ -31,8 +31,8 @@ class GamesRepositoryImpl @Inject constructor(
     override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> =
         localGamesDataStore.observeHiddenOwnedGamesCount(steamId.asSteam64())
 
-    override suspend fun clearHiddenGames(steamId: SteamId) {
-        localGamesDataStore.clearHiddenOwnedGames(steamId.asSteam64())
+    override suspend fun resetHiddenGames(steamId: SteamId) {
+        localGamesDataStore.resetHiddenOwnedGames(steamId.asSteam64())
     }
 
     override fun observeGamesUpdates(steamId: SteamId): LiveData<Long> =
@@ -47,21 +47,19 @@ class GamesRepositoryImpl @Inject constructor(
     override suspend fun isUserHasGames(steamId: SteamId): Boolean =
         localGamesDataStore.isUserHasGames(steamId.asSteam64())
 
-    override suspend fun getFilteredLocalOwnedGamesIds(
+    override suspend fun getLocalOwnedGamesIds(
         steamId: SteamId,
         filter: PlaytimeFilter
     ): List<Int> =
-        localGamesDataStore.getFilteredOwnedGamesIds(steamId.asSteam64(), filter)
+        localGamesDataStore.getOwnedGamesIds(steamId.asSteam64(), filter)
 
-    override suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame {
-        return localGamesDataStore.getOwnedGame(steamId.asSteam64(), gameId)
-    }
+    override suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame =
+        localGamesDataStore.getOwnedGame(steamId.asSteam64(), gameId)
 
-    override suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame> {
-        return localGamesDataStore.getOwnedGames(steamId.asSteam64(), gameIds)
-    }
+    override suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame> =
+        localGamesDataStore.getOwnedGames(steamId.asSteam64(), gameIds)
 
-    override suspend fun markLocalGameAsHidden(steamId: SteamId, gameId: Int) {
+    override suspend fun hideLocalOwnedGame(steamId: SteamId, gameId: Int) {
         localGamesDataStore.hideOwnedGame(steamId.asSteam64(), gameId)
     }
 

@@ -15,7 +15,7 @@ class GetUserSummaryUseCase @Inject constructor(
     override suspend fun getResult(params: Params): UserSummary =
         userRepository.getUserSummary(
             params.steamId,
-            if (params.reload) CachePolicy.Remote else CachePolicy.CacheIfValid
+            if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
         )
 
     data class Params(

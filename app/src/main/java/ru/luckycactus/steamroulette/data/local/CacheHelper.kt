@@ -38,7 +38,7 @@ class CacheHelper @Inject constructor(
         timeUnit: TimeUnit = TimeUnit.HOURS
     ): Boolean =
         cachePolicy == CachePolicy.OnlyCache ||
-                (cachePolicy == CachePolicy.CacheIfValid && !isExpired(key, window, timeUnit))
+                (cachePolicy == CachePolicy.CacheOrRemote && !isExpired(key, window, timeUnit))
 
 
     fun shouldUpdate(
