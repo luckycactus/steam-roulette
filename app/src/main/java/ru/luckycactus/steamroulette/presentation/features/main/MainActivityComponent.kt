@@ -6,7 +6,7 @@ import ru.luckycactus.steamroulette.di.scopes.ActivityScope
 import ru.luckycactus.steamroulette.presentation.features.login.LoginComponent
 
 @ActivityScope
-@Subcomponent
+@Subcomponent(modules = [MainActivityModule::class])
 interface MainActivityComponent {
 
     @Subcomponent.Factory

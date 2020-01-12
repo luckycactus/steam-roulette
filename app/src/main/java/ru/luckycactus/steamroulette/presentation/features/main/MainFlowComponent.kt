@@ -9,7 +9,7 @@ import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteViewM
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.PlaytimeViewModel
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteOptionsViewModel
 
-@Subcomponent(modules = [MainFlowModule::class])
+@Subcomponent
 @FlowScope
 interface MainFlowComponent {
     @Subcomponent.Factory

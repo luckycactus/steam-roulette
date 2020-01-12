@@ -3,16 +3,19 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_game_card_stack.view.*
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_game_card_stack.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
-import ru.luckycactus.steamroulette.presentation.utils.inflate
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
-import javax.inject.Inject
+import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
-class RouletteAdapter @Inject constructor(
-    private val gameCoverLoader: GlideGameCoverLoader
+class RouletteAdapter @AssistedInject constructor(
+    private val gameCoverLoader: GlideGameCoverLoader,
+    @Assisted private val onGameClick: (OwnedGame) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
     var items: List<OwnedGame>? = null
@@ -30,17 +33,34 @@ class RouletteAdapter @Inject constructor(
         holder.bind(items!![position])
     }
 
-    inner class RouletteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+    inner class RouletteViewHolder(
+        override val containerView: View
+    ) : RecyclerView.ViewHolder(containerView),
+        LayoutContainer,
         CardStackTouchHelperCallback.ViewHolderSwipeProgressListener {
 
+        private lateinit var game: OwnedGame
+
+        init {
+            gameView.setOnClickListener {
+                onGameClick(game)
+            }
+        }
+
         fun bind(game: OwnedGame) {
-            itemView.gameView.setGame(game, gameCoverLoader)
+            this.game = game
+            gameView.setGame(game, gameCoverLoader)
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {
             val thresholdedProgress = (progress / threshold).coerceIn(-1f, 1f)
-            itemView.overlayHide.alpha = thresholdedProgress.coerceAtMost(0f).absoluteValue
+            overlayHide.alpha = thresholdedProgress.coerceAtMost(0f).absoluteValue
             //itemView.overlayNext.alpha = thresholdedProgress.coerceAtLeast(0f).absoluteValue
         }
+    }
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(onGameClick: (OwnedGame) -> Unit): RouletteAdapter
     }
 }

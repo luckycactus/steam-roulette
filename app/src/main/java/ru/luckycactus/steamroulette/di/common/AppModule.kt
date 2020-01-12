@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -36,7 +37,8 @@ import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverLoader
 import javax.inject.Singleton
 
-@Module
+@AssistedModule
+@Module(includes = [AssistedInject_AppModule::class])
 abstract class AppModule {
 
     @Binds

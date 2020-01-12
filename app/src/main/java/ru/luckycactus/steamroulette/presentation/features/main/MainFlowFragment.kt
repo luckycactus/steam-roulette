@@ -17,7 +17,7 @@ import ru.luckycactus.steamroulette.presentation.utils.*
 class MainFlowFragment : BaseFragment(),
     ComponentOwner<MainFlowComponent> {
 
-    val viewModel by viewModel { component.mainFlowViewModel }
+    private val viewModel by viewModel { component.mainFlowViewModel }
 
     override val layoutResId = R.layout.fragment_main_flow
 
@@ -29,10 +29,6 @@ class MainFlowFragment : BaseFragment(),
         with(activity as AppCompatActivity) {
             setSupportActionBar(toolbar)
             supportActionBar!!.setDisplayShowTitleEnabled(false)
-        }
-
-        if (savedInstanceState == null) {
-            viewModel.coldStart()
         }
 
         avatarContainer.setOnClickListener {
@@ -49,13 +45,7 @@ class MainFlowFragment : BaseFragment(),
                 .into(ivAvatar)
         }
 
-        observeEvent(viewModel.errorMessage) {
-            container.showSnackbar(it) {
-                anchorView = toolbar
-            }
-        }
-
-        observeEvent(viewModel.logonCheckedAction) {
+        if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
                 .add(R.id.container, RouletteFragment.newInstance())
                 .commit()

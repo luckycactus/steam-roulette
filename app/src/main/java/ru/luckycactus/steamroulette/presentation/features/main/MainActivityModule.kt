@@ -5,13 +5,13 @@ import dagger.Provides
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 
 @Module
-abstract class MainFlowModule {
+abstract class MainActivityModule {
 
     @Module
     companion object {
         @Provides
         @JvmStatic
-        fun provideUserViewModelDelegate(fragment: MainFlowFragment): UserViewModelDelegate =
-            fragment.viewModel
+        fun provideUserViewModelDelegate(activity: MainActivity): UserViewModelDelegate =
+            activity.viewModel
     }
 }

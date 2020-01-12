@@ -2,12 +2,14 @@ package ru.luckycactus.steamroulette.presentation.features.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.*
 import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
+import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
 class MainActivity : AppCompatActivity(),
@@ -33,6 +35,12 @@ class MainActivity : AppCompatActivity(),
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.container, MainFlowFragment.newInstance())
                         .commit()
+            }
+        }
+
+        observeEvent(viewModel.errorMessage) {
+            container.showSnackbar(it) {
+                anchorView = toolbar
             }
         }
     }

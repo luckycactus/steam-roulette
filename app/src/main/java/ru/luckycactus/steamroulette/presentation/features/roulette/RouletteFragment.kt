@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -25,15 +26,18 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackT
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 import javax.inject.Inject
 
-class RouletteFragment : BaseFragment(),
-    Injectable {
+class RouletteFragment : BaseFragment(), Injectable {
 
     private val viewModel by viewModel {
         findComponent<MainFlowComponent>().rouletteViewModel
     }
 
     @Inject
-    lateinit var rouletteAdapter: RouletteAdapter
+    lateinit var rouletteAdapterFactory: RouletteAdapter.Factory
+
+    private val rouletteAdapter: RouletteAdapter by lazyNonThreadSafe {
+        rouletteAdapterFactory.create { viewModel.onGameClick(it) }
+    }
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 

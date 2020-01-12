@@ -21,6 +21,7 @@ class GameView : MaterialCardView {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_game_roulette, this, true)
+        setRippleColorResource(android.R.color.transparent)
     }
 
     private var current: OwnedGame? = null
