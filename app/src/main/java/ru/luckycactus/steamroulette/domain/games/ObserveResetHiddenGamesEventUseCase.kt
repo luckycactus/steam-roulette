@@ -9,7 +9,7 @@ import ru.luckycactus.steamroulette.domain.common.Event
 import javax.inject.Inject
 
 @Reusable
-class ObserveHiddenGamesClearUseCase @Inject constructor(
+class ObserveResetHiddenGamesEventUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
 ) : UseCase<SteamId, LiveData<Event<Unit>>>() {
 

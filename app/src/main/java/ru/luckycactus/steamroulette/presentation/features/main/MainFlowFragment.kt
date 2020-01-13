@@ -45,9 +45,10 @@ class MainFlowFragment : BaseFragment(),
                 .into(ivAvatar)
         }
 
-        if (savedInstanceState == null) {
+        if (childFragmentManager.fragments.isEmpty()) {
             childFragmentManager.beginTransaction()
-                .add(R.id.container, RouletteFragment.newInstance())
+                .add(R.id.container, RouletteFragment.newInstance(), ROULETTE_FRAGMENT_TAG)
+                .setReorderingAllowed(true)
                 .commit()
         }
     }
@@ -60,6 +61,7 @@ class MainFlowFragment : BaseFragment(),
 
     companion object {
         fun newInstance() = MainFlowFragment()
+        const val ROULETTE_FRAGMENT_TAG = "ROULETTE_FRAGMENT_TAG"
         const val MENU_FRAGMENT_TAG = "menu_fragment_tag"
         const val FILTER_FRAGMENT_TAG = "filter_fragment_tag"
     }

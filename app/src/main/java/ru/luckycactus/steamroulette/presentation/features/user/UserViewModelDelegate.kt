@@ -10,10 +10,10 @@ interface UserViewModelDelegatePublic {
 }
 
 interface UserViewModelDelegate : UserViewModelDelegatePublic {
-    val currentUserSteamId: SteamId
+    val currentUserSteamId: LiveData<SteamId>
     val fetchGamesState: LiveData<Result<Unit>>
     val fetchUserSummaryState: LiveData<Boolean>
-    fun observeCurrentUserSteamId(): LiveData<SteamId>
+    fun getCurrentUserSteamId(): SteamId
     fun fetchUserAndGames()
     fun fetchGames()
 }

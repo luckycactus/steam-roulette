@@ -12,6 +12,7 @@ import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.utils.combine
+import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import javax.inject.Inject
 
 class MenuViewModel @Inject constructor(
@@ -21,9 +22,10 @@ class MenuViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate
 ) : ViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
-    val gameCount: LiveData<Int> = userViewModelDelegate.observeCurrentUserSteamId().switchMap {
-        observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it))
-    }
+    val gameCount: LiveData<Int> =
+        userViewModelDelegate.currentUserSteamId.switchMap {
+            observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it))
+        }
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
     val closeAction: LiveData<Unit>
@@ -37,9 +39,8 @@ class MenuViewModel @Inject constructor(
     }
 
     init {
-
         gamesLastUpdate =
-            userViewModelDelegate.observeCurrentUserSteamId().switchMap {
+            userViewModelDelegate.currentUserSteamId.switchMap {
                 observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it))
             }.map {
                 val ago = if (it <= 0)

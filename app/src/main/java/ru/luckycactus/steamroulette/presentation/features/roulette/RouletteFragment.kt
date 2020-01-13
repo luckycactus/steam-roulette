@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.di.common.findComponent
+import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowFragment
@@ -36,7 +37,9 @@ class RouletteFragment : BaseFragment(), Injectable {
     lateinit var rouletteAdapterFactory: RouletteAdapter.Factory
 
     private val rouletteAdapter: RouletteAdapter by lazyNonThreadSafe {
-        rouletteAdapterFactory.create { viewModel.onGameClick(it) }
+        rouletteAdapterFactory.create { view, game ->
+            (activity as MainActivity).viewModel.onGameClick(game)
+        }
     }
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder

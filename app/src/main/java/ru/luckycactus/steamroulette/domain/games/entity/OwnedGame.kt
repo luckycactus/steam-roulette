@@ -1,5 +1,9 @@
 package ru.luckycactus.steamroulette.domain.games.entity
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class OwnedGame(
     val appId: Int,
     val name: String,
@@ -7,7 +11,7 @@ data class OwnedGame(
     val playtimeForever: Int,
     val iconUrl: String,
     val logoUrl: String
-) {
+) : Parcelable {
     val headerImageUrl
         get() = "https://steamcdn-a.akamaihd.net/steam/apps/$appId/header.jpg"
     val libraryPortraitImageUrl

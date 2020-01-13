@@ -15,7 +15,7 @@ import kotlin.math.absoluteValue
 
 class RouletteAdapter @AssistedInject constructor(
     private val gameCoverLoader: GlideGameCoverLoader,
-    @Assisted private val onGameClick: (OwnedGame) -> Unit
+    @Assisted private val onGameClick: (View, OwnedGame) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
     var items: List<OwnedGame>? = null
@@ -43,7 +43,7 @@ class RouletteAdapter @AssistedInject constructor(
 
         init {
             gameView.setOnClickListener {
-                onGameClick(game)
+                onGameClick(gameView, game)
             }
         }
 
@@ -61,6 +61,6 @@ class RouletteAdapter @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(onGameClick: (OwnedGame) -> Unit): RouletteAdapter
+        fun create(onGameClick: (View, OwnedGame) -> Unit): RouletteAdapter
     }
 }

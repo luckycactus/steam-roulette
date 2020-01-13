@@ -28,18 +28,18 @@ class RouletteOptionsViewModel @Inject constructor(
     private val _closeAction = MutableLiveData<Unit>()
 
     init {
-        playTimePrefValue = userViewModelDelegate.observeCurrentUserSteamId().switchMap {
+        playTimePrefValue = userViewModelDelegate.currentUserSteamId.switchMap {
             observePlayTimeFilter(it).map(this@RouletteOptionsViewModel::getPlayTimeFilterText)
         }
 
-        hiddenGamesCount = userViewModelDelegate.observeCurrentUserSteamId()
+        hiddenGamesCount = userViewModelDelegate.currentUserSteamId
             .switchMap { observeHiddenGamesCount(it) }
     }
 
     fun onClearHiddenGames() {
         //todo Что будет, если очистить во время обновления?
         viewModelScope.launch {
-            clearHiddenGames(userViewModelDelegate.currentUserSteamId)
+            clearHiddenGames(userViewModelDelegate.getCurrentUserSteamId())
         }
         closeWithDelay()
     }

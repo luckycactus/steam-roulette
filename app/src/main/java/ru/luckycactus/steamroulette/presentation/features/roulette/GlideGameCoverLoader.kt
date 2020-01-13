@@ -9,6 +9,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import dagger.Reusable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
@@ -17,6 +18,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import javax.inject.Inject
 
+@Reusable
 class GlideGameCoverLoader @Inject constructor(
     @ForApplication private val appContext: Context
 ) : GameCoverCacheCleaner {

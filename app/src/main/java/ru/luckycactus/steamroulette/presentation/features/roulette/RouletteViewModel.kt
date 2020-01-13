@@ -10,7 +10,7 @@ import ru.luckycactus.steamroulette.domain.common.Result
 import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
 import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
-import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesClearUseCase
+import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.domain.common.Event
@@ -23,7 +23,7 @@ class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingList,
     private val observePlayTimeFilter: ObservePlaytimeFilterUseCase,
-    private val observeHiddenGamesClear: ObserveHiddenGamesClearUseCase,
+    private val observeResetHiddenGamesEvent: ObserveResetHiddenGamesEventUseCase,
     private val hideGame: HideGameUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel() {
@@ -51,7 +51,7 @@ class RouletteViewModel @Inject constructor(
 
     init {
         currentUserPlayTimeFilter =
-            userViewModelDelegate.observeCurrentUserSteamId().switchMap {
+            userViewModelDelegate.currentUserSteamId.switchMap {
                 observePlayTimeFilter(it).distinctUntilChanged()
             }
 
@@ -63,10 +63,8 @@ class RouletteViewModel @Inject constructor(
             refreshGames()
         }
 
-        _contentState.addSource(userViewModelDelegate.observeCurrentUserSteamId().switchMap {
-            observeHiddenGamesClear(
-                it
-            )
+        _contentState.addSource(userViewModelDelegate.currentUserSteamId.switchMap {
+            observeResetHiddenGamesEvent(it)
         }) {
             refreshGames()
         }
@@ -94,7 +92,7 @@ class RouletteViewModel @Inject constructor(
                     GlobalScope.launch {
                         hideGame(
                             HideGameUseCase.Params(
-                                userViewModelDelegate.currentUserSteamId,
+                                userViewModelDelegate.getCurrentUserSteamId(),
                                 game.appId
                             )
                         )
@@ -161,7 +159,7 @@ class RouletteViewModel @Inject constructor(
 
                     val pagingGameList = getOwnedGamesPagingList(
                         GetOwnedGamesPagingList.Params(
-                            userViewModelDelegate.currentUserSteamId,
+                            userViewModelDelegate.getCurrentUserSteamId(),
                             filter,
                             viewModelScope
                         )

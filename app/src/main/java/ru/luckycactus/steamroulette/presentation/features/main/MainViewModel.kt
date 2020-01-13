@@ -1,15 +1,17 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
+import android.view.View
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.*
-import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
-import ru.luckycactus.steamroulette.domain.update.MigrateAppUseCase
-import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
+import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
+import ru.luckycactus.steamroulette.domain.update.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
+import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
@@ -28,32 +30,32 @@ class MainViewModel @Inject constructor(
     private val resourceManager: ResourceManager
 ) : ViewModel(), UserViewModelDelegate {
 
-    override val currentUserSteamId
-        get() = _currentUserSteamId.value!!
+    override val currentUserSteamId: LiveData<SteamId>
+        get() = _currentUserSteamId
     override val userSummary: LiveData<UserSummary>
     override val fetchGamesState: LiveData<Result<Unit>>
         get() = _fetchGamesState
     override val fetchUserSummaryState: LiveData<Boolean>
         get() = _fetchUserSummaryState
+
     val errorMessage: LiveData<Event<String>>
         get() = _errorMessage
 
     val screen: LiveData<Event<Screen>>
-    // get() = _screen
+        get() = _screen
 
     private val _currentUserSteamId = MediatorLiveData<SteamId>()
+
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
     private val _errorMessage = MutableLiveData<Event<String>>()
-
-    //private val _screen = MutableLiveData<Event<Screen>>()
+    private val _screen = MutableLiveData<Event<Screen>>()
 
     init {
         _currentUserSteamId.addSource(observeCurrentUser()) {
             viewModelScope.coroutineContext.cancelChildren()
             it?.let {
                 _currentUserSteamId.value = it
-
                 viewModelScope.launch {
                     fetchGames(false)
                 }
@@ -65,39 +67,45 @@ class MainViewModel @Inject constructor(
         userSummary = _currentUserSteamId.switchMap {
             observeUserSummary(it)
         }
-        screen = _currentUserSteamId.map {
-            if (it != null) Event(Screen.Roulette) else Event(Screen.Login)
-        }
     }
 
     fun onColdStart() {
         viewModelScope.launch {
             migrateApp()
-
+            if (getSignedInUserSteamId() != null) {
+                _screen.value = Event(Screen.Roulette)
+            } else {
+                _screen.value = Event(Screen.Login)
+            }
         }
     }
 
     fun onSignInSuccess() {
-//        _screen.value =
-//            Event(Screen.Roulette)
+        _screen.value = Event(Screen.Roulette)
     }
 
     fun onExit() {
-//        _screen.value = Event(Screen.Login)
+        _screen.value = Event(Screen.Login)
         //todo progress
         viewModelScope.launch {
             signOutUser()
         }
     }
 
-    override fun observeCurrentUserSteamId() = _currentUserSteamId
+    fun onGameClick(game: OwnedGame) {
+        _screen.value = Event(Screen.GameDetails(game))
+    }
+
+    override fun getCurrentUserSteamId(): SteamId {
+        return _currentUserSteamId.value!!
+    }
+
 
     override fun fetchGames() {
         viewModelScope.launch {
             handleGamesFetchError(fetchGames(true))
         }
     }
-
 
     override fun fetchUserAndGames() {
         viewModelScope.launch {
@@ -135,8 +143,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
+
     private suspend fun fetchGames(reload: Boolean): Result<Unit> {
-        currentUserSteamId.let {
+        getCurrentUserSteamId().let {
             _fetchGamesState.value = Result.Loading
             return try {
                 fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
@@ -156,9 +165,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun fetchUserSummary(reload: Boolean): Result<Unit> {
-        currentUserSteamId.let {
+        getCurrentUserSteamId().let {
             return try {
                 _fetchUserSummaryState.value = true
                 fetchUserSummary(
@@ -180,9 +188,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    enum class Screen {
-        Login,
-        Roulette
+    sealed class Screen {
+        object Login : Screen()
+        object Roulette : Screen()
+        class GameDetails(val game: OwnedGame) : Screen()
     }
 
 }
