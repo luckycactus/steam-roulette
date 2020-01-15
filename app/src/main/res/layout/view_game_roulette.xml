@@ -16,6 +16,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/cover_placeholder"
+                android:foreground="@drawable/cover_glare"
                 >
 
             <TextView
@@ -37,12 +38,6 @@
                 android:id="@+id/ivGame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                />
-
-        <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/cover_glare"
                 />
 
     </FrameLayout>

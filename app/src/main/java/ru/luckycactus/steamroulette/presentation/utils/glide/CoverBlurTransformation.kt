@@ -22,7 +22,7 @@ class CoverBlurTransformation(
     private val bias: Float
 ) : BitmapTransformation() {
 
-    //private val rs: RenderScript
+    //private val rs: RenderScript //todo
 
     init {
         check(!(bias < 0f || bias > 1f)) { "bias should be in 0..1 range" }
@@ -66,12 +66,11 @@ class CoverBlurTransformation(
         //} else {
 //            canvas.drawBitmap()
         //}
-
+        pool.put(blurBitmap)
 
         var y = bias * outHeight - toTransform.height / 2
         y = y.coerceIn(0f, outHeight - toTransform.height / 2f)
         canvas.drawBitmap(toTransform, 0f, y, paint)
-
 
         return bitmap
     }
@@ -125,7 +124,6 @@ class CoverBlurTransformation(
 
     companion object {
         private const val VERSION = 1
-        private const val ID =
-            "ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation.$VERSION"
+        private const val ID = "ru.luckycactus.steamroulette.CoverBlurTransformation.$VERSION"
     }
 }
