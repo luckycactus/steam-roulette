@@ -1,13 +1,20 @@
 package ru.luckycactus.steamroulette.presentation.utils.glide
 
 import android.content.Context
-import android.graphics.*
-import android.os.Build.ID
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.renderscript.Allocation
+import android.renderscript.Element
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
+import android.util.Log
 import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import jp.wasabeef.glide.transformations.BitmapTransformation
 import jp.wasabeef.glide.transformations.internal.FastBlur
 import java.security.MessageDigest
+
 
 class CoverBlurTransformation(
     private val radius: Int,
@@ -15,8 +22,11 @@ class CoverBlurTransformation(
     private val bias: Float
 ) : BitmapTransformation() {
 
+    //private val rs: RenderScript
+
     init {
         check(!(bias < 0f || bias > 1f)) { "bias should be in 0..1 range" }
+        //rs = RenderScript.create(context)
     }
 
     override fun transform(
@@ -26,7 +36,9 @@ class CoverBlurTransformation(
         outWidth: Int,
         outHeight: Int
     ): Bitmap {
-        var bitmap = pool.get(outWidth, outHeight, Bitmap.Config.ARGB_8888)
+        if (toTransform.width < toTransform.height) //todo
+            return toTransform
+        val bitmap = pool.get(outWidth, outHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint().apply {
             //flags = Paint.FILTER_BITMAP_FLAG
@@ -46,6 +58,7 @@ class CoverBlurTransformation(
             drawBitmap(toTransform, 0f, 0f, paint)
         }
         blurBitmap = FastBlur.blur(blurBitmap, radius, true)
+        //blurBitmap = blur(blurBitmap, radius.toFloat())
         canvas.save()
         canvas.scale(outWidth.toFloat() / scaledWidth, outHeight.toFloat() / scaledHeight)
         canvas.drawBitmap(blurBitmap, 0f, 0f, paint)
@@ -59,8 +72,36 @@ class CoverBlurTransformation(
         y = y.coerceIn(0f, outHeight - toTransform.height / 2f)
         canvas.drawBitmap(toTransform, 0f, y, paint)
 
+
         return bitmap
     }
+
+//    fun blur(bitmap: Bitmap, radius: Float): Bitmap {
+//
+//        // Allocate memory for Renderscript to work with
+//        val input = Allocation.createFromBitmap(
+//            rs,
+//            bitmap,
+//            Allocation.MipmapControl.MIPMAP_FULL,
+//            Allocation.USAGE_SHARED
+//        )
+//        val output = Allocation.createTyped(rs, input.type)
+//
+//        // Load up an instance of the specific script that we want to use.
+//        val script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
+//        script.setInput(input)
+//
+//        // Set the blur radius
+//        script.setRadius(radius)
+//
+//        // Start the ScriptIntrinisicBlur
+//        script.forEach(output)
+//
+//        // Copy the output to the blurred bitmap
+//        output.copyTo(bitmap)
+//
+//        return bitmap
+//    }
 
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {

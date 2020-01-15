@@ -28,15 +28,6 @@ class GameDetailsFragment : BaseFragment(), Injectable {
 
     override val layoutResId: Int = R.layout.fragment_game_details
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        postponeEnterTransition()
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 

@@ -6,12 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsItemUiModel
-import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverLoader
+import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverCacheCleaner
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import javax.inject.Inject
 
 class GameDetailsAdapter @Inject constructor(
-    private val gameCoverLoader: GlideGameCoverLoader
 ) : RecyclerView.Adapter<GameDetailsViewHolder<*>>() {
 
     private val items = mutableListOf<GameDetailsItemUiModel>()
@@ -26,10 +25,7 @@ class GameDetailsAdapter @Inject constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameDetailsViewHolder<*> {
         return when (viewType) {
-            R.layout.item_game_details_header -> GameHeaderViewHolder(
-                parent.inflate(viewType),
-                gameCoverLoader
-            )
+            R.layout.item_game_details_header -> GameHeaderViewHolder(parent.inflate(viewType))
             else -> throw IllegalStateException("Unknown view type $viewType")
         }
     }

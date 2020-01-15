@@ -14,7 +14,6 @@ import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
 class RouletteAdapter @AssistedInject constructor(
-    private val gameCoverLoader: GlideGameCoverLoader,
     @Assisted private val onGameClick: (View, OwnedGame) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
@@ -49,7 +48,7 @@ class RouletteAdapter @AssistedInject constructor(
 
         fun bind(game: OwnedGame) {
             this.game = game
-            gameView.setGame(game, gameCoverLoader)
+            gameView.setGame(game)
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {

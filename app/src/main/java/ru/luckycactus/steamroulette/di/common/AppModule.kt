@@ -34,7 +34,7 @@ import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.update.AppSettingsRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
-import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverLoader
+import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverCacheCleaner
 import javax.inject.Singleton
 
 @AssistedModule
@@ -67,7 +67,7 @@ abstract class AppModule {
     abstract fun bindGamesRepository(gamesRepository: GamesRepositoryImpl): GamesRepository
 
     @Binds
-    abstract fun bindGameCoverCacheCleaner(glideGameCoverLoader: GlideGameCoverLoader): GameCoverCacheCleaner
+    abstract fun bindGameCoverCacheCleaner(glideGameCoverCacheCleaner: GlideGameCoverCacheCleaner): GameCoverCacheCleaner
 
     @Binds
     abstract fun bindRemoteGamesDataStore(remoteGamesDataStore: RemoteGamesDataStore): GamesDataStore.Remote
