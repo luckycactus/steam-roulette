@@ -9,9 +9,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.transition.*
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
+import kotlinx.coroutines.delay
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.di.common.findComponent
@@ -37,8 +39,39 @@ class RouletteFragment : BaseFragment(), Injectable {
     lateinit var rouletteAdapterFactory: RouletteAdapter.Factory
 
     private val rouletteAdapter: RouletteAdapter by lazyNonThreadSafe {
-        rouletteAdapterFactory.create { view, game ->
-            (activity as MainActivity).viewModel.onGameClick(game)
+        rouletteAdapterFactory.create { sharedViews, game ->
+            if (sharedViews.isNotEmpty()) {
+                requireParentFragment().exitTransition = transitionSet {
+                    fade { }
+                    excludeTarget(rvRoulette, true)
+                    onTransitionEnd {
+                        parentFragment?.exitTransition = null
+                    }
+                }
+
+                requireParentFragment().reenterTransition = transitionSet {
+                    fade {
+                        excludeTarget(rvRoulette, true)
+                    }
+                    //delay cardstack appear
+                    fade {
+                        startDelay = 375 //todo
+                        duration = 0
+                        addTarget(rvRoulette)
+                    }
+                    onTransitionEnd {
+                        parentFragment?.reenterTransition = null
+                    }
+                }
+            } else {
+                requireParentFragment().exitTransition = transitionSet {
+                    fade { }
+                }
+                requireParentFragment().reenterTransition = transitionSet {
+                    fade { }
+                }
+            }
+            (activity as MainActivity).onGameClick(sharedViews, game)
         }
     }
 
@@ -147,11 +180,9 @@ class RouletteFragment : BaseFragment(), Injectable {
             }
         }
 
-
         observe(viewModel.games) {
             rouletteAdapter.items = it
         }
-
 
         observe(viewModel.contentState) {
             dataLoadingViewHolder.showContentState(it)

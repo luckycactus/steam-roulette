@@ -2,12 +2,17 @@ package ru.luckycactus.steamroulette.presentation.features.main
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.commit
+import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.*
 import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.di.core.InjectionManager
+import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
@@ -42,16 +47,6 @@ class MainActivity : AppCompatActivity(),
                         )
                         .setReorderingAllowed(true)
                         .commit()
-                is MainViewModel.Screen.GameDetails -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(
-                            R.id.container,
-                            GameDetailsFragment.newInstance(it.game)
-                        )
-                        .setReorderingAllowed(true)
-                        .addToBackStack(null)
-                        .commit()
-                }
             }
         }
 
@@ -66,6 +61,21 @@ class MainActivity : AppCompatActivity(),
         InjectionManager.findComponent<AppComponent>()
             .mainActivityComponentFactory()
             .create(this)
+
+    fun onGameClick(sharedViews: List<View>, game: OwnedGame) {
+        supportFragmentManager.commit {
+            hide(supportFragmentManager.findFragmentById(R.id.container)!!)
+            add(
+                R.id.container,
+                GameDetailsFragment.newInstance(game, sharedViews.isNotEmpty())
+            )
+            for (sharedView in sharedViews) {
+                addSharedElement(sharedView, ViewCompat.getTransitionName(sharedView)!!)
+            }
+            setReorderingAllowed(true)
+            addToBackStack(null)
+        }
+    }
 
     companion object {
         const val FRAGMENT_MAIN_FLOW_TAG = "FRAGMENT_MAIN_FLOW_TAG"

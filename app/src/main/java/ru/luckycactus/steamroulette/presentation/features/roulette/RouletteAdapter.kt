@@ -2,11 +2,13 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
+import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
@@ -14,7 +16,7 @@ import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
 class RouletteAdapter @AssistedInject constructor(
-    @Assisted private val onGameClick: (View, OwnedGame) -> Unit
+    @Assisted private val onGameClick: (List<View>, OwnedGame) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
     var items: List<OwnedGame>? = null
@@ -42,13 +44,26 @@ class RouletteAdapter @AssistedInject constructor(
 
         init {
             gameView.setOnClickListener {
-                onGameClick(gameView, game)
+                onGameClick(
+                    if (gameView.imageReady)
+                        listOf<View>(gameView.ivGame, gameView)
+                    else emptyList(),
+                    game
+                )
             }
         }
 
         fun bind(game: OwnedGame) {
             this.game = game
             gameView.setGame(game)
+            ViewCompat.setTransitionName(
+                gameView.ivGame,
+                gameView.context.getString(R.string.image_shared_element_transition, game.appId)
+            )
+            ViewCompat.setTransitionName(
+                gameView,
+                gameView.context.getString(R.string.cardview_shared_element_transition, game.appId)
+            )
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {
@@ -60,6 +75,6 @@ class RouletteAdapter @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(onGameClick: (View, OwnedGame) -> Unit): RouletteAdapter
+        fun create(onGameClick: (List<View>, OwnedGame) -> Unit): RouletteAdapter
     }
 }

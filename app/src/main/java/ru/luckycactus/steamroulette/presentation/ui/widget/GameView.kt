@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AlphaAnimation
@@ -16,8 +15,9 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.Resource
-import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.request.transition.ViewAnimationFactory
@@ -30,10 +30,12 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransforma
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.GameCoverModel
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
-import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class GameView : MaterialCardView {
+
+    private var current: OwnedGame? = null
+    var imageReady = false
+        private set
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -48,25 +50,33 @@ class GameView : MaterialCardView {
         setRippleColorResource(android.R.color.transparent)
     }
 
-    private var current: OwnedGame? = null
-
-    fun setGame(game: OwnedGame?) {
+    fun setGame(
+        game: OwnedGame?,
+        disableTransition: Boolean = false,
+        listener: RequestListener<Drawable>? = null
+    ) {
         if (game == current)
             return
 
         current = game
+        imageReady = false
         tvName.text = game?.name
 
         placeholder.visibility = View.VISIBLE
         if (game != null) {
-            createRequestBuilder(this, game).into(ivGame)
+            createRequestBuilder(this, game, disableTransition, listener).into(ivGame)
         } else {
             Glide.with(ivGame).clear(ivGame)
         }
     }
 
     //todo Грузить hd через wifi, обычную через мобильную сеть
-    fun createRequestBuilder(view: GameView, game: OwnedGame): RequestBuilder<Drawable> {
+    fun createRequestBuilder(
+        view: GameView,
+        game: OwnedGame,
+        disableTransition: Boolean,
+        listener: RequestListener<Drawable>?
+    ): RequestBuilder<Drawable> {
         val anim = AlphaAnimation(0f, 1f).apply {
             duration = 300
             setAnimationListener(object : Animation.AnimationListener {
@@ -76,6 +86,7 @@ class GameView : MaterialCardView {
 
                 override fun onAnimationEnd(animation: Animation?) {
                     placeholder.visibility = View.INVISIBLE
+                    imageReady = true
                 }
 
                 override fun onAnimationStart(animation: Animation?) {
@@ -90,11 +101,17 @@ class GameView : MaterialCardView {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Transition<Drawable> {
-                    return super.build(dataSource, isFirstResource).also {
-                        if (it is NoTransition) {
-                            placeholder.visibility = View.INVISIBLE
-                        }
+                    val transition = if (disableTransition)
+                        NoTransition.get()
+                    else
+                        super.build(dataSource, isFirstResource)
+
+                    if (transition is NoTransition) {
+                        placeholder.visibility = View.INVISIBLE
+                        imageReady = true
                     }
+
+                    return transition
                 }
             }
         )
@@ -105,6 +122,11 @@ class GameView : MaterialCardView {
             .fitCenter()
             .transform(headerImageTransformation)
             .transition(transitionOptions)
+            .also { request ->
+                listener?.let {
+                    request.listener(it)
+                }
+            }
     }
 
     companion object {
