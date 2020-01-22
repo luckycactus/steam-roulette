@@ -3,30 +3,27 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.transition.*
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
-import kotlinx.coroutines.delay
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.di.common.findComponent
+import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
-import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteOptionsFragment
-import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackLayoutManager
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
+import ru.luckycactus.steamroulette.presentation.utils.*
 import javax.inject.Inject
 
 class RouletteFragment : BaseFragment(), Injectable {
@@ -46,6 +43,10 @@ class RouletteFragment : BaseFragment(), Injectable {
                     excludeTarget(rvRoulette, true)
                     onTransitionEnd {
                         parentFragment?.exitTransition = null
+                        //todo comment
+                        sharedViews.forEach {
+                            it.trySetTransitionAlpha(1f)
+                        }
                     }
                 }
 

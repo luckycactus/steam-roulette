@@ -15,6 +15,5 @@ class OwnedGameRoomEntityMapper(
             hiddenGameIds.contains(from.appId),
             from
         )
-
     }
 }

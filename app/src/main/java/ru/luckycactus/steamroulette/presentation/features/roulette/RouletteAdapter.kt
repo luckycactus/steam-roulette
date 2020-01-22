@@ -10,6 +10,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.utils.inflate
@@ -55,7 +56,7 @@ class RouletteAdapter @AssistedInject constructor(
 
         fun bind(game: OwnedGame) {
             this.game = game
-            gameView.setGame(game)
+            gameView.setGame(GameMinimal(game)) //todo
             ViewCompat.setTransitionName(
                 gameView.ivGame,
                 gameView.context.getString(R.string.image_shared_element_transition, game.appId)

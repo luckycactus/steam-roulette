@@ -14,6 +14,7 @@ import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUse
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.domain.common.Event
+import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
@@ -124,8 +125,7 @@ class RouletteViewModel @Inject constructor(
 
     fun onSteamInfoClick() {
         games.value?.get(0)?.let {
-            _openUrlAction.value =
-                Event(it.storeUrl)
+            _openUrlAction.value = Event(GameUrlUtils.storePage(it.appId))
         }
     }
 

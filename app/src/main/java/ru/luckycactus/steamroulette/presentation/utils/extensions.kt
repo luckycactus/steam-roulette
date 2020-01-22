@@ -25,6 +25,7 @@ import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException
 import ru.luckycactus.steamroulette.domain.exception.ServerException
 import ru.luckycactus.steamroulette.domain.common.Event
+import java.lang.reflect.Method
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -335,4 +336,22 @@ fun FragmentManager.showIfNotExist(tag: String, createDialogFragment: () -> Dial
     if (findFragmentByTag(tag) == null) {
         createDialogFragment().show(this, tag)
     }
+}
+
+private val setTransitionAlphaMethod: Method? by lazy {
+    try {
+        View::class.java.getMethod("setTransitionAlpha", Float::class.java)
+    } catch (e: NoSuchMethodException) {
+        //todo log
+        null
+    }
+}
+
+fun View.trySetTransitionAlpha(alpha: Float, invalidate: Boolean = false): Boolean {
+    return setTransitionAlphaMethod?.let {
+        it.invoke(this, alpha)
+        if (invalidate)
+            invalidate()
+        true
+    } ?: false
 }

@@ -2,12 +2,13 @@ package ru.luckycactus.steamroulette.data.repositories.games
 
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
+import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import java.util.concurrent.TimeUnit
@@ -81,6 +82,12 @@ class GamesRepositoryImpl @Inject constructor(
             override suspend fun getFromCache(): List<OwnedGame> {
                 throw UnsupportedOperationException()
             }
+        }
+    }
+
+    override suspend fun getGameStoreInfo(gameId: Int, reload: Boolean): GameStoreInfo {
+        return NetworkBoundResource.withMemoryCache("game_store_info_$gameId", reload) {
+            remoteGamesDataStore.getGameStoreInfo(gameId)
         }
     }
 

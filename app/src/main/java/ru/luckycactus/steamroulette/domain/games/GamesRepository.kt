@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.domain.games
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.domain.common.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
@@ -32,5 +33,7 @@ interface GamesRepository {
     fun observeGamesUpdates(steamId: SteamId): LiveData<Long>
 
     suspend fun clearUser(steamId: SteamId)
+
+    suspend fun getGameStoreInfo(gameId: Int, reload: Boolean): GameStoreInfo
 }
 

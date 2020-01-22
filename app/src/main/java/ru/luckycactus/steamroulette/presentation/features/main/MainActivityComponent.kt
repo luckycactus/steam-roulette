@@ -4,6 +4,7 @@ import dagger.BindsInstance
 import dagger.Subcomponent
 import ru.luckycactus.steamroulette.di.scopes.ActivityScope
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
+import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.login.LoginComponent
 
 @ActivityScope
@@ -20,6 +21,8 @@ interface MainActivityComponent {
     fun loginComponentFactory(): LoginComponent.Factory
 
     val mainViewModel: MainViewModel
+
+    val gameDetailsViewModelFactory: GameDetailsViewModel.Factory
 
     fun inject(gameDetailsFragment: GameDetailsFragment)
 }

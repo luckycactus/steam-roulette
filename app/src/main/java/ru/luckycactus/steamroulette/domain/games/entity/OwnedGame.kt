@@ -11,13 +11,4 @@ data class OwnedGame(
     val playtimeForever: Int,
     val iconUrl: String,
     val logoUrl: String
-) : Parcelable {
-    val headerImageUrl
-        get() = "https://steamcdn-a.akamaihd.net/steam/apps/$appId/header.jpg"
-    val libraryPortraitImageUrl
-        get() = "https://steamcdn-a.akamaihd.net/steam/apps/$appId/library_600x900.jpg"
-    val libraryPortraitImageUrlHD
-        get() = "https://steamcdn-a.akamaihd.net/steam/apps/$appId/library_600x900_2x.jpg"
-    val storeUrl
-        get() = "https://store.steampowered.com/app/$appId/"
-}
+) : Parcelable

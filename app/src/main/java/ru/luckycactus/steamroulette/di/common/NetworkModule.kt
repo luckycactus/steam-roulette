@@ -1,5 +1,7 @@
 package ru.luckycactus.steamroulette.di.common
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -10,12 +12,11 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
-import ru.luckycactus.steamroulette.data.net.AuthInterceptor
-import ru.luckycactus.steamroulette.data.net.SteamApiService
-import ru.luckycactus.steamroulette.data.net.MyHttpLoggingInterceptor
+import ru.luckycactus.steamroulette.data.net.*
 import ru.luckycactus.steamroulette.di.qualifier.InterceptorSet
 import ru.luckycactus.steamroulette.di.qualifier.NetworkInterceptorSet
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -37,18 +38,35 @@ abstract class NetworkModule {
         @JvmStatic
         @Singleton
         @Provides
-        fun provideSteamApiService(retrofit: Retrofit): SteamApiService =
+        fun provideSteamApiService(@Named("steam-api") retrofit: Retrofit): SteamApiService =
             retrofit.create(SteamApiService::class.java)
 
         @JvmStatic
-        @Provides
         @Singleton
-        fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
+        @Provides
+        fun provideSteamStoreApiService(@Named("steam-store-api") retrofit: Retrofit): SteamStoreApiService =
+            retrofit.create(SteamStoreApiService::class.java)
+
+        @JvmStatic
+        @Provides
+        @Named("steam-api")
+        fun provideRetrofitForSteamApi(okHttpClient: OkHttpClient, @Named("api") gson: Gson): Retrofit =
             Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://api.steampowered.com/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
+
+        @JvmStatic
+        @Provides
+        @Named("steam-store-api")
+        fun provideRetrofitForSteamStoreApi(okHttpClient: OkHttpClient, @Named("api") gson: Gson): Retrofit {
+            return Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl("https://store.steampowered.com/api/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
+        }
 
         @JvmStatic
         @Provides
@@ -69,16 +87,19 @@ abstract class NetworkModule {
         @InterceptorSet
         @Provides
         fun provideLogInterceptor(): Interceptor =
-            MyHttpLoggingInterceptor(
-                setOf(
-                    "IPlayerService/GetOwnedGames/"
-                )
-            ).apply {
-                level = if (BuildConfig.DEBUG)
-                    MyHttpLoggingInterceptor.Level.BODY
-                else
-                    MyHttpLoggingInterceptor.Level.NONE
-            }
+            MyHttpLoggingInterceptor(setOf("IPlayerService/GetOwnedGames/"))
+                .apply {
+                    level = if (BuildConfig.DEBUG)
+                        MyHttpLoggingInterceptor.Level.BODY
+                    else
+                        MyHttpLoggingInterceptor.Level.NONE
+                }
+
+        @JvmStatic
+        @Provides
+        @Named("api")
+        fun provideGsonForApi() = GsonBuilder()
+            .registerTypeAdapterFactory(SystemRequirementsTypeAdapterFactory()).create()
 
     }
 }

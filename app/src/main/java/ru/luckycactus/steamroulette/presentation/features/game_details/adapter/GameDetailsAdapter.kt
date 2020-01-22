@@ -1,8 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -12,41 +15,32 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsItemUiModel
-import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverCacheCleaner
-import ru.luckycactus.steamroulette.presentation.utils.glide.GlideRequest
+import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.utils.inflate
-import javax.inject.Inject
 
 class GameDetailsAdapter @AssistedInject constructor(
     @Assisted private val enableSharedElementTransition: Boolean,
-    @Assisted private val onImageReady: () -> Unit
-) : RecyclerView.Adapter<GameDetailsViewHolder<*>>() {
-    private val items = mutableListOf<GameDetailsItemUiModel>()
+    @Assisted private val onHeaderImageReady: () -> Unit
+) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
+    diffCallback
+) {
     private var headerWasBound = false
 
-    fun setItems(items: List<GameDetailsItemUiModel>?) {
-        this.items.clear()
-        if (items != null) {
-            this.items.addAll(items)
-        }
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameDetailsViewHolder<*> {
+        val view = parent.inflate(viewType)
         return when (viewType) {
-            R.layout.item_game_details_header -> GameHeaderViewHolder(parent.inflate(viewType))
+            R.layout.item_game_details_header -> GameHeaderViewHolder(view)
+            R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(view)
             else -> throw IllegalStateException("Unknown view type $viewType")
         }
     }
 
-    override fun getItemCount(): Int = items.size
-
     override fun onBindViewHolder(holder: GameDetailsViewHolder<*>, position: Int) {
         when (holder) {
             is GameHeaderViewHolder -> {
-                val enableTransition = enableSharedElementTransition && !headerWasBound
-                val listener = if (enableTransition)
+                val shouldRunSharedElementTransition =
+                    enableSharedElementTransition && !headerWasBound
+                val listener = if (shouldRunSharedElementTransition)
                     object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
@@ -55,7 +49,7 @@ class GameDetailsAdapter @AssistedInject constructor(
                             isFirstResource: Boolean
                         ): Boolean {
                             headerWasBound = true
-                            onImageReady()
+                            onHeaderImageReady()
                             return false
                         }
 
@@ -67,28 +61,30 @@ class GameDetailsAdapter @AssistedInject constructor(
                             isFirstResource: Boolean
                         ): Boolean {
                             headerWasBound = true
-                            onImageReady()
+                            onHeaderImageReady()
                             return false
                         }
 
                     }
                 else null
                 holder.bind(
-                    items[position] as GameDetailsItemUiModel.Header,
-                    enableTransition,
+                    getItem(position) as GameDetailsUiModel.Header,
+                    shouldRunSharedElementTransition,
                     listener
-                    )
-                if (!enableTransition && !headerWasBound) {
-                    onImageReady()
+                )
+                if (!shouldRunSharedElementTransition && !headerWasBound) {
+                    onHeaderImageReady()
                     headerWasBound = true
                 }
             }
+            is GameShortDescriptionViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.ShortDescription)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
-            is GameDetailsItemUiModel.Header -> R.layout.item_game_details_header
+        return when (getItem(position)) {
+            is GameDetailsUiModel.Header -> R.layout.item_game_details_header
+            is GameDetailsUiModel.ShortDescription -> R.layout.item_game_details_short_description
         }
     }
 
@@ -96,12 +92,32 @@ class GameDetailsAdapter @AssistedInject constructor(
     interface Factory {
         fun create(
             enableSharedElementTransition: Boolean,
-            onImageReady: () -> Unit
+            onHeaderImageReady: () -> Unit
         ): GameDetailsAdapter
+    }
+
+    companion object {
+        private val diffCallback = object : DiffUtil.ItemCallback<GameDetailsUiModel>() {
+            override fun areItemsTheSame(
+                oldItem: GameDetailsUiModel,
+                newItem: GameDetailsUiModel
+            ): Boolean {
+                return oldItem::class == newItem::class
+            }
+
+            @SuppressLint("DiffUtilEquals")
+            override fun areContentsTheSame(
+                oldItem: GameDetailsUiModel,
+                newItem: GameDetailsUiModel
+            ): Boolean {
+                return oldItem == newItem
+            }
+
+        }
     }
 }
 
-abstract class GameDetailsViewHolder<T : GameDetailsItemUiModel>(
+abstract class GameDetailsViewHolder<T : GameDetailsUiModel>(
     override val containerView: View
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
     abstract fun bind(item: T)

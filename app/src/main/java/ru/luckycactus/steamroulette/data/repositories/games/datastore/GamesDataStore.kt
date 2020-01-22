@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.data.repositories.games.datastore
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
@@ -32,5 +33,7 @@ interface GamesDataStore {
 
     interface Remote : GamesDataStore {
         suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity>
+
+        suspend fun getGameStoreInfo(appId: Int): GameStoreInfo
     }
 }

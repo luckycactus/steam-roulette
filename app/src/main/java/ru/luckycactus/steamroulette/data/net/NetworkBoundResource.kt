@@ -64,5 +64,22 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         private val memoryCache = LruCache<String, Any>(50)
         private val cacheHelper: CacheHelper =
             InjectionManager.findComponent<AppComponent>().cacheHelper
+
+        suspend fun <RequestType> withMemoryCache(
+            memoryKey: String,
+            invalidate: Boolean,
+            getFromNetwork: suspend () -> RequestType
+        ): RequestType {
+            if (invalidate)
+                memoryCache.remove(memoryKey)
+            var data = memoryCache[memoryKey] as RequestType?
+            if (data == null) {
+                data = wrapCommonNetworkExceptions { getFromNetwork() }
+                data?.let {
+                    memoryCache.put(memoryKey, data)
+                }
+            }
+            return data!!
+        }
     }
 }

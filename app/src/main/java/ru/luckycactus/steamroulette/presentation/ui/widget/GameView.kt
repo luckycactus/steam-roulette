@@ -15,16 +15,14 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.request.transition.ViewAnimationFactory
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
@@ -33,7 +31,7 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 
 class GameView : MaterialCardView {
 
-    private var current: OwnedGame? = null
+    private var current: GameMinimal? = null
     var imageReady = false
         private set
 
@@ -51,12 +49,14 @@ class GameView : MaterialCardView {
     }
 
     fun setGame(
-        game: OwnedGame?,
+        game: GameMinimal?,
         disableTransition: Boolean = false,
         listener: RequestListener<Drawable>? = null
     ) {
         if (game == current)
             return
+
+        val differentAppId = current?.appId != game?.appId
 
         current = game
         imageReady = false
@@ -64,7 +64,8 @@ class GameView : MaterialCardView {
 
         placeholder.visibility = View.VISIBLE
         if (game != null) {
-            createRequestBuilder(this, game, disableTransition, listener).into(ivGame)
+            if (differentAppId)
+                createRequestBuilder(this, game, disableTransition, listener).into(ivGame)
         } else {
             Glide.with(ivGame).clear(ivGame)
         }
@@ -73,7 +74,7 @@ class GameView : MaterialCardView {
     //todo Грузить hd через wifi, обычную через мобильную сеть
     fun createRequestBuilder(
         view: GameView,
-        game: OwnedGame,
+        game: GameMinimal,
         disableTransition: Boolean,
         listener: RequestListener<Drawable>?
     ): RequestBuilder<Drawable> {
