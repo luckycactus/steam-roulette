@@ -17,15 +17,15 @@ data class GameStoreInfo(
     @SerializedName("pc_requirements") val pcRequirements: SystemRequirementsEntity?,
     @SerializedName("mac_requirements") val macRequirements: SystemRequirementsEntity?,
     @SerializedName("linux_requirements") val linuxRequirements: SystemRequirementsEntity?,
-    @SerializedName("developers") val developers: List<String>,
-    @SerializedName("publishers") val publishers: List<String>,
+    @SerializedName("developers") val developers: List<String>?,
+    @SerializedName("publishers") val publishers: List<String>?,
     @SerializedName("platforms") val platforms: PlatformsAvailability,
     @SerializedName("metacritic") val metacritic: MetacriticInfoEntity,
     @SerializedName("categories") val categories: List<GameCategoryEntity>,
     @SerializedName("genres") val genres: List<GameGenreEntity>,
     @SerializedName("screenshots") val screenshots: List<ScreenshotEntity>,
     @SerializedName("movies") val trailers: List<TrailerEntity>,
-    @SerializedName("release_date") val releaseDate: ReleaseDateInfoEntity,
+    @SerializedName("release_date") val releaseDate: ReleaseDateInfoEntity?,
     @SerializedName("content_descriptors") val contentDescriptors: ContentDescriptorsEntity,
     @SerializedName("background") val background: String
 )
@@ -77,7 +77,7 @@ data class WebmEntity(
 
 data class ReleaseDateInfoEntity(
     @SerializedName("coming_soon") val comingSoon: Boolean,
-    @SerializedName("date") val date: String
+    @SerializedName("date") val date: String?
 )
 
 data class ContentDescriptorsEntity(

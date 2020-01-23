@@ -58,4 +58,8 @@
 
     </style>
 
+    <style name="TextAppearance.MyTheme.GameDetailsHeadline" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>

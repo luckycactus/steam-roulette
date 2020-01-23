@@ -44,6 +44,10 @@
     <string name="playtime_pref_not_played">Games I have not played</string>
     <string name="playtime_pref_max_time">Games I played for no more than:</string>
     <string name="playtime_hours_label">hour(s)</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="game_details_description">Description</string>
+    <string name="button_steam_store">Steam store</string>
+    <string name="button_community_hub">Community Hub</string>
     <plurals name="playtime_pref_max_time_full_plurals">
         <item quantity="zero">Games I played for no more than %d hours</item>
         <item quantity="one">Games I played for no more than %d hour</item>

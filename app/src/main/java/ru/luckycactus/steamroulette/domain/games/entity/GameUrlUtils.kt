@@ -18,5 +18,9 @@ class GameUrlUtils {
         @JvmStatic
         fun storePage(appId: Int) =
             "https://store.steampowered.com/app/$appId/"
+
+        @JvmStatic
+        fun hubPage(appId: Int) =
+            "https://steamcommunity.com/app/$appId"
     }
 }

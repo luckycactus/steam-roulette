@@ -196,16 +196,7 @@ class RouletteFragment : BaseFragment(), Injectable {
         }
 
         observeEvent(viewModel.openUrlAction) {
-            //todo into navigation
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
-            if (isAppInstalled(context!!, "com.valvesoftware.android.steam.community")) {
-                with(intent) {
-                    flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                    `package` = "com.valvesoftware.android.steam.community"
-                }
-            }
-            startActivity(intent)
+            (activity as MainActivity).openUrl(it, true)
         }
     }
 

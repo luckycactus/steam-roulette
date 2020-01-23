@@ -39,4 +39,10 @@
     <style name="Widget.MyTheme.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
     </style>
 
+    <style name="Widget.MyTheme.GameDetailsHeadlineTextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.MyTheme.GameDetailsHeadline</item>
+        <item name="android:layout_marginBottom">@dimen/default_activity_margin</item>
+    </style>
+
+
 </resources>

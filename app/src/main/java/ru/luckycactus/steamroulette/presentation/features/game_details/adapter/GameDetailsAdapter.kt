@@ -15,12 +15,14 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
 class GameDetailsAdapter @AssistedInject constructor(
     @Assisted private val enableSharedElementTransition: Boolean,
-    @Assisted private val onHeaderImageReady: () -> Unit
+    @Assisted private val onHeaderImageReady: () -> Unit,
+    @Assisted private val gameDetailsViewModel: GameDetailsViewModel
 ) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
     diffCallback
 ) {
@@ -31,6 +33,7 @@ class GameDetailsAdapter @AssistedInject constructor(
         return when (viewType) {
             R.layout.item_game_details_header -> GameHeaderViewHolder(view)
             R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(view)
+            R.layout.item_game_details_links -> GameLinksViewHolder(view, gameDetailsViewModel)
             else -> throw IllegalStateException("Unknown view type $viewType")
         }
     }
@@ -78,6 +81,7 @@ class GameDetailsAdapter @AssistedInject constructor(
                 }
             }
             is GameShortDescriptionViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.ShortDescription)
+            is GameLinksViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Links)
         }
     }
 
@@ -85,6 +89,7 @@ class GameDetailsAdapter @AssistedInject constructor(
         return when (getItem(position)) {
             is GameDetailsUiModel.Header -> R.layout.item_game_details_header
             is GameDetailsUiModel.ShortDescription -> R.layout.item_game_details_short_description
+            is GameDetailsUiModel.Links -> R.layout.item_game_details_links
         }
     }
 
@@ -92,6 +97,7 @@ class GameDetailsAdapter @AssistedInject constructor(
     interface Factory {
         fun create(
             enableSharedElementTransition: Boolean,
+            gameDetailsViewModel: GameDetailsViewModel,
             onHeaderImageReady: () -> Unit
         ): GameDetailsAdapter
     }

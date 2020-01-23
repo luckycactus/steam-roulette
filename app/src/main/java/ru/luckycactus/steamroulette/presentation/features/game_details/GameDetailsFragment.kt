@@ -2,13 +2,16 @@ package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.ArcMotion
 import kotlinx.android.synthetic.main.fragment_game_details.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
+import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
+import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 import javax.inject.Inject
@@ -22,7 +25,7 @@ class GameDetailsFragment : BaseFragment(), Injectable {
 
     private val viewModel by viewModel {
         findComponent<MainActivityComponent>().gameDetailsViewModelFactory.create(
-            arguments!!.getParcelable(ARG_GAME)!!
+            requireArguments().getParcelable(ARG_GAME)!!
         )
     }
 
@@ -32,7 +35,7 @@ class GameDetailsFragment : BaseFragment(), Injectable {
         super.onActivityCreated(savedInstanceState)
 
         val shouldPlaySharedElementTransition =
-            arguments!!.getBoolean(ARG_ENABLE_TRANSITION) && savedInstanceState == null
+            requireArguments().getBoolean(ARG_ENABLE_TRANSITION) && savedInstanceState == null
 
         enterTransition = transitionSet {
             fade { }
@@ -40,23 +43,34 @@ class GameDetailsFragment : BaseFragment(), Injectable {
 
         if (shouldPlaySharedElementTransition) {
             sharedElementEnterTransition = transitionSet {
-                changeBounds { }
+                changeBounds {
+                    //setPathMotion(ArcMotion()) //todo
+                }
                 changeClipBounds { }
                 changeTransform { }
             }
-
             postponeEnterTransition()
         }
 
-        adapter = gameDetailsAdapterFactory.create(shouldPlaySharedElementTransition) {
+        adapter = gameDetailsAdapterFactory.create(shouldPlaySharedElementTransition, viewModel) {
             startPostponedEnterTransition()
         }
 
         rvGameDetails.adapter = adapter
         rvGameDetails.layoutManager = LinearLayoutManager(context)
+        val margin = resources.getDimensionPixelSize(R.dimen.default_activity_margin)
+        rvGameDetails.addItemDecoration(SpaceDecoration(margin, 0, margin))
+
+        fabBack.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
 
         observe(viewModel.gameDetails) {
             adapter.submitList(it)
+        }
+
+        observeEvent(viewModel.openUrlAction) {
+            (activity as MainActivity).openUrl(it, true)
         }
     }
 

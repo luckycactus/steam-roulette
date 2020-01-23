@@ -79,10 +79,6 @@ class RouletteViewModel @Inject constructor(
         }
     }
 
-    fun onGameClick(game: OwnedGame) {
-
-    }
-
     fun onGameSwiped(hide: Boolean) {
         _gamesPagingList.value?.let {
             if (!it.isEmpty()) {

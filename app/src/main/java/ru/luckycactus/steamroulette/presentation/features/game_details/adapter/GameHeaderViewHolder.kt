@@ -4,11 +4,11 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.request.RequestListener
-import kotlinx.android.synthetic.main.item_game_details_header.gameView
+import kotlinx.android.synthetic.main.item_game_details_header.*
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
+import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class GameHeaderViewHolder(
     view: View
@@ -20,6 +20,13 @@ class GameHeaderViewHolder(
         listener: RequestListener<Drawable>?
     ) {
         gameView.setGame(item.gameMinimal, disableTransition, listener)
+        tvHeaderGameName.text = item.gameMinimal.name
+        tvPublisher.text = item.publisher
+        tvPublisher.visibility(!item.publisher.isNullOrBlank())
+        tvDeveloper.text = item.developer
+        tvDeveloper.visibility(!item.developer.isNullOrBlank())
+        tvReleaseDate.text = item.releaseDate
+        tvReleaseDate.visibility(!item.releaseDate.isNullOrBlank())
         ViewCompat.setTransitionName(
             gameView.ivGame,
             gameView.context.getString(
