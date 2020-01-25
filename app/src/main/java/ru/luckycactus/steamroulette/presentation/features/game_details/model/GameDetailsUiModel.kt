@@ -18,4 +18,8 @@ sealed class GameDetailsUiModel {
     ) : GameDetailsUiModel()
 
     object Links : GameDetailsUiModel()
+
+    data class Languages(
+        val languages: String
+    ) : GameDetailsUiModel()
 }

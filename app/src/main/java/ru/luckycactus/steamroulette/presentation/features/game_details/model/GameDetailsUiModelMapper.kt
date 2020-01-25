@@ -19,6 +19,7 @@ class GameDetailsUiModelMapper @Inject constructor(
             add(mapHeader(from))
             add(GameDetailsUiModel.Links)
             add(mapShortDescription(from))
+            mapLanguages(from)?.let { add(it) }
         }
 
     private fun mapHeader(from: GameStoreInfo): GameDetailsUiModel.Header {
@@ -44,4 +45,7 @@ class GameDetailsUiModelMapper @Inject constructor(
             from.categories.map { it.description },
             from.genres.map { it.description }
         )
+
+    private fun mapLanguages(from: GameStoreInfo): GameDetailsUiModel.Languages? =
+        from.supportedLanguages?.let { GameDetailsUiModel.Languages(it) }
 }

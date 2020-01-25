@@ -10,7 +10,7 @@ data class GameStoreInfo(
     @SerializedName("detailed_description") val detailedDescription: String,
     @SerializedName("about_the_game") val aboutTheGame: String,
     @SerializedName("short_description") val shortDescription: String,
-    @SerializedName("supported_languages") val supportedLanguages: String,
+    @SerializedName("supported_languages") val supportedLanguages: String?,
     @SerializedName("reviews") val reviews: String,
     @SerializedName("header_image") val headerImage: String,
     @SerializedName("website") val website: String,
