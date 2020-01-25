@@ -41,4 +41,6 @@
 
     <color name="color_overlay_next">#537F3A</color>
     <color name="color_overlay_hide">#951823</color>
+
+    <color name="platforms_icon_tint">#38475B</color>
 </resources>

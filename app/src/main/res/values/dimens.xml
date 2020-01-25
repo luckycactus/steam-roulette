@@ -5,4 +5,6 @@
     <dimen name="cardview_corner_radius">8dp</dimen>
     <dimen name="dialog_corner_radius">8dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="game_details_platform_icon_size">28dp</dimen>
+    <dimen name="game_details_platform_icon_margin">8dp</dimen>
 </resources>

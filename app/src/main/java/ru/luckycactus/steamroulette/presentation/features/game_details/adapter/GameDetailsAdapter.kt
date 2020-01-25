@@ -35,6 +35,7 @@ class GameDetailsAdapter @AssistedInject constructor(
             R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(view)
             R.layout.item_game_details_links -> GameLinksViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_languages -> GameLanguagesViewHolder(view)
+            R.layout.item_game_details_system_requirements -> GameSystemReqsViewHolder(view)
             else -> throw IllegalStateException("Unknown view type $viewType")
         }
     }
@@ -84,6 +85,7 @@ class GameDetailsAdapter @AssistedInject constructor(
             is GameShortDescriptionViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.ShortDescription)
             is GameLinksViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Links)
             is GameLanguagesViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Languages)
+            is GameSystemReqsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Platforms)
         }
     }
 
@@ -93,6 +95,7 @@ class GameDetailsAdapter @AssistedInject constructor(
             is GameDetailsUiModel.ShortDescription -> R.layout.item_game_details_short_description
             is GameDetailsUiModel.Links -> R.layout.item_game_details_links
             is GameDetailsUiModel.Languages -> R.layout.item_game_details_languages
+            is GameDetailsUiModel.Platforms -> R.layout.item_game_details_system_requirements
         }
     }
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        >
+
+    <TextView
+            style="@style/Widget.MyTheme.GameDetailsHeadlineTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/game_details_platforms"
+            />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        <ImageView
+                android:id="@+id/ivWindows"
+                android:layout_width="@dimen/game_details_platform_icon_size"
+                android:layout_height="@dimen/game_details_platform_icon_size"
+                android:layout_marginRight="@dimen/game_details_platform_icon_margin"
+                android:tint="@color/platforms_icon_tint"
+                android:visibility="gone"
+                app:srcCompat="@drawable/windows"
+                tools:visibility="visible"
+                />
+
+        <ImageView
+                android:id="@+id/ivMacOs"
+                android:layout_width="@dimen/game_details_platform_icon_size"
+                android:layout_height="@dimen/game_details_platform_icon_size"
+                android:layout_marginRight="@dimen/game_details_platform_icon_margin"
+                android:tint="@color/platforms_icon_tint"
+                android:visibility="gone"
+                app:srcCompat="@drawable/apple"
+                tools:visibility="visible"
+                />
+
+        <ImageView
+                android:id="@+id/ivSteamOs"
+                android:layout_width="@dimen/game_details_platform_icon_size"
+                android:layout_height="@dimen/game_details_platform_icon_size"
+                android:tint="@color/platforms_icon_tint"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_steam"
+                tools:visibility="visible"
+                />
+
+
+    </LinearLayout>
+
+</LinearLayout>

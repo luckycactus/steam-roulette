@@ -126,7 +126,7 @@ class EditTextWithLabel : EditText {
 
     }
 
-    private class SavedState: BaseSavedState {
+    private class SavedState : BaseSavedState {
 
         var label: CharSequence? = null
 

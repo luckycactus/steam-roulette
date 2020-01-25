@@ -1,6 +1,9 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.model
 
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
+import ru.luckycactus.steamroulette.domain.games.entity.Platform
+import ru.luckycactus.steamroulette.domain.games.entity.PlatformsAvailability
+import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 
 sealed class GameDetailsUiModel {
 
@@ -21,5 +24,9 @@ sealed class GameDetailsUiModel {
 
     data class Languages(
         val languages: String
+    ) : GameDetailsUiModel()
+
+    data class Platforms(
+        val platformsAvailability: PlatformsAvailability
     ) : GameDetailsUiModel()
 }

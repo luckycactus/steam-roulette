@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
-import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager

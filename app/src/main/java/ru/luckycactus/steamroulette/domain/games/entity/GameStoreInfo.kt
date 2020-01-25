@@ -14,12 +14,12 @@ data class GameStoreInfo(
     @SerializedName("reviews") val reviews: String,
     @SerializedName("header_image") val headerImage: String,
     @SerializedName("website") val website: String,
-    @SerializedName("pc_requirements") val pcRequirements: SystemRequirementsEntity?,
-    @SerializedName("mac_requirements") val macRequirements: SystemRequirementsEntity?,
-    @SerializedName("linux_requirements") val linuxRequirements: SystemRequirementsEntity?,
+    @SerializedName("pc_requirements") val pcRequirements: SystemRequirements?,
+    @SerializedName("mac_requirements") val macRequirements: SystemRequirements?,
+    @SerializedName("linux_requirements") val linuxRequirements: SystemRequirements?,
     @SerializedName("developers") val developers: List<String>?,
     @SerializedName("publishers") val publishers: List<String>?,
-    @SerializedName("platforms") val platforms: PlatformsAvailability,
+    @SerializedName("platforms") val platforms: PlatformsAvailability?,
     @SerializedName("metacritic") val metacritic: MetacriticInfoEntity,
     @SerializedName("categories") val categories: List<GameCategoryEntity>,
     @SerializedName("genres") val genres: List<GameGenreEntity>,
@@ -30,9 +30,9 @@ data class GameStoreInfo(
     @SerializedName("background") val background: String
 )
 
-data class SystemRequirementsEntity(
-    @SerializedName("minimum") val minimum: String,
-    @SerializedName("recommended") val recommended: String
+data class SystemRequirements(
+    @SerializedName("minimum") val minimum: String?,
+    @SerializedName("recommended") val recommended: String?
 )
 
 data class PlatformsAvailability(

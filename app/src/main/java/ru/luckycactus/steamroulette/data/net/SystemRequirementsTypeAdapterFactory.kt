@@ -7,11 +7,11 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirementsEntity
+import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 
 class SystemRequirementsTypeAdapterFactory : TypeAdapterFactory {
     override fun <T> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
-        if (!SystemRequirementsEntity::class.java.isAssignableFrom(type.rawType)) return null
+        if (!SystemRequirements::class.java.isAssignableFrom(type.rawType)) return null
 
         val delegate = gson.getDelegateAdapter(this, type)
         return object : TypeAdapter<T>() {

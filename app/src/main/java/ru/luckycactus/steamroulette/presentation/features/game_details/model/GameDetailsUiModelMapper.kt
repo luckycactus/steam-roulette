@@ -6,7 +6,8 @@ import ru.luckycactus.steamroulette.domain.common.Mapper
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
-import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
+import ru.luckycactus.steamroulette.domain.games.entity.Platform
+import ru.luckycactus.steamroulette.domain.games.entity.PlatformsAvailability
 import javax.inject.Inject
 
 @Reusable
@@ -19,6 +20,7 @@ class GameDetailsUiModelMapper @Inject constructor(
             add(mapHeader(from))
             add(GameDetailsUiModel.Links)
             add(mapShortDescription(from))
+            mapPlatforms(from)?.let { add(it) }
             mapLanguages(from)?.let { add(it) }
         }
 
@@ -48,4 +50,30 @@ class GameDetailsUiModelMapper @Inject constructor(
 
     private fun mapLanguages(from: GameStoreInfo): GameDetailsUiModel.Languages? =
         from.supportedLanguages?.let { GameDetailsUiModel.Languages(it) }
+
+    private fun mapPlatforms(from: GameStoreInfo): GameDetailsUiModel.Platforms? {
+        return from.platforms?.let {
+            if (it.windows || it.linux || it.mac)
+                GameDetailsUiModel.Platforms(it)
+            else null
+        }
+    }
+
+//    private fun mapPlatforms(from: GameStoreInfo): GameDetailsUiModel.SystemReq? {
+//        return from.platforms?.let {
+//            val platforms = mutableListOf<Pair<String, SystemRequirements?>>()
+//            if (it.windows) {
+//                platforms.add("Windows" to from.pcRequirements)
+//            }
+//            if (it.mac) {
+//                platforms.add("Mac OS X" to from.macRequirements)
+//            }
+//            if (it.linux) {
+//                platforms.add("SteamOS + Linux" to from.linuxRequirements)
+//            }
+//            if (platforms.isNotEmpty())
+//                GameDetailsUiModel.SystemReq(platforms)
+//            else null
+//        }
+//    }
 }
