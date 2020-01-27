@@ -1,14 +1,11 @@
 package ru.luckycactus.steamroulette.domain.games.entity
 
-import android.graphics.Point
-import android.util.Log
 import com.google.gson.annotations.SerializedName
-import java.util.regex.Pattern
 
 data class GameStoreInfo(
     @SerializedName("name") val name: String,
     @SerializedName("steam_appid") val appId: Int,
-    @SerializedName("required_age") val requiredAge: Int,
+    @SerializedName("required_age") val requiredAge: RequiredAge?,
     @SerializedName("controller_support") val controllerSupport: String,
     @SerializedName("detailed_description") val detailedDescription: String,
     @SerializedName("about_the_game") val aboutTheGame: String,
@@ -31,6 +28,10 @@ data class GameStoreInfo(
     @SerializedName("release_date") val releaseDate: ReleaseDateInfoEntity?,
     @SerializedName("content_descriptors") val contentDescriptors: ContentDescriptorsEntity,
     @SerializedName("background") val background: String
+)
+
+data class RequiredAge(
+    val age: Int
 )
 
 data class SystemRequirements(

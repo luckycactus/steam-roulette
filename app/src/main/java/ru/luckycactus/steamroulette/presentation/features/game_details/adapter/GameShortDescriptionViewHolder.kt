@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
@@ -11,6 +12,8 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.utils.inflate
+import ru.luckycactus.steamroulette.presentation.utils.setDrawableColor
+import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class GameShortDescriptionViewHolder(
     view: View
@@ -43,6 +46,50 @@ class GameShortDescriptionViewHolder(
         } else {
             rvCategories.visibility = View.GONE
         }
+
+        val ageResource = item.requiredAge?.let { getAgeDrawableResource(it) }
+        if (ageResource != null) {
+            ivAge.setImageResource(ageResource)
+            ivAge.visibility(true)
+        } else {
+            ivAge.visibility(false)
+        }
+
+        if (item.metacriticInfoEntity != null) {
+            tvMetacriticScore.text = item.metacriticInfoEntity.score.toString()
+            setDrawableColor(
+                tvMetacriticScore.background,
+                getMetacriticScoreColor(item.metacriticInfoEntity.score)
+            )
+            layoutMetacriticScore.visibility(true)
+            //todo click
+        } else {
+            layoutMetacriticScore.visibility(false)
+        }
+
+        blockExtraInfo.visibility(ageResource != null || item.metacriticInfoEntity != null)
+    }
+
+    private fun getAgeDrawableResource(age: Int): Int? {
+        return when (age) {
+            0 -> R.drawable.age_0
+            6 -> R.drawable.age_6
+            12 -> R.drawable.age_12
+            16 -> R.drawable.age_16
+            18 -> R.drawable.age_18
+            else -> null
+        }
+    }
+
+    private fun getMetacriticScoreColor(score: Int): Int { //todo move to domain?
+        return ContextCompat.getColor(
+            itemView.context,
+            when (score) {
+                in 75..100 -> R.color.metacritic_good
+                in 50..74 -> R.color.metacritic_average
+                else -> R.color.metacritic_poor
+            }
+        )
     }
 
     class TagsAdapter(

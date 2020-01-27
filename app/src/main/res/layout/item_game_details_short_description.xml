@@ -42,4 +42,50 @@
             android:layout_height="wrap_content"
             />
 
+    <LinearLayout
+            android:id="@+id/blockExtraInfo"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/half_default_activity_margin"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/default_activity_margin"
+            android:paddingRight="@dimen/default_activity_margin"
+            >
+
+        <ImageView
+                android:id="@+id/ivAge"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/default_activity_margin"
+                android:adjustViewBounds="true"
+                tools:src="@drawable/age_18"
+                />
+
+        <LinearLayout
+                android:id="@+id/layoutMetacriticScore"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/half_default_activity_margin"
+                    android:src="@drawable/metacritic_logo_no_text"
+                    />
+
+            <TextView
+                    android:id="@+id/tvMetacriticScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    style="@style/Widget.MyTheme.MetacriticScoreTextView"
+                    tools:text="89"
+                    />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </LinearLayout>

@@ -14,7 +14,9 @@ sealed class GameDetailsUiModel {
     data class ShortDescription(
         val value: String,
         val categories: List<String>?,
-        val genres: List<String>?
+        val genres: List<String>?,
+        val requiredAge: Int?,
+        val metacriticInfoEntity: MetacriticInfoEntity?
     ) : GameDetailsUiModel()
 
     object Links : GameDetailsUiModel()
@@ -29,5 +31,5 @@ sealed class GameDetailsUiModel {
 
     data class Screenshots(
         val screenshots: List<ScreenshotEntity>
-    ): GameDetailsUiModel()
+    ) : GameDetailsUiModel()
 }

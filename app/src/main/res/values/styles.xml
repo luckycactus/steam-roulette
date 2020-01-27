@@ -19,7 +19,9 @@
         <item name="windowFixedWidthMajor">90%</item>
         <item name="windowFixedWidthMinor">90%</item>
         <item name="android:windowAnimationStyle">@style/Animation.MyTheme.AlertDialog</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.MyTheme.Title.Text</item>
+        <item name="materialAlertDialogTitleTextStyle">
+            @style/MaterialAlertDialog.MyTheme.Title.Text
+        </item>
     </style>
 
     <style name="MaterialAlertDialog.MyTheme.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
@@ -36,12 +38,20 @@
         <item name="cardBackgroundColor">@android:color/transparent</item>
     </style>
 
-    <style name="Widget.MyTheme.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
-    </style>
+    <style name="Widget.MyTheme.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton"></style>
 
     <style name="Widget.MyTheme.GameDetailsHeadlineTextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:textAppearance">@style/TextAppearance.MyTheme.GameDetailsHeadline</item>
         <item name="android:layout_marginBottom">@dimen/default_activity_margin</item>
+    </style>
+
+    <style name="Widget.MyTheme.MetacriticScoreTextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:background">@drawable/background_metacritic_score</item>
+        <item name="android:gravity">center</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:padding">@dimen/half_default_activity_margin</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
 

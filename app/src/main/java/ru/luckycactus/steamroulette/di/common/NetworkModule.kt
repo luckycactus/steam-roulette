@@ -99,7 +99,9 @@ abstract class NetworkModule {
         @Provides
         @Named("api")
         fun provideGsonForApi() = GsonBuilder()
-            .registerTypeAdapterFactory(SystemRequirementsTypeAdapterFactory()).create()
+            .registerTypeAdapterFactory(SystemRequirementsTypeAdapterFactory()) //todo provide
+            .registerTypeAdapterFactory(RequiredAgeTypeAdapterFactory())
+            .create()
 
     }
 }

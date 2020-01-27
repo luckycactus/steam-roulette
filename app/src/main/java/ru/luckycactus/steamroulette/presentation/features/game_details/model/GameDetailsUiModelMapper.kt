@@ -6,8 +6,6 @@ import ru.luckycactus.steamroulette.domain.common.Mapper
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
-import ru.luckycactus.steamroulette.domain.games.entity.Platform
-import ru.luckycactus.steamroulette.domain.games.entity.PlatformsAvailability
 import javax.inject.Inject
 
 //todo refactor
@@ -20,8 +18,8 @@ class GameDetailsUiModelMapper @Inject constructor(
         mutableListOf<GameDetailsUiModel>().apply {
             add(mapHeader(from))
             add(GameDetailsUiModel.Links)
-            add(mapShortDescription(from))
             from.screenshots?.let { if (it.isNotEmpty()) add(GameDetailsUiModel.Screenshots(it)) }
+            add(mapShortDescription(from))
             mapPlatforms(from)?.let { add(it) }
             mapLanguages(from)?.let { add(it) }
         }
@@ -47,7 +45,9 @@ class GameDetailsUiModelMapper @Inject constructor(
         GameDetailsUiModel.ShortDescription(
             from.shortDescription,//.replace("&quot", "\""), //todo
             from.categories.map { it.description },
-            from.genres.map { it.description }
+            from.genres.map { it.description },
+            from.requiredAge?.age,
+            from.metacritic
         )
 
     private fun mapLanguages(from: GameStoreInfo): GameDetailsUiModel.Languages? =
