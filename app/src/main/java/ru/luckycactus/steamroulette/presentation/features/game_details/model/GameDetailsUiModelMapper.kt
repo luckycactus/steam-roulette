@@ -10,6 +10,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.Platform
 import ru.luckycactus.steamroulette.domain.games.entity.PlatformsAvailability
 import javax.inject.Inject
 
+//todo refactor
 @Reusable
 class GameDetailsUiModelMapper @Inject constructor(
     private val resourceManager: ResourceManager
@@ -20,6 +21,7 @@ class GameDetailsUiModelMapper @Inject constructor(
             add(mapHeader(from))
             add(GameDetailsUiModel.Links)
             add(mapShortDescription(from))
+            from.screenshots?.let { if (it.isNotEmpty()) add(GameDetailsUiModel.Screenshots(it)) }
             mapPlatforms(from)?.let { add(it) }
             mapLanguages(from)?.let { add(it) }
         }
@@ -58,22 +60,4 @@ class GameDetailsUiModelMapper @Inject constructor(
             else null
         }
     }
-
-//    private fun mapPlatforms(from: GameStoreInfo): GameDetailsUiModel.SystemReq? {
-//        return from.platforms?.let {
-//            val platforms = mutableListOf<Pair<String, SystemRequirements?>>()
-//            if (it.windows) {
-//                platforms.add("Windows" to from.pcRequirements)
-//            }
-//            if (it.mac) {
-//                platforms.add("Mac OS X" to from.macRequirements)
-//            }
-//            if (it.linux) {
-//                platforms.add("SteamOS + Linux" to from.linuxRequirements)
-//            }
-//            if (platforms.isNotEmpty())
-//                GameDetailsUiModel.SystemReq(platforms)
-//            else null
-//        }
-//    }
 }

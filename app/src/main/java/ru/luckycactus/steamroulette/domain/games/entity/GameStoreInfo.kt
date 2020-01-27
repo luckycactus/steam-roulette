@@ -1,6 +1,9 @@
 package ru.luckycactus.steamroulette.domain.games.entity
 
+import android.graphics.Point
+import android.util.Log
 import com.google.gson.annotations.SerializedName
+import java.util.regex.Pattern
 
 data class GameStoreInfo(
     @SerializedName("name") val name: String,
@@ -23,7 +26,7 @@ data class GameStoreInfo(
     @SerializedName("metacritic") val metacritic: MetacriticInfoEntity,
     @SerializedName("categories") val categories: List<GameCategoryEntity>,
     @SerializedName("genres") val genres: List<GameGenreEntity>,
-    @SerializedName("screenshots") val screenshots: List<ScreenshotEntity>,
+    @SerializedName("screenshots") val screenshots: List<ScreenshotEntity>?,
     @SerializedName("movies") val trailers: List<TrailerEntity>,
     @SerializedName("release_date") val releaseDate: ReleaseDateInfoEntity?,
     @SerializedName("content_descriptors") val contentDescriptors: ContentDescriptorsEntity,

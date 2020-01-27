@@ -1,13 +1,18 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
 import android.content.Context
-import android.content.res.Resources
-import android.util.TypedValue
-import androidx.lifecycle.LiveData
-import kotlin.math.floor
 import android.content.pm.PackageManager
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
+import android.content.res.Resources
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.ShapeDrawable
+import android.util.TypedValue
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import ru.luckycactus.steamroulette.R
+import kotlin.math.floor
 
 
 fun dpF(dp: Float): Float {
@@ -35,4 +40,11 @@ fun isAppInstalled(context: Context, packageName: String): Boolean {
     }
 }
 
+fun setDrawableColor(drawable: Drawable, @ColorInt color: Int) {
+    when (drawable) {
+        is ShapeDrawable -> drawable.paint.color = color
+        is GradientDrawable -> drawable.setColor(color)
+        is ColorDrawable -> drawable.color = color
+    }
+}
 

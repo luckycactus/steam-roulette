@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,14 +16,15 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.games.entity.ScreenshotEntity
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
-class GameDetailsAdapter @AssistedInject constructor(
-    @Assisted private val enableSharedElementTransition: Boolean,
-    @Assisted private val onHeaderImageReady: () -> Unit,
-    @Assisted private val gameDetailsViewModel: GameDetailsViewModel
+class GameDetailsAdapter constructor(
+    private val enableSharedElementTransition: Boolean,
+    private val onHeaderImageReady: () -> Unit,
+    private val gameDetailsViewModel: GameDetailsViewModel
 ) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
     diffCallback
 ) {
@@ -36,6 +38,7 @@ class GameDetailsAdapter @AssistedInject constructor(
             R.layout.item_game_details_links -> GameLinksViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_languages -> GameLanguagesViewHolder(view)
             R.layout.item_game_details_system_requirements -> GameSystemReqsViewHolder(view)
+            R.layout.item_game_details_screenshots -> GameScreenshotsViewHolder(view)
             else -> throw IllegalStateException("Unknown view type $viewType")
         }
     }
@@ -86,6 +89,7 @@ class GameDetailsAdapter @AssistedInject constructor(
             is GameLinksViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Links)
             is GameLanguagesViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Languages)
             is GameSystemReqsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Platforms)
+            is GameScreenshotsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Screenshots)
         }
     }
 
@@ -96,16 +100,8 @@ class GameDetailsAdapter @AssistedInject constructor(
             is GameDetailsUiModel.Links -> R.layout.item_game_details_links
             is GameDetailsUiModel.Languages -> R.layout.item_game_details_languages
             is GameDetailsUiModel.Platforms -> R.layout.item_game_details_system_requirements
+            is GameDetailsUiModel.Screenshots -> R.layout.item_game_details_screenshots
         }
-    }
-
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(
-            enableSharedElementTransition: Boolean,
-            gameDetailsViewModel: GameDetailsViewModel,
-            onHeaderImageReady: () -> Unit
-        ): GameDetailsAdapter
     }
 
     companion object {
