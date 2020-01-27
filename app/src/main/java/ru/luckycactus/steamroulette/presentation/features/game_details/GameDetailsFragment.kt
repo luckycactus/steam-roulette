@@ -3,6 +3,9 @@ package ru.luckycactus.steamroulette.presentation.features.game_details
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import androidx.core.view.doOnLayout
+import androidx.core.view.doOnPreDraw
+import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ArcMotion
 import com.stfalcon.imageviewer.StfalconImageViewer
@@ -76,6 +79,10 @@ class GameDetailsFragment : BaseFragment(), Injectable {
 
         observeEvent(viewModel.openUrlAction) {
             (activity as MainActivity).openUrl(it, true)
+        }
+
+        fabBack.doOnLayout {
+            rvGameDetails.updatePadding(bottom = it.height + it.marginBottom)
         }
     }
 

@@ -11,14 +11,8 @@
             android:id="@+id/rvGameDetails"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             />
-
-    <!--    <com.google.android.material.bottomappbar.BottomAppBar-->
-    <!--            android:id="@+id/toolbar"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="?actionBarSize"-->
-    <!--            android:layout_gravity="bottom"-->
-    <!--            />-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabBack"
