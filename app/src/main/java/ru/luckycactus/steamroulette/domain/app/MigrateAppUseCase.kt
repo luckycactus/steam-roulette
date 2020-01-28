@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain.update
+package ru.luckycactus.steamroulette.domain.app
 
 import ru.luckycactus.steamroulette.domain.common.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class MigrateAppUseCase @Inject constructor(
-    private val appSettingsRepository: AppSettingsRepository,
+    private val appRepository: AppRepository,
     private val getCurrentUserSteamId: GetCurrentUserSteamIdUseCase,
     private val userSettingsRepository: UserSettingsRepository,
     private val gameCoverCacheCleaner: Provider<GameCoverCacheCleaner>
@@ -23,15 +23,15 @@ class MigrateAppUseCase @Inject constructor(
     }
 
     override suspend fun getResult(params: Unit) {
-        var lastVersion = appSettingsRepository.lastVersion
-        val currentVersion = appSettingsRepository.currentVersion
+        var lastVersion = appRepository.lastVersion
+        val currentVersion = appRepository.currentVersion
         val isUserLoggedOn = getCurrentUserSteamId() != null
         if (lastVersion < 0) {
             if (isUserLoggedOn) lastVersion = 4 else return
         }
         while (lastVersion < currentVersion) {
             migrations[lastVersion]?.invoke()
-            appSettingsRepository.lastVersion = ++lastVersion
+            appRepository.lastVersion = ++lastVersion
         }
     }
 

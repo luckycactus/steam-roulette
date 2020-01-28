@@ -20,7 +20,7 @@ import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.RemoteLoginDataStore
-import ru.luckycactus.steamroulette.data.repositories.update.AppSettingsRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.UserRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserDataStore
@@ -33,7 +33,7 @@ import ru.luckycactus.steamroulette.domain.common.GameCoverCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
-import ru.luckycactus.steamroulette.domain.update.AppSettingsRepository
+import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.features.roulette.GlideGameCoverCacheCleaner
@@ -51,7 +51,7 @@ abstract class AppModule {
     abstract fun bindResourceManager(androidResourceManager: AndroidResourceManager): ResourceManager
 
     @Binds
-    abstract fun bindAppSettingsRepository(appSettingsRepositoryImpl: AppSettingsRepositoryImpl): AppSettingsRepository
+    abstract fun bindAppSettingsRepository(appRepositoryImpl: AppRepositoryImpl): AppRepository
 
     @Binds
     abstract fun bindUserRepository(userRepository: UserRepositoryImpl): UserRepository

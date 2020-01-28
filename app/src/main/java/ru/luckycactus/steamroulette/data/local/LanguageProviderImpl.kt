@@ -48,7 +48,7 @@ class LanguageProviderImpl @Inject constructor(
     private lateinit var localeCode: String
     private var languageInfo: Pair<String, String>? = null
 
-    fun updateLanguage() {
+    override fun updateLanguage() {
         localeCode = context.getString(R.string.locale)
         var info = languages[localeCode]
         if (info == null) {
@@ -57,7 +57,7 @@ class LanguageProviderImpl @Inject constructor(
         languageInfo = info!!
     }
 
-    fun getLanguageInfo(): Pair<String, String> {
+    private fun getLanguageInfo(): Pair<String, String> {
         if (languageInfo == null)
             updateLanguage()
         return languageInfo!!
