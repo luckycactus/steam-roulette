@@ -3,27 +3,23 @@ package ru.luckycactus.steamroulette.presentation.features.game_details
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import androidx.core.app.SharedElementCallback
 import androidx.core.view.doOnLayout
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ArcMotion
-import com.stfalcon.imageviewer.StfalconImageViewer
 import kotlinx.android.synthetic.main.fragment_game_details.*
-import kotlinx.android.synthetic.main.item_game_details_screenshots.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.findComponent
 import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
-import ru.luckycactus.steamroulette.domain.games.entity.ScreenshotEntity
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.*
-import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
-import javax.inject.Inject
 
 class GameDetailsFragment : BaseFragment(), Injectable {
 
@@ -50,7 +46,7 @@ class GameDetailsFragment : BaseFragment(), Injectable {
         if (shouldPlaySharedElementTransition) {
             sharedElementEnterTransition = transitionSet {
                 changeBounds {
-                    //setPathMotion(ArcMotion()) //todo
+                    setPathMotion(ArcMotion())
                 }
                 changeClipBounds { }
                 changeTransform { }

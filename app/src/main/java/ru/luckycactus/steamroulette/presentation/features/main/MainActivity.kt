@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,6 +17,7 @@ import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
+import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
@@ -98,6 +100,19 @@ class MainActivity : AppCompatActivity(),
         }
         startActivity(intent)
     }
+
+    fun onReturnFromGameDetailsStart(hasSharedViews: Boolean) {
+        findRouletteFragment()?.onReturnFromGameDetailsStart(hasSharedViews)
+    }
+
+    fun onReturnFromGameDetailsEnd(hasSharedViews: Boolean) {
+        findRouletteFragment()?.onReturnFromGameDetailsEnd(hasSharedViews)
+    }
+
+    private fun findRouletteFragment() =
+        supportFragmentManager
+            .findFragmentByTag(FRAGMENT_MAIN_FLOW_TAG)?.childFragmentManager
+            ?.findFragmentByTag(MainFlowFragment.ROULETTE_FRAGMENT_TAG) as? RouletteFragment
 
     companion object {
         const val FRAGMENT_MAIN_FLOW_TAG = "FRAGMENT_MAIN_FLOW_TAG"
