@@ -15,6 +15,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataS
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.RemoteGamesDataStore
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
+import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
@@ -29,6 +30,7 @@ import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.common.GameCoverCacheCleaner
+import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.update.AppSettingsRepository
@@ -80,6 +82,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindLoginDataStore(loginDataStore: RemoteLoginDataStore): LoginDataStore
+
+    @Binds
+    abstract fun bindLanguageProvider(languageProviderImpl: LanguageProviderImpl): LanguageProvider
 
     @Module
     companion object {

@@ -14,6 +14,7 @@ import ru.luckycactus.steamroulette.data.net.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoResult
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.exception.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
@@ -24,7 +25,8 @@ import javax.inject.Named
 class RemoteGamesDataStore @Inject constructor(
     private val steamApiService: SteamApiService,
     private val steamStoreApiService: SteamStoreApiService,
-    @Named("api") private val gson: Gson
+    @Named("api") private val gson: Gson,
+    private val languageProvider: LanguageProvider
 ) : GamesDataStore.Remote {
 
     override suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity> {
@@ -78,7 +80,10 @@ class RemoteGamesDataStore @Inject constructor(
 
     override suspend fun getGameStoreInfo(appId: Int): GameStoreInfo {
         val response = wrapCommonNetworkExceptions {
-            steamStoreApiService.getGamesStoreInfo(listOf(appId))
+            steamStoreApiService.getGamesStoreInfo(
+                listOf(appId),
+                languageProvider.getLanguageForStoreApi()
+            )
         }
 
         val reader = JsonReader(response.charStream())

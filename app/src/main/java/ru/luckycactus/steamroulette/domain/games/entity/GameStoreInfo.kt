@@ -6,28 +6,28 @@ data class GameStoreInfo(
     @SerializedName("name") val name: String,
     @SerializedName("steam_appid") val appId: Int,
     @SerializedName("required_age") val requiredAge: RequiredAge?,
-    @SerializedName("controller_support") val controllerSupport: String,
+    //@SerializedName("controller_support") val controllerSupport: String,
     @SerializedName("detailed_description") val detailedDescription: String,
     @SerializedName("about_the_game") val aboutTheGame: String,
     @SerializedName("short_description") val shortDescription: String,
     @SerializedName("supported_languages") val supportedLanguages: String?,
-    @SerializedName("reviews") val reviews: String,
-    @SerializedName("header_image") val headerImage: String,
-    @SerializedName("website") val website: String,
+    //@SerializedName("reviews") val reviews: String,
+    //@SerializedName("header_image") val headerImage: String,
+    //@SerializedName("website") val website: String,
     @SerializedName("pc_requirements") val pcRequirements: SystemRequirements?,
     @SerializedName("mac_requirements") val macRequirements: SystemRequirements?,
     @SerializedName("linux_requirements") val linuxRequirements: SystemRequirements?,
     @SerializedName("developers") val developers: List<String>?,
     @SerializedName("publishers") val publishers: List<String>?,
     @SerializedName("platforms") val platforms: PlatformsAvailability?,
-    @SerializedName("metacritic") val metacritic: MetacriticInfoEntity,
+    @SerializedName("metacritic") val metacritic: MetacriticInfoEntity?,
     @SerializedName("categories") val categories: List<GameCategoryEntity>,
     @SerializedName("genres") val genres: List<GameGenreEntity>,
     @SerializedName("screenshots") val screenshots: List<ScreenshotEntity>?,
-    @SerializedName("movies") val trailers: List<TrailerEntity>,
-    @SerializedName("release_date") val releaseDate: ReleaseDateInfoEntity?,
-    @SerializedName("content_descriptors") val contentDescriptors: ContentDescriptorsEntity,
-    @SerializedName("background") val background: String
+    //@SerializedName("movies") val trailers: List<TrailerEntity>,
+    @SerializedName("release_date") val releaseDate: ReleaseDateInfoEntity?
+    //@SerializedName("content_descriptors") val contentDescriptors: ContentDescriptorsEntity,
+    //@SerializedName("background") val background: String
 )
 
 data class RequiredAge(

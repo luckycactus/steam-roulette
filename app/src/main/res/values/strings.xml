@@ -1,4 +1,5 @@
 <resources>
+    <string name="locale">en</string>
     <string name="error_user_with_vanity_url_not_found">User not found</string>
     <string name="error_user_with_steamid_not_found">User not found</string>
     <string name="error_invalid_steamid_format">Invalid SteamID format</string>

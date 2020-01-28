@@ -7,6 +7,7 @@ import retrofit2.http.Query
 interface SteamStoreApiService {
     @GET("appdetails")
     suspend fun getGamesStoreInfo(
-        @Query("appids") appIds: List<Int>
+        @Query("appids") appIds: List<Int>,
+        @Query("l") lang: String
     ): ResponseBody
 }

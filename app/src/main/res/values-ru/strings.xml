@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="locale">ru</string>
     <string name="error_user_with_vanity_url_not_found">Пользователь с данным Profile URL не найден</string>
     <string name="error_user_with_steamid_not_found">Пользователь с данным SteamID не найден</string>
     <string name="error_invalid_steamid_format">Неверный формат SteamID</string>
