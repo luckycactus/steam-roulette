@@ -189,6 +189,9 @@ class RouletteFragment : BaseFragment(), Injectable {
 //    }
 
     private fun onGameClick(sharedViews: List<View>, game: OwnedGame) {
+        requireParentFragment().reenterTransition = transitionSet {
+            fade {}
+        }
         if (sharedViews.isNotEmpty()) {
             requireParentFragment().exitTransition = transitionSet {
                 excludeTarget(rvRoulette, true)
@@ -203,15 +206,8 @@ class RouletteFragment : BaseFragment(), Injectable {
                     }
                 )
             }
-
-            requireParentFragment().reenterTransition = transitionSet {
-                fade {}
-            }
         } else {
             requireParentFragment().exitTransition = transitionSet {
-                fade { }
-            }
-            requireParentFragment().reenterTransition = transitionSet {
                 fade { }
             }
         }
