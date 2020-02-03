@@ -1,7 +1,7 @@
-package ru.luckycactus.steamroulette.domain.games.entity
+package ru.luckycactus.steamroulette.domain.games
 
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 
 class GetGameStoreInfoUseCase @Inject constructor(

@@ -143,16 +143,6 @@ fun <A, B, Result> LiveData<A>.combine(
     return result
 }
 
-fun Context.getColorFromRes(@ColorRes color: Int): Int {
-    onApiAtLeast(Build.VERSION_CODES.M) {
-        return resources.getColor(color, theme)
-    }
-    return resources.getColor(color)
-}
-
-fun View.getColorFromRes(@ColorRes color: Int) = context.getColorFromRes(color)
-
-
 inline fun View.updatePadding(
     @Px left: Int = paddingLeft,
     @Px top: Int = paddingTop,
@@ -191,7 +181,7 @@ fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): Vie
 
 inline fun <reified T> argument(
     key: String,
-    defValue: String? = null
+    defValue: T? = null
 ): ReadOnlyProperty<Fragment, T> = object : ReadOnlyProperty<Fragment, T> {
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
         val result = thisRef.arguments?.get(key) ?: defValue

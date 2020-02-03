@@ -101,19 +101,6 @@ class MainActivity : AppCompatActivity(),
         startActivity(intent)
     }
 
-    fun onReturnFromGameDetailsStart(hasSharedViews: Boolean) {
-        findRouletteFragment()?.onReturnFromGameDetailsStart(hasSharedViews)
-    }
-
-    fun onReturnFromGameDetailsEnd(hasSharedViews: Boolean) {
-        findRouletteFragment()?.onReturnFromGameDetailsEnd(hasSharedViews)
-    }
-
-    private fun findRouletteFragment() =
-        supportFragmentManager
-            .findFragmentByTag(FRAGMENT_MAIN_FLOW_TAG)?.childFragmentManager
-            ?.findFragmentByTag(MainFlowFragment.ROULETTE_FRAGMENT_TAG) as? RouletteFragment
-
     companion object {
         const val FRAGMENT_MAIN_FLOW_TAG = "FRAGMENT_MAIN_FLOW_TAG"
     }

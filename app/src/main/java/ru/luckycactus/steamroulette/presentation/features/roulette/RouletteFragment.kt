@@ -1,16 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.core.app.SharedElementCallback
-import androidx.transition.TransitionSet
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
@@ -196,48 +191,22 @@ class RouletteFragment : BaseFragment(), Injectable {
     private fun onGameClick(sharedViews: List<View>, game: OwnedGame) {
         if (sharedViews.isNotEmpty()) {
             requireParentFragment().exitTransition = transitionSet {
-                fade { }
                 excludeTarget(rvRoulette, true)
-                onTransitionEnd {
-                    parentFragment?.exitTransition = null
-                    //todo comment
-                    sharedViews.forEach {
-                        it.trySetTransitionAlpha(1f)
+                fade()
+                listener(
+                    onTransitionEnd = {
+                        parentFragment?.exitTransition = null
+                        //todo comment
+                        sharedViews.forEach {
+                            it.trySetTransitionAlpha(1f)
+                        }
                     }
-                }
+                )
             }
-
 
             requireParentFragment().reenterTransition = transitionSet {
                 fade {}
             }
-
-//            requireParentFragment().setExitSharedElementCallback(object :
-//                SharedElementCallback() {
-//                private var exit = true
-//                override fun onMapSharedElements(
-//                    names: MutableList<String>?,
-//                    sharedElements: MutableMap<String, View>?
-//                ) {
-//                    if (!exit && !sharedElements.isNullOrEmpty()) {
-//                        requireParentFragment().reenterTransition = transitionSet {
-//                            fade {
-//                                excludeTarget(rvRoulette, true)
-//                            }
-//                            //delay cardstack appear
-//                            fade {
-//                                startDelay = 375 //todo
-//                                duration = 0
-//                                addTarget(rvRoulette)
-//                            }
-//                            onTransitionEnd {
-//                                parentFragment?.reenterTransition = null
-//                            }
-//                        }
-//                    }
-//                    exit = false
-//                }
-//            })
         } else {
             requireParentFragment().exitTransition = transitionSet {
                 fade { }
@@ -253,18 +222,6 @@ class RouletteFragment : BaseFragment(), Injectable {
         rvRoulette.findViewHolderForAdapterPosition(0)?.let {
             itemTouchHelper.swipe(it, direction)
         }
-    }
-
-    fun onReturnFromGameDetailsStart(hasSharedViews: Boolean) {
-//        if (hasSharedViews) {
-//            rvRoulette.alpha = 0f
-//            rvRoulette.visibility = View.INVISIBLE
-//        }
-    }
-
-    fun onReturnFromGameDetailsEnd(hasSharedViews: Boolean) {
-//        rvRoulette.alpha = 1f
-//        rvRoulette.visibility = View.VISIBLE
     }
 
     companion object {

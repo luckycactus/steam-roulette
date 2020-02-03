@@ -2,9 +2,15 @@ package ru.luckycactus.steamroulette.presentation.utils
 
 import androidx.transition.*
 
-class TransitionSetBuilder: TransitionSet()
+class TransitionSetBuilder : TransitionSet()
 
-inline fun transitionSet(block: TransitionSetBuilder.() -> Unit) = TransitionSetBuilder().also(block)
+const val DEFAULT_TRANSITION_DURATION = 375L
+
+inline fun transitionSet(block: TransitionSetBuilder.() -> Unit) =
+    TransitionSetBuilder().apply {
+        duration = DEFAULT_TRANSITION_DURATION
+        block()
+    }
 
 inline fun TransitionSetBuilder.fade(block: Fade.() -> Unit = {}): Fade =
     Fade().also {
@@ -59,10 +65,3 @@ fun Transition.listener(
 }.also {
     addListener(it)
 }
-
-fun Transition.onTransitionEnd(block: (Transition) -> Unit) =
-    object : TransitionListenerAdapter() {
-        override fun onTransitionEnd(transition: Transition) {
-            block(transition)
-        }
-    }.also { addListener(it) }

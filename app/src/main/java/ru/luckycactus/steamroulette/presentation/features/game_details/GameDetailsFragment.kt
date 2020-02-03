@@ -1,9 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.os.Bundle
-import android.view.View
-import android.widget.ImageView
-import androidx.core.app.SharedElementCallback
 import androidx.core.view.doOnLayout
 import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,39 +28,28 @@ class GameDetailsFragment : BaseFragment(), Injectable {
         )
     }
 
+    private val enableTransition: Boolean by argument(ARG_ENABLE_TRANSITION)
+
     override val layoutResId: Int = R.layout.fragment_game_details
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val shouldPlaySharedElementTransition =
-            requireArguments().getBoolean(ARG_ENABLE_TRANSITION) && savedInstanceState == null
-
-        enterTransition = transitionSet {
-            fade { }
-        }
-
-        if (shouldPlaySharedElementTransition) {
-            sharedElementEnterTransition = transitionSet {
-                changeBounds {
-                    setPathMotion(ArcMotion())
-                }
-                changeClipBounds { }
-                changeTransform { }
-            }
-            postponeEnterTransition()
-        }
+        postponeEnterTransition()
+        setupTransition()
 
         adapter = GameDetailsAdapter(
-            shouldPlaySharedElementTransition,
+            enableTransition && savedInstanceState == null,
             ::startPostponedEnterTransition,
             viewModel
         )
 
-        rvGameDetails.adapter = adapter
-        rvGameDetails.layoutManager = LinearLayoutManager(context)
-        val margin = resources.getDimensionPixelSize(R.dimen.default_activity_margin)
-        rvGameDetails.addItemDecoration(SpaceDecoration(margin, 0, margin))
+        with(rvGameDetails) {
+            this.adapter = this@GameDetailsFragment.adapter
+            layoutManager = LinearLayoutManager(context)
+            val margin = resources.getDimensionPixelSize(R.dimen.default_activity_margin)
+            addItemDecoration(SpaceDecoration(margin, 0, margin))
+        }
 
         fabBack.setOnClickListener {
             requireActivity().onBackPressed()
@@ -79,6 +65,29 @@ class GameDetailsFragment : BaseFragment(), Injectable {
 
         fabBack.doOnLayout {
             rvGameDetails.updatePadding(bottom = it.height + it.marginBottom)
+        }
+    }
+
+    private fun setupTransition() {
+        enterTransition = transitionSet {
+            fade()
+        }
+
+        if (enableTransition) {
+            returnTransition = transitionSet {
+                excludeTarget(GameView::class.java, true)
+                fade()
+            }
+        }
+
+        sharedElementEnterTransition = transitionSet {
+            //to fix weird bug when enter animation ends before shared element animation and
+            //shared views don't invalidate for some reason and stuck in intermediate state
+            duration = DEFAULT_TRANSITION_DURATION - 25L
+            changeTransform()
+            changeBounds {
+                setPathMotion(ArcMotion())
+            }
         }
     }
 

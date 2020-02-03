@@ -45,6 +45,7 @@ class GameDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             try {
                 _gameDetails.value = gameDetailsUiModelMapper.mapFrom(
+                    //todo usecase
                     gamesRepository.getGameStoreInfo(ownedGame.appId, false).also {
                         resolvedAppId = it.appId
                     }

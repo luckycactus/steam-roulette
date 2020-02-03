@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,17 +11,14 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.ScreenshotEntity
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
 class GameDetailsAdapter constructor(
-    private val enableSharedElementTransition: Boolean,
+    private val waitForHeaderReadyForTransition: Boolean,
     private val onHeaderImageReady: () -> Unit,
     private val gameDetailsViewModel: GameDetailsViewModel
 ) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
@@ -46,9 +42,8 @@ class GameDetailsAdapter constructor(
     override fun onBindViewHolder(holder: GameDetailsViewHolder<*>, position: Int) {
         when (holder) {
             is GameHeaderViewHolder -> {
-                val shouldRunSharedElementTransition =
-                    enableSharedElementTransition && !headerWasBound
-                val listener = if (shouldRunSharedElementTransition)
+                val shouldWaitForHeader = waitForHeaderReadyForTransition && !headerWasBound
+                val listener = if (shouldWaitForHeader)
                     object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
@@ -77,10 +72,10 @@ class GameDetailsAdapter constructor(
                 else null
                 holder.bind(
                     getItem(position) as GameDetailsUiModel.Header,
-                    shouldRunSharedElementTransition,
+                    shouldWaitForHeader,
                     listener
                 )
-                if (!shouldRunSharedElementTransition && !headerWasBound) {
+                if (!shouldWaitForHeader && !headerWasBound) {
                     onHeaderImageReady()
                     headerWasBound = true
                 }

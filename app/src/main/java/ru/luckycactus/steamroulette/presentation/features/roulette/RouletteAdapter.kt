@@ -47,7 +47,7 @@ class RouletteAdapter @AssistedInject constructor(
             gameView.setOnClickListener {
                 onGameClick(
                     if (gameView.imageReady)
-                        listOf<View>(gameView.ivGame, gameView)
+                        listOf<View>(gameView.ivGame)
                     else emptyList(),
                     game
                 )
