@@ -9,6 +9,7 @@ import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.common.CachePolicy
 import java.util.concurrent.TimeUnit
 
+//todo refactor
 abstract class NetworkBoundResource<RequestType, ResultType>(
     private val key: String,
     private val memoryKey: String?,
@@ -27,9 +28,9 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         }
     }
 
-    suspend fun get(cachePolicy: CachePolicy): ResultType {
+    suspend fun get(cachePolicy: CachePolicy): ResultType? {
         updateIfNeed(cachePolicy)
-        return getCachedData()!!
+        return getCachedData()
     }
 
     fun observeCacheUpdates(): LiveData<Long> = cacheHelper.observeCacheUpdates(key)
@@ -67,19 +68,20 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
 
         suspend fun <RequestType> withMemoryCache(
             memoryKey: String,
-            invalidate: Boolean,
+            cachePolicy: CachePolicy,
             getFromNetwork: suspend () -> RequestType
-        ): RequestType {
-            if (invalidate)
+        ): RequestType? {
+            var data: RequestType? = null
+            if (cachePolicy == CachePolicy.Remote)
                 memoryCache.remove(memoryKey)
-            var data = memoryCache[memoryKey] as RequestType?
-            if (data == null) {
+            else data = memoryCache[memoryKey] as RequestType?
+            if (data == null && cachePolicy != CachePolicy.OnlyCache) {
                 data = wrapCommonNetworkExceptions { getFromNetwork() }
                 data?.let {
                     memoryCache.put(memoryKey, data)
                 }
             }
-            return data!!
+            return data
         }
     }
 }

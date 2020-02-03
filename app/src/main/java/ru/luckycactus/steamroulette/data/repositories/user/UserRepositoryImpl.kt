@@ -38,7 +38,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserSummary(
         steamId: SteamId,
         cachePolicy: CachePolicy
-    ): UserSummary = createUserSummaryResource(steamId).get(cachePolicy)
+    ): UserSummary? = createUserSummaryResource(steamId).get(cachePolicy)
 
     override fun observeUserSummary(steamId: SteamId): LiveData<UserSummary> =
         localUserDataStore.observeUserSummary(steamId.asSteam64())

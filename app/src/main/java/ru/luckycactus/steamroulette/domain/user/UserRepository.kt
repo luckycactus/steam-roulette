@@ -7,7 +7,7 @@ import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 
 interface UserRepository {
 
-    suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary
+    suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary?
 
     fun observeUserSummary(steamId: SteamId): LiveData<UserSummary>
 

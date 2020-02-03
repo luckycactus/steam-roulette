@@ -34,6 +34,6 @@ interface GamesRepository {
 
     suspend fun clearUser(steamId: SteamId)
 
-    suspend fun getGameStoreInfo(gameId: Int, reload: Boolean): GameStoreInfo
+    suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo?
 }
 

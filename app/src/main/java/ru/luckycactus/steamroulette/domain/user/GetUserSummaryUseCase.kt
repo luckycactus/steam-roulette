@@ -16,7 +16,7 @@ class GetUserSummaryUseCase @Inject constructor(
         userRepository.getUserSummary(
             params.steamId,
             if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
-        )
+        )!!
 
     data class Params(
         val steamId: SteamId,

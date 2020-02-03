@@ -85,8 +85,8 @@ class GamesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getGameStoreInfo(gameId: Int, reload: Boolean): GameStoreInfo {
-        return NetworkBoundResource.withMemoryCache("game_store_info_$gameId", reload) {
+    override suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo? {
+        return NetworkBoundResource.withMemoryCache("game_store_info_$gameId", cachePolicy) {
             remoteGamesDataStore.getGameStoreInfo(gameId)
         }
     }

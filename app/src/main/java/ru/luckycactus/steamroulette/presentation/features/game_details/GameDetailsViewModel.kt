@@ -12,6 +12,7 @@ import ru.luckycactus.steamroulette.domain.common.Event
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
@@ -21,9 +22,9 @@ import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 
 class GameDetailsViewModel @AssistedInject constructor(
     @Assisted private val ownedGame: OwnedGame,
-    private val gamesRepository: GamesRepository,
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
-    private val resourceManager: ResourceManager
+    private val resourceManager: ResourceManager,
+    private val getGameStoreInfo: GetGameStoreInfoUseCase
 ) : ViewModel() {
     val gameDetails: LiveData<List<GameDetailsUiModel>>
         get() = _gameDetails
@@ -36,32 +37,43 @@ class GameDetailsViewModel @AssistedInject constructor(
     private var resolvedAppId: Int? = null
 
     init {
-        _gameDetails.value = //todo
-            listOf<GameDetailsUiModel>(
-                GameDetailsUiModel.Header(
-                    GameMinimal(ownedGame)
-                )
-            )
         viewModelScope.launch {
-            try {
-                _gameDetails.value = gameDetailsUiModelMapper.mapFrom(
-                    //todo usecase
-                    gamesRepository.getGameStoreInfo(ownedGame.appId, false).also {
+            var gameStoreInfo = getGameStoreInfo.getFromCache(ownedGame.appId)
+            if (gameStoreInfo == null) {
+                renderInitialHeader()
+                try {
+                    gameStoreInfo = getGameStoreInfo(
+                        GetGameStoreInfoUseCase.Params(
+                            ownedGame.appId,
+                            false
+                        )
+                    ).also {
                         resolvedAppId = it.appId
                     }
-                )
-            } catch (e: GetGameStoreInfoException) {
-                e.printStackTrace()
-                //todo
-            } catch (e: Exception) {
-                if (e is CancellationException)
-                    throw e
-                else {
+
+                } catch (e: GetGameStoreInfoException) {
                     e.printStackTrace()
-                    getCommonErrorDescription(resourceManager, e) //todo
+                    //todo
+                } catch (e: Exception) {
+                    if (e is CancellationException)
+                        throw e
+                    else {
+                        e.printStackTrace()
+                        getCommonErrorDescription(resourceManager, e) //todo
+                    }
                 }
             }
+            if (gameStoreInfo != null) {
+                resolvedAppId = gameStoreInfo.appId
+                _gameDetails.value = gameDetailsUiModelMapper.mapFrom(gameStoreInfo)
+            }
         }
+    }
+
+    private fun renderInitialHeader() {
+        _gameDetails.value = listOf<GameDetailsUiModel>(
+                GameDetailsUiModel.Header(GameMinimal(ownedGame))
+            )
     }
 
     fun onStoreClick() {
