@@ -132,7 +132,8 @@ class GameView : MaterialCardView {
 
     companion object {
         private val headerImageTransformation = MultiTransformation<Bitmap>(
-            CoverBlurTransformation(50, 5, 0.5f),
+            //todo calculate blur scale width
+            CoverBlurTransformation(50, 200, 0.5f),
             CoverGlareTransformation(
                 BitmapFactory.decodeResource(
                     App.getInstance().resources,
