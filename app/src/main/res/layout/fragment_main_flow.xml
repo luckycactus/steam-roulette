@@ -5,6 +5,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
         >
 
     <FrameLayout
@@ -12,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="?attr/actionBarSize"
+            android:clipChildren="false"
             />
 
     <com.google.android.material.appbar.MaterialToolbar

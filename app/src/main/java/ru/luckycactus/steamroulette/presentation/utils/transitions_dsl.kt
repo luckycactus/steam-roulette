@@ -18,6 +18,12 @@ inline fun TransitionSetBuilder.fade(block: Fade.() -> Unit = {}): Fade =
         it.block()
     }
 
+inline fun TransitionSetBuilder.slide(block: Slide.() -> Unit = {}): Slide =
+    Slide().also {
+        addTransition(it)
+        it.block()
+    }
+
 inline fun TransitionSetBuilder.changeBounds(block: ChangeBounds.() -> Unit = {}): ChangeBounds =
     ChangeBounds().also {
         addTransition(it)

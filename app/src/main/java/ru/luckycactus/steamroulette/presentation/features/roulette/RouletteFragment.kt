@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.transition.Slide
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
@@ -189,13 +190,11 @@ class RouletteFragment : BaseFragment(), Injectable {
 //    }
 
     private fun onGameClick(sharedViews: List<View>, game: OwnedGame) {
-        requireParentFragment().reenterTransition = transitionSet {
-            fade {}
-        }
+        requireParentFragment().reenterTransition = createDefaultExitTransition()
         if (sharedViews.isNotEmpty()) {
             requireParentFragment().exitTransition = transitionSet {
                 excludeTarget(rvRoulette, true)
-                fade()
+                slide()
                 listener(
                     onTransitionEnd = {
                         parentFragment?.exitTransition = null
@@ -207,11 +206,18 @@ class RouletteFragment : BaseFragment(), Injectable {
                 )
             }
         } else {
-            requireParentFragment().exitTransition = transitionSet {
-                fade { }
-            }
+            requireParentFragment().exitTransition = createDefaultExitTransition()
         }
         (activity as MainActivity).onGameClick(sharedViews, game)
+    }
+
+    private fun createDefaultExitTransition() = transitionSet {
+        slide {
+            excludeTarget(rvRoulette, true)
+        }
+        fade {
+            addTarget(rvRoulette)
+        }
     }
 
     private fun swipeTop(direction: Int) {
