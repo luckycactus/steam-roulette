@@ -54,5 +54,8 @@
         <item name="android:textSize">30sp</item>
     </style>
 
+    <style name="Widget.MyTheme.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/btn_stroke_color_selector</item>
+    </style>
 
 </resources>
