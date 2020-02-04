@@ -19,7 +19,7 @@ class GameDetailsUiModelMapper @Inject constructor(
             add(mapHeader(from))
             add(GameDetailsUiModel.Links)
             from.screenshots?.let { if (it.isNotEmpty()) add(GameDetailsUiModel.Screenshots(it)) }
-            add(mapShortDescription(from))
+            mapShortDescription(from)?.let { add(it) }
             mapPlatforms(from)?.let { add(it) }
             mapLanguages(from)?.let { add(it) }
         }
@@ -41,14 +41,18 @@ class GameDetailsUiModelMapper @Inject constructor(
         )
     }
 
-    private fun mapShortDescription(from: GameStoreInfo): GameDetailsUiModel.ShortDescription =
-        GameDetailsUiModel.ShortDescription(
+    private fun mapShortDescription(from: GameStoreInfo): GameDetailsUiModel.ShortDescription? {
+        val model = GameDetailsUiModel.ShortDescription(
             from.shortDescription,//.replace("&quot", "\""), //todo
             from.categories?.map { it.description },
             from.genres?.map { it.description },
             from.requiredAge?.age,
             from.metacritic
         )
+        if (model.isEmpty())
+            return null
+        return model
+    }
 
     private fun mapLanguages(from: GameStoreInfo): GameDetailsUiModel.Languages? =
         from.supportedLanguages?.let { GameDetailsUiModel.Languages(it) }

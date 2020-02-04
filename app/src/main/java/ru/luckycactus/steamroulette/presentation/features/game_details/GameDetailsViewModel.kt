@@ -8,14 +8,16 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.Event
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.GetGameStoreInfoException
-import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
@@ -37,43 +39,11 @@ class GameDetailsViewModel @AssistedInject constructor(
     private var resolvedAppId: Int? = null
 
     init {
-        viewModelScope.launch {
-            var gameStoreInfo = getGameStoreInfo.getFromCache(ownedGame.appId)
-            if (gameStoreInfo == null) {
-                renderInitialHeader()
-                try {
-                    gameStoreInfo = getGameStoreInfo(
-                        GetGameStoreInfoUseCase.Params(
-                            ownedGame.appId,
-                            false
-                        )
-                    ).also {
-                        resolvedAppId = it.appId
-                    }
-
-                } catch (e: GetGameStoreInfoException) {
-                    e.printStackTrace()
-                    //todo
-                } catch (e: Exception) {
-                    if (e is CancellationException)
-                        throw e
-                    else {
-                        e.printStackTrace()
-                        getCommonErrorDescription(resourceManager, e) //todo
-                    }
-                }
-            }
-            if (gameStoreInfo != null) {
-                resolvedAppId = gameStoreInfo.appId
-                _gameDetails.value = gameDetailsUiModelMapper.mapFrom(gameStoreInfo)
-            }
-        }
+        loadInfo(true)
     }
 
-    private fun renderInitialHeader() {
-        _gameDetails.value = listOf<GameDetailsUiModel>(
-                GameDetailsUiModel.Header(GameMinimal(ownedGame))
-            )
+    fun onRetryClick() {
+        loadInfo(false)
     }
 
     fun onStoreClick() {
@@ -84,6 +54,57 @@ class GameDetailsViewModel @AssistedInject constructor(
     fun onHubClick() {
         _openUrlAction.value = Event(GameUrlUtils.hubPage(resolvedAppId ?: ownedGame.appId))
     }
+
+    private fun loadInfo(tryCache: Boolean) {
+        viewModelScope.launch {
+            var gameStoreInfo = if (tryCache)
+                getGameStoreInfo.getFromCache(ownedGame.appId)
+            else null
+            if (gameStoreInfo == null) {
+                renderLoading()
+                try {
+                    gameStoreInfo = getGameStoreInfo(
+                        GetGameStoreInfoUseCase.Params(
+                            ownedGame.appId,
+                            false
+                        )
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    renderError(e)
+                }
+            }
+            if (gameStoreInfo != null) {
+                resolvedAppId = gameStoreInfo.appId
+                _gameDetails.value = gameDetailsUiModelMapper.mapFrom(gameStoreInfo)
+            }
+        }
+    }
+
+    private fun renderError(e: Exception) {
+        val errorMessage = if (e is GetGameStoreInfoException)
+            resourceManager.getString(R.string.fail_steam_store_info)
+        else getCommonErrorDescription(resourceManager, e)
+        val contentState = ContentState.errorPlaceholder(errorMessage)
+
+        _gameDetails.value = listOf(
+            getInitialHeader(),
+            GameDetailsUiModel.DataLoading(contentState)
+        )
+    }
+
+    private fun renderLoading() {
+        _gameDetails.value = listOf(
+            getInitialHeader(),
+            GameDetailsUiModel.DataLoading(ContentState.Loading)
+        )
+    }
+
+
+    private fun getInitialHeader(): GameDetailsUiModel =
+        GameDetailsUiModel.Header(GameMinimal(ownedGame))
 
     @AssistedInject.Factory
     interface Factory {
