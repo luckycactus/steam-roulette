@@ -44,8 +44,8 @@ class GameDetailsUiModelMapper @Inject constructor(
     private fun mapShortDescription(from: GameStoreInfo): GameDetailsUiModel.ShortDescription =
         GameDetailsUiModel.ShortDescription(
             from.shortDescription,//.replace("&quot", "\""), //todo
-            from.categories.map { it.description },
-            from.genres.map { it.description },
+            from.categories?.map { it.description },
+            from.genres?.map { it.description },
             from.requiredAge?.age,
             from.metacritic
         )

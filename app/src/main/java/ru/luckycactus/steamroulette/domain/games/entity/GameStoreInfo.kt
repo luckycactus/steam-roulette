@@ -21,8 +21,8 @@ data class GameStoreInfo(
     @SerializedName("publishers") val publishers: List<String>?,
     @SerializedName("platforms") val platforms: PlatformsAvailability?,
     @SerializedName("metacritic") val metacritic: MetacriticInfoEntity?,
-    @SerializedName("categories") val categories: List<GameCategoryEntity>,
-    @SerializedName("genres") val genres: List<GameGenreEntity>,
+    @SerializedName("categories") val categories: List<GameCategoryEntity>?,
+    @SerializedName("genres") val genres: List<GameGenreEntity>?,
     @SerializedName("screenshots") val screenshots: List<ScreenshotEntity>?,
     //@SerializedName("movies") val trailers: List<TrailerEntity>,
     @SerializedName("release_date") val releaseDate: ReleaseDateInfoEntity?
