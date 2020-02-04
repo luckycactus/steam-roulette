@@ -119,12 +119,6 @@ class RouletteViewModel @Inject constructor(
         }
     }
 
-    fun onSteamInfoClick() {
-        games.value?.get(0)?.let {
-            _openUrlAction.value = Event(GameUrlUtils.storePage(it.appId))
-        }
-    }
-
     fun onSwipeProgress(progress: Float) {
         _controlsAvailable.value = (progress == 0f)
     }

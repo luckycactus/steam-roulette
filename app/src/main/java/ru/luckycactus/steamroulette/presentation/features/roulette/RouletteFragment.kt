@@ -6,7 +6,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.transition.Slide
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
@@ -65,7 +64,7 @@ class RouletteFragment : BaseFragment(), Injectable {
                 when (it) {
                     fabNextGame -> R.string.next_game
                     fabHideGame -> R.string.hide_game
-                    fabSteamInfo -> R.string.open_game_store_page
+                    fabGameInfo -> R.string.open_game_store_page
                     else -> 0
                 }
             )
@@ -75,7 +74,7 @@ class RouletteFragment : BaseFragment(), Injectable {
 
         fabNextGame.setOnLongClickListener(fabLongClickListener)
         fabHideGame.setOnLongClickListener(fabLongClickListener)
-        fabSteamInfo.setOnLongClickListener(fabLongClickListener)
+        fabGameInfo.setOnLongClickListener(fabLongClickListener)
 
 
         itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
@@ -105,8 +104,7 @@ class RouletteFragment : BaseFragment(), Injectable {
             }
         ), 1.5f)
         itemTouchHelper.attachToRecyclerView(rvRoulette)
-        rvRoulette.layoutManager =
-            CardStackLayoutManager()
+        rvRoulette.layoutManager = CardStackLayoutManager()
         rvRoulette.adapter = rouletteAdapter
 
         fabNextGame.setOnClickListener {
@@ -117,8 +115,10 @@ class RouletteFragment : BaseFragment(), Injectable {
             swipeTop(ItemTouchHelper.LEFT)
         }
 
-        fabSteamInfo.setOnClickListener {
-            viewModel.onSteamInfoClick()
+        fabGameInfo.setOnClickListener {
+            rvRoulette.findViewHolderForAdapterPosition(0)?.let {
+                it.itemView.callOnClick()
+            }
         }
 
         dataLoadingViewHolder = DataLoadingViewHolder(
@@ -155,7 +155,7 @@ class RouletteFragment : BaseFragment(), Injectable {
         observe(viewModel.controlsAvailable) {
             fabNextGame.isEnabled = it
             fabHideGame.isEnabled = it
-            fabSteamInfo.isEnabled = it
+            fabGameInfo.isEnabled = it
         }
 
         observeEvent(viewModel.openUrlAction) {
