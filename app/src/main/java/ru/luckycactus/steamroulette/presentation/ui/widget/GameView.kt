@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import androidx.core.view.ViewCompat
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -28,6 +29,7 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransforma
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.GameCoverModel
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
+import ru.luckycactus.steamroulette.presentation.utils.onApiAtLeast
 
 class GameView : MaterialCardView {
 
@@ -46,6 +48,9 @@ class GameView : MaterialCardView {
     init {
         LayoutInflater.from(context).inflate(R.layout.view_game_roulette, this, true)
         setRippleColorResource(android.R.color.transparent)
+        onApiAtLeast(21) {
+            ivGame.clipToOutline = true
+        }
     }
 
     fun setGame(

@@ -1,10 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.core.view.doOnLayout
 import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ArcMotion
+import androidx.transition.ChangeImageTransform
 import kotlinx.android.synthetic.main.fragment_game_details.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.findComponent
@@ -85,6 +87,7 @@ class GameDetailsFragment : BaseFragment(), Injectable {
             //shared views don't invalidate for some reason and stuck in intermediate state
             duration = DEFAULT_TRANSITION_DURATION - 25L
             changeTransform()
+            changeClipBounds()
             changeBounds {
                 setPathMotion(ArcMotion())
             }
