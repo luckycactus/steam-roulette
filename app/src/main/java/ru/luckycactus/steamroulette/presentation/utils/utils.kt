@@ -16,7 +16,6 @@ import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.R
 import kotlin.math.floor
 
-
 fun dpF(dp: Float): Float {
     return TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
@@ -27,6 +26,14 @@ fun dpF(dp: Float): Float {
 
 fun dp(dp: Float): Int {
     return floor(dpF(dp).toDouble()).toInt()
+}
+
+fun sp(sp: Float): Float {
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP,
+        sp,
+        Resources.getSystem().displayMetrics
+    )
 }
 
 private val emptyLiveData by lazyNonThreadSafe { object : LiveData<Any?>() {} }

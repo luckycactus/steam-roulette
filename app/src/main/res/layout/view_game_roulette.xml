@@ -22,9 +22,9 @@
                 android:gravity="center"
                 android:maxLines="2"
                 android:padding="8dp"
-                android:textSize="36sp"
                 app:autoSizeTextType="uniform"
                 tools:text="Final Fantasy XIV: A Realm Reborn"
+                tools:textSize="20sp"
                 />
 
     </FrameLayout>

@@ -5,11 +5,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.ViewCompat
+import androidx.core.widget.TextViewCompat
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -25,31 +28,59 @@ import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.presentation.common.App
+import ru.luckycactus.steamroulette.presentation.utils.dp
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.GameCoverModel
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.onApiAtLeast
+import ru.luckycactus.steamroulette.presentation.utils.sp
 
 class GameView : MaterialCardView {
 
-    private var current: GameMinimal? = null
+    var textSize: Float
+        set(value) {
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(
+                tvName,
+                TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
+            )
+            tvName.setTextSize(TypedValue.COMPLEX_UNIT_PX, value)
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(
+                tvName,
+                TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM
+            )
+        }
+        get() = tvName.textSize
+
     var imageReady = false
         private set
 
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    private var current: GameMinimal? = null
+
+    constructor(context: Context) : super(context) {
+        init(context, null)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init(context, attrs)
+    }
+
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
-    )
+    ) {
+        init(context, attrs)
+    }
 
-    init {
+    private fun init(context: Context, attrs: AttributeSet?) {
         LayoutInflater.from(context).inflate(R.layout.view_game_roulette, this, true)
         setRippleColorResource(android.R.color.transparent)
         onApiAtLeast(21) {
             ivGame.clipToOutline = true
+        }
+        context.withStyledAttributes(attrs, R.styleable.GameView) {
+            textSize = getDimension(R.styleable.GameView_textSize, DEFAULT_TEXT_SIZE)
         }
     }
 
@@ -146,5 +177,7 @@ class GameView : MaterialCardView {
                 )
             )
         )
+
+        private val DEFAULT_TEXT_SIZE = sp(20f)
     }
 }
