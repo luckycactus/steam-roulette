@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,15 +17,13 @@ import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
-import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
-import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
-import ru.luckycactus.steamroulette.presentation.utils.observeEvent
-import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
+import ru.luckycactus.steamroulette.presentation.utils.*
 
 
 class MainActivity : AppCompatActivity(),
     ComponentOwner<MainActivityComponent> {
+
+    var touchAndBackPressEnabled: Boolean = true
 
     val viewModel by viewModel { component.mainViewModel }
 
@@ -67,12 +65,23 @@ class MainActivity : AppCompatActivity(),
             .mainActivityComponentFactory()
             .create(this)
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return touchAndBackPressEnabled && super.dispatchTouchEvent(ev)
+    }
+
+    override fun onBackPressed() {
+        if (touchAndBackPressEnabled) {
+            super.onBackPressed()
+        }
+    }
+
     fun onGameClick(sharedViews: List<View>, game: OwnedGame) {
-        supportFragmentManager.commit {
-            hide(supportFragmentManager.findFragmentById(R.id.container)!!)
+        supportFragmentManager.commitIfNotExist(FRAGMENT_GAME_DETAILS_TAG) {
+            hide(supportFragmentManager.findFragmentByTag(FRAGMENT_MAIN_FLOW_TAG)!!)
             add(
                 R.id.container,
-                GameDetailsFragment.newInstance(game, sharedViews.isNotEmpty())
+                GameDetailsFragment.newInstance(game, sharedViews.isNotEmpty()),
+                FRAGMENT_GAME_DETAILS_TAG
             )
             for (sharedView in sharedViews) {
                 addSharedElement(sharedView, ViewCompat.getTransitionName(sharedView)!!)
@@ -103,5 +112,6 @@ class MainActivity : AppCompatActivity(),
 
     companion object {
         const val FRAGMENT_MAIN_FLOW_TAG = "FRAGMENT_MAIN_FLOW_TAG"
+        const val FRAGMENT_GAME_DETAILS_TAG = "FRAGMENT_GAME_DETAILS_TAG"
     }
 }

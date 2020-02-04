@@ -1,11 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
+import androidx.transition.Transition
+import androidx.transition.TransitionListenerAdapter
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
@@ -75,7 +74,6 @@ class RouletteFragment : BaseFragment(), Injectable {
         fabNextGame.setOnLongClickListener(fabLongClickListener)
         fabHideGame.setOnLongClickListener(fabLongClickListener)
         fabGameInfo.setOnLongClickListener(fabLongClickListener)
-
 
         itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
             onSwiped = {
@@ -204,6 +202,7 @@ class RouletteFragment : BaseFragment(), Injectable {
                         }
                     }
                 )
+                addListener(touchSwitchListener)
             }
         } else {
             requireParentFragment().exitTransition = createDefaultExitTransition()
@@ -217,6 +216,17 @@ class RouletteFragment : BaseFragment(), Injectable {
         }
         fade {
             addTarget(rvRoulette)
+        }
+        addListener(touchSwitchListener)
+    }
+
+    private val touchSwitchListener = object : TransitionListenerAdapter() {
+        override fun onTransitionEnd(transition: Transition) {
+            (activity as MainActivity).touchAndBackPressEnabled = true
+        }
+
+        override fun onTransitionStart(transition: Transition) {
+            (activity as MainActivity).touchAndBackPressEnabled = false
         }
     }
 

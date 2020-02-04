@@ -322,9 +322,19 @@ inline fun <reified T : ViewModel> Fragment.activityViewModel(
     }
 }
 
-fun FragmentManager.showIfNotExist(tag: String, createDialogFragment: () -> DialogFragment) {
+inline fun FragmentManager.showIfNotExist(tag: String, createDialogFragment: () -> DialogFragment) {
     if (findFragmentByTag(tag) == null) {
         createDialogFragment().show(this, tag)
+    }
+}
+
+inline fun FragmentManager.commitIfNotExist(
+    tag: String,
+    allowStateLoss: Boolean = false,
+    body: FragmentTransaction.() -> Unit
+) {
+    if (findFragmentByTag(tag) == null) {
+        commit(allowStateLoss, body)
     }
 }
 
