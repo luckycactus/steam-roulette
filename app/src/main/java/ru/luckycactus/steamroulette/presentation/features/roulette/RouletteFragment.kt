@@ -5,6 +5,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
@@ -26,6 +27,8 @@ import javax.inject.Inject
 
 class RouletteFragment : BaseFragment(), Injectable {
 
+    private lateinit var fabs: List<FloatingActionButton>
+
     private val viewModel by viewModel {
         findComponent<MainFlowComponent>().rouletteViewModel
     }
@@ -45,6 +48,19 @@ class RouletteFragment : BaseFragment(), Injectable {
 
     override val layoutResId: Int = R.layout.fragment_roulette
 
+    private val fabClickListener = View.OnClickListener { fab ->
+        when (fab) {
+            fabNextGame -> swipeTop(ItemTouchHelper.RIGHT)
+            fabHideGame -> swipeTop(ItemTouchHelper.LEFT)
+            fabGameInfo -> {
+                rvRoulette.findViewHolderForAdapterPosition(0)?.let {
+                    it.itemView.callOnClick()
+                }
+            }
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -56,6 +72,8 @@ class RouletteFragment : BaseFragment(), Injectable {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        fabs = listOf(fabNextGame, fabHideGame, fabGameInfo)
 
         //todo Заменить на popupwindow
         val fabLongClickListener = View.OnLongClickListener {
@@ -71,9 +89,9 @@ class RouletteFragment : BaseFragment(), Injectable {
             true
         }
 
-        fabNextGame.setOnLongClickListener(fabLongClickListener)
-        fabHideGame.setOnLongClickListener(fabLongClickListener)
-        fabGameInfo.setOnLongClickListener(fabLongClickListener)
+        fabs.forEach {
+            it.setOnLongClickListener(fabLongClickListener)
+        }
 
         itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
             onSwiped = {
@@ -104,20 +122,6 @@ class RouletteFragment : BaseFragment(), Injectable {
         itemTouchHelper.attachToRecyclerView(rvRoulette)
         rvRoulette.layoutManager = CardStackLayoutManager()
         rvRoulette.adapter = rouletteAdapter
-
-        fabNextGame.setOnClickListener {
-            swipeTop(ItemTouchHelper.RIGHT)
-        }
-
-        fabHideGame.setOnClickListener {
-            swipeTop(ItemTouchHelper.LEFT)
-        }
-
-        fabGameInfo.setOnClickListener {
-            rvRoulette.findViewHolderForAdapterPosition(0)?.let {
-                it.itemView.callOnClick()
-            }
-        }
 
         dataLoadingViewHolder = DataLoadingViewHolder(
             emptyLayout,
@@ -151,9 +155,8 @@ class RouletteFragment : BaseFragment(), Injectable {
         }
 
         observe(viewModel.controlsAvailable) {
-            fabNextGame.isEnabled = it
-            fabHideGame.isEnabled = it
-            fabGameInfo.isEnabled = it
+            val listener = if (it) fabClickListener else null
+            fabs.forEach { fab -> fab.setOnClickListener(listener) }
         }
 
         observeEvent(viewModel.openUrlAction) {
