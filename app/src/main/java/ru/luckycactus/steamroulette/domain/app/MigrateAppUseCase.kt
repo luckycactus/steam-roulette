@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.domain.app
 
-import ru.luckycactus.steamroulette.domain.common.GameCoverCacheCleaner
+import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.common.invoke
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
@@ -13,12 +13,12 @@ class MigrateAppUseCase @Inject constructor(
     private val appRepository: AppRepository,
     private val getCurrentUserSteamId: GetCurrentUserSteamIdUseCase,
     private val userSettingsRepository: UserSettingsRepository,
-    private val gameCoverCacheCleaner: Provider<GameCoverCacheCleaner>
+    private val imageCacheCleaner: Provider<ImageCacheCleaner>
 ) : SuspendUseCase<Unit, Unit>() {
 
     private val migrations by lazyNonThreadSafe {
         mapOf(
-            4 to ::migrate4to5
+            5 to ::migrate5to6
         )
     }
 
@@ -27,7 +27,7 @@ class MigrateAppUseCase @Inject constructor(
         val currentVersion = appRepository.currentVersion
         val isUserLoggedOn = getCurrentUserSteamId() != null
         if (lastVersion < 0) {
-            if (isUserLoggedOn) lastVersion = 4 else return
+            if (isUserLoggedOn) lastVersion = 5 else return
         }
         while (lastVersion < currentVersion) {
             migrations[lastVersion]?.invoke()
@@ -35,10 +35,10 @@ class MigrateAppUseCase @Inject constructor(
         }
     }
 
-    suspend fun migrate4to5() {
+    suspend fun migrate5to6() {
         getCurrentUserSteamId()?.let {
             userSettingsRepository.migrateEnPlayTimeFilter(it)
         }
-        gameCoverCacheCleaner.get().clearAllCache()
+        imageCacheCleaner.get().clearAllCache()
     }
 }

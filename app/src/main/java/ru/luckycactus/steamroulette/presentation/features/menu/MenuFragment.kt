@@ -12,6 +12,7 @@ import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 
 class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
@@ -43,7 +44,9 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
 
         observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
-            Glide.with(this).load(it.avatarFull).placeholder(R.drawable.avatar_placeholder)
+            GlideApp.with(this)
+                .load(it.avatarFull)
+                .placeholder(R.drawable.avatar_placeholder)
                 .into(ivAvatar)
         }
 

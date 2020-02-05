@@ -34,13 +34,13 @@ class GameHeaderViewHolder(
                 item.gameMinimal.appId
             )
         )
-        ViewCompat.setTransitionName(
-            gameView,
-            gameView.context.getString(
-                R.string.cardview_shared_element_transition,
-                item.gameMinimal.appId
-            )
-        )
+//        ViewCompat.setTransitionName(
+//            gameView,
+//            gameView.context.getString(
+//                R.string.cardview_shared_element_transition,
+//                item.gameMinimal.appId
+//            )
+//        )
     }
 
     override fun bind(item: GameDetailsUiModel.Header) {

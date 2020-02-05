@@ -1,5 +1,5 @@
 package ru.luckycactus.steamroulette.domain.common
 
-interface GameCoverCacheCleaner {
+interface ImageCacheCleaner {
     suspend fun clearAllCache()
 }

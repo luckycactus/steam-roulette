@@ -61,10 +61,10 @@ class RouletteAdapter @AssistedInject constructor(
                 gameView.ivGame,
                 gameView.context.getString(R.string.image_shared_element_transition, game.appId)
             )
-            ViewCompat.setTransitionName(
-                gameView,
-                gameView.context.getString(R.string.cardview_shared_element_transition, game.appId)
-            )
+//            ViewCompat.setTransitionName(
+//                gameView,
+//                gameView.context.getString(R.string.cardview_shared_element_transition, game.appId)
+//            )
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {

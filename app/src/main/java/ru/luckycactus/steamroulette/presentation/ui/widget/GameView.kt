@@ -155,7 +155,7 @@ class GameView : MaterialCardView {
 
         return GlideApp.with(view)
             .load(GameCoverModel(game))
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
             .fitCenter()
             .transform(headerImageTransformation)
             .transition(transitionOptions)
