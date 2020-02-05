@@ -3,12 +3,12 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.common.*
 import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
-import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
@@ -66,6 +66,8 @@ class MainViewModel @Inject constructor(
         userSummary = _currentUserSteamId.switchMap {
             observeUserSummary(it)
         }
+        //todo
+        currentUserSteamId.observeForever {  }
     }
 
     fun onColdStart() {
