@@ -1,13 +1,13 @@
 package ru.luckycactus.steamroulette.domain.user
 
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.entity.CachePolicy
-import ru.luckycactus.steamroulette.domain.entity.SteamId
-import ru.luckycactus.steamroulette.domain.entity.UserSummary
+import ru.luckycactus.steamroulette.domain.common.CachePolicy
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 
 interface UserRepository {
 
-    suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary
+    suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary?
 
     fun observeUserSummary(steamId: SteamId): LiveData<UserSummary>
 

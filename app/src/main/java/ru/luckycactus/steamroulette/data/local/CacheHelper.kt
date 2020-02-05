@@ -3,10 +3,10 @@ package ru.luckycactus.steamroulette.data.local
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.apply
-import ru.luckycactus.steamroulette.data.longLiveData
-import ru.luckycactus.steamroulette.di.common.Identified
-import ru.luckycactus.steamroulette.domain.entity.CachePolicy
+import ru.luckycactus.steamroulette.data.utils.apply
+import ru.luckycactus.steamroulette.data.utils.longLiveData
+import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.domain.common.CachePolicy
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,7 +38,7 @@ class CacheHelper @Inject constructor(
         timeUnit: TimeUnit = TimeUnit.HOURS
     ): Boolean =
         cachePolicy == CachePolicy.OnlyCache ||
-                (cachePolicy == CachePolicy.CacheIfValid && !isExpired(key, window, timeUnit))
+                (cachePolicy == CachePolicy.CacheOrRemote && !isExpired(key, window, timeUnit))
 
 
     fun shouldUpdate(
@@ -50,7 +50,6 @@ class CacheHelper @Inject constructor(
         !shouldUseCache(cachePolicy, key, window, timeUnit)
 
     fun setCachedNow(key: String) {
-        //todo apply or commit
         prefsEditor.apply { putLong(key, System.currentTimeMillis()) }
     }
 

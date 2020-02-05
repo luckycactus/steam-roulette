@@ -1,17 +1,23 @@
 package ru.luckycactus.steamroulette.domain.user_settings
 
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.entity.EnPlayTimeFilter
-import ru.luckycactus.steamroulette.domain.entity.SteamId
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.common.SteamId
 
 interface UserSettingsRepository {
 
-    fun observePlayTimeFilter(
+    fun observePlaytimeFilterType(
         steamId: SteamId,
-        filter: EnPlayTimeFilter
-    ): LiveData<EnPlayTimeFilter>
+        default: PlaytimeFilter.Type
+    ): LiveData<PlaytimeFilter.Type>
 
-    fun savePlayTimeFilter(steamId: SteamId, filter: EnPlayTimeFilter)
+    fun savePlayTimeFilterType(steamId: SteamId, filterType: PlaytimeFilter.Type)
+
+    fun saveMaxPlaytime(steamId: SteamId, maxHours: Int)
+
+    fun observeMaxPlaytime(steamId: SteamId, default: Int): LiveData<Int>
 
     fun clearUser(steamId: SteamId)
+
+    fun migrateEnPlayTimeFilter(steamId: SteamId)
 }

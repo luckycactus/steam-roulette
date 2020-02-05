@@ -5,13 +5,11 @@ import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.local.CacheHelper
 import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.di.common.AppComponent
-import ru.luckycactus.steamroulette.di.common.AppModule
-import ru.luckycactus.steamroulette.di.common.InjectionManager
-import ru.luckycactus.steamroulette.domain.entity.CachePolicy
-import ru.luckycactus.steamroulette.presentation.common.App
+import ru.luckycactus.steamroulette.di.core.InjectionManager
+import ru.luckycactus.steamroulette.domain.common.CachePolicy
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
+//todo refactor
 abstract class NetworkBoundResource<RequestType, ResultType>(
     private val key: String,
     private val memoryKey: String?,
@@ -30,9 +28,9 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         }
     }
 
-    suspend fun get(cachePolicy: CachePolicy): ResultType {
+    suspend fun get(cachePolicy: CachePolicy): ResultType? {
         updateIfNeed(cachePolicy)
-        return getCachedData()!!
+        return getCachedData()
     }
 
     fun observeCacheUpdates(): LiveData<Long> = cacheHelper.observeCacheUpdates(key)
@@ -67,5 +65,23 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         private val memoryCache = LruCache<String, Any>(50)
         private val cacheHelper: CacheHelper =
             InjectionManager.findComponent<AppComponent>().cacheHelper
+
+        suspend fun <RequestType> withMemoryCache(
+            memoryKey: String,
+            cachePolicy: CachePolicy,
+            getFromNetwork: suspend () -> RequestType
+        ): RequestType? {
+            var data: RequestType? = null
+            if (cachePolicy == CachePolicy.Remote)
+                memoryCache.remove(memoryKey)
+            else data = memoryCache[memoryKey] as RequestType?
+            if (data == null && cachePolicy != CachePolicy.OnlyCache) {
+                data = wrapCommonNetworkExceptions { getFromNetwork() }
+                data?.let {
+                    memoryCache.put(memoryKey, data)
+                }
+            }
+            return data
+        }
     }
 }

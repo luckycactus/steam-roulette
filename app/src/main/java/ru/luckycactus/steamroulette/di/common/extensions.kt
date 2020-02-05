@@ -2,6 +2,8 @@ package ru.luckycactus.steamroulette.di.common
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
+import ru.luckycactus.steamroulette.di.core.ComponentOwner
+import ru.luckycactus.steamroulette.di.core.InjectionManager
 
 val <T : Any> ComponentOwner<T>.component: T
     get() = InjectionManager.bindComponent(this)

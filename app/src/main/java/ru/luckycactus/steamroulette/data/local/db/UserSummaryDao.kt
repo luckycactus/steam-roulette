@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.data.local.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import ru.luckycactus.steamroulette.data.model.UserSummaryEntity
+import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 
 @Dao
 abstract class UserSummaryDao: BaseDao<UserSummaryEntity>() {

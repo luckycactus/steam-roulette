@@ -82,7 +82,7 @@
                     app:srcCompat="@drawable/ic_refresh_white_24dp"
                     />
 
-            <ru.luckycactus.steamroulette.presentation.widget.LuxuryProgressBar
+            <ru.luckycactus.steamroulette.presentation.ui.widget.LuxuryProgressBar
                     android:id="@+id/profileRefreshProgressBar"
                     style="@style/Widget.LuxuryProgressBar"
                     android:layout_width="@dimen/standard_progress_bar_size"

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="alphaEmphasisHigh" format="float"/>
-    <attr name="alphaEmphasisMedium" format="float"/>
-    <attr name="alphaEmphasisDisabled" format="float"/>
+    <attr name="alphaEmphasisHigh" format="float" />
+    <attr name="alphaEmphasisMedium" format="float" />
+    <attr name="alphaEmphasisDisabled" format="float" />
 
     <declare-styleable name="LuxuryProgressBar">
         <attr name="size" format="dimension" />
@@ -12,5 +12,14 @@
         <attr name="growthDuration" format="integer" />
         <attr name="rotationDuration" format="integer" />
         <attr name="decreasingDuration" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="PreferenceView">
+        <attr name="prefTitle" format="string" />
+        <attr name="prefValue" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="GameView">
+        <attr name="textSize" format="dimension" />
     </declare-styleable>
 </resources>

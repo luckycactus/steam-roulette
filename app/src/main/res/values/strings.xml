@@ -1,4 +1,5 @@
 <resources>
+    <string name="locale">en</string>
     <string name="error_user_with_vanity_url_not_found">User not found</string>
     <string name="error_user_with_steamid_not_found">User not found</string>
     <string name="error_invalid_steamid_format">Invalid SteamID format</string>
@@ -7,7 +8,7 @@
     <string name="error_unknown">Unknown error</string>
     <string name="exit">Exit</string>
     <string name="retry">Retry</string>
-    <string name="error_get_owned_games">Failed to receive your games</string>
+    <string name="error_get_owned_games">Failed to get your games</string>
     <string name="error_get_owned_games_privacy">Your profile is private, please make it public</string>
     <string name="placeholder_empty_title">Empty data</string>
     <string name="placeholder_error_title">Error</string>
@@ -25,11 +26,7 @@
     <string name="games_last_sync">Last sync: %1$s</string>
     <string name="never">never</string>
     <string name="roulette_options">Options</string>
-    <string name="roulette_game_time_filter_title">Show</string>
     <string name="btn_reset_hidden_games">Clear</string>
-    <string name="playtime_filter_all_games">All games</string>
-    <string name="playtime_filter_not_played_games">Games I have not played</string>
-    <string name="playtime_filter_not_played_2_weeks_games">Games I have not played in the last 2 weeks</string>
     <string name="hidden_games_count">Hidden games</string>
     <string name="games_queue_ended">No more matching games!</string>
     <string name="error_filtered_games_not_found">No games matching the specified filters were found</string>
@@ -43,4 +40,24 @@
     <string name="next_game">Next game</string>
     <string name="hide_game">Hide game</string>
     <string name="open_game_store_page">Open the page in the store</string>
+    <string name="playtime">Show</string>
+    <string name="playtime_pref_all">All games</string>
+    <string name="playtime_pref_not_played">Games I have not played</string>
+    <string name="playtime_pref_max_time">Games I played for no more than:</string>
+    <string name="playtime_hours_label">hour(s)</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="game_details_description">Description</string>
+    <string name="button_steam_store">Steam store</string>
+    <string name="button_community_hub">Community Hub</string>
+    <string name="game_details_languages">Languages</string>
+    <string name="game_details_platforms">Platforms</string>
+    <string name="fail_steam_store_info">Failed to get game information</string>
+    <plurals name="playtime_pref_max_time_full_plurals">
+        <item quantity="zero">Games I played for no more than %d hours</item>
+        <item quantity="one">Games I played for no more than %d hour</item>
+        <item quantity="two">Games I played for no more than %d hours</item>
+        <item quantity="few">Games I played for no more than %d hours</item>
+        <item quantity="many">Games I played for no more than %d hours</item>
+        <item quantity="other">Games I played for no more than %d hours</item>
+    </plurals>
 </resources>

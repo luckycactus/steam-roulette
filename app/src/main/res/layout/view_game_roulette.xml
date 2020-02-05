@@ -7,9 +7,11 @@
         >
 
     <FrameLayout
+            android:id="@+id/placeholder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/cover_placeholder"
+            android:foreground="@drawable/cover_glare"
             >
 
         <TextView
@@ -20,23 +22,18 @@
                 android:gravity="center"
                 android:maxLines="2"
                 android:padding="8dp"
-                android:textSize="36sp"
                 app:autoSizeTextType="uniform"
                 tools:text="Final Fantasy XIV: A Realm Reborn"
-                />
-
-        <ImageView
-                android:id="@+id/ivGame"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
-
-        <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/cover_glare"
+                tools:textSize="20sp"
                 />
 
     </FrameLayout>
 
+    <ImageView
+            android:id="@+id/ivGame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_outline"
+            android:outlineProvider="background"
+            />
 </merge>

@@ -12,13 +12,12 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
+            android:supportsRtl="false"
             android:theme="@style/AppTheme"
             >
         <activity
-                android:name=".presentation.main.MainActivity"
+                android:name="ru.luckycactus.steamroulette.presentation.features.main.MainActivity"
                 android:launchMode="singleTask"
-                android:windowSoftInputMode="adjustResize"
                 android:screenOrientation="sensorPortrait"
                 >
             <intent-filter>

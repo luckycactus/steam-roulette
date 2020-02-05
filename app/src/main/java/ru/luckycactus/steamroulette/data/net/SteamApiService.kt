@@ -4,9 +4,8 @@ import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Streaming
-import ru.luckycactus.steamroulette.data.model.OwnedGamesResponse
-import ru.luckycactus.steamroulette.data.model.ResolveVanityUrlResponse
-import ru.luckycactus.steamroulette.data.model.UserSummariesResponse
+import ru.luckycactus.steamroulette.data.repositories.login.models.ResolveVanityUrlResponse
+import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummariesResponse
 
 interface SteamApiService {
 
@@ -23,7 +22,7 @@ interface SteamApiService {
         @Query("vanityurl") vanityUrl: String
     ): ResolveVanityUrlResponse
 
-    @GET("/ISteamUser/GetPlayerSummaries/v0002")
+    @GET("ISteamUser/GetPlayerSummaries/v0002")
     suspend fun getUserSummaries(
         @Query("steamids") steamIds: List<Long>
     ): UserSummariesResponse

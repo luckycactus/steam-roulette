@@ -12,13 +12,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorRes
-import androidx.annotation.LayoutRes
-import androidx.annotation.Px
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.annotation.*
+import androidx.fragment.app.*
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -29,7 +24,8 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
 import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException
 import ru.luckycactus.steamroulette.domain.exception.ServerException
-import ru.luckycactus.steamroulette.presentation.common.Event
+import ru.luckycactus.steamroulette.domain.common.Event
+import java.lang.reflect.Method
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -46,6 +42,17 @@ fun <T> MutableLiveData<T>.startWith(item: T): MutableLiveData<T> {
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit) {
     liveData.observe(this, Observer { body(it) })
+}
+
+fun <T> LifecycleOwner.observeFirst(liveData: LiveData<T>, body: (T) -> Unit) {
+    val observer = object : Observer<T> {
+        override fun onChanged(t: T) {
+            body(t)
+            liveData.removeObserver(this)
+        }
+
+    }
+    liveData.observe(this, observer)
 }
 
 fun <T> LifecycleOwner.observeNonNull(liveData: LiveData<T?>, body: (T) -> Unit) {
@@ -136,16 +143,6 @@ fun <A, B, Result> LiveData<A>.combine(
     return result
 }
 
-fun Context.getColorFromRes(@ColorRes color: Int): Int {
-    onApiAtLeast(Build.VERSION_CODES.M) {
-        return resources.getColor(color, theme)
-    }
-    return resources.getColor(color)
-}
-
-fun View.getColorFromRes(@ColorRes color: Int) = context.getColorFromRes(color)
-
-
 inline fun View.updatePadding(
     @Px left: Int = paddingLeft,
     @Px top: Int = paddingTop,
@@ -184,7 +181,7 @@ fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): Vie
 
 inline fun <reified T> argument(
     key: String,
-    defValue: String? = null
+    defValue: T? = null
 ): ReadOnlyProperty<Fragment, T> = object : ReadOnlyProperty<Fragment, T> {
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
         val result = thisRef.arguments?.get(key) ?: defValue
@@ -323,4 +320,38 @@ inline fun <reified T : ViewModel> Fragment.activityViewModel(
         override fun <T : ViewModel> create(modelClass: Class<T>) =
             provider() as T
     }
+}
+
+inline fun FragmentManager.showIfNotExist(tag: String, createDialogFragment: () -> DialogFragment) {
+    if (findFragmentByTag(tag) == null) {
+        createDialogFragment().show(this, tag)
+    }
+}
+
+inline fun FragmentManager.commitIfNotExist(
+    tag: String,
+    allowStateLoss: Boolean = false,
+    body: FragmentTransaction.() -> Unit
+) {
+    if (findFragmentByTag(tag) == null) {
+        commit(allowStateLoss, body)
+    }
+}
+
+private val setTransitionAlphaMethod: Method? by lazy {
+    try {
+        View::class.java.getMethod("setTransitionAlpha", Float::class.java)
+    } catch (e: NoSuchMethodException) {
+        //todo log
+        null
+    }
+}
+
+fun View.trySetTransitionAlpha(alpha: Float, invalidate: Boolean = false): Boolean {
+    return setTransitionAlphaMethod?.let {
+        it.invoke(this, alpha)
+        if (invalidate)
+            invalidate()
+        true
+    } ?: false
 }

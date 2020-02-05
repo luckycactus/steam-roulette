@@ -22,6 +22,9 @@
         <item name="colorPrimaryDark">?colorPrimaryVariant</item>
         <item name="colorAccent">?colorSecondary</item>
 
+        <item name="colorControlActivated">@color/color_primary</item>
+        <item name="android:textColorHighlight">@color/color_primary</item>
+
         <!--Material shape attributes-->
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyTheme.SmallComponent
         </item>
@@ -34,6 +37,8 @@
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.MyTheme.MaterialAlertDialog</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.MyTheme.BottomSheetDialog</item>
         <item name="toolbarStyle">@style/Widget.MyTheme.Toolbar</item>
+        <item name="radioButtonStyle">@style/Widget.MyTheme.CompoundButton.RadioButton</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.MyTheme.Button.OutlinedButton</item>
 
         <!--Material type attributes-->
         <item name="textAppearanceHeadline1">@style/TextAppearance.MyTheme.Headline1</item>

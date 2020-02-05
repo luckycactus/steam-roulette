@@ -6,8 +6,8 @@
     <color name="steam_dark">#16202B</color>
     <color name="steam_dark_2">#141A25</color>
 
-    <color name="ripple_color">#15ffffff</color>
-    <color name="ripple_color_2">#10ffffff</color>
+    <color name="holo_ripple_color">#15ffffff</color>
+    <color name="holo_focused_color">#10ffffff</color>
     <color name="divider">#141A25</color>
 
     <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
@@ -41,4 +41,10 @@
 
     <color name="color_overlay_next">#537F3A</color>
     <color name="color_overlay_hide">#951823</color>
+
+    <color name="platforms_icon_tint">#38475B</color>
+    
+    <color name="metacritic_good">#81C94E</color>
+    <color name="metacritic_average">#F8CD55</color>
+    <color name="metacritic_poor">#EB3323</color>
 </resources>
