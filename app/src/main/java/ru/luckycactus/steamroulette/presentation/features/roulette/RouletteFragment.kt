@@ -1,8 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import androidx.core.view.ViewGroupCompat
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -121,6 +125,7 @@ class RouletteFragment : BaseFragment(), Injectable {
         itemTouchHelper.attachToRecyclerView(rvRoulette)
         rvRoulette.layoutManager = CardStackLayoutManager()
         rvRoulette.adapter = rouletteAdapter
+        ViewGroupCompat.setTransitionGroup(rvRoulette, true)
 
         dataLoadingViewHolder = DataLoadingViewHolder(
             emptyLayout,
@@ -213,6 +218,7 @@ class RouletteFragment : BaseFragment(), Injectable {
     }
 
     private fun createDefaultExitTransition() = transitionSet {
+
         slide {
             excludeTarget(rvRoulette, true)
         }
