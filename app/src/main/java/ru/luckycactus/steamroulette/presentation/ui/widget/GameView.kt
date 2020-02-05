@@ -108,7 +108,7 @@ class GameView : MaterialCardView {
     }
 
     //todo Грузить hd через wifi, обычную через мобильную сеть
-    fun createRequestBuilder(
+    private fun createRequestBuilder(
         view: GameView,
         game: GameMinimal,
         disableTransition: Boolean,

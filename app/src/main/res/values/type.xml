@@ -62,4 +62,9 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="TextAppearance.MyTheme.GameDetailsDeveloper" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
 </resources>

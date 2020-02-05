@@ -62,7 +62,6 @@ class GameShortDescriptionViewHolder(
                 getMetacriticScoreColor(item.metacriticInfoEntity.score)
             )
             layoutMetacriticScore.visibility(true)
-            //todo click
         } else {
             layoutMetacriticScore.visibility(false)
         }

@@ -10,11 +10,11 @@ import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
-import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
+import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import javax.inject.Inject
 
@@ -23,11 +23,12 @@ class MainViewModel @Inject constructor(
     private val observeUserSummary: ObserveUserSummaryUseCase,
     private val fetchUserSummary: FetchUserSummaryUseCase,
     private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
-    private val getSignedInUserSteamId: GetCurrentUserSteamIdUseCase,
     private val signOutUser: SignOutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel(), UserViewModelDelegate {
+    override val isUserLoggedIn: Boolean
+        get() = _nullableCurrentUserSteamId.value != null
 
     override val currentUserSteamId: LiveData<SteamId>
         get() = _currentUserSteamId
@@ -44,6 +45,7 @@ class MainViewModel @Inject constructor(
         get() = _screen
 
     private val _currentUserSteamId = MediatorLiveData<SteamId>()
+    private val _nullableCurrentUserSteamId: LiveData<SteamId?>
 
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
@@ -51,7 +53,8 @@ class MainViewModel @Inject constructor(
     private val _screen = MutableLiveData<Event<Screen>>()
 
     init {
-        _currentUserSteamId.addSource(observeCurrentUser()) {
+        _nullableCurrentUserSteamId = observeCurrentUser()
+        _currentUserSteamId.addSource(_nullableCurrentUserSteamId) {
             viewModelScope.coroutineContext.cancelChildren()
             it?.let {
                 _currentUserSteamId.value = it
@@ -67,16 +70,15 @@ class MainViewModel @Inject constructor(
             observeUserSummary(it)
         }
         //todo
-        currentUserSteamId.observeForever {  }
+        currentUserSteamId.observeForever { }
     }
 
     fun onColdStart() {
         viewModelScope.launch {
             migrateApp()
-            if (getSignedInUserSteamId() != null) {
-                _screen.value = Event(Screen.Roulette)
-            } else {
-                _screen.value = Event(Screen.Login)
+            _nullableCurrentUserSteamId.first {
+                val screen = if (it != null) Screen.Roulette else Screen.Login
+                _screen.value = Event(screen)
             }
         }
     }

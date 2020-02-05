@@ -7,7 +7,7 @@ import ru.luckycactus.steamroulette.presentation.features.game_details.model.Gam
 
 class GameLinksViewHolder(
     itemView: View,
-    gameDetailsViewModel: GameDetailsViewModel //todo
+    gameDetailsViewModel: GameDetailsViewModel
 ) : GameDetailsViewHolder<GameDetailsUiModel.Links>(itemView) {
 
     init {

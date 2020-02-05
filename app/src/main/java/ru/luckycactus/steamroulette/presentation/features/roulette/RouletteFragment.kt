@@ -75,7 +75,6 @@ class RouletteFragment : BaseFragment(), Injectable {
 
         fabs = listOf(fabNextGame, fabHideGame, fabGameInfo)
 
-        //todo Заменить на popupwindow
         val fabLongClickListener = View.OnLongClickListener {
             val text = getString(
                 when (it) {

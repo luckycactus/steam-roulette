@@ -18,6 +18,7 @@ class PlaytimeViewModel @Inject constructor(
     private val savePlayTimeFilterType: SavePlayTimeFilterTypeUseCase,
     private val saveMaxPlaytimeSetting: SaveMaxPlaytimeSettingUseCase
 ) : ViewModel() {
+    //todo
     val currentPlaytimeFilterType: LiveData<PlaytimeFilter.Type> by lazyNonThreadSafe {
         userViewModelDelegate.currentUserSteamId.switchMap { steamId ->
             observePlaytimeFilter(steamId).map { it.type }

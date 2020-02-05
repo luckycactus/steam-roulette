@@ -18,6 +18,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
+import ru.luckycactus.steamroulette.presentation.utils.startWith
 import javax.inject.Inject
 
 class RouletteViewModel @Inject constructor(
@@ -43,7 +44,7 @@ class RouletteViewModel @Inject constructor(
     private val _gamesPagingList = MutableLiveData<PagingGameList?>()
     private val _contentState = MediatorLiveData<ContentState>()
     private val _openUrlAction = MutableLiveData<Event<String>>()
-    private val _controlsAvailable = MutableLiveData<Boolean>()
+    private val _controlsAvailable = MutableLiveData<Boolean>().startWith(true)
     private val _itemRemoved = MediatorLiveData<Event<Int>>()
     private val currentUserPlayTimeFilter: LiveData<PlaytimeFilter>
 

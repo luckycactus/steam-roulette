@@ -32,15 +32,17 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Mirror's Edge"
-
             />
 
     <TextView
             android:id="@+id/tvReleaseDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:alpha="?alphaEmphasisHigh"
             android:paddingLeft="@dimen/default_activity_margin"
             android:textAppearance="?textAppearanceSubtitle1"
+            android:textSize="14sp"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintLeft_toRightOf="@id/gameView"
             app:layout_constraintRight_toRightOf="parent"
@@ -52,8 +54,9 @@
             android:id="@+id/tvDeveloper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:paddingLeft="@dimen/default_activity_margin"
-            android:textAppearance="?textAppearanceSubtitle1"
+            android:textAppearance="@style/TextAppearance.MyTheme.GameDetailsDeveloper"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintLeft_toRightOf="@id/gameView"
             app:layout_constraintRight_toRightOf="parent"

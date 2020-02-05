@@ -5,10 +5,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import javax.inject.Inject
 
@@ -32,8 +32,9 @@ class RouletteOptionsViewModel @Inject constructor(
             observePlayTimeFilter(it).map(this@RouletteOptionsViewModel::getPlayTimeFilterText)
         }
 
-        hiddenGamesCount = userViewModelDelegate.currentUserSteamId
-            .switchMap { observeHiddenGamesCount(it) }
+        hiddenGamesCount = userViewModelDelegate.currentUserSteamId.switchMap {
+            observeHiddenGamesCount(it)
+        }
     }
 
     fun onClearHiddenGames() {

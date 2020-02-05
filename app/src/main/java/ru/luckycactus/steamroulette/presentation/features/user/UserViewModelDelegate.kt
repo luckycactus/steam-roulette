@@ -10,6 +10,7 @@ interface UserViewModelDelegatePublic {
 }
 
 interface UserViewModelDelegate : UserViewModelDelegatePublic {
+    val isUserLoggedIn: Boolean
     val currentUserSteamId: LiveData<SteamId>
     val fetchGamesState: LiveData<Result<Unit>>
     val fetchUserSummaryState: LiveData<Boolean>
