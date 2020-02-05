@@ -7,12 +7,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
+import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.net.*
+import ru.luckycactus.steamroulette.data.utils.enableTls12OnOldApis
 import ru.luckycactus.steamroulette.di.qualifier.InterceptorSet
 import ru.luckycactus.steamroulette.di.qualifier.NetworkInterceptorSet
 import java.util.concurrent.TimeUnit
@@ -74,13 +74,15 @@ abstract class NetworkModule {
         fun provideOkHttpClient(
             @InterceptorSet interceptors: Set<@JvmSuppressWildcards Interceptor>,
             @NetworkInterceptorSet networkInterceptors: Set<@JvmSuppressWildcards Interceptor>
-        ): OkHttpClient =
-            OkHttpClient.Builder().apply {
+        ): OkHttpClient {
+            return OkHttpClient.Builder().apply {
                 readTimeout(60, TimeUnit.SECONDS)
                 connectTimeout(60, TimeUnit.SECONDS)
                 interceptors.forEach { addInterceptor(it) }
                 networkInterceptors.forEach { addNetworkInterceptor(it) }
+                enableTls12OnOldApis(this)
             }.build()
+        }
 
         @JvmStatic
         @IntoSet
