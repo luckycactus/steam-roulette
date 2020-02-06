@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.ui.widget.card_stack
 
 import android.graphics.Canvas
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 
@@ -10,6 +11,8 @@ class CardStackTouchHelperCallback(
     private val onSwipedRight: (() -> Unit)?,
     private val onSwipeProgress: ((Float, Float) -> Unit)?
 ) : ItemTouchHelper.Callback() {
+
+    private var inSwipeState = false
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
@@ -62,6 +65,10 @@ class CardStackTouchHelperCallback(
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         if (viewHolder.adapterPosition == 0) {
             val swipeProgress = (dX / recyclerView.width).coerceIn(-1f, 1f)
+            val lastSwipeState = this.inSwipeState
+            inSwipeState = (swipeProgress != 0f)
+            val swipeStateChanged = this.inSwipeState != lastSwipeState
+
             viewHolder.itemView.rotation = 15 * swipeProgress
             onSwipeProgress?.invoke(swipeProgress, getSwipeThreshold(viewHolder))
             if (viewHolder is ViewHolderSwipeProgressListener) {
@@ -73,12 +80,16 @@ class CardStackTouchHelperCallback(
             val layoutManager = recyclerView.layoutManager as CardStackLayoutManager
             for (i in 0 until recyclerView.childCount) {
                 val vh = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
-                if (vh.adapterPosition != 0) {
+                val adapterPosition = vh.adapterPosition
+                if (adapterPosition != 0) {
                     layoutManager.setChildGaps(
                         recyclerView.getChildAt(i),
-                        vh.adapterPosition,
+                        adapterPosition,
                         swipeProgress
                     )
+                }
+                if (swipeStateChanged && (adapterPosition == 1) && vh is ViewHolderVisibleHintListener) {
+                    vh.setVisibleHint(inSwipeState)
                 }
             }
         }
@@ -92,9 +103,17 @@ class CardStackTouchHelperCallback(
         if (viewHolder is ViewHolderSwipeProgressListener) {
             viewHolder.onSwipeProgress(0f, getSwipeThreshold(viewHolder))
         }
+        if (viewHolder.adapterPosition < 0 && viewHolder is ViewHolderVisibleHintListener) {
+            viewHolder.setVisibleHint(false)
+            this.inSwipeState = false
+        }
     }
 
     interface ViewHolderSwipeProgressListener {
         fun onSwipeProgress(progress: Float, threshold: Float)
+    }
+
+    interface ViewHolderVisibleHintListener {
+        fun setVisibleHint(visible: Boolean)
     }
 }

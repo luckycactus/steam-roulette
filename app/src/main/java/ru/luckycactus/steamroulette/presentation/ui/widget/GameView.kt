@@ -19,6 +19,7 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
@@ -56,6 +57,7 @@ class GameView : MaterialCardView {
         private set
 
     private var current: GameMinimal? = null
+    private var userVisibleHint = true
 
     constructor(context: Context) : super(context) {
         init(context, null)
@@ -107,6 +109,10 @@ class GameView : MaterialCardView {
         }
     }
 
+    fun setUserVisibleHint(visible: Boolean) {
+        userVisibleHint = visible
+    }
+
     //todo Грузить hd через wifi, обычную через мобильную сеть
     private fun createRequestBuilder(
         view: GameView,
@@ -138,7 +144,7 @@ class GameView : MaterialCardView {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Transition<Drawable> {
-                    val transition = if (disableTransition)
+                    val transition = if (disableTransition || !userVisibleHint)
                         NoTransition.get()
                     else
                         super.build(dataSource, isFirstResource)
@@ -155,8 +161,10 @@ class GameView : MaterialCardView {
 
         return GlideApp.with(view)
             .load(GameCoverModel(game))
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
             .fitCenter()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .downsample(DownsampleStrategy.CENTER_INSIDE)
+            .skipMemoryCache(true)
             .transform(headerImageTransformation)
             .transition(transitionOptions)
             .also { request ->

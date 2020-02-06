@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.stfalcon.imageviewer.StfalconImageViewer
 import kotlinx.android.extensions.LayoutContainer
@@ -52,12 +53,16 @@ class GameScreenshotsViewHolder(
             target.context,
             screenshots
         ) { view, screenshot ->
+            val thumbnail = GlideApp.with(view)
+                .load(screenshot.thumbnail)
+                .skipMemoryCache(true)
+                .downsample(DownsampleStrategy.CENTER_INSIDE)
+
             GlideApp.with(view)
                 .load(screenshot.full)
-                .thumbnail(
-                    GlideApp.with(view)
-                        .load(screenshot.thumbnail)
-                )
+                .thumbnail(thumbnail)
+                .skipMemoryCache(true)
+                .downsample(DownsampleStrategy.NONE)
                 .into(view)
         }.withStartPosition(position)
             .withTransitionFrom(target)
@@ -103,6 +108,8 @@ class GameScreenshotsViewHolder(
             fun bind(screenshotEntity: ScreenshotEntity) {
                 GlideApp.with(itemView)
                     .load(screenshotEntity.thumbnail)
+                    .downsample(DownsampleStrategy.CENTER_INSIDE)
+                    .skipMemoryCache(true)
                     .transition(DrawableTransitionOptions.with(CrossFadeFactory()))
                     .placeholder(placeholder)
                     .into(ivScreenshot)

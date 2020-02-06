@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.ui.widget.card_stack
+package ru.luckycactus.steamroulette.presentation.ui.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -65,7 +65,9 @@ class EditTextWithLabel : EditText {
     }
 
     override fun onSaveInstanceState(): Parcelable? =
-        SavedState(super.onSaveInstanceState()).apply {
+        SavedState(
+            super.onSaveInstanceState()
+        ).apply {
             label = this@EditTextWithLabel.label
         }
 
@@ -143,7 +145,9 @@ class EditTextWithLabel : EditText {
 
         companion object CREATOR : Parcelable.Creator<SavedState> {
             override fun createFromParcel(parcel: Parcel): SavedState {
-                return SavedState(parcel)
+                return SavedState(
+                    parcel
+                )
             }
 
             override fun newArray(size: Int): Array<SavedState?> {
