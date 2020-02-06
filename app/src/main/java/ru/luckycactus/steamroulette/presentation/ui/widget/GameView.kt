@@ -19,6 +19,7 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
@@ -155,8 +156,10 @@ class GameView : MaterialCardView {
 
         return GlideApp.with(view)
             .load(GameCoverModel(game))
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
             .fitCenter()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .downsample(DownsampleStrategy.CENTER_INSIDE)
+            .skipMemoryCache(true)
             .transform(headerImageTransformation)
             .transition(transitionOptions)
             .also { request ->
