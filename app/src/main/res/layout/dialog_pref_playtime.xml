@@ -42,7 +42,7 @@
 
     </RadioGroup>
 
-    <ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.EditTextWithLabel
+    <ru.luckycactus.steamroulette.presentation.ui.widget.EditTextWithLabel
             android:id="@+id/etPlaytime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

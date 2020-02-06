@@ -125,6 +125,7 @@ class RouletteFragment : BaseFragment(), Injectable {
         itemTouchHelper.attachToRecyclerView(rvRoulette)
         rvRoulette.layoutManager = CardStackLayoutManager()
         rvRoulette.adapter = rouletteAdapter
+        rvRoulette.itemAnimator = null
         ViewGroupCompat.setTransitionGroup(rvRoulette, true)
 
         dataLoadingViewHolder = DataLoadingViewHolder(

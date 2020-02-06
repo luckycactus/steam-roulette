@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
@@ -20,6 +21,10 @@ class RouletteAdapter @AssistedInject constructor(
     @Assisted private val onGameClick: (List<View>, OwnedGame) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
+    init {
+        setHasStableIds(true)
+    }
+
     var items: List<OwnedGame>? = null
         set(value) {
             field = value
@@ -35,11 +40,16 @@ class RouletteAdapter @AssistedInject constructor(
         holder.bind(items!![position])
     }
 
+    override fun getItemId(position: Int): Long {
+        return items!![position].appId.toLong()
+    }
+
     inner class RouletteViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView),
         LayoutContainer,
-        CardStackTouchHelperCallback.ViewHolderSwipeProgressListener {
+        CardStackTouchHelperCallback.ViewHolderSwipeProgressListener,
+        CardStackTouchHelperCallback.ViewHolderVisibleHintListener {
 
         private lateinit var game: OwnedGame
 
@@ -56,6 +66,7 @@ class RouletteAdapter @AssistedInject constructor(
 
         fun bind(game: OwnedGame) {
             this.game = game
+            setVisibleHint(adapterPosition == 0)
             gameView.setGame(GameMinimal(game)) //todo
             ViewCompat.setTransitionName(
                 gameView.ivGame,
@@ -71,6 +82,11 @@ class RouletteAdapter @AssistedInject constructor(
             val thresholdedProgress = (progress / threshold).coerceIn(-1f, 1f)
             overlayHide.alpha = thresholdedProgress.coerceAtMost(0f).absoluteValue
             //itemView.overlayNext.alpha = thresholdedProgress.coerceAtLeast(0f).absoluteValue
+        }
+
+        override fun setVisibleHint(visible: Boolean) {
+            Log.d("ololo", "setVisibleHint: $adapterPosition - $visible")
+            gameView.setUserVisibleHint(visible)
         }
     }
 
