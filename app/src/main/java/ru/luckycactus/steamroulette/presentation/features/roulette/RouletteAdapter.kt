@@ -85,7 +85,6 @@ class RouletteAdapter @AssistedInject constructor(
         }
 
         override fun setVisibleHint(visible: Boolean) {
-            Log.d("ololo", "setVisibleHint: $adapterPosition - $visible")
             gameView.setUserVisibleHint(visible)
         }
     }

@@ -25,6 +25,8 @@ import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.request.transition.ViewAnimationFactory
 import com.google.android.material.card.MaterialCardView
+import jp.wasabeef.glide.transformations.BlurTransformation
+import jp.wasabeef.glide.transformations.internal.SupportRSBlur
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
@@ -177,7 +179,7 @@ class GameView : MaterialCardView {
     companion object {
         private val headerImageTransformation = MultiTransformation<Bitmap>(
             //todo calculate blur scale width
-            CoverBlurTransformation(50, 200, 0.5f),
+            CoverBlurTransformation(25, 100, 0.5f),
             CoverGlareTransformation(
                 BitmapFactory.decodeResource(
                     App.getInstance().resources,

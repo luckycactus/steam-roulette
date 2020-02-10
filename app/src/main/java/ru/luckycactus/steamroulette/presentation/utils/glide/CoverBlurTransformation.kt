@@ -8,6 +8,8 @@ import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import jp.wasabeef.glide.transformations.BitmapTransformation
 import jp.wasabeef.glide.transformations.internal.FastBlur
+import jp.wasabeef.glide.transformations.internal.RSBlur
+import jp.wasabeef.glide.transformations.internal.SupportRSBlur
 import java.security.MessageDigest
 
 class CoverBlurTransformation(
@@ -16,9 +18,9 @@ class CoverBlurTransformation(
     private val bias: Float
 ) : BitmapTransformation() {
 
-
     init {
         check(!(bias < 0f || bias > 1f)) { "bias should be in 0..1 range" }
+        check(!(radius <= 0 || radius > 25)) { "radius should be in (0,25] range" }
     }
 
     override fun transform(
@@ -49,7 +51,13 @@ class CoverBlurTransformation(
             scale(1f / sampling, 1f / sampling)
             drawBitmap(toTransform, 0f, 0f, paint)
         }
-        blurBitmap = FastBlur.blur(blurBitmap, radius, true)
+        blurBitmap = try {
+            SupportRSBlur.blur(context, blurBitmap, radius)
+        } catch (e: NoClassDefFoundError) {
+            RSBlur.blur(context, blurBitmap, radius)
+        } catch (e: RuntimeException) {
+            FastBlur.blur(blurBitmap, radius, true)
+        }
         canvas.save()
         canvas.scale(
             outWidth.toFloat() / blurBackgroundWidth,
@@ -90,7 +98,7 @@ class CoverBlurTransformation(
     }
 
     companion object {
-        private const val VERSION = 3
+        private const val VERSION = 4
         private const val ID = "ru.luckycactus.steamroulette.CoverBlurTransformation.$VERSION"
     }
 }

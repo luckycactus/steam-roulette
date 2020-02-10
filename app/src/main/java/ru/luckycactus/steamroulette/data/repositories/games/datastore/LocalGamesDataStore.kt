@@ -28,6 +28,7 @@ class LocalGamesDataStore @Inject constructor(
 
     override suspend fun saveOwnedGames(steam64: Long, gamesFlow: Flow<OwnedGameEntity>) {
         db.withTransaction {
+            val gameIds = db.ownedGamesDao().getAllIds(steam64).toSet()
             val hiddenGameIds = db.ownedGamesDao().getHiddenIds(steam64).toSet()
             val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds)
 
@@ -35,11 +36,15 @@ class LocalGamesDataStore @Inject constructor(
 
             gamesFlow
                 .filter { game ->
-                    var banned = game.iconUrl.isNullOrEmpty() && game.logoUrl.isNullOrEmpty()
-                    if (!banned && !game.name.isNullOrEmpty()) {
-                        banned = bannedEndings.any { game.name.endsWith(it, true) }
+                    if (gameIds.contains(game.appId)) {
+                        true
+                    } else {
+                        var banned = game.iconUrl.isNullOrEmpty() && game.logoUrl.isNullOrEmpty()
+                        if (!banned && !game.name.isNullOrEmpty()) {
+                            banned = bannedEndings.any { game.name.endsWith(it, true) }
+                        }
+                        !banned
                     }
-                    !banned
                 }
                 .map { mapper.mapFrom(it) }
                 .chunkBuffer(GAMES_BUFFER_SIZE)
