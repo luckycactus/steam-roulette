@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.utils.glide
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.util.Log
 import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
@@ -21,9 +22,8 @@ class CoverGlareTransformation(
         outWidth: Int,
         outHeight: Int
     ): Bitmap {
-
         with(Canvas(toTransform)) {
-            scale(outWidth / glare.width.toFloat(), outHeight / glare.height.toFloat())
+            scale(toTransform.width / glare.width.toFloat(), toTransform.height / glare.height.toFloat())
             drawBitmap(glare, 0f, 0f, paint)
         }
 
@@ -41,11 +41,11 @@ class CoverGlareTransformation(
     }
 
     override fun hashCode(): Int {
-        return javaClass.hashCode()
+        return ID.hashCode()
     }
 
     companion object {
-        private const val VERSION = 1
+        private const val VERSION = 2
         private const val ID =
             "ru.luckycactus.steamroulette.CoverGlareTransformation.$VERSION"
     }

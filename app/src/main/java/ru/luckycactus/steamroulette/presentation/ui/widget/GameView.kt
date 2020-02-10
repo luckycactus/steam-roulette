@@ -183,8 +183,11 @@ class GameView : MaterialCardView {
             CoverGlareTransformation(
                 BitmapFactory.decodeResource(
                     App.getInstance().resources,
-                    R.drawable.cover_glare
-                )
+                    R.drawable.cover_glare,
+                    BitmapFactory.Options().apply { inScaled = false }
+                ).apply {
+                    density = Bitmap.DENSITY_NONE
+                }
             )
         )
 

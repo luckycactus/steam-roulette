@@ -80,7 +80,7 @@ class CoverBlurTransformation(
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
-        messageDigest.update((ID + radius + blurBackgroundWidth).toByteArray(Key.CHARSET))
+        messageDigest.update(("${ID}_${radius}_${blurBackgroundWidth}_${bias.toRawBits()}").toByteArray(Key.CHARSET))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -91,14 +91,15 @@ class CoverBlurTransformation(
     }
 
     override fun hashCode(): Int {
-        var result = radius
+        var result = ID.hashCode()
+        result = 31 * result + radius
         result = 31 * result + blurBackgroundWidth
         result = 31 * result + bias.hashCode()
         return result
     }
 
     companion object {
-        private const val VERSION = 4
+        private const val VERSION = 5
         private const val ID = "ru.luckycactus.steamroulette.CoverBlurTransformation.$VERSION"
     }
 }
