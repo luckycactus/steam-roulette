@@ -12,6 +12,9 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("select appId from owned_game where userSteam64 = :steam64 and hidden = 0")
     abstract suspend fun getVisibleIds(steam64: Long): List<Int>
 
+    @Query("select appId from owned_game where userSteam64 = :steam64")
+    abstract suspend fun getAllIds(steam64: Long): List<Int>
+
     @Query(
         """select appId 
         from owned_game 

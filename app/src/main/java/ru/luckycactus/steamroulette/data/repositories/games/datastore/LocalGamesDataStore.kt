@@ -5,6 +5,7 @@ import androidx.room.withTransaction
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
@@ -33,6 +34,13 @@ class LocalGamesDataStore @Inject constructor(
             db.ownedGamesDao().deleteAll(steam64)
 
             gamesFlow
+                .filter { game ->
+                    var banned = game.iconUrl.isNullOrEmpty() && game.logoUrl.isNullOrEmpty()
+                    if (!banned && !game.name.isNullOrEmpty()) {
+                        banned = bannedEndings.any { game.name.endsWith(it, true) }
+                    }
+                    !banned
+                }
                 .map { mapper.mapFrom(it) }
                 .chunkBuffer(GAMES_BUFFER_SIZE)
                 .collect {
@@ -75,5 +83,17 @@ class LocalGamesDataStore @Inject constructor(
 
     companion object {
         private const val GAMES_BUFFER_SIZE = 500
+        private val bannedEndings = arrayOf(
+            "public test",
+            "public testing",
+            "closed test",
+            "system test",
+            "test server",
+            "testlive client",
+            "screen tests",
+
+            " demo",
+            " beta"
+        )
     }
 }
