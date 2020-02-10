@@ -88,10 +88,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun onExit() {
-        _screen.value = Event(Screen.Login)
         //todo progress
         viewModelScope.launch {
             signOutUser()
+            _screen.value = Event(Screen.Login)
         }
     }
 

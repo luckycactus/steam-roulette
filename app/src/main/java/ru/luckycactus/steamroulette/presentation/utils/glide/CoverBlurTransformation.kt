@@ -52,11 +52,11 @@ class CoverBlurTransformation(
             drawBitmap(toTransform, 0f, 0f, paint)
         }
         blurBitmap = try {
+            FastBlur.blur(blurBitmap, radius, true)
+        } catch (e: RuntimeException) {
             SupportRSBlur.blur(context, blurBitmap, radius)
         } catch (e: NoClassDefFoundError) {
             RSBlur.blur(context, blurBitmap, radius)
-        } catch (e: RuntimeException) {
-            FastBlur.blur(blurBitmap, radius, true)
         }
         canvas.save()
         canvas.scale(
