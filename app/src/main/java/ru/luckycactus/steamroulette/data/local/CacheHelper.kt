@@ -10,6 +10,9 @@ import ru.luckycactus.steamroulette.domain.common.CachePolicy
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.milliseconds
+import kotlin.time.toDuration
 
 @Singleton
 class CacheHelper @Inject constructor(
@@ -21,33 +24,29 @@ class CacheHelper @Inject constructor(
 
     fun isExpired(
         key: String,
-        window: Long,
-        timeUnit: TimeUnit = TimeUnit.HOURS
+        window: Duration
     ): Boolean {
         val savedTime = prefs.getLong(key, 0L)
         if (savedTime == 0L)
             return true
-        val expireTime = savedTime + TimeUnit.MILLISECONDS.convert(window, timeUnit)
-        return System.currentTimeMillis() >= expireTime
+
+        val passedTime = (System.currentTimeMillis() - savedTime).milliseconds
+        return passedTime >= window
     }
 
     fun shouldUseCache(
         cachePolicy: CachePolicy,
         key: String,
-        window: Long,
-        timeUnit: TimeUnit = TimeUnit.HOURS
-    ): Boolean =
-        cachePolicy == CachePolicy.OnlyCache ||
-                (cachePolicy == CachePolicy.CacheOrRemote && !isExpired(key, window, timeUnit))
+        window: Duration
+    ): Boolean = cachePolicy == CachePolicy.OnlyCache ||
+            (cachePolicy == CachePolicy.CacheOrRemote && !isExpired(key, window))
 
 
     fun shouldUpdate(
         cachePolicy: CachePolicy,
         key: String,
-        window: Long,
-        timeUnit: TimeUnit = TimeUnit.HOURS
-    ): Boolean =
-        !shouldUseCache(cachePolicy, key, window, timeUnit)
+        window: Duration
+    ): Boolean = !shouldUseCache(cachePolicy, key, window)
 
     fun setCachedNow(key: String) {
         prefsEditor.apply { putLong(key, System.currentTimeMillis()) }

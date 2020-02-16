@@ -14,6 +14,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.days
 
 @Singleton
 class GamesRepositoryImpl @Inject constructor(
@@ -92,6 +93,6 @@ class GamesRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        val OWNED_GAMES_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS)
+        val OWNED_GAMES_CACHE_WINDOW = 7.days
     }
 }

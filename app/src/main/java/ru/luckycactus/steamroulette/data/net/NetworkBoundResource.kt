@@ -8,12 +8,13 @@ import ru.luckycactus.steamroulette.di.common.AppComponent
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.common.CachePolicy
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 //todo refactor
 abstract class NetworkBoundResource<RequestType, ResultType>(
     private val key: String,
     private val memoryKey: String?,
-    private val windowMillis: Long
+    private val window: Duration
 ) {
     abstract suspend fun getFromNetwork(): RequestType
     abstract suspend fun saveToCache(data: RequestType)
@@ -58,7 +59,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     }
 
     private fun shouldUpdate(cachePolicy: CachePolicy): Boolean {
-        return cacheHelper.shouldUpdate(cachePolicy, key, windowMillis, TimeUnit.MILLISECONDS)
+        return cacheHelper.shouldUpdate(cachePolicy, key, window)
     }
 
     companion object {

@@ -13,6 +13,7 @@ import ru.luckycactus.steamroulette.domain.user.UserRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.days
 
 @Singleton
 class UserRepositoryImpl @Inject constructor(
@@ -88,6 +89,6 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        val SUMMARY_CACHE_WINDOW = TimeUnit.MILLISECONDS.convert(2L, TimeUnit.DAYS)
+        val SUMMARY_CACHE_WINDOW = 2.days
     }
 }
