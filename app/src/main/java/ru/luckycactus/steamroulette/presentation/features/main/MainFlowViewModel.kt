@@ -23,20 +23,4 @@ import javax.inject.Inject
 //todo Отдавать Result из UseCase?
 class MainFlowViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate
-) : ViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
-
-//    val logonCheckedAction: LiveData<Event<Unit>>
-//        get() = _logonCheckedAction
-//
-//
-//    private val _logonCheckedAction = MutableLiveData<Event<Unit>>()
-
-
-//    fun coldStart() {
-//        _currentUserSteamId.first {
-//            _logonCheckedAction.value =
-//                Event(Unit)
-//        }
-//    }
-
-}
+) : ViewModel(), UserViewModelDelegatePublic by userViewModelDelegate

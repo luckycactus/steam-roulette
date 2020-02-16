@@ -8,21 +8,20 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 
-//todo refactor
 @Reusable
 class GameDetailsUiModelMapper @Inject constructor(
     private val resourceManager: ResourceManager
 ) : Mapper<GameStoreInfo, List<GameDetailsUiModel>>() {
 
     override fun mapFrom(from: GameStoreInfo): List<GameDetailsUiModel> =
-        mutableListOf<GameDetailsUiModel>().apply {
-            add(mapHeader(from))
-            add(GameDetailsUiModel.Links)
-            from.screenshots?.let { if (it.isNotEmpty()) add(GameDetailsUiModel.Screenshots(it)) }
-            mapShortDescription(from)?.let { add(it) }
-            mapPlatforms(from)?.let { add(it) }
-            mapLanguages(from)?.let { add(it) }
-        }
+        listOfNotNull(
+            mapHeader(from),
+            GameDetailsUiModel.Links,
+            mapScrenshots(from),
+            mapShortDescription(from),
+            mapPlatforms(from),
+            mapLanguages(from)
+        )
 
     private fun mapHeader(from: GameStoreInfo): GameDetailsUiModel.Header {
         val releaseDate = from.releaseDate?.let {
@@ -64,4 +63,10 @@ class GameDetailsUiModelMapper @Inject constructor(
             else null
         }
     }
+
+    private fun mapScrenshots(from: GameStoreInfo): GameDetailsUiModel.Screenshots? =
+        if (from.screenshots?.isNotEmpty() == true)
+            GameDetailsUiModel.Screenshots(from.screenshots)
+        else null
+
 }

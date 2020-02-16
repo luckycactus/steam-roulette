@@ -15,6 +15,9 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("select appId from owned_game where userSteam64 = :steam64")
     abstract suspend fun getAllIds(steam64: Long): List<Int>
 
+    @Query("select appId from owned_game where userSteam64 =:steam64 and hidden = 1")
+    abstract suspend fun getHiddenIds(steam64: Long): List<Int>
+
     @Query(
         """select appId 
         from owned_game 
@@ -42,13 +45,10 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("update owned_game SET hidden = 1 where userSteam64 =:steam64 and appId = :gameId")
     abstract suspend fun hide(steam64: Long, gameId: Int)
 
-    @Query("select appId from owned_game where userSteam64 =:steam64 and hidden = 1")
-    abstract suspend fun getHiddenIds(steam64: Long): List<Int>
-
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun deleteAll(steam64: Long)
 
-    suspend fun isUserHasGames(steam64: Long) = _isUserHasOwnedGames(steam64) == 1
+    suspend fun isUserHasGames(steam64: Long) = _isUserHasGames(steam64) == 1
 
     @Query("select COUNT(*) from owned_game  where userSteam64 = :steam64")
     abstract fun observeCount(steam64: Long): LiveData<Int>
@@ -68,5 +68,5 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
             limit 1
         )"""
     )
-    abstract suspend fun _isUserHasOwnedGames(steam64: Long): Int
+    abstract suspend fun _isUserHasGames(steam64: Long): Int
 }

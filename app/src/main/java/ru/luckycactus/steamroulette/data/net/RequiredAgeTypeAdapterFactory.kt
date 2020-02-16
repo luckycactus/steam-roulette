@@ -9,11 +9,12 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import ru.luckycactus.steamroulette.domain.games.entity.RequiredAge
+import javax.inject.Inject
 
 /**
  * Json field is string ("0", "6", etc) when there is info about required age and int 0 otherwise
  */
-class RequiredAgeTypeAdapterFactory : TypeAdapterFactory {
+class RequiredAgeTypeAdapterFactory @Inject constructor() : TypeAdapterFactory {
     override fun <T> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
         if (!RequiredAge::class.java.isAssignableFrom(type.rawType)) return null
 

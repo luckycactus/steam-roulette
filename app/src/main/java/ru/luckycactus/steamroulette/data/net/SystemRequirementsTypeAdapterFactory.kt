@@ -8,8 +8,9 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
+import javax.inject.Inject
 
-class SystemRequirementsTypeAdapterFactory : TypeAdapterFactory {
+class SystemRequirementsTypeAdapterFactory @Inject constructor() : TypeAdapterFactory {
     override fun <T> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
         if (!SystemRequirements::class.java.isAssignableFrom(type.rawType)) return null
 

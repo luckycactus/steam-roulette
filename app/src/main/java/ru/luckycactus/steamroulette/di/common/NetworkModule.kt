@@ -100,9 +100,12 @@ abstract class NetworkModule {
         @JvmStatic
         @Provides
         @Named("api")
-        fun provideGsonForApi() = GsonBuilder()
-            .registerTypeAdapterFactory(SystemRequirementsTypeAdapterFactory()) //todo provide
-            .registerTypeAdapterFactory(RequiredAgeTypeAdapterFactory())
+        fun provideGsonForApi(
+            systemRequirementsTypeAdapterFactory: SystemRequirementsTypeAdapterFactory,
+            requiredAgeTypeAdapterFactory: RequiredAgeTypeAdapterFactory
+        ) = GsonBuilder()
+            .registerTypeAdapterFactory(systemRequirementsTypeAdapterFactory)
+            .registerTypeAdapterFactory(requiredAgeTypeAdapterFactory)
             .create()
 
     }
