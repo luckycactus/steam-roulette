@@ -19,7 +19,6 @@ class RouletteOptionsViewModel @Inject constructor(
     private val clearHiddenGames: ClearHiddenGamesUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel() {
-
     val playTimePrefValue: LiveData<String>
     val hiddenGamesCount: LiveData<Int>
     val closeAction: LiveData<Unit>

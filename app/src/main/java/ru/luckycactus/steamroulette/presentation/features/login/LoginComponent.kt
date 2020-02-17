@@ -6,10 +6,8 @@ import ru.luckycactus.steamroulette.di.scopes.FeatureScope
 @Subcomponent
 @FeatureScope
 interface LoginComponent {
-
     @Subcomponent.Factory
     interface Factory {
-
         fun create(): LoginComponent
     }
 

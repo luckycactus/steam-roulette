@@ -57,7 +57,3 @@ fun setDrawableColor(drawable: Drawable, @ColorInt color: Int) {
     }
 }
 
-inline fun testPostDelayed(delay: Long, crossinline block: () -> Unit) {
-    Handler().postDelayed({ block() }, delay)
-}
-

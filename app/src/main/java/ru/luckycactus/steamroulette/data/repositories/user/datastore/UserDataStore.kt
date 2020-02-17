@@ -17,9 +17,9 @@ interface UserDataStore {
 
         fun getCurrentUserSteam64(): SteamId?
 
-        fun observeCurrentUserSteam64(): LiveData<SteamId?>
+        fun observeCurrentUserSteamId(): LiveData<SteamId?>
 
-        fun removeCurrentUserSteam64()
+        fun removeCurrentUserSteamId()
 
         suspend fun removeUserSummary(steamId: SteamId)
     }

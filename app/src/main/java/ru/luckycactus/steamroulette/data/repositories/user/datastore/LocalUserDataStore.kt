@@ -51,10 +51,10 @@ class LocalUserDataStore @Inject constructor(
 
     override fun getCurrentUserSteam64(): SteamId? = fromSteam64(currentUserSteam64Pref)
 
-    override fun observeCurrentUserSteam64(): LiveData<SteamId?> =
+    override fun observeCurrentUserSteamId(): LiveData<SteamId?> =
         currentUserSteam64LiveData.map { fromSteam64(it) }
 
-    override fun removeCurrentUserSteam64() {
+    override fun removeCurrentUserSteamId() {
         userPreferences.edit { remove(CURRENT_USER_KEY) }
     }
 

@@ -6,7 +6,6 @@ import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDele
 
 @Module
 abstract class MainActivityModule {
-
     @Module
     companion object {
         @Provides

@@ -13,7 +13,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEnti
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.presentation.utils.chunkBuffer
+import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import javax.inject.Inject
 
 @Reusable

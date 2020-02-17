@@ -1,11 +1,10 @@
-package ru.luckycactus.steamroulette.presentation.features.roulette
+package ru.luckycactus.steamroulette.domain.games.entity
 
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.domain.core.Event
-import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
 interface PagingGameList {
     val list: List<GameHeader>
@@ -14,7 +13,6 @@ interface PagingGameList {
     fun gamesEnded(): Boolean
     @MainThread
     fun removeTop(): GameHeader
-
     @MainThread
     fun finish()
 }

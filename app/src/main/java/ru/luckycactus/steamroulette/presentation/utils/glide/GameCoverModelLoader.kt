@@ -9,21 +9,23 @@ import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import com.bumptech.glide.signature.ObjectKey
 import com.bumptech.glide.util.pool.FactoryPools
 import okhttp3.OkHttpClient
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import java.io.InputStream
 
-class GameCoverModelLoader : ModelLoader<GameCoverModel, InputStream> {
-    private val client = OkHttpClient() //todo
+class GameCoverModelLoader : ModelLoader<GameHeader, InputStream> {
+    private val client = OkHttpClient()
     private val throwableListPool = FactoryPools.threadSafeList<Throwable>(5)
 
     override fun buildLoadData(
-        model: GameCoverModel,
+        model: GameHeader,
         width: Int,
         height: Int,
         options: Options
     ): ModelLoader.LoadData<InputStream>? {
         val fetchers = listOf(
-            OkHttpStreamFetcher(client, GlideUrl(model.primary)),
-            OkHttpStreamFetcher(client, GlideUrl(model.secondary))
+            OkHttpStreamFetcher(client, GlideUrl(GameUrlUtils.libraryPortraitImageHD(model.appId))),
+            OkHttpStreamFetcher(client, GlideUrl(GameUrlUtils.headerImage(model.appId)))
         )
         return ModelLoader.LoadData(
             ObjectKey(model),
@@ -31,14 +33,14 @@ class GameCoverModelLoader : ModelLoader<GameCoverModel, InputStream> {
         )
     }
 
-    override fun handles(model: GameCoverModel): Boolean {
+    override fun handles(model: GameHeader): Boolean {
         return true
     }
 
-    class Factory : ModelLoaderFactory<GameCoverModel, InputStream> {
+    class Factory : ModelLoaderFactory<GameHeader, InputStream> {
         override fun build(
             multiFactory: MultiModelLoaderFactory
-        ): ModelLoader<GameCoverModel, InputStream> {
+        ): ModelLoader<GameHeader, InputStream> {
             return GameCoverModelLoader()
         }
 

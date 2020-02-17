@@ -19,8 +19,7 @@ class ObserveResetHiddenGamesEventUseCase @Inject constructor(
         }.apply {
             addSource(gamesRepository.observeHiddenGamesCount(params)) { newHiddenCount ->
                 if (lastHiddenCount > 0 && newHiddenCount == 0)
-                    value =
-                        Event(Unit)
+                    value = Event(Unit)
                 lastHiddenCount = newHiddenCount
             }
         }

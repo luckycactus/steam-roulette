@@ -6,8 +6,8 @@ import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
-import ru.luckycactus.steamroulette.presentation.features.roulette.PagingGameList
-import ru.luckycactus.steamroulette.presentation.features.roulette.PagingGameListImpl
+import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
+import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import javax.inject.Inject
 
 @Reusable

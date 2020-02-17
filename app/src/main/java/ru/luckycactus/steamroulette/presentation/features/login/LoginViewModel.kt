@@ -23,7 +23,6 @@ class LoginViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel() {
-
     val progressState: LiveData<Boolean>
         get() = _progressState
 

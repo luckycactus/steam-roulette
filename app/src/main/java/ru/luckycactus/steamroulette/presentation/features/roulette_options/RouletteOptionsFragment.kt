@@ -13,7 +13,6 @@ import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
 
 class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
-
     private val viewModel by viewModel {
         findComponent<MainFlowComponent>().rouletteOptionsViewModel
     }

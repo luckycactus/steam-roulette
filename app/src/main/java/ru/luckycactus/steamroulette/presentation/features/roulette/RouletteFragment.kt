@@ -37,12 +37,7 @@ class RouletteFragment : BaseFragment(), Injectable {
         findComponent<MainFlowComponent>().rouletteViewModel
     }
 
-    @Inject
-    lateinit var rouletteAdapterFactory: RouletteAdapter.Factory
-
-    private val rouletteAdapter: RouletteAdapter by lazyNonThreadSafe {
-        rouletteAdapterFactory.create(::onGameClick)
-    }
+    private lateinit var rouletteAdapter: RouletteAdapter
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
@@ -122,11 +117,15 @@ class RouletteFragment : BaseFragment(), Injectable {
                 viewModel.onSwipeProgress(progress)
             }
         ), 1.5f)
-        itemTouchHelper.attachToRecyclerView(rvRoulette)
-        rvRoulette.layoutManager = CardStackLayoutManager()
-        rvRoulette.adapter = rouletteAdapter
-        rvRoulette.itemAnimator = null
-        ViewGroupCompat.setTransitionGroup(rvRoulette, true)
+        with(rvRoulette) {
+            itemTouchHelper.attachToRecyclerView(this)
+            layoutManager = CardStackLayoutManager()
+            adapter = RouletteAdapter(::onGameClick).also {
+                rouletteAdapter = it
+            }
+            itemAnimator = null
+            ViewGroupCompat.setTransitionGroup(this, true)
+        }
 
         dataLoadingViewHolder = DataLoadingViewHolder(
             emptyLayout,
@@ -201,15 +200,13 @@ class RouletteFragment : BaseFragment(), Injectable {
             requireParentFragment().exitTransition = transitionSet {
                 excludeTarget(rvRoulette, true)
                 slide()
-                listener(
-                    onTransitionEnd = {
-                        parentFragment?.exitTransition = null
-                        //todo comment
-                        sharedViews.forEach {
-                            it.trySetTransitionAlpha(1f)
-                        }
+                listener(onTransitionEnd = {
+                    parentFragment?.exitTransition = null
+                    //todo comment
+                    sharedViews.forEach {
+                        it.trySetTransitionAlpha(1f)
                     }
-                )
+                })
                 addListener(touchSwitchListener)
             }
         } else {
@@ -219,7 +216,6 @@ class RouletteFragment : BaseFragment(), Injectable {
     }
 
     private fun createDefaultExitTransition() = transitionSet {
-
         slide {
             excludeTarget(rvRoulette, true)
         }

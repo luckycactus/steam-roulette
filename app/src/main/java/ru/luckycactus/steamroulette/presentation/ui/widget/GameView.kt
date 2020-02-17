@@ -30,13 +30,11 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
-import ru.luckycactus.steamroulette.presentation.utils.glide.GameCoverModel
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.onApiAtLeast
 import ru.luckycactus.steamroulette.presentation.utils.sp
 
 class GameView : MaterialCardView {
-
     var textSize: Float
         set(value) {
             TextViewCompat.setAutoSizeTextTypeWithDefaults(
@@ -158,7 +156,7 @@ class GameView : MaterialCardView {
         )
 
         return GlideApp.with(view)
-            .load(GameCoverModel(game))
+            .load(game)
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .downsample(DownsampleStrategy.CENTER_INSIDE)

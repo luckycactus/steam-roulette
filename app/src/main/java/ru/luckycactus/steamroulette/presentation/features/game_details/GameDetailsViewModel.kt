@@ -15,7 +15,7 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
-import ru.luckycactus.steamroulette.presentation.common.ContentState
+import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription

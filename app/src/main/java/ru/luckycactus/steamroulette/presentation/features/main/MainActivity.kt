@@ -19,9 +19,7 @@ import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 
 
-class MainActivity : AppCompatActivity(),
-    ComponentOwner<MainActivityComponent> {
-
+class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent> {
     var touchAndBackPressEnabled: Boolean = true
 
     val viewModel by viewModel { component.mainViewModel }

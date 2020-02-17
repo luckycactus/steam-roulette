@@ -10,7 +10,6 @@ import ru.luckycactus.steamroulette.presentation.features.login.LoginComponent
 @ActivityScope
 @Subcomponent(modules = [MainActivityModule::class])
 interface MainActivityComponent {
-
     @Subcomponent.Factory
     interface Factory {
         fun create(@BindsInstance activity: MainActivity): MainActivityComponent

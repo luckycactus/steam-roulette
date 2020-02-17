@@ -16,8 +16,7 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 
 
-class LoginFragment : BaseFragment(),
-    ComponentOwner<LoginComponent> {
+class LoginFragment : BaseFragment(), ComponentOwner<LoginComponent> {
 
     private val viewModel by viewModel { component.loginViewModel }
 

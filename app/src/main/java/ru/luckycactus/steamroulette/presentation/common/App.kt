@@ -10,7 +10,6 @@ import javax.inject.Inject
 
 open class App : Application(),
     ComponentOwner<BaseAppComponent> {
-
     @Inject
     lateinit var systemLanguageSynchronizer: SystemLanguageSynchronizer
 

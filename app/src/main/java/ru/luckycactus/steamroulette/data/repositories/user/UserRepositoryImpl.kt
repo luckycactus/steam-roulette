@@ -28,7 +28,7 @@ class UserRepositoryImpl @Inject constructor(
     override fun getCurrentUserSteamId(): SteamId? = localUserDataStore.getCurrentUserSteam64()
 
     override fun observeCurrentUserSteamId(): LiveData<SteamId?> =
-        localUserDataStore.observeCurrentUserSteam64()
+        localUserDataStore.observeCurrentUserSteamId()
 
     override fun isUserSignedIn(): Boolean = localUserDataStore.getCurrentUserSteam64() != null
 
@@ -46,7 +46,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signOut() {
-        localUserDataStore.removeCurrentUserSteam64()
+        localUserDataStore.removeCurrentUserSteamId()
     }
 
     override suspend fun clearUserSummary(steamId: SteamId) {

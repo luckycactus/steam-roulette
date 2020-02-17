@@ -98,7 +98,6 @@ class GameScreenshotsViewHolder(
         inner class ScreenshotViewHolder(
             override val containerView: View
         ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
-
             init {
                 ivScreenshot.setOnClickListener {
                     onScreenshotClick(adapterPosition, ivScreenshot)

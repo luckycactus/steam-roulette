@@ -81,7 +81,7 @@ class GameDetailsFragment : BaseFragment(), Injectable {
         }
 
         sharedElementEnterTransition = transitionSet {
-            //to fix weird bug when enter animation ends before shared element animation and
+            //to avoid weird bug when enter animation ends before shared element animation and
             //shared views don't invalidate for some reason and stuck in intermediate state
             duration = DEFAULT_TRANSITION_DURATION - 25L
             changeTransform()

@@ -11,9 +11,10 @@ import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
 import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.presentation.common.ContentState
+import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
@@ -28,7 +29,6 @@ class RouletteViewModel @Inject constructor(
     private val hideGame: HideGameUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel() {
-
     val games: LiveData<List<GameHeader>?>
     val itemRemoved: LiveData<Event<Int>?> //todo flow
         get() = _itemRemoved

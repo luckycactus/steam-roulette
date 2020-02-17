@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.model
 
 import ru.luckycactus.steamroulette.domain.games.entity.*
-import ru.luckycactus.steamroulette.presentation.common.ContentState
+import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 
 sealed class GameDetailsUiModel {
 

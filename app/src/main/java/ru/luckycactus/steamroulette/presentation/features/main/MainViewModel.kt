@@ -126,25 +126,23 @@ class MainViewModel @Inject constructor(
 
     private fun handleUserFetchError(result: Result<Unit>) {
         if (result is Result.Error) {
-            _errorMessage.value =
-                Event(
-                    "%s: %s".format(
-                        resourceManager.getString(R.string.error_user_update),
-                        result.message
-                    )
+            _errorMessage.value = Event(
+                "%s: %s".format(
+                    resourceManager.getString(R.string.error_user_update),
+                    result.message
                 )
+            )
         }
     }
 
     private fun handleGamesFetchError(result: Result<Unit>) {
         if (result is Result.Error) {
-            _errorMessage.value =
-                Event(
-                    "%s: %s".format(
-                        resourceManager.getString(R.string.error_get_owned_games),
-                        result.message
-                    )
+            _errorMessage.value = Event(
+                "%s: %s".format(
+                    resourceManager.getString(R.string.error_get_owned_games),
+                    result.message
                 )
+            )
         }
     }
 
@@ -174,12 +172,7 @@ class MainViewModel @Inject constructor(
         getCurrentUserSteamId().let {
             return try {
                 _fetchUserSummaryState.value = true
-                fetchUserSummary(
-                    FetchUserSummaryUseCase.Params(
-                        it,
-                        reload
-                    )
-                )
+                fetchUserSummary(FetchUserSummaryUseCase.Params(it, reload))
                 Result.success
             } catch (e: Exception) {
                 if (e is CancellationException) {

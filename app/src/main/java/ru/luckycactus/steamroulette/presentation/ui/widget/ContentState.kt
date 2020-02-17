@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.common
+package ru.luckycactus.steamroulette.presentation.ui.widget
 
 sealed class ContentState {
     object Loading : ContentState()
@@ -12,7 +12,6 @@ sealed class ContentState {
     ) : ContentState()
 
     sealed class TitleType {
-
         object DefaultError : TitleType()
 
         object DefaultEmpty : TitleType()
@@ -25,7 +24,6 @@ sealed class ContentState {
     }
 
     sealed class ButtonType {
-
         object Default : ButtonType()
 
         object None : ButtonType()
@@ -36,25 +34,46 @@ sealed class ContentState {
     }
 
     companion object {
-
         fun errorPlaceholder(
             message: String,
             title: String? = null,
             buttonText: String? = null
-        ) = Placeholder(
-            message,
-            title?.let { TitleType.Custom(it) } ?: TitleType.DefaultError,
-            buttonText?.let { ButtonType.Custom(it) } ?: ButtonType.Default
-        )
+        ) =
+            Placeholder(
+                message,
+                title?.let {
+                    TitleType.Custom(
+                        it
+                    )
+                }
+                    ?: TitleType.DefaultError,
+                buttonText?.let {
+                    ButtonType.Custom(
+                        it
+                    )
+                }
+                    ?: ButtonType.Default
+            )
 
         fun emptyPlaceholder(
             message: String,
             title: String? = null,
             buttonText: String? = null
-        ) = Placeholder(
-            message,
-            title?.let { TitleType.Custom(it) } ?: TitleType.DefaultEmpty,
-            buttonText?.let { ButtonType.Custom(it) } ?: ButtonType.Default
-        )
+        ) =
+            Placeholder(
+                message,
+                title?.let {
+                    TitleType.Custom(
+                        it
+                    )
+                }
+                    ?: TitleType.DefaultEmpty,
+                buttonText?.let {
+                    ButtonType.Custom(
+                        it
+                    )
+                }
+                    ?: ButtonType.Default
+            )
     }
 }

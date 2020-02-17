@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.empty_layout.view.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class DataLoadingViewHolder(

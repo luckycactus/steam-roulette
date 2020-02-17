@@ -14,7 +14,6 @@ import ru.luckycactus.steamroulette.presentation.features.roulette_options.Roule
 interface MainFlowComponent {
     @Subcomponent.Factory
     interface Factory {
-
         fun create(@BindsInstance mainFlowFragment: MainFlowFragment): MainFlowComponent
     }
 

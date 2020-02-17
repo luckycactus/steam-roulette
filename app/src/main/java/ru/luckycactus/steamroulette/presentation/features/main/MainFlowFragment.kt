@@ -16,9 +16,7 @@ import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.showIfNotExist
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
-class MainFlowFragment : BaseFragment(),
-    ComponentOwner<MainFlowComponent> {
-
+class MainFlowFragment : BaseFragment(), ComponentOwner<MainFlowComponent> {
     private val viewModel by viewModel { component.mainFlowViewModel }
 
     override val layoutResId = R.layout.fragment_main_flow
