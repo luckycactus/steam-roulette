@@ -4,14 +4,14 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
-import ru.luckycactus.steamroulette.domain.common.*
+import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
-import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.core.invoke
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
@@ -102,16 +102,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onGameClick(game: OwnedGame) {
-        _screen.value = Event(
-            Screen.GameDetails(game)
-        )
-    }
-
     override fun getCurrentUserSteamId(): SteamId {
         return _currentUserSteamId.value!!
     }
-
 
     override fun fetchGames() {
         viewModelScope.launch {
@@ -200,10 +193,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //todo
     sealed class Screen {
         object Login : Screen()
         object Roulette : Screen()
-        class GameDetails(val game: OwnedGame) : Screen()
+        class GameDetails(val game: GameHeader) : Screen()
     }
 
 }

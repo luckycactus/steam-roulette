@@ -22,7 +22,7 @@ class GetOwnedGamesPagingList @Inject constructor(
         val gameIds = gamesRepository.getLocalOwnedGamesIds(params.steamId, params.filter)
             .shuffled()
         return PagingGameListImpl(
-            { gamesRepository.getLocalOwnedGames(params.steamId, it) },
+            { gamesRepository.getLocalOwnedGameHeaders(params.steamId, it) },
             gameIds,
             5,
             10,

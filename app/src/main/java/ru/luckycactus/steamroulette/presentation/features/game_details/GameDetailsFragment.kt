@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.fragment_game_details.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.di.core.Injectable
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
@@ -100,7 +100,7 @@ class GameDetailsFragment : BaseFragment(), Injectable {
         private const val ARG_GAME = "ARG_GAME"
         private const val ARG_ENABLE_TRANSITION = "ARG_ENABLE_SHARED_ELEMENT_TRANSITION"
 
-        fun newInstance(game: OwnedGame, enableSharedElementTransition: Boolean) =
+        fun newInstance(game: GameHeader, enableSharedElementTransition: Boolean) =
             GameDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_GAME, game)

@@ -10,10 +10,10 @@ import androidx.core.view.ViewCompat
 import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.common.BaseAppComponent
-import ru.luckycactus.steamroulette.di.core.component
 import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.di.core.InjectionManager
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.di.core.component
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    fun onGameClick(sharedViews: List<View>, game: OwnedGame) {
+    fun onGameClick(sharedViews: List<View>, game: GameHeader) {
         supportFragmentManager.commitIfNotExist(FRAGMENT_GAME_DETAILS_TAG) {
             hide(supportFragmentManager.findFragmentByTag(FRAGMENT_MAIN_FLOW_TAG)!!)
             add(

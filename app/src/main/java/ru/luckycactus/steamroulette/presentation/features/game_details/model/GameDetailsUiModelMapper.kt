@@ -4,7 +4,7 @@ import dagger.Reusable
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.Mapper
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 
@@ -33,7 +33,7 @@ class GameDetailsUiModelMapper @Inject constructor(
         }
 
         return GameDetailsUiModel.Header(
-            GameMinimal(from),
+            GameHeader(from),
             from.developers?.joinToString(),
             from.publishers?.joinToString(),
             releaseDate

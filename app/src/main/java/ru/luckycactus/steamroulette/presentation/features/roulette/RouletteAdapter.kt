@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
@@ -11,21 +10,20 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
 class RouletteAdapter @AssistedInject constructor(
-    @Assisted private val onGameClick: (List<View>, OwnedGame) -> Unit
+    @Assisted private val onGameClick: (List<View>, GameHeader) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
     init {
         setHasStableIds(true)
     }
 
-    var items: List<OwnedGame>? = null
+    var items: List<GameHeader>? = null
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -51,7 +49,7 @@ class RouletteAdapter @AssistedInject constructor(
         CardStackTouchHelperCallback.ViewHolderSwipeProgressListener,
         CardStackTouchHelperCallback.ViewHolderVisibleHintListener {
 
-        private lateinit var game: OwnedGame
+        private lateinit var game: GameHeader
 
         init {
             itemView.setOnClickListener {
@@ -64,10 +62,10 @@ class RouletteAdapter @AssistedInject constructor(
             }
         }
 
-        fun bind(game: OwnedGame) {
+        fun bind(game: GameHeader) {
             this.game = game
             setVisibleHint(adapterPosition == 0)
-            gameView.setGame(GameMinimal(game)) //todo
+            gameView.setGame(game)
             ViewCompat.setTransitionName(
                 gameView.ivGame,
                 gameView.context.getString(R.string.image_shared_element_transition, game.appId)
@@ -89,8 +87,9 @@ class RouletteAdapter @AssistedInject constructor(
         }
     }
 
+    //todo remove
     @AssistedInject.Factory
     interface Factory {
-        fun create(onGameClick: (List<View>, OwnedGame) -> Unit): RouletteAdapter
+        fun create(onGameClick: (List<View>, GameHeader) -> Unit): RouletteAdapter
     }
 }

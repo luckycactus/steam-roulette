@@ -8,8 +8,8 @@ import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEnti
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -52,11 +52,8 @@ class GamesRepositoryImpl @Inject constructor(
     ): List<Int> =
         localGamesDataStore.getOwnedGamesIds(steamId, filter)
 
-    override suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame =
-        localGamesDataStore.getOwnedGame(steamId, gameId)
-
-    override suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame> =
-        localGamesDataStore.getOwnedGames(steamId, gameIds)
+    override suspend fun getLocalOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader> =
+        localGamesDataStore.getOwnedGameHeaders(steamId, gameIds)
 
     override suspend fun hideLocalOwnedGame(steamId: SteamId, gameId: Int) {
         localGamesDataStore.hideOwnedGame(steamId, gameId)
@@ -64,9 +61,9 @@ class GamesRepositoryImpl @Inject constructor(
 
     private fun createOwnedGamesResource(
         steamId: SteamId
-    ): NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>> {
+    ): NetworkBoundResource<Flow<OwnedGameEntity>, Unit> {
         val cacheKey = "owned_games_${steamId.asSteam64()}"
-        return object : NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>>(
+        return object : NetworkBoundResource<Flow<OwnedGameEntity>, Unit>(
             cacheKey,
             cacheKey,
             OWNED_GAMES_CACHE_WINDOW
@@ -77,7 +74,7 @@ class GamesRepositoryImpl @Inject constructor(
             override suspend fun saveToCache(data: Flow<OwnedGameEntity>) =
                 localGamesDataStore.saveOwnedGames(steamId, data)
 
-            override suspend fun getFromCache(): List<OwnedGame> {
+            override suspend fun getFromCache() {
                 throw UnsupportedOperationException()
             }
         }

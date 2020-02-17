@@ -11,7 +11,6 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.core.content.withStyledAttributes
-import androidx.core.view.ViewCompat
 import androidx.core.widget.TextViewCompat
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
@@ -25,13 +24,10 @@ import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.request.transition.ViewAnimationFactory
 import com.google.android.material.card.MaterialCardView
-import jp.wasabeef.glide.transformations.BlurTransformation
-import jp.wasabeef.glide.transformations.internal.SupportRSBlur
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.common.App
-import ru.luckycactus.steamroulette.presentation.utils.dp
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.GameCoverModel
@@ -58,7 +54,7 @@ class GameView : MaterialCardView {
     var imageReady = false
         private set
 
-    private var current: GameMinimal? = null
+    private var current: GameHeader? = null
     private var userVisibleHint = true
 
     constructor(context: Context) : super(context) {
@@ -89,7 +85,7 @@ class GameView : MaterialCardView {
     }
 
     fun setGame(
-        game: GameMinimal?,
+        game: GameHeader?,
         disableTransition: Boolean = false,
         listener: RequestListener<Drawable>? = null
     ) {
@@ -118,7 +114,7 @@ class GameView : MaterialCardView {
     //todo Грузить hd через wifi, обычную через мобильную сеть
     private fun createRequestBuilder(
         view: GameView,
-        game: GameMinimal,
+        game: GameHeader,
         disableTransition: Boolean,
         listener: RequestListener<Drawable>?
     ): RequestBuilder<Drawable> {

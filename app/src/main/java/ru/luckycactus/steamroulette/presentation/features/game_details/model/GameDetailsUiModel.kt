@@ -6,7 +6,7 @@ import ru.luckycactus.steamroulette.presentation.common.ContentState
 sealed class GameDetailsUiModel {
 
     data class Header(
-        val gameMinimal: GameMinimal,
+        val gameHeader: GameHeader,
         val developer: String? = null,
         val publisher: String? = null,
         val releaseDate: String? = null

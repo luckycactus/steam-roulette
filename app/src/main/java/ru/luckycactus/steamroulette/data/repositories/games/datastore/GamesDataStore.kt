@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 interface GamesDataStore {
@@ -17,9 +17,9 @@ interface GamesDataStore {
 
         suspend fun hideOwnedGame(steamId: SteamId, gameId: Int)
 
-        suspend fun getOwnedGame(steamId: SteamId, gameId: Int): OwnedGame
+        suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader
 
-        suspend fun getOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame>
+        suspend fun getOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader>
 
         suspend fun isUserHasGames(steamId: SteamId): Boolean
 

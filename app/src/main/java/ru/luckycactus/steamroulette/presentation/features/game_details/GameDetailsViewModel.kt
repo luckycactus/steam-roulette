@@ -9,20 +9,19 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 
 class GameDetailsViewModel @AssistedInject constructor(
-    @Assisted private val ownedGame: OwnedGame,
+    @Assisted private val gameHeader: GameHeader,
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase
@@ -48,27 +47,27 @@ class GameDetailsViewModel @AssistedInject constructor(
     fun onStoreClick() {
         //todo инжектить mainviewmodel и вызывать сразу у нее?
         _openUrlAction.value = Event(
-            GameUrlUtils.storePage(resolvedAppId ?: ownedGame.appId)
+            GameUrlUtils.storePage(resolvedAppId ?: gameHeader.appId)
         )
     }
 
     fun onHubClick() {
         _openUrlAction.value = Event(
-            GameUrlUtils.hubPage(resolvedAppId ?: ownedGame.appId)
+            GameUrlUtils.hubPage(resolvedAppId ?: gameHeader.appId)
         )
     }
 
     private fun loadInfo(tryCache: Boolean) {
         viewModelScope.launch {
             var gameStoreInfo = if (tryCache)
-                getGameStoreInfo.getFromCache(ownedGame.appId)
+                getGameStoreInfo.getFromCache(gameHeader.appId)
             else null
             if (gameStoreInfo == null) {
                 renderLoading()
                 try {
                     gameStoreInfo = getGameStoreInfo(
                         GetGameStoreInfoUseCase.Params(
-                            ownedGame.appId,
+                            gameHeader.appId,
                             false
                         )
                     )
@@ -107,10 +106,10 @@ class GameDetailsViewModel @AssistedInject constructor(
 
 
     private fun getInitialHeader(): GameDetailsUiModel =
-        GameDetailsUiModel.Header(GameMinimal(ownedGame))
+        GameDetailsUiModel.Header(gameHeader)
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(ownedGame: OwnedGame): GameDetailsViewModel
+        fun create(gameHeader: GameHeader): GameDetailsViewModel
     }
 }

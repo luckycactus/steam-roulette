@@ -4,35 +4,35 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
 interface PagingGameList {
-    val list: List<OwnedGame>
+    val list: List<GameHeader>
     val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>>
     fun isEmpty(): Boolean
     fun gamesEnded(): Boolean
     @MainThread
-    fun removeTop(): OwnedGame
+    fun removeTop(): GameHeader
 
     @MainThread
     fun finish()
 }
 
 class PagingGameListImpl constructor(
-    private val gamesFactory: suspend (List<Int>) -> List<OwnedGame>,
+    private val gamesFactory: suspend (List<Int>) -> List<GameHeader>,
     private val gameIds: List<Int>,
     private val minSize: Int,
     private val fetchDistance: Int,
     private val coroutineScope: CoroutineScope
 ) : PagingGameList {
 
-    override val list: List<OwnedGame>
+    override val list: List<GameHeader>
         get() = _list
     override val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>>
         get() = _itemsInsertedLiveData
 
-    private val _list = mutableListOf<OwnedGame>()
+    private val _list = mutableListOf<GameHeader>()
     private val _itemsInsertedLiveData = MutableLiveData<Event<Pair<Int, Int>>>()
     private var nextFetchIndex = 0
     private var fetching = false
@@ -48,7 +48,7 @@ class PagingGameListImpl constructor(
     override fun gamesEnded() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
 
     @MainThread
-    override fun removeTop(): OwnedGame {
+    override fun removeTop(): GameHeader {
         val removedItem = _list.removeAt(0)
         if (_list.size <= minSize && !fetching && nextFetchIndex < gameIds.size)
             fetch()

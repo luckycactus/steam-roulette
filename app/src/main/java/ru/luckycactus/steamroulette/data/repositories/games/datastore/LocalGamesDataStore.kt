@@ -11,7 +11,7 @@ import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.utils.chunkBuffer
 import javax.inject.Inject
@@ -70,11 +70,11 @@ class LocalGamesDataStore @Inject constructor(
         db.ownedGamesDao().resetHidden(steamId.asSteam64())
     }
 
-    override suspend fun getOwnedGame(steamId: SteamId, gameId: Int): OwnedGame =
-        db.ownedGamesDao().get(steamId.asSteam64(), gameId)
+    override suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader =
+        db.ownedGamesDao().getHeader(steamId.asSteam64(), gameId)
 
-    override suspend fun getOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame> =
-        db.ownedGamesDao().get(steamId.asSteam64(), gameIds)
+    override suspend fun getOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader> =
+        db.ownedGamesDao().getHeaders(steamId.asSteam64(), gameIds)
 
     override suspend fun hideOwnedGame(steamId: SteamId, gameId: Int) {
         db.ownedGamesDao().hide(steamId.asSteam64(), gameId)

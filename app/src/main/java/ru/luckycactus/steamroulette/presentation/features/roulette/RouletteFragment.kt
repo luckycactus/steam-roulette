@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.di.core.Injectable
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowFragment
@@ -195,7 +195,7 @@ class RouletteFragment : BaseFragment(), Injectable {
 //        }
 //    }
 
-    private fun onGameClick(sharedViews: List<View>, game: OwnedGame) {
+    private fun onGameClick(sharedViews: List<View>, game: GameHeader) {
         requireParentFragment().reenterTransition = createDefaultExitTransition()
         if (sharedViews.isNotEmpty()) {
             requireParentFragment().exitTransition = transitionSet {

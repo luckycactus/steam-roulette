@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
 @Dao
 abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
@@ -26,18 +26,18 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     abstract suspend fun getVisibleLimitedByPlaytimeIds(steam64: Long, maxHours: Int): List<Int>
 
     @Query(
-        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
+        """select appId, name
         from owned_game 
         where appId = :gameId and userSteam64 = :steam64"""
     )
-    abstract suspend fun get(steam64: Long, gameId: Int): OwnedGame
+    abstract suspend fun getHeader(steam64: Long, gameId: Int): GameHeader
 
     @Query(
-        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
+        """select appId, name
         from owned_game 
         where appId in (:appIds) and userSteam64 = :steam64"""
     )
-    abstract suspend fun get(steam64: Long, appIds: List<Int>): List<OwnedGame>
+    abstract suspend fun getHeaders(steam64: Long, appIds: List<Int>): List<GameHeader>
 
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun delete(steam64: Long)

@@ -10,7 +10,7 @@ import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
 import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.common.ContentState
@@ -29,7 +29,7 @@ class RouletteViewModel @Inject constructor(
     private val resourceManager: ResourceManager
 ) : ViewModel() {
 
-    val games: LiveData<List<OwnedGame>?>
+    val games: LiveData<List<GameHeader>?>
     val itemRemoved: LiveData<Event<Int>?> //todo flow
         get() = _itemRemoved
     val itemsInserted: LiveData<Event<Pair<Int, Int>>?> //todo flow
