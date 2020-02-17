@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.net
+package ru.luckycactus.steamroulette.data.net.services
 
 import okhttp3.ResponseBody
 import retrofit2.http.GET

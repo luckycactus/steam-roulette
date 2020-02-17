@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.net
+package ru.luckycactus.steamroulette.data.net.interceptors
 
 import okhttp3.Interceptor
 import okhttp3.Response

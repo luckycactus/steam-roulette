@@ -9,10 +9,11 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        DebugModule::class
     ]
 )
-interface ReleaseAppComponent: AppComponent {
+interface DebugBaseAppComponent : BaseAppComponent {
 
     @Component.Builder
     interface Builder {
@@ -20,6 +21,6 @@ interface ReleaseAppComponent: AppComponent {
         @BindsInstance
         fun application(app: Application): Builder
 
-        fun build(): AppComponent
+        fun build(): DebugBaseAppComponent
     }
 }

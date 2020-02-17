@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.domain.app
 
 import androidx.lifecycle.Observer
-import ru.luckycactus.steamroulette.domain.common.Event
+import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import javax.inject.Inject
 import javax.inject.Singleton

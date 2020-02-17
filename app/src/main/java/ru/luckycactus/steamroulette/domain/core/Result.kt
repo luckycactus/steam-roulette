@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain.common
+package ru.luckycactus.steamroulette.domain.core
 
 sealed class Result<out T> {
     object Loading : Result<Nothing>()

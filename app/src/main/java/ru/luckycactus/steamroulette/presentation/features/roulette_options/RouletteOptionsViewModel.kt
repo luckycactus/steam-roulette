@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase

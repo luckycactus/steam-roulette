@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.net
+package ru.luckycactus.steamroulette.data.net.adapters
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException

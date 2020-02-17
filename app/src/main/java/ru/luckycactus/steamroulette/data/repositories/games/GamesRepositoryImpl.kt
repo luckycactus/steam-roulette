@@ -2,16 +2,15 @@ package ru.luckycactus.steamroulette.data.repositories.games
 
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
+import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.domain.common.CachePolicy
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.days
@@ -23,62 +22,60 @@ class GamesRepositoryImpl @Inject constructor(
 ) : GamesRepository {
 
     override suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy) {
-        createOwnedGamesResource(steamId.asSteam64())
-            .updateIfNeed(cachePolicy)
+        createOwnedGamesResource(steamId).updateIfNeed(cachePolicy)
     }
 
     override fun observeGamesCount(steamId: SteamId): LiveData<Int> =
-        localGamesDataStore.observeOwnedGamesCount(steamId.asSteam64())
+        localGamesDataStore.observeOwnedGamesCount(steamId)
 
     override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> =
-        localGamesDataStore.observeHiddenOwnedGamesCount(steamId.asSteam64())
+        localGamesDataStore.observeHiddenOwnedGamesCount(steamId)
 
     override suspend fun resetHiddenGames(steamId: SteamId) {
-        localGamesDataStore.resetHiddenOwnedGames(steamId.asSteam64())
+        localGamesDataStore.resetHiddenOwnedGames(steamId)
     }
 
     override fun observeGamesUpdates(steamId: SteamId): LiveData<Long> =
-        createOwnedGamesResource(steamId.asSteam64()).observeCacheUpdates()
+        createOwnedGamesResource(steamId).observeCacheUpdates()
 
     override suspend fun clearUser(steamId: SteamId) {
-        localGamesDataStore.clearOwnedGames(steamId.asSteam64())
-        createOwnedGamesResource(steamId.asSteam64())
-            .invalidateCache()
+        localGamesDataStore.clearOwnedGames(steamId)
+        createOwnedGamesResource(steamId).invalidateCache()
     }
 
     override suspend fun isUserHasGames(steamId: SteamId): Boolean =
-        localGamesDataStore.isUserHasGames(steamId.asSteam64())
+        localGamesDataStore.isUserHasGames(steamId)
 
     override suspend fun getLocalOwnedGamesIds(
         steamId: SteamId,
         filter: PlaytimeFilter
     ): List<Int> =
-        localGamesDataStore.getOwnedGamesIds(steamId.asSteam64(), filter)
+        localGamesDataStore.getOwnedGamesIds(steamId, filter)
 
     override suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame =
-        localGamesDataStore.getOwnedGame(steamId.asSteam64(), gameId)
+        localGamesDataStore.getOwnedGame(steamId, gameId)
 
     override suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame> =
-        localGamesDataStore.getOwnedGames(steamId.asSteam64(), gameIds)
+        localGamesDataStore.getOwnedGames(steamId, gameIds)
 
     override suspend fun hideLocalOwnedGame(steamId: SteamId, gameId: Int) {
-        localGamesDataStore.hideOwnedGame(steamId.asSteam64(), gameId)
+        localGamesDataStore.hideOwnedGame(steamId, gameId)
     }
 
     private fun createOwnedGamesResource(
-        steam64: Long
+        steamId: SteamId
     ): NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>> {
-        val cacheKey = "owned_games_$steam64"
+        val cacheKey = "owned_games_${steamId.asSteam64()}"
         return object : NetworkBoundResource<Flow<OwnedGameEntity>, List<OwnedGame>>(
             cacheKey,
             cacheKey,
             OWNED_GAMES_CACHE_WINDOW
         ) {
             override suspend fun getFromNetwork(): Flow<OwnedGameEntity> =
-                remoteGamesDataStore.getOwnedGames(steam64)
+                remoteGamesDataStore.getOwnedGames(steamId)
 
             override suspend fun saveToCache(data: Flow<OwnedGameEntity>) =
-                localGamesDataStore.saveOwnedGames(steam64, data)
+                localGamesDataStore.saveOwnedGames(steamId, data)
 
             override suspend fun getFromCache(): List<OwnedGame> {
                 throw UnsupportedOperationException()

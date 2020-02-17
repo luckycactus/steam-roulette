@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.utils
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.TouchDelegate
@@ -21,10 +20,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.exception.NetworkConnectionException
-import ru.luckycactus.steamroulette.domain.exception.ServerException
-import ru.luckycactus.steamroulette.domain.common.Event
+import ru.luckycactus.steamroulette.data.core.NetworkConnectionException
+import ru.luckycactus.steamroulette.data.core.ServerException
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.Event
 import java.lang.reflect.Method
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.properties.ReadOnlyProperty

@@ -1,8 +1,4 @@
-package ru.luckycactus.steamroulette.domain.exception
-
-class NetworkConnectionException(cause: Throwable? = null) : Exception(cause)
-
-class ServerException(cause: Throwable? = null) : Exception(cause)
+package ru.luckycactus.steamroulette.domain.common
 
 class VanityNotFoundException(val vanity: String) : Exception()
 

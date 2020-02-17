@@ -12,7 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.dialog_pref_playtime.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.findComponent
+import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.utils.observeFirst

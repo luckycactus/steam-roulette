@@ -28,7 +28,7 @@ import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataSto
 import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.di.qualifier.Identified
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
@@ -92,7 +92,7 @@ abstract class AppModule {
         @JvmStatic
         @Singleton
         @Provides
-        fun provideAppsSharedPreferences(@ForApplication appContext: Context) =
+        fun provideAppSharedPreferences(@ForApplication appContext: Context) =
             appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
         @Identified(R.id.userSettingsPrefs)
@@ -122,7 +122,6 @@ abstract class AppModule {
         fun provideSteamRouletteDb(@ForApplication appContext: Context) =
             Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
                 .fallbackToDestructiveMigrationFrom(1)
-                .addMigrations()
                 .build()
 
 

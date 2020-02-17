@@ -7,11 +7,10 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.fragment.app.commit
 import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.AppComponent
-import ru.luckycactus.steamroulette.di.common.component
+import ru.luckycactus.steamroulette.di.common.BaseAppComponent
+import ru.luckycactus.steamroulette.di.core.component
 import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun createComponent(): MainActivityComponent =
-        InjectionManager.findComponent<AppComponent>()
+        InjectionManager.findComponent<BaseAppComponent>()
             .mainActivityComponentFactory()
             .create(this)
 

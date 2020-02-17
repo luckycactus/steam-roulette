@@ -1,16 +1,12 @@
-package ru.luckycactus.steamroulette.data.net
+package ru.luckycactus.steamroulette.data.core
 
 import android.util.LruCache
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.data.local.CacheHelper
-import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
-import ru.luckycactus.steamroulette.di.common.AppComponent
+import ru.luckycactus.steamroulette.di.common.BaseAppComponent
 import ru.luckycactus.steamroulette.di.core.InjectionManager
-import ru.luckycactus.steamroulette.domain.common.CachePolicy
-import java.util.concurrent.TimeUnit
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import kotlin.time.Duration
 
-//todo refactor
 abstract class NetworkBoundResource<RequestType, ResultType>(
     private val key: String,
     private val memoryKey: String?,
@@ -29,6 +25,9 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         }
     }
 
+    /**
+     * returns null if cachePolicy == CachePolicy.Cache and there is no data
+     */
     suspend fun get(cachePolicy: CachePolicy): ResultType? {
         updateIfNeed(cachePolicy)
         return getCachedData()
@@ -48,10 +47,9 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
             data = memoryCache[memoryKey] as ResultType?
         }
         if (data == null) {
-            data = getFromCache()
-            data?.let {
+            data = getFromCache()?.also {
                 if (memoryKey != null) {
-                    memoryCache.put(memoryKey, data)
+                    memoryCache.put(memoryKey, it)
                 }
             }
         }
@@ -65,7 +63,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     companion object {
         private val memoryCache = LruCache<String, Any>(50)
         private val cacheHelper: CacheHelper =
-            InjectionManager.findComponent<AppComponent>().cacheHelper
+            InjectionManager.findComponent<BaseAppComponent>().cacheHelper
 
         suspend fun <RequestType> withMemoryCache(
             memoryKey: String,
@@ -76,7 +74,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
             if (cachePolicy == CachePolicy.Remote)
                 memoryCache.remove(memoryKey)
             else data = memoryCache[memoryKey] as RequestType?
-            if (data == null && cachePolicy != CachePolicy.OnlyCache) {
+            if (data == null && cachePolicy != CachePolicy.Cache) {
                 data = wrapCommonNetworkExceptions { getFromNetwork() }
                 data?.let {
                     memoryCache.put(memoryKey, data)

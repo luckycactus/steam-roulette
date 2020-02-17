@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.repositories.user.mapper
 
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
-import ru.luckycactus.steamroulette.domain.common.Mapper
+import ru.luckycactus.steamroulette.domain.core.Mapper
 import ru.luckycactus.steamroulette.domain.user.entity.CommunityVisibleState
 import ru.luckycactus.steamroulette.domain.user.entity.PersonaState
 import ru.luckycactus.steamroulette.domain.common.SteamId

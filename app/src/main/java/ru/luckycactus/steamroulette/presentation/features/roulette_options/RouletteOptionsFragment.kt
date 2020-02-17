@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.roulette_options
 import android.os.Bundle
 import kotlinx.android.synthetic.main.fragment_options_filter.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.findComponent
+import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment

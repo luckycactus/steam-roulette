@@ -2,8 +2,8 @@ package ru.luckycactus.steamroulette.presentation.features.game_details.model
 
 import dagger.Reusable
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.Mapper
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.Mapper
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject

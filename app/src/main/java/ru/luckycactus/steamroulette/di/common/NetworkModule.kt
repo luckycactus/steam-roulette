@@ -11,7 +11,12 @@ import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
-import ru.luckycactus.steamroulette.data.net.*
+import ru.luckycactus.steamroulette.data.net.adapters.RequiredAgeTypeAdapterFactory
+import ru.luckycactus.steamroulette.data.net.adapters.SystemRequirementsTypeAdapterFactory
+import ru.luckycactus.steamroulette.data.net.interceptors.AuthInterceptor
+import ru.luckycactus.steamroulette.data.net.interceptors.MyHttpLoggingInterceptor
+import ru.luckycactus.steamroulette.data.net.services.SteamApiService
+import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.utils.enableTls12OnOldApis
 import ru.luckycactus.steamroulette.di.qualifier.InterceptorSet
 import ru.luckycactus.steamroulette.di.qualifier.NetworkInterceptorSet
@@ -89,13 +94,14 @@ abstract class NetworkModule {
         @InterceptorSet
         @Provides
         fun provideLogInterceptor(): Interceptor =
-            MyHttpLoggingInterceptor(setOf("IPlayerService/GetOwnedGames/"))
-                .apply {
-                    level = if (BuildConfig.DEBUG)
-                        MyHttpLoggingInterceptor.Level.BODY
-                    else
-                        MyHttpLoggingInterceptor.Level.NONE
-                }
+            MyHttpLoggingInterceptor(
+                setOf("IPlayerService/GetOwnedGames/")
+            ).apply {
+                level = if (BuildConfig.DEBUG)
+                    MyHttpLoggingInterceptor.Level.BODY
+                else
+                    MyHttpLoggingInterceptor.Level.NONE
+            }
 
         @JvmStatic
         @Provides

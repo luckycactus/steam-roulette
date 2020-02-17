@@ -3,10 +3,10 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.Event
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.common.Result
-import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
+import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.Result
+import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
 import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUseCase

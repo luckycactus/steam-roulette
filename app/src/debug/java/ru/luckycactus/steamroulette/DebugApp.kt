@@ -1,8 +1,8 @@
 package ru.luckycactus.steamroulette
 
 import com.facebook.stetho.Stetho
-import ru.luckycactus.steamroulette.di.common.AppComponent
-import ru.luckycactus.steamroulette.di.common.DaggerDebugAppComponent
+import ru.luckycactus.steamroulette.di.common.BaseAppComponent
+import ru.luckycactus.steamroulette.di.common.DaggerDebugBaseAppComponent
 import ru.luckycactus.steamroulette.presentation.common.App
 
 class DebugApp: App() {
@@ -12,8 +12,8 @@ class DebugApp: App() {
         Stetho.initializeWithDefaults(this)
     }
 
-    override fun createComponent(): AppComponent =
-        DaggerDebugAppComponent.builder()
+    override fun createComponent(): BaseAppComponent =
+        DaggerDebugBaseAppComponent.builder()
             .application(this)
             .build()
 }

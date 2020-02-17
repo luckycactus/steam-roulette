@@ -5,7 +5,11 @@ import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.common.*
-import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.Result
+import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.core.invoke
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
@@ -78,25 +82,30 @@ class MainViewModel @Inject constructor(
             migrateApp()
             _nullableCurrentUserSteamId.first {
                 val screen = if (it != null) Screen.Roulette else Screen.Login
-                _screen.value = Event(screen)
+                _screen.value =
+                    Event(screen)
             }
         }
     }
 
     fun onSignInSuccess() {
-        _screen.value = Event(Screen.Roulette)
+        _screen.value =
+            Event(Screen.Roulette)
     }
 
     fun onExit() {
         //todo progress
         viewModelScope.launch {
             signOutUser()
-            _screen.value = Event(Screen.Login)
+            _screen.value =
+                Event(Screen.Login)
         }
     }
 
     fun onGameClick(game: OwnedGame) {
-        _screen.value = Event(Screen.GameDetails(game))
+        _screen.value = Event(
+            Screen.GameDetails(game)
+        )
     }
 
     override fun getCurrentUserSteamId(): SteamId {

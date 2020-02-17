@@ -1,15 +1,15 @@
 package ru.luckycactus.steamroulette.presentation.common
 
 import android.app.Application
-import ru.luckycactus.steamroulette.di.common.AppComponent
-import ru.luckycactus.steamroulette.di.common.DaggerReleaseAppComponent
+import ru.luckycactus.steamroulette.di.common.BaseAppComponent
+import ru.luckycactus.steamroulette.di.common.DaggerReleaseBaseAppComponent
 import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.app.SystemLanguageSynchronizer
 import javax.inject.Inject
 
 open class App : Application(),
-    ComponentOwner<AppComponent> {
+    ComponentOwner<BaseAppComponent> {
 
     @Inject
     lateinit var systemLanguageSynchronizer: SystemLanguageSynchronizer
@@ -23,8 +23,8 @@ open class App : Application(),
         systemLanguageSynchronizer.start()
     }
 
-    override fun createComponent(): AppComponent =
-        DaggerReleaseAppComponent.builder()
+    override fun createComponent(): BaseAppComponent =
+        DaggerReleaseBaseAppComponent.builder()
             .application(this)
             .build()
 

@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
-import ru.luckycactus.steamroulette.domain.common.Event
+import ru.luckycactus.steamroulette.domain.core.Event
 
 interface PagingGameList {
     val list: List<OwnedGame>

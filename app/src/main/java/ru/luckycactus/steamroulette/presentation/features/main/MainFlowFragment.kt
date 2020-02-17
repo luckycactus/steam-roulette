@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_main_flow.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.component
-import ru.luckycactus.steamroulette.di.common.findComponent
+import ru.luckycactus.steamroulette.di.core.component
+import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.presentation.features.menu.MenuFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment

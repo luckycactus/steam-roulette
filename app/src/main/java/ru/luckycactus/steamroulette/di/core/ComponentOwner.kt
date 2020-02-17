@@ -10,11 +10,4 @@ interface ComponentOwner<T: Any> {
 
     val componentKey: String
         get() = javaClass.toString()
-
-    /**
-     * DANGEROUS. Set this to true if you want to keep alive a component on config changes
-     * such as screen rotation
-     */
-    val retainComponentOnConfigChanges: Boolean
-        get() = false
 }

@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain.common
+package ru.luckycactus.steamroulette.domain.core
 
 abstract class UseCase<in Params, Result> {
 

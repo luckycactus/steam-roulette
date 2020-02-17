@@ -5,14 +5,13 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.common.Result
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.utils.combine
-import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import javax.inject.Inject
 
 class MenuViewModel @Inject constructor(

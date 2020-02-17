@@ -1,8 +1,8 @@
 package ru.luckycactus.steamroulette.domain.app
 
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
-import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.common.invoke
+import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.invoke
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
@@ -35,7 +35,7 @@ class MigrateAppUseCase @Inject constructor(
         }
     }
 
-    suspend fun migrate5to6() {
+    private suspend fun migrate5to6() {
         getCurrentUserSteamId()?.let {
             userSettingsRepository.migrateEnPlayTimeFilter(it)
         }

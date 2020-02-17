@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.utils
+package ru.luckycactus.steamroulette.data.core
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
@@ -7,14 +7,14 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-private val compositeListeners =
-    WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
+private val compositeListeners = WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
 
 private val SharedPreferences.compositeListener
     @Synchronized
     get() = compositeListeners.getOrPut(this, {
-        CompositePreferenceChangeListener()
-            .also { registerOnSharedPreferenceChangeListener(it) }
+        CompositePreferenceChangeListener().also {
+            registerOnSharedPreferenceChangeListener(it)
+        }
     })
 
 fun SharedPreferences.Editor.apply(block: SharedPreferences.Editor.() -> Unit) {
@@ -37,11 +37,7 @@ fun SharedPreferences.float(key: String, defValue: Float = 0f) =
     FloatPreference(this, key, defValue)
 
 fun SharedPreferences.boolean(key: String, defValue: Boolean = false) =
-    BooleanPreference(
-        this,
-        key,
-        defValue
-    )
+    BooleanPreference(this, key, defValue)
 
 fun SharedPreferences.string(key: String, defValue: String? = null) =
     StringPreference(this, key, defValue)

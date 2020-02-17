@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain.common
+package ru.luckycactus.steamroulette.domain.core
 
 abstract class SuspendUseCase<in Params, Result> {
 

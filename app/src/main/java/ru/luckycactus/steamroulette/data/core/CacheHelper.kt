@@ -1,18 +1,14 @@
-package ru.luckycactus.steamroulette.data.local
+package ru.luckycactus.steamroulette.data.core
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.utils.apply
-import ru.luckycactus.steamroulette.data.utils.longLiveData
 import ru.luckycactus.steamroulette.di.qualifier.Identified
-import ru.luckycactus.steamroulette.domain.common.CachePolicy
-import java.util.concurrent.TimeUnit
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
 import kotlin.time.milliseconds
-import kotlin.time.toDuration
 
 @Singleton
 class CacheHelper @Inject constructor(
@@ -38,7 +34,7 @@ class CacheHelper @Inject constructor(
         cachePolicy: CachePolicy,
         key: String,
         window: Duration
-    ): Boolean = cachePolicy == CachePolicy.OnlyCache ||
+    ): Boolean = cachePolicy == CachePolicy.Cache ||
             (cachePolicy == CachePolicy.CacheOrRemote && !isExpired(key, window))
 
 

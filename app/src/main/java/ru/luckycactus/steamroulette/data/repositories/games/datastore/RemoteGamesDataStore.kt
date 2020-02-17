@@ -9,14 +9,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import ru.luckycactus.steamroulette.data.net.SteamApiService
-import ru.luckycactus.steamroulette.data.net.SteamStoreApiService
+import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.data.net.services.SteamApiService
+import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoResult
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
-import ru.luckycactus.steamroulette.domain.exception.GetGameStoreInfoException
-import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
+import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 import javax.inject.Named
@@ -29,10 +30,10 @@ class RemoteGamesDataStore @Inject constructor(
     private val languageProvider: LanguageProvider
 ) : GamesDataStore.Remote {
 
-    override suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity> {
+    override suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity> {
         val response = wrapCommonNetworkExceptions {
             steamApiService.getOwnedGames(
-                steam64,
+                steamId.asSteam64(),
                 includeAppInfo = true,
                 includePlayedFreeGames = false
             )

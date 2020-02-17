@@ -2,8 +2,8 @@ package ru.luckycactus.steamroulette.domain.login
 
 import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.user.UserRepository
-import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.exception.InvalidSteamIdFormatException
+import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
+import ru.luckycactus.steamroulette.domain.common.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary

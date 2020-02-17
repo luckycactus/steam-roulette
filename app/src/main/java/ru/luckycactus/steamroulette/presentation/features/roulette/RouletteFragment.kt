@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.findComponent
+import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity

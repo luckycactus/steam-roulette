@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.utils;
+package ru.luckycactus.steamroulette.data.net;
 
 import java.io.IOException;
 import java.net.InetAddress;

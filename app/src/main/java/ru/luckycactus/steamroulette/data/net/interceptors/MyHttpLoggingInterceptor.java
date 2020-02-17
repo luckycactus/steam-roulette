@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.net;
+package ru.luckycactus.steamroulette.data.net.interceptors;
 
 
 import java.io.EOFException;

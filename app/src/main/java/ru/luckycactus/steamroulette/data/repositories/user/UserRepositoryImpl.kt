@@ -3,14 +3,13 @@ package ru.luckycactus.steamroulette.data.repositories.user
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
-import ru.luckycactus.steamroulette.data.net.NetworkBoundResource
+import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.mapper.UserSummaryMapper
-import ru.luckycactus.steamroulette.domain.common.CachePolicy
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.domain.user.UserRepository
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.days
@@ -23,18 +22,15 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
 
     override fun setCurrentUser(steamId: SteamId) {
-        localUserDataStore.setCurrentUser(steamId.asSteam64())
+        localUserDataStore.setCurrentUser(steamId)
     }
 
-    override fun getCurrentUserSteamId() = fromSteam64(localUserDataStore.getCurrentUserSteam64())
+    override fun getCurrentUserSteamId(): SteamId? = localUserDataStore.getCurrentUserSteam64()
 
     override fun observeCurrentUserSteamId(): LiveData<SteamId?> =
-        localUserDataStore.observeCurrentUserSteam64().map {
-            fromSteam64(it)
-        }
+        localUserDataStore.observeCurrentUserSteam64()
 
-    override fun isUserSignedIn(): Boolean =
-        localUserDataStore.getCurrentUserSteam64() != 0L
+    override fun isUserSignedIn(): Boolean = localUserDataStore.getCurrentUserSteam64() != null
 
     override suspend fun getUserSummary(
         steamId: SteamId,
@@ -42,7 +38,7 @@ class UserRepositoryImpl @Inject constructor(
     ): UserSummary? = createUserSummaryResource(steamId).get(cachePolicy)
 
     override fun observeUserSummary(steamId: SteamId): LiveData<UserSummary> =
-        localUserDataStore.observeUserSummary(steamId.asSteam64())
+        localUserDataStore.observeUserSummary(steamId)
             .map { mapper.mapFrom(it) }
 
     override suspend fun fetchUserSummary(steamId: SteamId, cachePolicy: CachePolicy) {
@@ -54,18 +50,14 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearUserSummary(steamId: SteamId) {
-        localUserDataStore.removeUserSummary(steamId.asSteam64())
+        localUserDataStore.removeUserSummary(steamId)
         createUserSummaryResource(steamId).invalidateCache()
     }
-
-    private fun fromSteam64(steam64: Long) =
-        if (steam64 == 0L) null else SteamId.fromSteam64(steam64)
 
     private fun createUserSummaryResource(
         steamId: SteamId
     ): NetworkBoundResource<UserSummaryEntity, UserSummary> {
-        val steam64 = steamId.asSteam64()
-        val cacheKey = "user_summary_$steam64"
+        val cacheKey = "user_summary_${steamId.asSteam64()}"
         return object : NetworkBoundResource<UserSummaryEntity, UserSummary>(
             cacheKey,
             cacheKey,
@@ -74,7 +66,7 @@ class UserRepositoryImpl @Inject constructor(
             private var result: UserSummary? = null
 
             override suspend fun getFromNetwork(): UserSummaryEntity {
-                return remoteUserDataStore.getUserSummary(steam64)
+                return remoteUserDataStore.getUserSummary(steamId)
             }
 
             override suspend fun saveToCache(data: UserSummaryEntity) {
@@ -83,12 +75,12 @@ class UserRepositoryImpl @Inject constructor(
             }
 
             override suspend fun getFromCache(): UserSummary {
-                return result ?: mapper.mapFrom(localUserDataStore.getUserSummary(steam64))
+                return result ?: mapper.mapFrom(localUserDataStore.getUserSummary(steamId))
             }
         }
     }
 
     companion object {
-        val SUMMARY_CACHE_WINDOW = 2.days
+        val SUMMARY_CACHE_WINDOW = 7.days
     }
 }

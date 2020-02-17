@@ -9,10 +9,9 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.Event
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.exception.GetGameStoreInfoException
-import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
@@ -48,11 +47,15 @@ class GameDetailsViewModel @AssistedInject constructor(
 
     fun onStoreClick() {
         //todo инжектить mainviewmodel и вызывать сразу у нее?
-        _openUrlAction.value = Event(GameUrlUtils.storePage(resolvedAppId ?: ownedGame.appId))
+        _openUrlAction.value = Event(
+            GameUrlUtils.storePage(resolvedAppId ?: ownedGame.appId)
+        )
     }
 
     fun onHubClick() {
-        _openUrlAction.value = Event(GameUrlUtils.hubPage(resolvedAppId ?: ownedGame.appId))
+        _openUrlAction.value = Event(
+            GameUrlUtils.hubPage(resolvedAppId ?: ownedGame.appId)
+        )
     }
 
     private fun loadInfo(tryCache: Boolean) {

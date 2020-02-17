@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.domain.common
+package ru.luckycactus.steamroulette.domain.core
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
@@ -6,7 +6,6 @@ import androidx.lifecycle.map
 class Event<out T>(
     private val data: T
 ) {
-
     var handled: Boolean = false
         private set
 

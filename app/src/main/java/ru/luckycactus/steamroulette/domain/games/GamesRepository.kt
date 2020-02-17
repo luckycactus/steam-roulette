@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.domain.games
 
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.common.CachePolicy
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
