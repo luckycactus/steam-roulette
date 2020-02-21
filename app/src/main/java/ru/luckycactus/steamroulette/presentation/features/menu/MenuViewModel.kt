@@ -58,6 +58,10 @@ class MenuViewModel @Inject constructor(
         ) { a, b -> a || (b is Result.Loading) }
     }
 
+    fun exit() {
+        userViewModelDelegate.exit()
+    }
+
     private fun closeWithDelay() {
         viewModelScope.launch {
             delay(CLOSE_DELAY)

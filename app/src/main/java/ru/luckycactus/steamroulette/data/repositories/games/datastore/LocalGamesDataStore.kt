@@ -11,16 +11,15 @@ import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import javax.inject.Inject
 
 @Reusable
 class LocalGamesDataStore @Inject constructor(
     private val db: DB
 ) : GamesDataStore.Local {
-
     override fun observeOwnedGamesCount(steamId: SteamId): LiveData<Int> =
         db.ownedGamesDao().observeCount(steamId.asSteam64())
 
@@ -62,7 +61,10 @@ class LocalGamesDataStore @Inject constructor(
         when (filter) {
             PlaytimeFilter.All -> getVisibleIds(steamId.asSteam64())
             PlaytimeFilter.NotPlayed -> getVisibleLimitedByPlaytimeIds(steamId.asSteam64(), 0)
-            is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(steamId.asSteam64(), filter.maxTime)
+            is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(
+                steamId.asSteam64(),
+                filter.maxTime
+            )
         }
     }
 
@@ -73,7 +75,10 @@ class LocalGamesDataStore @Inject constructor(
     override suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader =
         db.ownedGamesDao().getHeader(steamId.asSteam64(), gameId)
 
-    override suspend fun getOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader> =
+    override suspend fun getOwnedGameHeaders(
+        steamId: SteamId,
+        gameIds: List<Int>
+    ): List<GameHeader> =
         db.ownedGamesDao().getHeaders(steamId.asSteam64(), gameIds)
 
     override suspend fun hideOwnedGame(steamId: SteamId, gameId: Int) {
@@ -89,6 +94,7 @@ class LocalGamesDataStore @Inject constructor(
 
     companion object {
         private const val GAMES_BUFFER_SIZE = 500
+        //todo regex
         private val bannedEndings = arrayOf(
             "public test",
             "public testing",

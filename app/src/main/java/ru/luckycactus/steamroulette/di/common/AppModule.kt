@@ -37,10 +37,12 @@ import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.features.roulette.GlideCacheCleaner
+import ru.terrakok.cicerone.Cicerone
+import ru.terrakok.cicerone.NavigatorHolder
+import ru.terrakok.cicerone.Router
 import javax.inject.Singleton
 
-@AssistedModule
-@Module(includes = [AssistedInject_AppModule::class])
+@Module
 abstract class AppModule {
 
     @Binds

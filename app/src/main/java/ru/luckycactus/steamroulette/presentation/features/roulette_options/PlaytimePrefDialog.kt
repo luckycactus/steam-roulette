@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.dialog_pref_playtime.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
+import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.utils.observeFirst
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
@@ -24,7 +24,7 @@ class PlaytimePrefDialog : DialogFragment() {
     private var layoutContainer: DialogLayoutContainer? = null
 
     private val viewModel by viewModel {
-        findComponent<MainFlowComponent>().playtimeDialogViewModel
+        findComponent<MainActivityComponent>().playtimeDialogViewModel
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

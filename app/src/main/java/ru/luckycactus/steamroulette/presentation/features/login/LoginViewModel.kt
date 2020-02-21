@@ -14,14 +14,17 @@ import ru.luckycactus.steamroulette.domain.common.VanityNotFoundException
 import ru.luckycactus.steamroulette.domain.login.SignInUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.startWith
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(
     private val validateSteamIdInputUseCase: ValidateSteamIdInputUseCase,
     private val signInUseCase: SignInUseCase,
-    private val resourceManager: ResourceManager
+    private val resourceManager: ResourceManager,
+    private val router: Router
 ) : ViewModel() {
     val progressState: LiveData<Boolean>
         get() = _progressState
@@ -32,8 +35,6 @@ class LoginViewModel @Inject constructor(
     val errorState: LiveData<String>
         get() = _errorState
 
-    val signInSuccessEvent = MutableLiveData<Event<Unit?>>() //todo refactor navigation
-
     private val _progressState = MutableLiveData<Boolean>().startWith(false)
     private val _loginButtonAvailableState = MutableLiveData<Boolean>().startWith(false)
     private val _errorState = MutableLiveData<String>()
@@ -43,8 +44,7 @@ class LoginViewModel @Inject constructor(
             try {
                 _progressState.value = true
                 signInUseCase(id.trim())
-                signInSuccessEvent.value =
-                    Event(null)
+                router.newRootScreen(Screens.Roulette)
             } catch (e: VanityNotFoundException) {
                 _errorState.value =
                     resourceManager.getString(R.string.error_user_with_vanity_url_not_found)

@@ -37,7 +37,6 @@ class RouletteOptionsViewModel @Inject constructor(
     }
 
     fun onClearHiddenGames() {
-        //todo Что будет, если очистить во время обновления?
         viewModelScope.launch {
             clearHiddenGames(userViewModelDelegate.getCurrentUserSteamId())
         }

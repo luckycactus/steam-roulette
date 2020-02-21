@@ -18,21 +18,21 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
+import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.terrakok.cicerone.Router
 
 class GameDetailsViewModel @AssistedInject constructor(
     @Assisted private val gameHeader: GameHeader,
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
     private val resourceManager: ResourceManager,
-    private val getGameStoreInfo: GetGameStoreInfoUseCase
+    private val getGameStoreInfo: GetGameStoreInfoUseCase,
+    private val router: Router
 ) : ViewModel() {
     val gameDetails: LiveData<List<GameDetailsUiModel>>
         get() = _gameDetails
-    val openUrlAction: LiveData<Event<String>>
-        get() = _openUrlAction
 
     private val _gameDetails = MutableLiveData<List<GameDetailsUiModel>>()
-    private val _openUrlAction = MutableLiveData<Event<String>>()
 
     private var resolvedAppId: Int? = null
 
@@ -45,15 +45,20 @@ class GameDetailsViewModel @AssistedInject constructor(
     }
 
     fun onStoreClick() {
-        //todo инжектить mainviewmodel и вызывать сразу у нее?
-        _openUrlAction.value = Event(
-            GameUrlUtils.storePage(resolvedAppId ?: gameHeader.appId)
+        router.newRootScreen(
+            Screens.ExternalSteamFlow(
+                GameUrlUtils.storePage(resolvedAppId ?: gameHeader.appId),
+                true
+            )
         )
     }
 
     fun onHubClick() {
-        _openUrlAction.value = Event(
-            GameUrlUtils.hubPage(resolvedAppId ?: gameHeader.appId)
+        router.newRootScreen(
+            Screens.ExternalSteamFlow(
+                GameUrlUtils.hubPage(resolvedAppId ?: gameHeader.appId),
+                true
+            )
         )
     }
 

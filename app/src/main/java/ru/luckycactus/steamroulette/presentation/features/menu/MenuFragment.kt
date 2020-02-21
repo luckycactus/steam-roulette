@@ -8,7 +8,7 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
-import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
+import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
@@ -16,7 +16,7 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
     private val viewModel by viewModel {
-        findComponent<MainFlowComponent>().menuViewModel
+        findComponent<MainActivityComponent>().menuViewModel
     }
 
     override val layoutResId: Int = R.layout.fragment_menu
@@ -66,7 +66,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
     }
 
     override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
-        (activity as MainActivity).viewModel.onExit()
+        viewModel.exit()
     }
 
     companion object {

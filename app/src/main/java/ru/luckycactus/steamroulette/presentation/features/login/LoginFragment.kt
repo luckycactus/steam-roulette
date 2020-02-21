@@ -24,9 +24,6 @@ class LoginFragment : BaseFragment(), ComponentOwner<LoginComponent> {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-
         etUserId.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
 
@@ -60,10 +57,6 @@ class LoginFragment : BaseFragment(), ComponentOwner<LoginComponent> {
 
         observe(viewModel.errorState) {
             showSnackbar(it)
-        }
-
-        observe(viewModel.signInSuccessEvent) {
-            (activity as MainActivity).viewModel.onSignInSuccess()
         }
     }
 

@@ -46,7 +46,7 @@ class CoverBlurTransformation(
                 }
 
         with(Canvas(blurBitmap)) {
-            density = toTransform.density //todo ??
+            density = toTransform.density
             scale(outWidth / toTransform.width.toFloat(), outHeight / toTransform.height.toFloat())
             scale(1f / sampling, 1f / sampling)
             drawBitmap(toTransform, 0f, 0f, paint)

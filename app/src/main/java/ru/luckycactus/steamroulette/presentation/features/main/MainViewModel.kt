@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.qualifier.ForActivity
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -17,9 +18,11 @@ import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
+import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -29,7 +32,8 @@ class MainViewModel @Inject constructor(
     private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
     private val signOutUser: SignOutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
-    private val resourceManager: ResourceManager
+    private val resourceManager: ResourceManager,
+    private val router: Router
 ) : ViewModel(), UserViewModelDelegate {
     override val isUserLoggedIn: Boolean
         get() = _nullableCurrentUserSteamId.value != null
@@ -45,16 +49,12 @@ class MainViewModel @Inject constructor(
     val errorMessage: LiveData<Event<String>>
         get() = _errorMessage
 
-    val screen: LiveData<Event<Screen>>
-        get() = _screen
-
     private val _currentUserSteamId = MediatorLiveData<SteamId>()
     private val _nullableCurrentUserSteamId: LiveData<SteamId?>
 
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
     private val _errorMessage = MutableLiveData<Event<String>>()
-    private val _screen = MutableLiveData<Event<Screen>>()
 
     init {
         _nullableCurrentUserSteamId = observeCurrentUser()
@@ -81,24 +81,22 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             migrateApp()
             _nullableCurrentUserSteamId.first {
-                val screen = if (it != null) Screen.Roulette else Screen.Login
-                _screen.value =
-                    Event(screen)
+                val screen = if (it != null) Screens.Roulette else Screens.Login
+                router.newRootScreen(screen)
             }
         }
     }
 
-    fun onSignInSuccess() {
-        _screen.value =
-            Event(Screen.Roulette)
+    fun onGameClick(game: GameHeader, enableSharedElementTransition: Boolean) {
+        router.navigateTo(Screens.GameDetails(game, enableSharedElementTransition))
     }
 
-    fun onExit() {
+    override fun exit() {
         //todo progress
+        viewModelScope.coroutineContext.cancelChildren()
         viewModelScope.launch {
             signOutUser()
-            _screen.value =
-                Event(Screen.Login)
+            router.newRootScreen(Screens.Login)
         }
     }
 
@@ -135,6 +133,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+
     private fun handleGamesFetchError(result: Result<Unit>) {
         if (result is Result.Error) {
             _errorMessage.value = Event(
@@ -145,7 +144,6 @@ class MainViewModel @Inject constructor(
             )
         }
     }
-
 
     private suspend fun fetchGames(reload: Boolean): Result<Unit> {
         getCurrentUserSteamId().let {
@@ -185,12 +183,4 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
-    //todo
-    sealed class Screen {
-        object Login : Screen()
-        object Roulette : Screen()
-        class GameDetails(val game: GameHeader) : Screen()
-    }
-
 }

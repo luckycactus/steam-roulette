@@ -59,10 +59,6 @@ class GameDetailsFragment : BaseFragment(), Injectable {
             adapter.submitList(it)
         }
 
-        observeEvent(viewModel.openUrlAction) {
-            (activity as MainActivity).openUrl(it, true)
-        }
-
         fabBack.doOnLayout {
             rvGameDetails.updatePadding(bottom = it.height + it.marginBottom)
         }

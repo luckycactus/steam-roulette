@@ -15,8 +15,8 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackT
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
-class RouletteAdapter @AssistedInject constructor(
-    @Assisted private val onGameClick: (List<View>, GameHeader) -> Unit
+class RouletteAdapter constructor(
+    private val onGameClick: (List<View>, GameHeader) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
     init {
@@ -85,11 +85,5 @@ class RouletteAdapter @AssistedInject constructor(
         override fun setVisibleHint(visible: Boolean) {
             gameView.setUserVisibleHint(visible)
         }
-    }
-
-    //todo remove
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(onGameClick: (List<View>, GameHeader) -> Unit): RouletteAdapter
     }
 }
