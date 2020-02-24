@@ -1,26 +1,30 @@
 package ru.luckycactus.steamroulette.data.repositories.user.models
 
 import androidx.room.Entity
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class UserSummariesResponse(
-    @SerializedName("response") val result: UserSummaryResult
+    @Json(name="response") val result: UserSummaryResult
 )
 
+@JsonClass(generateAdapter = true)
 data class UserSummaryResult(
-    @SerializedName("players") val players: List<UserSummaryEntity>
+    @Json(name="players") val players: List<UserSummaryEntity>
 )
 
+@JsonClass(generateAdapter = true)
 @Entity(tableName = "user_summary", primaryKeys = ["steam64"])
 data class UserSummaryEntity(
-    @SerializedName("steamid") val steam64: Long,
-    @SerializedName("communityvisibilitystate") val communityVisibilityState: Int,
-    @SerializedName("profilestate") val profileState: Int,
-    @SerializedName("personaname") val personaName: String,
-    @SerializedName("lastlogoff") val lastLogoff: Long,
-    @SerializedName("profileurl") val profileUrl: String,
-    @SerializedName("avatar") val avatar: String,
-    @SerializedName("avatarmedium") val avatarMedium: String,
-    @SerializedName("avatarfull") val avatarFull: String,
-    @SerializedName("personastate") val personaState: Int
+    @Json(name="steamid") val steam64: Long,
+    @Json(name="communityvisibilitystate") val communityVisibilityState: Int,
+    @Json(name="profilestate") val profileState: Int = 0,
+    @Json(name="personaname") val personaName: String,
+    @Json(name="lastlogoff") val lastLogoff: Long = 0,
+    @Json(name="profileurl") val profileUrl: String,
+    @Json(name="avatar") val avatar: String,
+    @Json(name="avatarmedium") val avatarMedium: String,
+    @Json(name="avatarfull") val avatarFull: String,
+    @Json(name="personastate") val personaState: Int = 0
 )

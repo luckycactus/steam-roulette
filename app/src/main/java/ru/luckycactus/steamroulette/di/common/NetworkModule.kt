@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.di.common
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -9,10 +8,10 @@ import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import okhttp3.*
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
-import ru.luckycactus.steamroulette.data.net.adapters.RequiredAgeTypeAdapterFactory
-import ru.luckycactus.steamroulette.data.net.adapters.SystemRequirementsTypeAdapterFactory
+import ru.luckycactus.steamroulette.data.net.adapters.RequiredAgeMoshiAdapter
+import ru.luckycactus.steamroulette.data.net.adapters.SystemRequirementsMoshiAdapter
 import ru.luckycactus.steamroulette.data.net.interceptors.AuthInterceptor
 import ru.luckycactus.steamroulette.data.net.interceptors.MyHttpLoggingInterceptor
 import ru.luckycactus.steamroulette.data.net.services.SteamApiService
@@ -55,21 +54,21 @@ abstract class NetworkModule {
         @JvmStatic
         @Provides
         @Named("steam-api")
-        fun provideRetrofitForSteamApi(okHttpClient: OkHttpClient, @Named("api") gson: Gson): Retrofit =
+        fun provideRetrofitForSteamApi(okHttpClient: OkHttpClient, @Named("api") moshi: Moshi): Retrofit =
             Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://api.steampowered.com/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
 
         @JvmStatic
         @Provides
         @Named("steam-store-api")
-        fun provideRetrofitForSteamStoreApi(okHttpClient: OkHttpClient, @Named("api") gson: Gson): Retrofit {
+        fun provideRetrofitForSteamStoreApi(okHttpClient: OkHttpClient, @Named("api") moshi: Moshi): Retrofit {
             return Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://store.steampowered.com/api/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
         }
 
@@ -106,13 +105,14 @@ abstract class NetworkModule {
         @JvmStatic
         @Provides
         @Named("api")
-        fun provideGsonForApi(
-            systemRequirementsTypeAdapterFactory: SystemRequirementsTypeAdapterFactory,
-            requiredAgeTypeAdapterFactory: RequiredAgeTypeAdapterFactory
-        ) = GsonBuilder()
-            .registerTypeAdapterFactory(systemRequirementsTypeAdapterFactory)
-            .registerTypeAdapterFactory(requiredAgeTypeAdapterFactory)
-            .create()
-
+        fun provideMoshiForApi(
+            systemRequirementsMoshiAdapter: SystemRequirementsMoshiAdapter,
+            requiredAgeMoshiAdapter: RequiredAgeMoshiAdapter
+        ): Moshi {
+            return Moshi.Builder()
+                .add(systemRequirementsMoshiAdapter)
+                .add(requiredAgeMoshiAdapter)
+                .build()
+        }
     }
 }

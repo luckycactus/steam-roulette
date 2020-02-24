@@ -1,9 +1,11 @@
 package ru.luckycactus.steamroulette.data.repositories.games.models
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 
+@JsonClass(generateAdapter = true)
 data class GameStoreInfoResult(
-    @SerializedName("data") val gameStoreInfo: GameStoreInfo?,
-    @SerializedName("success") val success: Boolean
+    @Json(name="data") val gameStoreInfo: GameStoreInfo?,
+    @Json(name="success") val success: Boolean = false
 )
