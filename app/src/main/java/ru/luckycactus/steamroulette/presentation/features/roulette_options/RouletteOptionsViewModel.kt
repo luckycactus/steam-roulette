@@ -10,13 +10,13 @@ import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
+import java.lang.Exception
 import javax.inject.Inject
 
 class RouletteOptionsViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     observePlayTimeFilter: ObservePlaytimeFilterUseCase,
     observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
-    private val clearHiddenGames: ClearHiddenGamesUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel() {
     val playTimePrefValue: LiveData<String>
@@ -37,9 +37,7 @@ class RouletteOptionsViewModel @Inject constructor(
     }
 
     fun onClearHiddenGames() {
-        viewModelScope.launch {
-            clearHiddenGames(userViewModelDelegate.getCurrentUserSteamId())
-        }
+        userViewModelDelegate.resetHiddenGames()
         closeWithDelay()
     }
 

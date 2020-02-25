@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.qualifier.ForActivity
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -11,6 +10,7 @@ import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.core.invoke
+import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
@@ -18,8 +18,8 @@ import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
-import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
+import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
@@ -32,6 +32,7 @@ class MainViewModel @Inject constructor(
     private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
     private val signOutUser: SignOutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
+    private val clearHiddenGames: ClearHiddenGamesUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
 ) : ViewModel(), UserViewModelDelegate {
@@ -89,6 +90,12 @@ class MainViewModel @Inject constructor(
 
     fun onGameClick(game: GameHeader, enableSharedElementTransition: Boolean) {
         router.navigateTo(Screens.GameDetails(game, enableSharedElementTransition))
+    }
+
+    override fun resetHiddenGames() {
+        viewModelScope.launch {
+            clearHiddenGames(getCurrentUserSteamId())
+        }
     }
 
     override fun exit() {

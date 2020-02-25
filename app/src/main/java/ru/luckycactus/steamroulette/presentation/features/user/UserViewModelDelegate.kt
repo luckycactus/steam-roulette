@@ -17,5 +17,6 @@ interface UserViewModelDelegate : UserViewModelDelegatePublic {
     fun getCurrentUserSteamId(): SteamId
     fun fetchUserAndGames()
     fun fetchGames()
+    fun resetHiddenGames()
     fun exit()
 }

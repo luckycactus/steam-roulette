@@ -8,7 +8,6 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
 @Dao
 abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
-
     @Query("select appId from owned_game where userSteam64 = :steam64 and hidden = 0")
     abstract suspend fun getVisibleIds(steam64: Long): List<Int>
 
