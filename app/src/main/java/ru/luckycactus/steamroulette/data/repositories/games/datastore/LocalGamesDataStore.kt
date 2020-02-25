@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import org.intellij.lang.annotations.Language
+import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
@@ -14,6 +16,8 @@ import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.presentation.utils.longLog
+import ru.luckycactus.steamroulette.presentation.utils.onDebug
 import javax.inject.Inject
 
 @Reusable
@@ -34,14 +38,29 @@ class LocalGamesDataStore @Inject constructor(
 
             db.ownedGamesDao().deleteAll(steamId.asSteam64())
 
+            val logger = GamesParseLogger(false)
             gamesFlow
                 .filter { game ->
+                    val suspicious = game.iconUrl.isNullOrEmpty() || game.logoUrl.isNullOrEmpty()
                     if (gameIds.contains(game.appId)) {
+                        onDebug {
+                            if (suspicious)
+                                logger.addSuspiciousGame(game)
+                        }
                         true
                     } else {
                         var banned = game.iconUrl.isNullOrEmpty() && game.logoUrl.isNullOrEmpty()
                         if (!banned && !game.name.isNullOrEmpty()) {
-                            banned = bannedEndings.any { game.name.endsWith(it, true) }
+                            banned = banRegex.containsMatchIn(game.name)
+
+                            if (!banned && suspicious) {
+                                banned = banIfSuspiciousRegex.containsMatchIn(game.name)
+                            }
+                        }
+                        if (banned) {
+                            logger.addBannedGame(game)
+                        } else if (suspicious) {
+                            logger.addSuspiciousGame(game)
                         }
                         !banned
                     }
@@ -51,6 +70,7 @@ class LocalGamesDataStore @Inject constructor(
                 .collect {
                     db.ownedGamesDao().insert(it)
                 }
+            logger.log()
         }
     }
 
@@ -92,20 +112,69 @@ class LocalGamesDataStore @Inject constructor(
         db.ownedGamesDao().delete(steamId.asSteam64())
     }
 
+    private class GamesParseLogger(
+        private val enable: Boolean = BuildConfig.DEBUG
+    ) {
+        private val bannedGames = if (enable) {
+            mutableListOf<String>()
+        } else null
+        private val suspiciousGames = if (enable) {
+            mutableListOf<String>()
+        } else null
+
+        fun addBannedGame(game: OwnedGameEntity) {
+            bannedGames?.add(game.name!!)
+        }
+
+        fun addSuspiciousGame(game: OwnedGameEntity) {
+            suspiciousGames?.add(game.name!!)
+        }
+
+        fun log() {
+            if (enable) {
+                longLog(
+                    "GamesParseLogger",
+                    "Banned games (${bannedGames!!.size}): ${bannedGames.joinToString(separator = "\n")}"
+                )
+                longLog(
+                    "GamesParseLogger",
+                    "Suspicious games (${suspiciousGames!!.size}): ${suspiciousGames.joinToString(
+                        separator = "\n"
+                    )}"
+                )
+            }
+        }
+    }
+
     companion object {
         private const val GAMES_BUFFER_SIZE = 500
-        //todo regex
-        private val bannedEndings = arrayOf(
-            "public test",
-            "public testing",
-            "closed test",
-            "system test",
-            "test server",
-            "testlive client",
-            "screen tests",
 
-            " demo",
-            " beta"
-        )
+        @Language("RegExp")
+        private val banRegex = arrayOf(
+            "public test$",
+            "public testing$",
+            "closed test$",
+            "system test$",
+            "test server$",
+            "testlive client$",
+            "screen tests$",
+            " demo$",
+            " beta$",
+            "\\(Theatrical",
+            "\\(Subtitled"
+        ).joinToString(separator = "|")
+            .toRegex(RegexOption.IGNORE_CASE)
+
+        @Language("RegExp")
+        private val banIfSuspiciousRegex =
+            arrayOf(
+                "\\btest$",
+                "\\bEp\\d\\d",
+                "Player Profiles",
+                "\\bSkin\\b",
+                "\\(Class\\)"
+
+            ).joinToString(separator = "|")
+                .toRegex(RegexOption.IGNORE_CASE)
     }
 }
