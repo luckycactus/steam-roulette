@@ -61,9 +61,10 @@ class RouletteViewModel @Inject constructor(
             refreshGames()
         }
 
-        _contentState.addSource(userViewModelDelegate.currentUserSteamId.switchMap {
+        val resetHiddenGamesEventLiveData = userViewModelDelegate.currentUserSteamId.switchMap {
             observeResetHiddenGamesEvent(it)
-        }) {
+        }
+        _contentState.addSource(resetHiddenGamesEventLiveData) {
             refreshGames()
         }
 

@@ -22,6 +22,8 @@ import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDele
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.nonNull
+import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -71,9 +73,10 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
-        userSummary = _currentUserSteamId.switchMap {
+        userSummary = _nullableCurrentUserSteamId.nullableSwitchMap {
             observeUserSummary(it)
-        }
+        }.nonNull()
+
         //todo
         currentUserSteamId.observeForever { }
     }

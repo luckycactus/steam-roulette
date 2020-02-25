@@ -5,6 +5,7 @@ import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 
+//todo document
 interface UserViewModelDelegatePublic {
     val userSummary: LiveData<UserSummary>
 }
