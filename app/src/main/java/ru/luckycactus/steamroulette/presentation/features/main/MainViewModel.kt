@@ -102,11 +102,10 @@ class MainViewModel @Inject constructor(
     }
 
     override fun exit() {
-        //todo progress
         viewModelScope.coroutineContext.cancelChildren()
+        router.newRootScreen(Screens.Login)
         viewModelScope.launch {
             signOutUser()
-            router.newRootScreen(Screens.Login)
         }
     }
 

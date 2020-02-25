@@ -12,7 +12,7 @@ abstract class UserSummaryDao : BaseDao<UserSummaryEntity>() {
     abstract suspend fun get(steam64: Long): UserSummaryEntity
 
     @Query("select * from user_summary where steam64 = :steam64")
-    abstract fun observe(steam64: Long): LiveData<UserSummaryEntity>
+    abstract fun observe(steam64: Long): LiveData<UserSummaryEntity?>
 
     @Query("delete from user_summary where steam64 = :steam64")
     abstract suspend fun delete(steam64: Long)

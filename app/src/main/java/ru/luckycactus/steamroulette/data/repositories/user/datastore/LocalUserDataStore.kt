@@ -12,6 +12,7 @@ import ru.luckycactus.steamroulette.data.core.longLiveData
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.presentation.utils.nonNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -43,7 +44,7 @@ class LocalUserDataStore @Inject constructor(
     }
 
     override fun observeUserSummary(steamId: SteamId): LiveData<UserSummaryEntity> =
-        db.userSummaryDao().observe(steamId.asSteam64()).distinctUntilChanged()
+        db.userSummaryDao().observe(steamId.asSteam64()).distinctUntilChanged().nonNull()
 
     override fun setCurrentUser(steamId: SteamId) {
         currentUserSteam64Pref = steamId.asSteam64()
