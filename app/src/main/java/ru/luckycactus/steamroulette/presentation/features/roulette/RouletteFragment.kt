@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -109,11 +110,9 @@ class RouletteFragment : BaseFragment() {
             onSwiped = {},
             onSwipedRight = {
                 viewModel.onGameSwiped(false)
-                viewModel.onAdapterUpdatedAfterSwipe()
             },
             onSwipedLeft = {
                 viewModel.onGameSwiped(true)
-                viewModel.onAdapterUpdatedAfterSwipe()
             },
             onSwipeProgress = { progress, _ ->
                 viewModel.onSwipeProgress(progress)

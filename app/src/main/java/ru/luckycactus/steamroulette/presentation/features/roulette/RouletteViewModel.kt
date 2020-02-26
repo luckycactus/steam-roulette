@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
@@ -46,7 +47,7 @@ class RouletteViewModel @Inject constructor(
     private val currentUserPlayTimeFilter: LiveData<PlaytimeFilter>
 
     private var getPagingListJob: Job? = null
-    private var gamesEnded = false
+    private var allGamesShowed = false
 
     init {
         currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId.switchMap {
@@ -93,8 +94,8 @@ class RouletteViewModel @Inject constructor(
                     }
                 }
 
-                if (it.gamesEnded()) {
-                    gamesEnded = true
+                if (it.allGamesShowed()) {
+                    allGamesShowed = true
                     _contentState.value = ContentState.Placeholder(
                         resourceManager.getString(R.string.games_queue_ended),
                         titleType = ContentState.TitleType.None,
@@ -106,10 +107,11 @@ class RouletteViewModel @Inject constructor(
                 }
             }
         }
+        _controlsAvailable.value = true
     }
 
     fun onRetryClick() {
-        if (gamesEnded) {
+        if (allGamesShowed) {
             refreshGames()
         } else {
             userViewModelDelegate.fetchGames()
@@ -120,10 +122,6 @@ class RouletteViewModel @Inject constructor(
         _controlsAvailable.value = (progress == 0f)
     }
 
-    fun onAdapterUpdatedAfterSwipe() {
-        _controlsAvailable.value = true
-    }
-
     private fun refreshGames() {
         val fetchGamesResult = userViewModelDelegate.fetchGamesState.value
         val filter = currentUserPlayTimeFilter.value
@@ -132,7 +130,7 @@ class RouletteViewModel @Inject constructor(
         _gamesPagingList.value?.finish()
         _gamesPagingList.value = null
 
-        gamesEnded = false
+        allGamesShowed = false
 
         if (fetchGamesResult == null || filter == null)
             return

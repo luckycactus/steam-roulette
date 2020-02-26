@@ -1,6 +1,8 @@
 package ru.luckycactus.steamroulette.domain.games.entity
 
+import android.util.SparseIntArray
 import androidx.annotation.MainThread
+import androidx.core.util.set
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
@@ -10,7 +12,7 @@ interface PagingGameList {
     val list: List<GameHeader>
     val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>>
     fun isEmpty(): Boolean
-    fun gamesEnded(): Boolean
+    fun allGamesShowed(): Boolean
     @MainThread
     fun removeTop(): GameHeader
     @MainThread
@@ -35,6 +37,7 @@ class PagingGameListImpl constructor(
     private var nextFetchIndex = 0
     private var fetching = false
     private var fetchJob: Job? = null
+    private val tmpIndiciesMap = SparseIntArray(fetchDistance)
 
     init {
         if (gameIds.isNotEmpty())
@@ -43,7 +46,7 @@ class PagingGameListImpl constructor(
 
     override fun isEmpty() = gameIds.isEmpty()
 
-    override fun gamesEnded() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
+    override fun allGamesShowed() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
 
     @MainThread
     override fun removeTop(): GameHeader {
@@ -63,17 +66,22 @@ class PagingGameListImpl constructor(
         if (fetchJob?.isActive != true) {
             fetchJob = coroutineScope.launch(context = Dispatchers.Main) {
                 val fetchEnd = minOf(nextFetchIndex + fetchDistance, gameIds.size)
-                val games = gamesFactory(
-                    gameIds.subList(
-                        nextFetchIndex,
-                        fetchEnd
-                    )
+                val fetchIds = gameIds.subList(
+                    nextFetchIndex,
+                    fetchEnd
                 )
+                fetchIds.forEachIndexed { index, i ->
+                    tmpIndiciesMap[i] = index
+                }
+                val games = gamesFactory(fetchIds)
+                    .sortedWith(Comparator { o1, o2 ->
+                        tmpIndiciesMap[o1.appId] - tmpIndiciesMap[o2.appId]
+                    })
+                tmpIndiciesMap.clear()
                 if (isActive) {
                     nextFetchIndex = fetchEnd
                     _list.addAll(games)
-                    _itemsInsertedLiveData.value =
-                        Event(_list.size - games.size to games.size)
+                    _itemsInsertedLiveData.value = Event(_list.size - games.size to games.size)
                     fetching = false
                 }
             }
