@@ -8,7 +8,7 @@ import ru.luckycactus.steamroulette.presentation.utils.onDebug
 
 class GamesVerifier(
     private val previouslyVerifiedAppIds: Set<Int>,
-    log: Boolean
+    log: Boolean = BuildConfig.DEBUG
 ) {
     private val logger = GamesParseLogger(log)
 

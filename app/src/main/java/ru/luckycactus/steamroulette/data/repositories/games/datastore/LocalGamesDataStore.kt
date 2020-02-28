@@ -38,7 +38,7 @@ class LocalGamesDataStore @Inject constructor(
 
             db.ownedGamesDao().deleteAll(steamId.asSteam64())
 
-            val gamesVerifier = GamesVerifier(gameIds, true)
+            val gamesVerifier = GamesVerifier(gameIds, false)
             gamesFlow
                 .filter { gamesVerifier.verify(it) }
                 .map { mapper.mapFrom(it) }
