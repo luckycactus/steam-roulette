@@ -4,8 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
@@ -18,11 +16,6 @@ import kotlin.math.absoluteValue
 class RouletteAdapter constructor(
     private val onGameClick: (List<View>, GameHeader) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
-
-    init {
-        setHasStableIds(true)
-    }
-
     var items: List<GameHeader>? = null
         set(value) {
             field = value
@@ -36,10 +29,6 @@ class RouletteAdapter constructor(
 
     override fun onBindViewHolder(holder: RouletteViewHolder, position: Int) {
         holder.bind(items!![position])
-    }
-
-    override fun getItemId(position: Int): Long {
-        return items!![position].appId.toLong()
     }
 
     inner class RouletteViewHolder(
