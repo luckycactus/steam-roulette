@@ -9,6 +9,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_description_block_tag.*
 import kotlinx.android.synthetic.main.item_game_details_short_description.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.utils.inflate
@@ -16,7 +17,8 @@ import ru.luckycactus.steamroulette.presentation.utils.setDrawableColor
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class GameShortDescriptionViewHolder(
-    view: View
+    view: View,
+    viewModel: GameDetailsViewModel
 ) : GameDetailsViewHolder<GameDetailsUiModel.ShortDescription>(view) {
     init {
         val space = view.resources.getDimensionPixelSize(R.dimen.default_activity_margin)
@@ -29,6 +31,10 @@ class GameShortDescriptionViewHolder(
         rvCategories.layoutManager =
             LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
         rvCategories.addItemDecoration(decoration)
+
+        layoutMetacriticScore.setOnClickListener {
+            viewModel.onMetacriticClick()
+        }
     }
 
     override fun bind(item: GameDetailsUiModel.ShortDescription) {

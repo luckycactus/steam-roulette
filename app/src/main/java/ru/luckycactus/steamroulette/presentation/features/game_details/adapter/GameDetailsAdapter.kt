@@ -30,7 +30,7 @@ class GameDetailsAdapter constructor(
         val view = parent.inflate(viewType)
         return when (viewType) {
             R.layout.item_game_details_header -> GameHeaderViewHolder(view)
-            R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(view)
+            R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_links -> GameLinksViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_languages -> GameLanguagesViewHolder(view)
             R.layout.item_game_details_system_requirements -> GameSystemReqsViewHolder(view)

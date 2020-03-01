@@ -10,10 +10,10 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
-import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
@@ -34,7 +34,7 @@ class GameDetailsViewModel @AssistedInject constructor(
 
     private val _gameDetails = MutableLiveData<List<GameDetailsUiModel>>()
 
-    private var resolvedAppId: Int? = null
+    private var gameStoreInfo: GameStoreInfo? = null
 
     init {
         loadInfo(true)
@@ -45,21 +45,27 @@ class GameDetailsViewModel @AssistedInject constructor(
     }
 
     fun onStoreClick() {
-        router.newRootScreen(
-            Screens.ExternalSteamFlow(
-                GameUrlUtils.storePage(resolvedAppId ?: gameHeader.appId),
+        router.navigateTo(
+            Screens.ExternalBrowserFlow(
+                GameUrlUtils.storePage(gameStoreInfo?.appId ?: gameHeader.appId),
                 true
             )
         )
     }
 
     fun onHubClick() {
-        router.newRootScreen(
-            Screens.ExternalSteamFlow(
-                GameUrlUtils.hubPage(resolvedAppId ?: gameHeader.appId),
+        router.navigateTo(
+            Screens.ExternalBrowserFlow(
+                GameUrlUtils.hubPage(gameStoreInfo?.appId ?: gameHeader.appId),
                 true
             )
         )
+    }
+
+    fun onMetacriticClick() {
+        gameStoreInfo?.metacritic?.url?.let {
+            router.navigateTo(Screens.ExternalBrowserFlow(it))
+        }
     }
 
     private fun loadInfo(tryCache: Boolean) {
@@ -83,9 +89,9 @@ class GameDetailsViewModel @AssistedInject constructor(
                     renderError(e)
                 }
             }
-            if (gameStoreInfo != null) {
-                resolvedAppId = gameStoreInfo.appId
-                _gameDetails.value = gameDetailsUiModelMapper.mapFrom(gameStoreInfo)
+            gameStoreInfo?.let {
+                this@GameDetailsViewModel.gameStoreInfo = gameStoreInfo
+                _gameDetails.value = gameDetailsUiModelMapper.mapFrom(it)
             }
         }
     }
@@ -102,13 +108,13 @@ class GameDetailsViewModel @AssistedInject constructor(
         )
     }
 
+
     private fun renderLoading() {
         _gameDetails.value = listOf(
             getInitialHeader(),
             GameDetailsUiModel.DataLoading(ContentState.Loading)
         )
     }
-
 
     private fun getInitialHeader(): GameDetailsUiModel =
         GameDetailsUiModel.Header(gameHeader)

@@ -29,9 +29,9 @@ sealed class Screens : SupportAppScreen() {
             GameDetailsFragment.newInstance(game, enableSharedElementTransition)
     }
 
-    data class ExternalSteamFlow(
+    data class ExternalBrowserFlow(
         val url: String,
-        val trySteamApp: Boolean
+        val trySteamApp: Boolean = false
     ) : Screens() {
         override fun getActivityIntent(context: Context): Intent {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
