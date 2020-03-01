@@ -37,7 +37,6 @@ class CacheHelper @Inject constructor(
     ): Boolean = cachePolicy == CachePolicy.Cache ||
             (cachePolicy == CachePolicy.CacheOrRemote && !isExpired(key, window))
 
-
     fun shouldUpdate(
         cachePolicy: CachePolicy,
         key: String,

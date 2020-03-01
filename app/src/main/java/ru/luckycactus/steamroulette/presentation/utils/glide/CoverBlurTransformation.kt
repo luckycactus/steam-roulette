@@ -33,12 +33,15 @@ class CoverBlurTransformation(
         if (toTransform.width < toTransform.height)
             return toTransform
 
-        val bitmap = pool.get(outWidth, outHeight, Bitmap.Config.ARGB_8888)
+        val aspectRatio = outWidth / outHeight.toFloat()
+        val width = toTransform.width.toFloat()
+        val height = width / aspectRatio
+        val bitmap = pool.get(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint()
 
-        val sampling = outWidth / blurBackgroundWidth.toFloat()
-        val blurBackgroundHeight = (outHeight / sampling).toInt()
+        val sampling = width / blurBackgroundWidth
+        val blurBackgroundHeight = (height / sampling).toInt()
         var blurBitmap =
             pool.get(blurBackgroundWidth, blurBackgroundHeight, Bitmap.Config.ARGB_8888)
                 .apply {
@@ -47,7 +50,7 @@ class CoverBlurTransformation(
 
         with(Canvas(blurBitmap)) {
             density = toTransform.density
-            scale(outWidth / toTransform.width.toFloat(), outHeight / toTransform.height.toFloat())
+            scale(1f, height / toTransform.height)
             scale(1f / sampling, 1f / sampling)
             drawBitmap(toTransform, 0f, 0f, paint)
         }
@@ -60,20 +63,17 @@ class CoverBlurTransformation(
         }
         canvas.save()
         canvas.scale(
-            outWidth.toFloat() / blurBackgroundWidth,
-            outHeight.toFloat() / blurBackgroundHeight
+            width / blurBackgroundWidth,
+            height / blurBackgroundHeight
         )
         canvas.drawBitmap(blurBitmap, 0f, 0f, paint)
         canvas.restore()
 
         pool.put(blurBitmap)
 
-        val scale = outWidth / toTransform.width.toFloat()
-        val toTransformScaledHeight = toTransform.height * scale
-        var y = bias * outHeight - toTransformScaledHeight / 2
-        y = y.coerceIn(0f, outHeight - toTransformScaledHeight / 2f)
+        var y = bias * height - toTransform.height / 2
+        y = y.coerceIn(0f, height - toTransform.height / 2f)
         canvas.translate(0f, y)
-        canvas.scale(scale, scale)
         canvas.drawBitmap(toTransform, 0f, 0f, paint)
 
         return bitmap
@@ -85,9 +85,9 @@ class CoverBlurTransformation(
 
     override fun equals(other: Any?): Boolean {
         return other is CoverBlurTransformation
-                && radius == other.radius
-                && blurBackgroundWidth == other.blurBackgroundWidth
-                && bias.toRawBits() == other.bias.toRawBits()
+            && radius == other.radius
+            && blurBackgroundWidth == other.blurBackgroundWidth
+            && bias.toRawBits() == other.bias.toRawBits()
     }
 
     override fun hashCode(): Int {
@@ -99,7 +99,7 @@ class CoverBlurTransformation(
     }
 
     companion object {
-        private const val VERSION = 5
+        private const val VERSION = 6
         private const val ID = "ru.luckycactus.steamroulette.CoverBlurTransformation.$VERSION"
     }
 }
