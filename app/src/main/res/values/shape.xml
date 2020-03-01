@@ -1,5 +1,4 @@
 <resources>
-
     <!--Shape Appearance for small components like chips, buttons, text fields and FABs-->
     <style name="ShapeAppearance.MyTheme.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerSize">@dimen/dialog_corner_radius</item>

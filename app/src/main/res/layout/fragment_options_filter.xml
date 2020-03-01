@@ -1,78 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/spacing_small"
+        android:paddingBottom="@dimen/spacing_small"
+        >
 
         <ru.luckycactus.steamroulette.presentation.ui.widget.PreferenceView
-                android:id="@+id/prefViewMaxPlaytime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/default_activity_margin"
-                android:paddingRight="@dimen/default_activity_margin"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:background="?selectableItemBackground"
-                app:prefTitle="@string/playtime"
-                android:layout_marginBottom="8dp"
-                />
+            android:id="@+id/prefViewMaxPlaytime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:background="?selectableItemBackground"
+            android:paddingLeft="@dimen/default_activity_margin"
+            android:paddingTop="@dimen/spacing_small"
+            android:paddingRight="@dimen/default_activity_margin"
+            android:paddingBottom="@dimen/spacing_small"
+            app:prefTitle="@string/playtime"
+            />
 
         <include layout="@layout/divider" />
 
         <LinearLayout
-                android:layout_width="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/default_activity_margin"
+            android:paddingTop="16dp"
+            android:paddingRight="@dimen/default_activity_margin"
+            >
+
+            <TextView
+                android:id="@+id/tvHiddenGamesLabel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/default_activity_margin"
-                android:paddingTop="16dp"
-                android:paddingRight="@dimen/default_activity_margin"
-                >
+                android:layout_weight="1"
+                android:text="@string/hidden_games_count"
+                android:textAppearance="?textAppearanceSubtitle1"
+                />
 
             <TextView
-                    android:id="@+id/tvHiddenGamesLabel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/hidden_games_count"
-                    android:textAppearance="?textAppearanceSubtitle1"
-                    />
-
-            <TextView
-                    android:id="@+id/tvHiddenGamesCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?textAppearanceBody2"
-                    tools:text="15"
-                    />
+                android:id="@+id/tvHiddenGamesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceBody2"
+                tools:text="15"
+                />
 
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnClearHiddenGames"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginEnd="@dimen/default_activity_margin"
-                android:layout_marginRight="@dimen/default_activity_margin"
-                android:gravity="center_vertical|start"
-                android:text="@string/btn_reset_hidden_games"
-                />
-
-
+            android:id="@+id/btnClearHiddenGames"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="@dimen/default_activity_margin"
+            android:gravity="center_vertical|start"
+            android:text="@string/btn_reset_hidden_games"
+            />
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>

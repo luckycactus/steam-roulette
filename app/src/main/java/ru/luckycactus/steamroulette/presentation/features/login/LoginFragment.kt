@@ -3,15 +3,14 @@ package ru.luckycactus.steamroulette.presentation.features.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.WindowManager
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.progress.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.di.core.component
 import ru.luckycactus.steamroulette.di.core.findComponent
-import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 

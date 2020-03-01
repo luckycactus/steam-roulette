@@ -1,6 +1,5 @@
 <resources>
 
-
     <style name="BaseBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -49,7 +48,7 @@
         <item name="android:background">@drawable/background_metacritic_score</item>
         <item name="android:gravity">center</item>
         <item name="android:includeFontPadding">false</item>
-        <item name="android:padding">@dimen/half_default_activity_margin</item>
+        <item name="android:padding">@dimen/spacing_small</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">30sp</item>
     </style>
@@ -58,4 +57,13 @@
         <item name="strokeColor">@color/btn_stroke_color_selector</item>
     </style>
 
+    <style name="Widget.MyTheme.CompoundButton.RadioButton.Dialog">
+        <item name="android:textAppearance">?textAppearanceBody2</item>
+    </style>
+
+    <style name="Widget.MyTheme.GameDetailsPlatformIcon" parent="">
+        <item name="android:layout_width">@dimen/game_details_platform_icon_size</item>
+        <item name="android:layout_height">@dimen/game_details_platform_icon_size</item>
+        <item name="android:tint">@color/platforms_icon_tint</item>
+    </style>
 </resources>

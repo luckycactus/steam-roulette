@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
 
     <View
-            android:id="@+id/dummyContent"
-            android:layout_width="0dp"
-            android:layout_height="0dp"/>
+        android:id="@+id/dummyContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />
 
-    <include layout="@layout/empty_layout"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            />
+    <include
+        layout="@layout/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 
-    <include layout="@layout/fullscreen_progress"
-            android:layout_height="48dp"
-            android:layout_width="match_parent"
-            />
+    <include
+        layout="@layout/progress"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        />
 
 </FrameLayout>

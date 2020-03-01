@@ -1,97 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/menuSheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
 
     <!-- Header -->
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/default_activity_margin"
-            android:paddingLeft="@dimen/default_activity_margin"
-            android:paddingTop="@dimen/default_activity_margin"
-            android:paddingEnd="4dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="@dimen/default_activity_margin"
-            >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/default_activity_margin"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingTop="@dimen/default_activity_margin"
+        android:paddingEnd="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="@dimen/default_activity_margin"
+        >
 
         <ImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                app:srcCompat="@drawable/avatar_placeholder"
-                />
+            android:id="@+id/ivAvatar"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            app:srcCompat="@drawable/avatar_placeholder"
+            />
 
         <LinearLayout
-                android:layout_width="0dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/tvNickname"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                >
+                android:layout_marginBottom="4dp"
+                android:textAppearance="?textAppearanceBody1"
+                tools:text="luckycactus"
+                />
 
             <TextView
-                    android:id="@+id/tvNickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:textAppearance="?textAppearanceBody1"
-                    tools:text="luckycactus"
-                    />
+                android:id="@+id/tvGamesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceBody2"
+                tools:text="1024 игр на аккаунте"
+                />
 
             <TextView
-                    android:id="@+id/tvGamesCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="1024 игр на аккаунте"
-                    android:textAppearance="?textAppearanceBody2"
-                    />
-
-            <TextView
-                    android:id="@+id/tvGamesUpdateDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="Последняя синхронизация: 2 дня назад"
-                    android:textAppearance="?textAppearanceCaption"
-                    android:lines="2"
-                    android:ellipsize="middle"
-                    />
+                android:id="@+id/tvGamesUpdateDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:lines="2"
+                android:textAppearance="?textAppearanceCaption"
+                tools:text="Последняя синхронизация: 2 дня назад"
+                />
 
         </LinearLayout>
 
         <FrameLayout
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                >
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            >
 
             <ImageView
-                    android:id="@+id/btnRefreshProfile"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/selectable_item_background_oval"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/ic_refresh_white_24dp"
-                    />
+                android:id="@+id/btnRefreshProfile"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/selectable_item_background_oval"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_refresh_white_24dp"
+                />
 
             <ru.luckycactus.steamroulette.presentation.ui.widget.LuxuryProgressBar
-                    android:id="@+id/profileRefreshProgressBar"
-                    style="@style/Widget.LuxuryProgressBar"
-                    android:layout_width="@dimen/standard_progress_bar_size"
-                    android:layout_height="@dimen/standard_progress_bar_size"
-                    android:layout_gravity="center"
-                    android:padding="12dp"
-                    android:visibility="gone"
-                    app:size="24dp"
-                    />
+                android:id="@+id/profileRefreshProgressBar"
+                style="@style/Widget.LuxuryProgressBar"
+                android:layout_width="@dimen/standard_progress_bar_size"
+                android:layout_height="@dimen/standard_progress_bar_size"
+                android:layout_gravity="center"
+                android:padding="12dp"
+                android:visibility="gone"
+                app:size="24dp"
+                />
 
         </FrameLayout>
 
@@ -100,15 +100,15 @@
     <include layout="@layout/divider" />
 
     <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnExit"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:gravity="start|center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/selectable_item_background"
-            android:text="@string/exit"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            />
+        android:id="@+id/btnExit"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/selectable_item_background"
+        android:gravity="start|center_vertical"
+        android:text="@string/exit"
+        />
 
 </LinearLayout>

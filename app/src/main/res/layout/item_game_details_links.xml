@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/default_activity_margin"
-        android:paddingRight="@dimen/default_activity_margin"
-        >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/default_activity_margin"
+    android:paddingRight="@dimen/default_activity_margin"
+    >
 
     <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStore"
-            style="?materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/button_steam_store"
-            />
+        android:id="@+id/btnStore"
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/button_steam_store"
+        />
 
     <Space
-            android:layout_width="@dimen/default_activity_margin"
-            android:layout_height="match_parent"
-            />
+        android:layout_width="@dimen/default_activity_margin"
+        android:layout_height="match_parent"
+        />
 
     <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHub"
-            style="?materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/button_community_hub"
-            />
+        android:id="@+id/btnHub"
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/button_community_hub"
+        />
 
 </LinearLayout>
