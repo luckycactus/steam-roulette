@@ -17,11 +17,11 @@ sealed class GameDetailsUiModel {
         val categories: List<String>?,
         val genres: List<String>?,
         val requiredAge: Int?,
-        val metacriticInfoEntity: MetacriticInfoEntity?
+        val metacriticInfo: MetacriticInfo?
     ) : GameDetailsUiModel() {
         fun isEmpty() =
             value.isNullOrEmpty() && categories.isNullOrEmpty() && genres.isNullOrEmpty()
-                    && requiredAge == null && metacriticInfoEntity == null
+                    && requiredAge == null && metacriticInfo == null
     }
 
     object Links : GameDetailsUiModel()
@@ -31,11 +31,11 @@ sealed class GameDetailsUiModel {
     ) : GameDetailsUiModel()
 
     data class Platforms(
-        val platformsAvailability: PlatformsAvailability
+        val platforms: PlatformsAvailability
     ) : GameDetailsUiModel()
 
     data class Screenshots(
-        val screenshots: List<ScreenshotEntity>
+        val screenshots: List<Screenshot>
     ) : GameDetailsUiModel()
 
     data class DataLoading(

@@ -10,25 +10,23 @@ import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
-import ru.luckycactus.steamroulette.presentation.features.system_reqs.model.SystemReqsUiModel
 
 class SystemReqsViewModel @AssistedInject constructor(
     @Assisted gameHeader: GameHeader,
-    private val getGameStoreInfo: GetGameStoreInfoUseCase,
-    private val systemReqsUiModelMapper: SystemReqsUiModelMapper
+    private val getGameStoreInfo: GetGameStoreInfoUseCase
 ) : ViewModel() {
 
-    val systemReqs: LiveData<List<SystemReqsUiModel>>
+    val systemReqs: LiveData<List<SystemRequirements>>
         get() = _systemReqs
 
-    private val _systemReqs = MutableLiveData<List<SystemReqsUiModel>>()
+    private val _systemReqs = MutableLiveData<List<SystemRequirements>>()
 
     init {
         viewModelScope.launch {
             val gameDetails = getGameStoreInfo(
                 GetGameStoreInfoUseCase.Params(gameHeader.appId, false)
             )
-            _systemReqs.value = systemReqsUiModelMapper.mapFrom(gameDetails)
+            _systemReqs.value = gameDetails.requirements
         }
     }
 

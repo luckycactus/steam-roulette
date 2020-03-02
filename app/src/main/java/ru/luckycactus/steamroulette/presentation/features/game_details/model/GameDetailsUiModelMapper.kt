@@ -34,8 +34,8 @@ class GameDetailsUiModelMapper @Inject constructor(
 
         return GameDetailsUiModel.Header(
             GameHeader(from),
-            from.developers?.joinToString(),
-            from.publishers?.joinToString(),
+            from.developers.joinToString(),
+            from.publishers.joinToString(),
             releaseDate
         )
     }
@@ -43,9 +43,9 @@ class GameDetailsUiModelMapper @Inject constructor(
     private fun mapShortDescription(from: GameStoreInfo): GameDetailsUiModel.ShortDescription? {
         val model = GameDetailsUiModel.ShortDescription(
             from.shortDescription,//.replace("&quot", "\""), //todo
-            from.categories?.map { it.description },
-            from.genres?.map { it.description },
-            from.requiredAge?.age,
+            from.categories.map { it.description },
+            from.genres.map { it.description },
+            from.requiredAge,
             from.metacritic
         )
         if (model.isEmpty())
@@ -57,15 +57,13 @@ class GameDetailsUiModelMapper @Inject constructor(
         from.supportedLanguages?.let { GameDetailsUiModel.Languages(it) }
 
     private fun mapPlatforms(from: GameStoreInfo): GameDetailsUiModel.Platforms? {
-        return from.platforms?.let {
-            if (it.windows || it.linux || it.mac)
-                GameDetailsUiModel.Platforms(it)
-            else null
-        }
+        return if (from.platforms.availableOnAnyPlatform)
+            GameDetailsUiModel.Platforms(from.platforms)
+        else null
     }
 
     private fun mapScrenshots(from: GameStoreInfo): GameDetailsUiModel.Screenshots? =
-        if (from.screenshots?.isNotEmpty() == true)
+        if (from.screenshots.isNotEmpty())
             GameDetailsUiModel.Screenshots(from.screenshots)
         else null
 

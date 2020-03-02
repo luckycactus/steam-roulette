@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
@@ -61,18 +60,18 @@ class GameShortDescriptionViewHolder(
             ivAge.visibility(false)
         }
 
-        if (item.metacriticInfoEntity != null) {
-            tvMetacriticScore.text = item.metacriticInfoEntity.score.toString()
+        if (item.metacriticInfo != null) {
+            tvMetacriticScore.text = item.metacriticInfo.score.toString()
             setDrawableColor(
                 tvMetacriticScore.background,
-                getMetacriticScoreColor(item.metacriticInfoEntity.score)
+                item.metacriticInfo.color
             )
             layoutMetacriticScore.visibility(true)
         } else {
             layoutMetacriticScore.visibility(false)
         }
 
-        blockExtraInfo.visibility(ageResource != null || item.metacriticInfoEntity != null)
+        blockExtraInfo.visibility(ageResource != null || item.metacriticInfo != null)
     }
 
     private fun getAgeDrawableResource(age: Int): Int? {
@@ -84,17 +83,6 @@ class GameShortDescriptionViewHolder(
             18 -> R.drawable.age_18
             else -> null
         }
-    }
-
-    private fun getMetacriticScoreColor(score: Int): Int { //todo move to domain?
-        return ContextCompat.getColor(
-            itemView.context,
-            when (score) {
-                in 75..100 -> R.color.metacritic_good
-                in 50..74 -> R.color.metacritic_average
-                else -> R.color.metacritic_poor
-            }
-        )
     }
 
     class TagsAdapter(

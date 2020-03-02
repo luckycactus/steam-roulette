@@ -4,18 +4,18 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.ToJson
-import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
+import ru.luckycactus.steamroulette.data.repositories.games.models.SystemRequirementsEntity
 import javax.inject.Inject
 
 class SystemRequirementsMoshiAdapter @Inject constructor() {
     @FromJson
     fun fromJson(
         jsonReader: JsonReader,
-        delegate: JsonAdapter<SystemRequirements>
-    ): SystemRequirements? {
+        delegate: JsonAdapter<SystemRequirementsEntity>
+    ): SystemRequirementsEntity? {
         return when (jsonReader.peek()) {
             JsonReader.Token.NULL -> {
-                jsonReader.nextNull<SystemRequirements>()
+                jsonReader.nextNull<SystemRequirementsEntity>()
                 null
             }
             JsonReader.Token.BEGIN_ARRAY -> {
@@ -27,7 +27,7 @@ class SystemRequirementsMoshiAdapter @Inject constructor() {
     }
 
     @ToJson
-    fun toJson(systemRequirements: SystemRequirements): String {
+    fun toJson(systemRequirements: SystemRequirementsEntity): String {
         throw UnsupportedOperationException()
     }
 }

@@ -43,8 +43,4 @@
     <color name="color_overlay_hide">#951823</color>
 
     <color name="platforms_icon_tint">#38475B</color>
-
-    <color name="metacritic_good">#81C94E</color>
-    <color name="metacritic_average">#F8CD55</color>
-    <color name="metacritic_poor">#EB3323</color>
 </resources>

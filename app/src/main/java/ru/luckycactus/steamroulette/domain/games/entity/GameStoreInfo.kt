@@ -1,102 +1,66 @@
 package ru.luckycactus.steamroulette.domain.games.entity
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
 data class GameStoreInfo(
-    @Json(name = "name") val name: String,
-    @Json(name = "steam_appid") val appId: Int,
-    @Json(name = "required_age") val requiredAge: RequiredAge?,
-    //@Json(name="controller_support") val controllerSupport: String,
-    @Json(name = "detailed_description") val detailedDescription: String,
-    @Json(name = "about_the_game") val aboutTheGame: String,
-    @Json(name = "short_description") val shortDescription: String,
-    @Json(name = "supported_languages") val supportedLanguages: String?,
-    //@Json(name="reviews") val reviews: String,
-    //@Json(name="header_image") val headerImage: String,
-    //@Json(name="website") val website: String,
-    @Json(name = "pc_requirements") val pcRequirements: SystemRequirements?,
-    @Json(name = "mac_requirements") val macRequirements: SystemRequirements?,
-    @Json(name = "linux_requirements") val linuxRequirements: SystemRequirements?,
-    @Json(name = "developers") val developers: List<String>?,
-    @Json(name = "publishers") val publishers: List<String>?,
-    @Json(name = "platforms") val platforms: PlatformsAvailability?,
-    @Json(name = "metacritic") val metacritic: MetacriticInfoEntity?,
-    @Json(name = "categories") val categories: List<GameCategoryEntity>?,
-    @Json(name = "genres") val genres: List<GameGenreEntity>?,
-    @Json(name = "screenshots") val screenshots: List<ScreenshotEntity>?,
-    //@Json(name="movies") val trailers: List<TrailerEntity>,
-    @Json(name = "release_date") val releaseDate: ReleaseDateInfoEntity?
-    //@Json(name="content_descriptors") val contentDescriptors: ContentDescriptorsEntity,
-    //@Json(name="background") val background: String
+    val name: String,
+    val appId: Int,
+    val requiredAge: Int?,
+    val detailedDescription: String,
+    val aboutTheGame: String,
+    val shortDescription: String,
+    val supportedLanguages: String?,
+    val requirements: List<SystemRequirements>,
+    val developers: List<String>,
+    val publishers: List<String>,
+    val platforms: PlatformsAvailability,
+    val metacritic: MetacriticInfo?,
+    val categories: List<GameCategory>,
+    val genres: List<GameGenre>,
+    val screenshots: List<Screenshot>,
+    val releaseDate: ReleaseDateInfo?
 )
 
-data class RequiredAge(
-    val age: Int
-)
-
-@JsonClass(generateAdapter = true)
-data class SystemRequirements(
-    @Json(name = "minimum") val minimum: String?,
-    @Json(name = "recommended") val recommended: String?
-)
-
-@JsonClass(generateAdapter = true)
 data class PlatformsAvailability(
-    @Json(name = "windows") val windows: Boolean = false,
-    @Json(name = "mac") val mac: Boolean = false,
-    @Json(name = "linux") val linux: Boolean = false
+    val windows: Boolean,
+    val mac: Boolean,
+    val linux: Boolean
+) {
+    val availableOnAnyPlatform = windows || mac || linux
+}
+
+data class SystemRequirements(
+    val platform: Platform,
+    val minimal: String?,
+    val recommended: String?
 )
 
-@JsonClass(generateAdapter = true)
-data class MetacriticInfoEntity(
-    @Json(name = "score") val score: Int,
-    @Json(name = "url") val url: String
+data class MetacriticInfo constructor(
+    val score: Int,
+    val url: String
+) {
+    val color: Int = when (score) {
+        in 75..100 -> 0x81C94E
+        in 50..74 -> 0xF8CD55
+        else -> 0xEB3323
+    }
+}
+
+data class GameCategory(
+    val id: Int,
+    val description: String
 )
 
-@JsonClass(generateAdapter = true)
-data class GameCategoryEntity(
-    @Json(name = "id") val id: Int,
-    @Json(name = "description") val description: String
+data class GameGenre(
+    val id: Int,
+    val description: String
 )
 
-@JsonClass(generateAdapter = true)
-data class GameGenreEntity(
-    @Json(name = "id") val id: Int,
-    @Json(name = "description") val description: String
+data class Screenshot(
+    val id: Int,
+    val thumbnail: String,
+    val full: String
 )
 
-@JsonClass(generateAdapter = true)
-data class ScreenshotEntity(
-    @Json(name = "id") val id: Int,
-    @Json(name = "path_thumbnail") val thumbnail: String,
-    @Json(name = "path_full") val full: String
-)
-
-@JsonClass(generateAdapter = true)
-data class TrailerEntity(
-    @Json(name = "id") val id: Int,
-    @Json(name = "name") val name: String,
-    @Json(name = "thumbnail") val thumbnail: String,
-    @Json(name = "webm") val webm: WebmEntity,
-    @Json(name = "highlight") val highlight: Boolean
-)
-
-@JsonClass(generateAdapter = true)
-data class WebmEntity(
-    @Json(name = "480") val p480: String,
-    @Json(name = "max") val max: String
-)
-
-@JsonClass(generateAdapter = true)
-data class ReleaseDateInfoEntity(
-    @Json(name = "coming_soon") val comingSoon: Boolean = false,
-    @Json(name = "date") val date: String?
-)
-
-@JsonClass(generateAdapter = true)
-data class ContentDescriptorsEntity(
-    @Json(name = "ids") val ids: List<Int>,
-    @Json(name = "notes") val notes: String
+data class ReleaseDateInfo(
+    val comingSoon: Boolean = false,
+    val date: String?
 )

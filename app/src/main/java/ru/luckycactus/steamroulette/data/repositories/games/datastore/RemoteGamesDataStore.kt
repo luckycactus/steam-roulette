@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flowOn
 import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.data.net.services.SteamApiService
 import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
+import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoResult
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
@@ -81,7 +82,7 @@ class RemoteGamesDataStore @Inject constructor(
     }
 
     //todo document
-    override suspend fun getGameStoreInfo(appId: Int): GameStoreInfo {
+    override suspend fun getGameStoreInfo(appId: Int): GameStoreInfoEntity {
         val response = wrapCommonNetworkExceptions {
             steamStoreApiService.getGamesStoreInfo(
                 listOf(appId),

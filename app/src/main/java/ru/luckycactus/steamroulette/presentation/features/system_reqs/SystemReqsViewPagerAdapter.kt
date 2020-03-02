@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_system_reqs.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.features.system_reqs.model.SystemReqsUiModel
+import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class SystemReqsViewPagerAdapter(
-    private val items: List<SystemReqsUiModel>
+    private val items: List<SystemRequirements>
 ) : RecyclerView.Adapter<SystemReqsViewPagerAdapter.SystemReqsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SystemReqsViewHolder =
@@ -24,13 +24,13 @@ class SystemReqsViewPagerAdapter(
         holder.bind(items[position])
     }
 
-    fun getPageTitle(position: Int): String = items[position].platform
+    fun getPageTitle(position: Int): String = items[position].platform.name
 
     class SystemReqsViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(item: SystemReqsUiModel) {
+        fun bind(item: SystemRequirements) {
             if (item.minimal != null) {
                 tvMinimumReqs.text = HtmlCompat.fromHtml(item.minimal, 0)
                 tvMinimumReqs.visibility(true)

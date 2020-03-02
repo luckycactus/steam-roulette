@@ -15,10 +15,9 @@ class GameSystemReqsViewHolder(
     }
 
     override fun bind(item: GameDetailsUiModel.Platforms) {
-        with(item.platformsAvailability) {
-            ivWindows.visibility(windows)
-            ivMacOs.visibility(mac)
-            ivSteamOs.visibility(linux)
-        }
+        ivWindows.visibility(item.platforms.windows)
+        ivMacOs.visibility(item.platforms.mac)
+        ivSteamOs.visibility(item.platforms.linux)
+
     }
 }

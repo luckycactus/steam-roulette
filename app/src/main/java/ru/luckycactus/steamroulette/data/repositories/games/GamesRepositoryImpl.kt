@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
+import ru.luckycactus.steamroulette.data.repositories.games.mapper.GameStoreInfoEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -18,7 +19,8 @@ import kotlin.time.days
 @Singleton
 class GamesRepositoryImpl @Inject constructor(
     private val localGamesDataStore: GamesDataStore.Local,
-    private val remoteGamesDataStore: GamesDataStore.Remote
+    private val remoteGamesDataStore: GamesDataStore.Remote,
+    private val gameStoreInfoEntityMapper: GameStoreInfoEntityMapper
 ) : GamesRepository {
 
     override suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy) {
@@ -82,7 +84,7 @@ class GamesRepositoryImpl @Inject constructor(
 
     override suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo? {
         return NetworkBoundResource.withMemoryCache("game_store_info_$gameId", cachePolicy) {
-            remoteGamesDataStore.getGameStoreInfo(gameId)
+            gameStoreInfoEntityMapper.mapFrom(remoteGamesDataStore.getGameStoreInfo(gameId))
         }
     }
 
