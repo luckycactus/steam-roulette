@@ -1,5 +1,7 @@
 package ru.luckycactus.steamroulette.domain.games.entity
 
+import androidx.annotation.ColorInt
+
 data class GameStoreInfo(
     val name: String,
     val appId: Int,
@@ -37,10 +39,11 @@ data class MetacriticInfo constructor(
     val score: Int,
     val url: String
 ) {
+    @ColorInt
     val color: Int = when (score) {
-        in 75..100 -> 0x81C94E
-        in 50..74 -> 0xF8CD55
-        else -> 0xEB3323
+        in 75..100 -> 0xFF81C94E.toInt()
+        in 50..74 -> 0xFFF8CD55.toInt()
+        else -> 0xFFEB3323.toInt()
     }
 }
 

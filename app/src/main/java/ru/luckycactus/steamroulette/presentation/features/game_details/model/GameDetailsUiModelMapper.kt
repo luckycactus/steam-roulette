@@ -58,7 +58,7 @@ class GameDetailsUiModelMapper @Inject constructor(
 
     private fun mapPlatforms(from: GameStoreInfo): GameDetailsUiModel.Platforms? {
         return if (from.platforms.availableOnAnyPlatform)
-            GameDetailsUiModel.Platforms(from.platforms)
+            GameDetailsUiModel.Platforms(from.platforms, from.requirements.isNotEmpty())
         else null
     }
 

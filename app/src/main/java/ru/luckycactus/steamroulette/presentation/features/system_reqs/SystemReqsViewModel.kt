@@ -9,29 +9,29 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 
 class SystemReqsViewModel @AssistedInject constructor(
-    @Assisted gameHeader: GameHeader,
+    @Assisted appId: Int,
     private val getGameStoreInfo: GetGameStoreInfoUseCase
 ) : ViewModel() {
 
-    val systemReqs: LiveData<List<SystemRequirements>>
-        get() = _systemReqs
+    val game: LiveData<GameStoreInfo>
+        get() = _game
 
-    private val _systemReqs = MutableLiveData<List<SystemRequirements>>()
+    private val _game = MutableLiveData<GameStoreInfo>()
 
     init {
         viewModelScope.launch {
-            val gameDetails = getGameStoreInfo(
-                GetGameStoreInfoUseCase.Params(gameHeader.appId, false)
+            _game.value = getGameStoreInfo(
+                GetGameStoreInfoUseCase.Params(appId, false)
             )
-            _systemReqs.value = gameDetails.requirements
         }
     }
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(gameHeader: GameHeader): SystemReqsViewModel
+        fun create(appId: Int): SystemReqsViewModel
     }
 }

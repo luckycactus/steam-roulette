@@ -32,9 +32,9 @@ sealed class Screens : SupportAppScreen() {
     }
 
     data class SystemReqs(
-        val game: GameHeader
+        val appId: Int
     ) : Screens() {
-        override fun getFragment(): Fragment = SystemReqsFragment.newInstance(game)
+        override fun getFragment(): Fragment = SystemReqsFragment.newInstance(appId)
     }
 
     data class ExternalBrowserFlow(

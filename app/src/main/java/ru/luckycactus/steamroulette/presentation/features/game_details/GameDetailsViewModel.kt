@@ -69,7 +69,9 @@ class GameDetailsViewModel @AssistedInject constructor(
     }
 
     fun onSystemRequirementsClick() {
-        router.navigateTo(Screens.SystemReqs(gameHeader))
+        gameStoreInfo?.let {
+            router.navigateTo(Screens.SystemReqs(it.appId))
+        }
     }
 
     private fun loadInfo(tryCache: Boolean) {

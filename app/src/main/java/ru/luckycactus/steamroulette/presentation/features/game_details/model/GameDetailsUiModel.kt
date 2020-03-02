@@ -31,7 +31,8 @@ sealed class GameDetailsUiModel {
     ) : GameDetailsUiModel()
 
     data class Platforms(
-        val platforms: PlatformsAvailability
+        val platforms: PlatformsAvailability,
+        val systemRequirementsAvailable: Boolean
     ) : GameDetailsUiModel()
 
     data class Screenshots(

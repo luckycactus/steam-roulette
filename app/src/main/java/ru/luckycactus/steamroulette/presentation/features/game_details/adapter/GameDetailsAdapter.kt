@@ -33,7 +33,7 @@ class GameDetailsAdapter constructor(
             R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_links -> GameLinksViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_languages -> GameLanguagesViewHolder(view)
-            R.layout.item_game_details_system_requirements -> GameSystemReqsViewHolder(view, gameDetailsViewModel)
+            R.layout.item_game_details_platforms -> GamePlatformsViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_screenshots -> GameScreenshotsViewHolder(view)
             R.layout.item_empty_layout -> GameLoadingViewHolder(view, gameDetailsViewModel)
             else -> throw IllegalStateException("Unknown view type $viewType")
@@ -84,7 +84,7 @@ class GameDetailsAdapter constructor(
             is GameShortDescriptionViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.ShortDescription)
             is GameLinksViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Links)
             is GameLanguagesViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Languages)
-            is GameSystemReqsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Platforms)
+            is GamePlatformsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Platforms)
             is GameScreenshotsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Screenshots)
             is GameLoadingViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.DataLoading)
         }
@@ -96,7 +96,7 @@ class GameDetailsAdapter constructor(
             is GameDetailsUiModel.ShortDescription -> R.layout.item_game_details_short_description
             is GameDetailsUiModel.Links -> R.layout.item_game_details_links
             is GameDetailsUiModel.Languages -> R.layout.item_game_details_languages
-            is GameDetailsUiModel.Platforms -> R.layout.item_game_details_system_requirements
+            is GameDetailsUiModel.Platforms -> R.layout.item_game_details_platforms
             is GameDetailsUiModel.Screenshots -> R.layout.item_game_details_screenshots
             is GameDetailsUiModel.DataLoading -> R.layout.item_empty_layout
         }
