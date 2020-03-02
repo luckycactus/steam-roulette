@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,8 +48,8 @@ class GameDetailsFragment : BaseFragment(), Injectable {
         with(rvGameDetails) {
             this.adapter = this@GameDetailsFragment.adapter
             layoutManager = LinearLayoutManager(context)
-            val margin = resources.getDimensionPixelSize(R.dimen.default_activity_margin)
-            addItemDecoration(SpaceDecoration(margin, 0, margin))
+            val margin = resources.getDimensionPixelSize(R.dimen.spacing_small)
+            addItemDecoration(SpaceDecoration(margin, 0, 0))
         }
 
         fabBack.setOnClickListener {
@@ -98,10 +99,10 @@ class GameDetailsFragment : BaseFragment(), Injectable {
 
         fun newInstance(game: GameHeader, enableSharedElementTransition: Boolean) =
             GameDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_GAME, game)
-                    putBoolean(ARG_ENABLE_TRANSITION, enableSharedElementTransition)
-                }
+                arguments = bundleOf(
+                    ARG_GAME to game,
+                    ARG_ENABLE_TRANSITION to enableSharedElementTransition
+                )
             }
 
     }

@@ -68,6 +68,10 @@ class GameDetailsViewModel @AssistedInject constructor(
         }
     }
 
+    fun onSystemRequirementsClick() {
+        router.navigateTo(Screens.SystemReqs(gameHeader))
+    }
+
     private fun loadInfo(tryCache: Boolean) {
         viewModelScope.launch {
             var gameStoreInfo = if (tryCache)
@@ -96,6 +100,7 @@ class GameDetailsViewModel @AssistedInject constructor(
         }
     }
 
+
     private fun renderError(e: Exception) {
         val errorMessage = if (e is GetGameStoreInfoException)
             resourceManager.getString(R.string.fail_steam_store_info)
@@ -107,7 +112,6 @@ class GameDetailsViewModel @AssistedInject constructor(
             GameDetailsUiModel.DataLoading(contentState)
         )
     }
-
 
     private fun renderLoading() {
         _gameDetails.value = listOf(

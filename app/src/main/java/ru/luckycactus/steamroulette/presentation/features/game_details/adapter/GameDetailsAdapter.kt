@@ -33,7 +33,7 @@ class GameDetailsAdapter constructor(
             R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_links -> GameLinksViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_languages -> GameLanguagesViewHolder(view)
-            R.layout.item_game_details_system_requirements -> GameSystemReqsViewHolder(view)
+            R.layout.item_game_details_system_requirements -> GameSystemReqsViewHolder(view, gameDetailsViewModel)
             R.layout.item_game_details_screenshots -> GameScreenshotsViewHolder(view)
             R.layout.item_empty_layout -> GameLoadingViewHolder(view, gameDetailsViewModel)
             else -> throw IllegalStateException("Unknown view type $viewType")

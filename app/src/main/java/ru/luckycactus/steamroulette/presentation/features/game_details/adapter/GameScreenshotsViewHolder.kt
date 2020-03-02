@@ -55,7 +55,6 @@ class GameScreenshotsViewHolder(
         ) { view, screenshot ->
             val thumbnail = GlideApp.with(view)
                 .load(screenshot.thumbnail)
-                .skipMemoryCache(true)
                 .downsample(DownsampleStrategy.CENTER_INSIDE)
 
             GlideApp.with(view)

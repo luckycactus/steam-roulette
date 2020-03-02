@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/GameDetailsItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     >
 
     <TextView
-        style="@style/Widget.MyTheme.GameDetailsHeadlineTextView"
+        style="@style/Widget.MyTheme.GameDetailsHeadline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/default_activity_margin"
         android:paddingRight="@dimen/default_activity_margin"
         android:text="@string/game_details_languages"
+        android:textAppearance="@style/TextAppearance.MyTheme.GameDetailsHeadline"
         />
 
     <TextView

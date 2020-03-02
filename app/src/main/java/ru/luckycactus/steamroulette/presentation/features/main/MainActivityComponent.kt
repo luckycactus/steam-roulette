@@ -10,6 +10,7 @@ import ru.luckycactus.steamroulette.presentation.features.menu.MenuViewModel
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteViewModel
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.PlaytimeViewModel
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteOptionsViewModel
+import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqsViewModel
 
 @ActivityScope
 @Subcomponent(modules = [MainActivityModule::class])
@@ -27,6 +28,7 @@ interface MainActivityComponent {
     val rouletteViewModel: RouletteViewModel
     val rouletteOptionsViewModel: RouletteOptionsViewModel
     val playtimeDialogViewModel: PlaytimeViewModel
+    val systemReqsViewModelFactory: SystemReqsViewModel.Factory
 
     fun inject(gameDetailsFragment: GameDetailsFragment)
     fun inject(mainActivity: MainActivity)
