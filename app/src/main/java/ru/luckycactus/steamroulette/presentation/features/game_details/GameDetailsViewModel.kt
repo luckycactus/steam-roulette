@@ -70,7 +70,13 @@ class GameDetailsViewModel @AssistedInject constructor(
 
     fun onSystemRequirementsClick() {
         gameStoreInfo?.let {
-            router.navigateTo(Screens.SystemReqs(it.appId))
+            router.navigateTo(Screens.SystemReqs(it.name, it.requirements))
+        }
+    }
+
+    fun onDetailedDescriptionClick() {
+        gameStoreInfo?.let {
+            router.navigateTo(Screens.DetailedDescription(it.name, it.detailedDescription))
         }
     }
 
@@ -101,7 +107,6 @@ class GameDetailsViewModel @AssistedInject constructor(
             }
         }
     }
-
 
     private fun renderError(e: Exception) {
         val errorMessage = if (e is GetGameStoreInfoException)

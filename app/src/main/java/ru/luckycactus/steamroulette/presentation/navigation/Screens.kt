@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.fragment.app.Fragment
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
+import ru.luckycactus.steamroulette.presentation.features.detailed_description.DetailedDescriptionFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
@@ -32,9 +33,18 @@ sealed class Screens : SupportAppScreen() {
     }
 
     data class SystemReqs(
-        val appId: Int
+        val appName: String,
+        val systemReqs: List<SystemRequirements>
     ) : Screens() {
-        override fun getFragment(): Fragment = SystemReqsFragment.newInstance(appId)
+        override fun getFragment(): Fragment = SystemReqsFragment.newInstance(appName, systemReqs)
+    }
+
+    data class DetailedDescription(
+        val appName: String,
+        val detailedDescription: String
+    ) : Screens() {
+        override fun getFragment(): Fragment =
+            DetailedDescriptionFragment.newInstance(appName, detailedDescription)
     }
 
     data class ExternalBrowserFlow(

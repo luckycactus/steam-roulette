@@ -34,6 +34,10 @@ class GameShortDescriptionViewHolder(
         layoutMetacriticScore.setOnClickListener {
             viewModel.onMetacriticClick()
         }
+
+        header.setOnClickListener {
+            viewModel.onDetailedDescriptionClick()
+        }
     }
 
     override fun bind(item: GameDetailsUiModel.ShortDescription) {

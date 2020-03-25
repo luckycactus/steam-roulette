@@ -24,6 +24,7 @@
 
         <item name="colorControlActivated">@color/color_primary</item>
         <item name="android:textColorHighlight">@color/color_primary</item>
+        <item name="android:textColorLink">@color/link_color_selector</item>
 
         <!--Material shape attributes-->
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyTheme.SmallComponent

@@ -61,4 +61,5 @@
         <item quantity="other">Games I played for no more than %d hours</item>
     </plurals>
     <string name="system_requirements">System requirements</string>
+    <string name="game_description">Description</string>
 </resources>

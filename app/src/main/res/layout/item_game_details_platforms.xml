@@ -16,7 +16,6 @@
         style="@style/Widget.MyTheme.GameDetailsHeadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/default_activity_margin"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables"
