@@ -26,38 +26,22 @@
             android:paddingRight="@dimen/default_activity_margin"
             android:paddingBottom="@dimen/spacing_small"
             app:prefTitle="@string/playtime"
+            app:type="dropdown"
             />
 
         <include layout="@layout/divider" />
 
-        <LinearLayout
+        <ru.luckycactus.steamroulette.presentation.ui.widget.PreferenceView
+            android:id="@+id/prefViewHiddenGames"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:background="?selectableItemBackground"
             android:paddingLeft="@dimen/default_activity_margin"
-            android:paddingTop="16dp"
+            android:paddingTop="@dimen/spacing_small"
             android:paddingRight="@dimen/default_activity_margin"
-            >
-
-            <TextView
-                android:id="@+id/tvHiddenGamesLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/hidden_games_count"
-                android:textAppearance="?textAppearanceSubtitle1"
-                />
-
-            <TextView
-                android:id="@+id/tvHiddenGamesCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?textAppearanceBody2"
-                tools:text="15"
-                />
-
-        </LinearLayout>
+            app:prefTitle="@string/hidden_games_count"
+            app:type="forward"
+            />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnClearHiddenGames"

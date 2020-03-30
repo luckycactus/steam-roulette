@@ -6,16 +6,17 @@ import ru.luckycactus.steamroulette.domain.common.SteamId
 import javax.inject.Inject
 
 @Reusable
-class HideGameUseCase @Inject constructor(
+class SetGameHiddenUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
-) : SuspendUseCase<HideGameUseCase.Params, Unit>() {
+) : SuspendUseCase<SetGameHiddenUseCase.Params, Unit>() {
 
     override suspend fun getResult(params: Params) {
-        gamesRepository.hideLocalOwnedGame(params.steamId, params.gameId)
+        gamesRepository.setLocalOwnedGameHidden(params.steamId, params.gameId, params.hide)
     }
 
     data class Params(
         val steamId: SteamId,
-        val gameId: Int
+        val gameId: Int,
+        val hide: Boolean
     )
 }

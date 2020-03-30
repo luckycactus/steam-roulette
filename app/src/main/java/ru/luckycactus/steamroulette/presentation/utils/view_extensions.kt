@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.annotation.Px
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import java.lang.reflect.Method
@@ -88,5 +89,13 @@ fun View.showSnackbar(
     ) {
         initializer?.invoke(this)
         show()
+    }
+}
+
+fun ViewGroup.traverseChildren(block: (View) -> Unit) {
+    children.forEach {
+        block(it)
+        if (it is ViewGroup)
+            it.traverseChildren(block)
     }
 }

@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
+import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import com.bumptech.glide.Glide

@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.data.local.db
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
@@ -16,6 +17,9 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     @Query("select appId from owned_game where userSteam64 =:steam64 and hidden = 1")
     abstract suspend fun getHiddenIds(steam64: Long): List<Int>
+
+    @Query("select appId, name from owned_game where userSteam64 =:steam64 and hidden = 1 order by name asc")
+    abstract fun getHiddenGamesDataSourceFactory(steam64: Long): DataSource.Factory<Int, GameHeader>
 
     @Query(
         """select appId 
@@ -41,8 +45,9 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun delete(steam64: Long)
 
-    @Query("update owned_game SET hidden = 1 where userSteam64 =:steam64 and appId = :gameId")
-    abstract suspend fun hide(steam64: Long, gameId: Int)
+    suspend fun setHidden(steam64: Long, gameId: Int, hidden: Boolean) {
+        _setHidden(steam64, gameId, if (hidden) 1 else 0)
+    }
 
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun deleteAll(steam64: Long)
@@ -68,4 +73,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         )"""
     )
     abstract suspend fun _isUserHasGames(steam64: Long): Int
+
+    @Query("update owned_game SET hidden = :hidden where userSteam64 =:steam64 and appId = :gameId")
+    abstract suspend fun _setHidden(steam64: Long, gameId: Int, hidden: Int)
 }

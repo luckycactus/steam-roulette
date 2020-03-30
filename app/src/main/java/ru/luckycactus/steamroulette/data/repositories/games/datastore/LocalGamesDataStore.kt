@@ -1,14 +1,13 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.withTransaction
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import org.intellij.lang.annotations.Language
-import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
@@ -16,8 +15,6 @@ import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.presentation.utils.longLog
-import ru.luckycactus.steamroulette.presentation.utils.onDebug
 import javax.inject.Inject
 
 @Reusable
@@ -77,8 +74,8 @@ class LocalGamesDataStore @Inject constructor(
     ): List<GameHeader> =
         db.ownedGamesDao().getHeaders(steamId.asSteam64(), gameIds)
 
-    override suspend fun hideOwnedGame(steamId: SteamId, gameId: Int) {
-        db.ownedGamesDao().hide(steamId.asSteam64(), gameId)
+    override suspend fun setOwnedGameHidden(steamId: SteamId, gameId: Int, hide: Boolean) {
+        db.ownedGamesDao().setHidden(steamId.asSteam64(), gameId, hide)
     }
 
     override suspend fun isUserHasGames(steamId: SteamId): Boolean =
@@ -86,6 +83,10 @@ class LocalGamesDataStore @Inject constructor(
 
     override suspend fun clearOwnedGames(steamId: SteamId) {
         db.ownedGamesDao().delete(steamId.asSteam64())
+    }
+
+    override fun getHiddenGamesDataSourceFactory(steamId: SteamId): DataSource.Factory<Int, GameHeader> {
+        return db.ownedGamesDao().getHiddenGamesDataSourceFactory(steamId.asSteam64())
     }
 
     companion object {

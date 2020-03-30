@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.domain.games
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
@@ -18,13 +19,15 @@ interface GamesRepository {
 
     suspend fun getLocalOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader>
 
-    suspend fun hideLocalOwnedGame(steamId: SteamId, gameId: Int)
+    suspend fun setLocalOwnedGameHidden(steamId: SteamId, gameId: Int, hide: Boolean)
 
     suspend fun isUserHasGames(steamId: SteamId): Boolean
 
     fun observeGamesCount(steamId: SteamId): LiveData<Int>
 
     fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int>
+
+    fun getHiddenGamesPagedListLiveData(steamId: SteamId): LiveData<PagedList<GameHeader>>
 
     suspend fun resetHiddenGames(steamId: SteamId)
 

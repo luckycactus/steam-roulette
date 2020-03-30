@@ -58,9 +58,9 @@
 
         <item name="elevationOverlayEnabled">false</item>
 
-        <item name="alphaEmphasisHigh">@dimen/alpha_emphasis_high</item>
-        <item name="alphaEmphasisMedium">@dimen/alpha_emphasis_medium</item>
-        <item name="alphaEmphasisDisabled">@dimen/alpha_emphasis_disabled</item>
+        <item format="float" name="alphaEmphasisDisabled" type="dimen">@dimen/alpha_emphasis_disabled</item>
+        <item format="float" name="alphaEmphasisHigh" type="dimen">@dimen/alpha_emphasis_high</item>
+        <item format="float" name="alphaEmphasisMedium" type="dimen">@dimen/alpha_emphasis_medium</item>
     </style>
 
     <style name="AppTheme" parent="BaseAppTheme" />

@@ -29,6 +29,10 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
             }
         }
 
+        prefViewHiddenGames.setOnClickListener {
+            viewModel.onHiddenGamesClick()
+        }
+
         observe(viewModel.closeAction) {
             dismiss()
         }
@@ -38,11 +42,10 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
         }
 
         observe(viewModel.hiddenGamesCount) {
-            tvHiddenGamesCount.text = it.toString()
+            prefViewHiddenGames.value = it.toString()
             val enabled = it > 0
             btnClearHiddenGames.isEnabled = enabled
-            tvHiddenGamesCount.isEnabled = enabled
-            tvHiddenGamesLabel.isEnabled = enabled
+            prefViewHiddenGames.isEnabled = enabled
         }
 
         btnClearHiddenGames.setOnClickListener {

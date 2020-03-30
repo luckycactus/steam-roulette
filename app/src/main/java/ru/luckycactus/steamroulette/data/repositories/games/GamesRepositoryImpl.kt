@@ -1,6 +1,8 @@
 package ru.luckycactus.steamroulette.data.repositories.games
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
+import androidx.paging.toLiveData
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
@@ -33,6 +35,9 @@ class GamesRepositoryImpl @Inject constructor(
     override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> =
         localGamesDataStore.observeHiddenOwnedGamesCount(steamId)
 
+    override fun getHiddenGamesPagedListLiveData(steamId: SteamId): LiveData<PagedList<GameHeader>> =
+        localGamesDataStore.getHiddenGamesDataSourceFactory(steamId).toLiveData(pageSize = 50)
+
     override suspend fun resetHiddenGames(steamId: SteamId) {
         localGamesDataStore.resetHiddenOwnedGames(steamId)
     }
@@ -54,11 +59,14 @@ class GamesRepositoryImpl @Inject constructor(
     ): List<Int> =
         localGamesDataStore.getOwnedGamesIds(steamId, filter)
 
-    override suspend fun getLocalOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader> =
+    override suspend fun getLocalOwnedGameHeaders(
+        steamId: SteamId,
+        gameIds: List<Int>
+    ): List<GameHeader> =
         localGamesDataStore.getOwnedGameHeaders(steamId, gameIds)
 
-    override suspend fun hideLocalOwnedGame(steamId: SteamId, gameId: Int) {
-        localGamesDataStore.hideOwnedGame(steamId, gameId)
+    override suspend fun setLocalOwnedGameHidden(steamId: SteamId, gameId: Int, hide: Boolean) {
+        localGamesDataStore.setOwnedGameHidden(steamId, gameId, hide)
     }
 
     private fun createOwnedGamesResource(

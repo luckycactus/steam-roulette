@@ -90,7 +90,7 @@ class RemoteGamesDataStore @Inject constructor(
             )
         }
 
-        val reader = JsonReader.of(response.source()) //todo moshi
+        val reader = JsonReader.of(response.source())
         val results = arrayMapOf<String, GameStoreInfoResult>()
         try {
             reader.beginObject()

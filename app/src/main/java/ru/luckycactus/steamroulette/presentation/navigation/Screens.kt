@@ -8,6 +8,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 import ru.luckycactus.steamroulette.presentation.features.detailed_description.DetailedDescriptionFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
+import ru.luckycactus.steamroulette.presentation.features.hidden_games.HiddenGamesFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqsFragment
@@ -45,6 +46,10 @@ sealed class Screens : SupportAppScreen() {
     ) : Screens() {
         override fun getFragment(): Fragment =
             DetailedDescriptionFragment.newInstance(appName, detailedDescription)
+    }
+
+    object HiddenGames : Screens() {
+        override fun getFragment(): Fragment = HiddenGamesFragment.newInstance()
     }
 
     data class ExternalBrowserFlow(
