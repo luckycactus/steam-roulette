@@ -65,8 +65,12 @@ class GamesRepositoryImpl @Inject constructor(
     ): List<GameHeader> =
         localGamesDataStore.getOwnedGameHeaders(steamId, gameIds)
 
-    override suspend fun setLocalOwnedGameHidden(steamId: SteamId, gameId: Int, hide: Boolean) {
-        localGamesDataStore.setOwnedGameHidden(steamId, gameId, hide)
+    override suspend fun setLocalOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean) {
+        localGamesDataStore.setOwnedGamesHidden(steamId, gameIds, hide)
+    }
+
+    override suspend fun setAllLocalOwnedGamesHidden(steamId: SteamId, hide: Boolean) {
+        localGamesDataStore.setAllOwnedGamesHidden(steamId, hide)
     }
 
     private fun createOwnedGamesResource(

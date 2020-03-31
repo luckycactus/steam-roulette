@@ -63,4 +63,6 @@
     <string name="system_requirements">System requirements</string>
     <string name="game_description">Description</string>
     <string name="hidden_games">Hidden games</string>
+    <string name="clear_all">Clear all</string>
+    <string name="unhide_selected">Unhide selected</string>
 </resources>

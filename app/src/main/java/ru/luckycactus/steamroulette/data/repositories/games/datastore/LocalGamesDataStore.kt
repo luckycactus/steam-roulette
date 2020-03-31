@@ -74,8 +74,12 @@ class LocalGamesDataStore @Inject constructor(
     ): List<GameHeader> =
         db.ownedGamesDao().getHeaders(steamId.asSteam64(), gameIds)
 
-    override suspend fun setOwnedGameHidden(steamId: SteamId, gameId: Int, hide: Boolean) {
-        db.ownedGamesDao().setHidden(steamId.asSteam64(), gameId, hide)
+    override suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean) {
+        db.ownedGamesDao().setHidden(steamId.asSteam64(), gameIds, hide)
+    }
+
+    override suspend fun setAllOwnedGamesHidden(steamId: SteamId, hide: Boolean) {
+        db.ownedGamesDao().setAllHidden(steamId.asSteam64(), hide)
     }
 
     override suspend fun isUserHasGames(steamId: SteamId): Boolean =

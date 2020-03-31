@@ -8,7 +8,7 @@ import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
-import ru.luckycactus.steamroulette.domain.games.SetGameHiddenUseCase
+import ru.luckycactus.steamroulette.domain.games.SetGamesHiddenUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
@@ -27,7 +27,7 @@ class RouletteViewModel @Inject constructor(
     private val getOwnedGamesPagingList: GetOwnedGamesPagingList,
     private val observePlayTimeFilter: ObservePlaytimeFilterUseCase,
     private val observeResetHiddenGamesEvent: ObserveResetHiddenGamesEventUseCase,
-    private val hideGame: SetGameHiddenUseCase,
+    private val setGamesHidden: SetGamesHiddenUseCase,
     private val resourceManager: ResourceManager
 ) : ViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
     val games: LiveData<List<GameHeader>?>
@@ -115,10 +115,10 @@ class RouletteViewModel @Inject constructor(
 
     private fun hideGame(game: GameHeader) {
         GlobalScope.launch {
-            hideGame(
-                SetGameHiddenUseCase.Params(
+            setGamesHidden(
+                SetGamesHiddenUseCase.Params(
                     userViewModelDelegate.getCurrentUserSteamId(),
-                    game.appId,
+                    listOf(game.appId),
                     true
                 )
             )

@@ -19,7 +19,9 @@ interface GamesRepository {
 
     suspend fun getLocalOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader>
 
-    suspend fun setLocalOwnedGameHidden(steamId: SteamId, gameId: Int, hide: Boolean)
+    suspend fun setLocalOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
+
+    suspend fun setAllLocalOwnedGamesHidden(steamId: SteamId, hide: Boolean)
 
     suspend fun isUserHasGames(steamId: SteamId): Boolean
 
@@ -34,7 +36,6 @@ interface GamesRepository {
     fun observeGamesUpdates(steamId: SteamId): LiveData<Long>
 
     suspend fun clearUser(steamId: SteamId)
-
     suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo?
 }
 

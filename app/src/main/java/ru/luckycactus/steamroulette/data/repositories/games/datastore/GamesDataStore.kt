@@ -16,7 +16,9 @@ interface GamesDataStore {
 
         suspend fun getOwnedGamesIds(steamId: SteamId, filter: PlaytimeFilter): List<Int>
 
-        suspend fun setOwnedGameHidden(steamId: SteamId, gameId: Int, hide: Boolean)
+        suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
+
+        suspend fun setAllOwnedGamesHidden(steamId: SteamId, hide: Boolean)
 
         suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader
 
@@ -31,7 +33,6 @@ interface GamesDataStore {
         suspend fun resetHiddenOwnedGames(steamId: SteamId)
 
         suspend fun clearOwnedGames(steamId: SteamId)
-
         fun getHiddenGamesDataSourceFactory(steamId: SteamId): DataSource.Factory<Int, GameHeader>
     }
 

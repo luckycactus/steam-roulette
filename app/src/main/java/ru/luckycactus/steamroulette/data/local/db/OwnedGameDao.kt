@@ -45,12 +45,14 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun delete(steam64: Long)
 
-    suspend fun setHidden(steam64: Long, gameId: Int, hidden: Boolean) {
-        _setHidden(steam64, gameId, if (hidden) 1 else 0)
-    }
-
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun deleteAll(steam64: Long)
+
+    @Query("update owned_game SET hidden = :hidden where userSteam64 =:steam64 and appId in (:gameIds)")
+    abstract suspend fun setHidden(steam64: Long, gameIds: List<Int>, hidden: Boolean)
+
+    @Query("update owned_game SET hidden = :hidden where userSteam64 =:steam64")
+    abstract suspend fun setAllHidden(steam64: Long, hidden: Boolean)
 
     suspend fun isUserHasGames(steam64: Long) = _isUserHasGames(steam64) == 1
 
@@ -73,7 +75,4 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         )"""
     )
     abstract suspend fun _isUserHasGames(steam64: Long): Int
-
-    @Query("update owned_game SET hidden = :hidden where userSteam64 =:steam64 and appId = :gameId")
-    abstract suspend fun _setHidden(steam64: Long, gameId: Int, hidden: Int)
 }
