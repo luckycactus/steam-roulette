@@ -64,5 +64,5 @@
     <string name="game_description">Description</string>
     <string name="hidden_games">Hidden games</string>
     <string name="clear_all">Clear all</string>
-    <string name="unhide_selected">Unhide selected</string>
+    <string name="make_visible">Make visible</string>
 </resources>

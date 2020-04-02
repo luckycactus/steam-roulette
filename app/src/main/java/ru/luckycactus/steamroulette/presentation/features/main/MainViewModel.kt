@@ -20,6 +20,7 @@ import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.nonNull
@@ -37,7 +38,7 @@ class MainViewModel @Inject constructor(
     private val clearHiddenGames: ClearHiddenGamesUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
-) : ViewModel(), UserViewModelDelegate {
+) : BaseViewModel(), UserViewModelDelegate {
     override val isUserLoggedIn: Boolean
         get() = _nullableCurrentUserSteamId.value != null
 
@@ -77,8 +78,7 @@ class MainViewModel @Inject constructor(
             observeUserSummary(it)
         }.nonNull()
 
-        //todo
-        currentUserSteamId.observeForever { }
+        observe(currentUserSteamId) { /* nothing */ }
     }
 
     fun onColdStart() {

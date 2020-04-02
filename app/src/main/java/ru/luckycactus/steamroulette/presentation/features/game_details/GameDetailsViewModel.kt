@@ -19,6 +19,7 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
 
@@ -28,7 +29,7 @@ class GameDetailsViewModel @AssistedInject constructor(
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase,
     private val router: Router
-) : ViewModel() {
+) : BaseViewModel() {
     val gameDetails: LiveData<List<GameDetailsUiModel>>
         get() = _gameDetails
 

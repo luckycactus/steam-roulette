@@ -15,6 +15,7 @@ import ru.luckycactus.steamroulette.domain.login.SignInUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.startWith
 import ru.terrakok.cicerone.Router
@@ -25,7 +26,7 @@ class LoginViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
-) : ViewModel() {
+) : BaseViewModel() {
     val progressState: LiveData<Boolean>
         get() = _progressState
 

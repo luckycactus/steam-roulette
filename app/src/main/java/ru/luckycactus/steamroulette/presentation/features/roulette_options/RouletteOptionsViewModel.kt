@@ -11,6 +11,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUse
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
 import java.lang.Exception
 import javax.inject.Inject
@@ -21,7 +22,7 @@ class RouletteOptionsViewModel @Inject constructor(
     observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
-) : ViewModel() {
+) : BaseViewModel() {
     val playTimePrefValue: LiveData<String>
     val hiddenGamesCount: LiveData<Int>
     val closeAction: LiveData<Unit>

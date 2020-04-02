@@ -52,13 +52,14 @@ class HiddenGamesAdapter : PagedListAdapter<GameHeader, HiddenGameViewHolder>(di
 class HiddenGameViewHolder(
     override val containerView: View
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
-    lateinit var gameHeader: GameHeader
-        private set
+    init {
+        gameView.memoryCacheEnabled = true
+    }
 
     fun bind(gameHeader: GameHeader, selected: Boolean) {
         gameView.setGame(gameHeader)
-        this.gameHeader = gameHeader
-        itemView.isSelected = selected
+        gameView.isSelected = selected
+        cardViewBottom.isSelected = selected
     }
 
     fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> {

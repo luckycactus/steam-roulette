@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="closeItemLayout">@layout/layout_action_mode_close_item</item>
+    </style>
+
     <style name="BaseBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>

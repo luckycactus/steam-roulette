@@ -11,6 +11,7 @@ import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.combine
 import javax.inject.Inject
 
@@ -19,7 +20,7 @@ class MenuViewModel @Inject constructor(
     private val observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     private val resourceManager: ResourceManager,
     private val userViewModelDelegate: UserViewModelDelegate
-) : ViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
+) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
     val gameCount: LiveData<Int> =
         userViewModelDelegate.currentUserSteamId.switchMap {

@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <item
-        android:id="@+id/action_clear_all"
-        android:icon="@drawable/ic_clear_all_black_24dp"
-        android:title="@string/clear_all"
+        android:id="@+id/action_unhide"
+        android:icon="@drawable/ic_visibility_24dp"
+        android:title="@string/make_visible"
         app:showAsAction="always"
         />
 </menu>

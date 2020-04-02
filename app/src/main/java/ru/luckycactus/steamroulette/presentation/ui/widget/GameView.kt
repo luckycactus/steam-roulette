@@ -49,6 +49,8 @@ class GameView : MaterialCardView {
         }
         get() = tvName.textSize
 
+    var memoryCacheEnabled = false
+
     var imageReady = false
         private set
 
@@ -160,7 +162,7 @@ class GameView : MaterialCardView {
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .downsample(DownsampleStrategy.CENTER_INSIDE)
-            .skipMemoryCache(true)
+            .skipMemoryCache(!memoryCacheEnabled)
             .transform(headerImageTransformation)
             .transition(transitionOptions)
             .also { request ->
