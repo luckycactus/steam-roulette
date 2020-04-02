@@ -194,7 +194,7 @@ class RouletteFragment : BaseFragment() {
                         it.trySetTransitionAlpha(1f)
                     }
                 })
-                addListener(touchSwitchListener)
+                addListener((activity as MainActivity).touchSwitchTransitionListener)
             }
         } else {
             exitTransition = createDefaultExitTransition()
@@ -209,17 +209,7 @@ class RouletteFragment : BaseFragment() {
         fade {
             addTarget(rvRoulette)
         }
-        addListener(touchSwitchListener)
-    }
-
-    private val touchSwitchListener = object : TransitionListenerAdapter() {
-        override fun onTransitionEnd(transition: Transition) {
-            (activity as MainActivity).touchAndBackPressEnabled = true
-        }
-
-        override fun onTransitionStart(transition: Transition) {
-            (activity as MainActivity).touchAndBackPressEnabled = false
-        }
+        addListener((activity as MainActivity).touchSwitchTransitionListener)
     }
 
     private fun swipeTop(direction: Int) {

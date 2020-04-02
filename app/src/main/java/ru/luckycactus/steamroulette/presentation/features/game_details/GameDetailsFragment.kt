@@ -83,9 +83,8 @@ class GameDetailsFragment : BaseFragment(), Injectable {
             duration = DEFAULT_TRANSITION_DURATION - 25L
             changeTransform()
             changeClipBounds()
-            changeBounds {
-                setPathMotion(ArcMotion())
-            }
+            changeBounds()
+            setPathMotion(ArcMotion())
         }
     }
 

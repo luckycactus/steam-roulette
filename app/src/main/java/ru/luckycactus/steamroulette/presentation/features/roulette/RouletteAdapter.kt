@@ -42,12 +42,7 @@ class RouletteAdapter constructor(
 
         init {
             itemView.setOnClickListener {
-                onGameClick(
-                    if (gameView.imageReady)
-                        listOf<View>(gameView.ivGame)
-                    else emptyList(),
-                    game
-                )
+                onGameClick(gameView.getSharedViews(), game)
             }
         }
 
@@ -55,14 +50,6 @@ class RouletteAdapter constructor(
             this.game = game
             setVisibleHint(adapterPosition == 0)
             gameView.setGame(game)
-            ViewCompat.setTransitionName(
-                gameView.ivGame,
-                gameView.context.getString(R.string.image_shared_element_transition, game.appId)
-            )
-//            ViewCompat.setTransitionName(
-//                gameView,
-//                gameView.context.getString(R.string.cardview_shared_element_transition, game.appId)
-//            )
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {

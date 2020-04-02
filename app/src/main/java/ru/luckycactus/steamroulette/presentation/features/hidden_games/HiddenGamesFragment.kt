@@ -12,13 +12,14 @@ import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.fragment_hidden_games.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.InjectionManager
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.GridSpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.SimpleIdItemKeyProvider
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
+import ru.luckycactus.steamroulette.presentation.utils.*
 
 
 class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
@@ -26,12 +27,13 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         InjectionManager.findComponent<MainActivityComponent>().hiddenGamesViewModel
     }
 
-    private val adapter = HiddenGamesAdapter()
+    private val adapter = HiddenGamesAdapter(::onGameClick)
+
     private lateinit var selectionTracker: SelectionTracker<Long>
 
     private var inSelectionMode = false
-    private var actionMode: ActionMode? = null
 
+    private var actionMode: ActionMode? = null
     override val layoutResId = R.layout.fragment_hidden_games
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -76,6 +78,10 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         }
     }
 
+    override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
+        viewModel.clearAll()
+    }
+
     private fun onMenuItemClick(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_clear_all -> {
@@ -91,8 +97,31 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         }
     }
 
-    override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
-        viewModel.clearAll()
+    private fun onGameClick(sharedViews: List<View>, game: GameHeader) {
+        reenterTransition = createDefaultExitTransition()
+        if (sharedViews.isNotEmpty()) {
+            exitTransition = transitionSet {
+                //excludeTarget(rvRoulette, true)
+                fade()
+                listener(onTransitionEnd = {
+                    exitTransition = null
+                    //todo comment
+                    sharedViews.forEach {
+                        it.trySetTransitionAlpha(1f)
+                    }
+                })
+                addListener((activity as MainActivity).touchSwitchTransitionListener)
+            }
+        } else {
+            exitTransition = createDefaultExitTransition()
+        }
+        (activity as MainActivity).onGameClick(sharedViews, game)
+    }
+
+
+    private fun createDefaultExitTransition() = transitionSet {
+        fade {}
+        addListener((activity as MainActivity).touchSwitchTransitionListener)
     }
 
     private fun onNavigationIconClick(view: View) {
@@ -150,7 +179,7 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
             val view = recyclerView.findChildViewUnder(event.x, event.y)
             if (view != null) {
-                return (recyclerView.getChildViewHolder(view) as HiddenGameViewHolder)
+                return (recyclerView.getChildViewHolder(view) as HiddenGamesAdapter.HiddenGameViewHolder)
                     .getItemDetails()
             }
             return null

@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.transition.Transition
+import androidx.transition.TransitionListenerAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_toolbar.*
 import ru.luckycactus.steamroulette.R
@@ -16,12 +18,10 @@ import ru.luckycactus.steamroulette.di.core.ComponentOwner
 import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.di.core.component
-import ru.luckycactus.steamroulette.di.qualifier.ForActivity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
-import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>, Injectable {
     private var sharedViews: List<View>? = null
 
-    var touchAndBackPressEnabled: Boolean = true
+    var runningTransitions = 0
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
@@ -46,6 +46,16 @@ class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>,
     lateinit var router: Router
 
     val viewModel by viewModel { component.mainViewModel }
+
+    val touchSwitchTransitionListener = object : TransitionListenerAdapter() {
+        override fun onTransitionEnd(transition: Transition) {
+            runningTransitions--
+        }
+
+        override fun onTransitionStart(transition: Transition) {
+            runningTransitions++
+        }
+    }
 
     private val navigator: Navigator =
         object : SupportAppNavigator(this, supportFragmentManager, R.id.container) {
@@ -148,11 +158,11 @@ class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>,
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return touchAndBackPressEnabled && super.dispatchTouchEvent(ev)
+        return runningTransitions == 0 && super.dispatchTouchEvent(ev)
     }
 
     override fun onBackPressed() {
-        if (touchAndBackPressEnabled) {
+        if (runningTransitions == 0) {
             super.onBackPressed()
         }
     }

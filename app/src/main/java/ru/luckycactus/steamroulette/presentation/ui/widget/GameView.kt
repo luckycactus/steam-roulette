@@ -11,6 +11,7 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.core.content.withStyledAttributes
+import androidx.core.view.ViewCompat
 import androidx.core.widget.TextViewCompat
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
@@ -51,8 +52,7 @@ class GameView : MaterialCardView {
 
     var memoryCacheEnabled = false
 
-    var imageReady = false
-        private set
+    private var imageReady = false
 
     private var current: GameHeader? = null
     private var userVisibleHint = true
@@ -102,13 +102,28 @@ class GameView : MaterialCardView {
         if (game != null) {
             if (differentAppId)
                 createRequestBuilder(this, game, disableTransition, listener).into(ivGame)
+            ViewCompat.setTransitionName(
+                ivGame,
+                context.getString(R.string.image_shared_element_transition, game.appId)
+            )
+//            ViewCompat.setTransitionName(
+//                this,
+//                context.getString(R.string.cardview_shared_element_transition, game.appId)
+//            )
         } else {
             Glide.with(ivGame).clear(ivGame)
+            ViewCompat.setTransitionName(ivGame, null)
         }
     }
 
     fun setUserVisibleHint(visible: Boolean) {
         userVisibleHint = visible
+    }
+
+    fun getSharedViews(): List<View> {
+        return if (imageReady)
+            listOf<View>(ivGame)
+        else emptyList()
     }
 
     //todo Грузить hd через wifi, обычную через мобильную сеть

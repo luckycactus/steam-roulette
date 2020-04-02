@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
@@ -10,13 +11,12 @@
         android:id="@+id/cardViewBottom"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/color_surface"
+        android:stateListAnimator="@drawable/hidden_games_bottom_card_view_animator"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:stateListAnimator="@drawable/hidden_games_bottom_card_view_animator"
         />
 
     <ru.luckycactus.steamroulette.presentation.ui.widget.GameView
@@ -31,4 +31,24 @@
         app:textSize="@dimen/game_view_details_text_size"
         />
 
+    <ImageView
+        android:id="@+id/checkbox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/circle_check_background"
+        android:elevation="1dp"
+        android:scaleX="0"
+        android:scaleY="0"
+        android:stateListAnimator="@drawable/hidden_games_checkbox_state_list_animator"
+        android:tint="@color/color_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.4"
+        app:srcCompat="@drawable/circle_check_layer_list"
+        tools:scaleX="1"
+        tools:scaleY="1"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
