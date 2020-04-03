@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
@@ -8,8 +9,8 @@ import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
+import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.SetGamesHiddenUseCase
-import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
@@ -27,7 +28,7 @@ class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingList,
     private val observePlayTimeFilter: ObservePlaytimeFilterUseCase,
-    private val observeResetHiddenGamesEvent: ObserveResetHiddenGamesEventUseCase,
+    private var observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val resourceManager: ResourceManager
 ) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
@@ -48,6 +49,9 @@ class RouletteViewModel @Inject constructor(
 
     private var getPagingListJob: Job? = null
     private var allGamesShowed = false
+    private var viewVisible = true
+    private var hiddenGamesCount = 0
+    private var rouletteStateInvalidated = false
 
     init {
         currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId.switchMap {
@@ -55,18 +59,24 @@ class RouletteViewModel @Inject constructor(
         }
 
         _contentState.addSource(userViewModelDelegate.fetchGamesState) {
-            refreshGames()
+            rouletteStateInvalidated = true
+            syncRouletteState()
         }
 
         _contentState.addSource(currentUserPlayTimeFilter) {
-            refreshGames()
+            rouletteStateInvalidated = true
+            syncRouletteState()
         }
 
-        val resetHiddenGamesEventLiveData = userViewModelDelegate.currentUserSteamId.switchMap {
-            observeResetHiddenGamesEvent(it)
+        val hiddenGamesCountLiveData = userViewModelDelegate.currentUserSteamId.switchMap {
+            observeHiddenGamesCount(it)
         }
-        _contentState.addSource(resetHiddenGamesEventLiveData) {
-            refreshGames()
+
+        _contentState.addSource(hiddenGamesCountLiveData) {
+            if (it < hiddenGamesCount)
+                rouletteStateInvalidated = true
+            hiddenGamesCount = it
+            syncRouletteState()
         }
 
         games = _gamesPagingList.map { it?.list }
@@ -104,7 +114,8 @@ class RouletteViewModel @Inject constructor(
 
     fun onRetryClick() {
         if (allGamesShowed) {
-            refreshGames()
+            rouletteStateInvalidated = true
+            syncRouletteState()
         } else {
             userViewModelDelegate.fetchGames()
         }
@@ -112,6 +123,11 @@ class RouletteViewModel @Inject constructor(
 
     fun onSwipeProgress(progress: Float) {
         _controlsAvailable.value = (progress == 0f)
+    }
+
+    fun onHiddenChanged(hidden: Boolean) {
+        viewVisible = !hidden
+        syncRouletteState()
     }
 
     private fun hideGame(game: GameHeader) {
@@ -126,7 +142,13 @@ class RouletteViewModel @Inject constructor(
         }
     }
 
-    private fun refreshGames() {
+    private fun syncRouletteState() {
+        if (!viewVisible)
+            return
+
+        if (!rouletteStateInvalidated)
+            return
+
         val fetchGamesState = userViewModelDelegate.fetchGamesState.value
         val filter = currentUserPlayTimeFilter.value
 
@@ -135,6 +157,7 @@ class RouletteViewModel @Inject constructor(
         _gamesPagingList.value = null
 
         allGamesShowed = false
+        rouletteStateInvalidated = false
 
         if (fetchGamesState == null || filter == null)
             return
@@ -142,6 +165,7 @@ class RouletteViewModel @Inject constructor(
         if (fetchGamesState == Result.Loading) {
             _contentState.value = ContentState.Loading
         } else {
+            Log.d("ololo", "Games are refreshing")
             getPagingListJob = viewModelScope.launch {
                 try {
                     _contentState.value = ContentState.Loading

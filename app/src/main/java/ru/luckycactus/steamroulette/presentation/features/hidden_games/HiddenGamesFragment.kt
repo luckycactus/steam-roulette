@@ -76,6 +76,10 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         observe(viewModel.hiddenGames) {
             adapter.submitList(it)
         }
+
+        observe(viewModel.hiddenGamesCount) {
+            toolbar.title = """${getString(R.string.hidden_games)} ($it)"""
+        }
     }
 
     override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {

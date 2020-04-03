@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -179,6 +180,11 @@ class RouletteFragment : BaseFragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        viewModel.onHiddenChanged(hidden)
     }
 
     private fun onGameClick(sharedViews: List<View>, game: GameHeader) {

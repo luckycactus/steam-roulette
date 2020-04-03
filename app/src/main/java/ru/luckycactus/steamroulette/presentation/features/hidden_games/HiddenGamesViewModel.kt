@@ -25,9 +25,12 @@ class HiddenGamesViewModel @Inject constructor(
     val hiddenGames = userViewModelDelegate.currentUserSteamId.switchMap {
         getHiddenGamesPagedList(it)
     }
+    val hiddenGamesCount = userViewModelDelegate.currentUserSteamId.switchMap {
+        observeHiddenGamesCount(it)
+    }
 
     init {
-        observe(observeHiddenGamesCount(userViewModelDelegate.getCurrentUserSteamId())) {
+        observe(hiddenGamesCount) {
             if (it == 0) {
                 viewModelScope.launch {
                     delay(300)
