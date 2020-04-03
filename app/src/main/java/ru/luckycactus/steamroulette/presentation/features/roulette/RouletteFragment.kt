@@ -188,10 +188,15 @@ class RouletteFragment : BaseFragment() {
     }
 
     private fun onGameClick(sharedViews: List<View>, game: GameHeader) {
-        reenterTransition = createDefaultExitTransition()
+        reenterTransition = createDefaultExitTransition().apply {
+            listener(onTransitionEnd = {
+                reenterTransition = null
+            })
+        }
         if (sharedViews.isNotEmpty()) {
             exitTransition = transitionSet {
                 excludeTarget(rvRoulette, true)
+                excludeTarget(roulette_fragment_root, true)
                 slide()
                 listener(onTransitionEnd = {
                     exitTransition = null
@@ -203,13 +208,19 @@ class RouletteFragment : BaseFragment() {
                 addListener((activity as MainActivity).touchSwitchTransitionListener)
             }
         } else {
-            exitTransition = createDefaultExitTransition()
+            exitTransition = createDefaultExitTransition().apply {
+                listener(onTransitionEnd = {
+                    exitTransition = null
+                })
+            }
         }
         (activity as MainActivity).onGameClick(sharedViews, game)
     }
 
     private fun createDefaultExitTransition() = transitionSet {
+        //xcludeChildren(roulette_fragment_root, true)
         slide {
+            excludeTarget(roulette_fragment_root, true)
             excludeTarget(rvRoulette, true)
         }
         fade {

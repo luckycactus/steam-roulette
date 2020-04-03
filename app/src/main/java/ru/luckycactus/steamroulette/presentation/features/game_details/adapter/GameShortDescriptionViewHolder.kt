@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
@@ -41,7 +42,7 @@ class GameShortDescriptionViewHolder(
     }
 
     override fun bind(item: GameDetailsUiModel.ShortDescription) {
-        tvDescription.text = item.value
+        tvDescription.text = item.value?.let { HtmlCompat.fromHtml(it, 0) }
         if (!item.genres.isNullOrEmpty()) {
             rvGenres.adapter = TagsAdapter(item.genres)
             rvGenres.visibility = View.VISIBLE

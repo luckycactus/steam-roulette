@@ -120,6 +120,14 @@ class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>,
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                     }
                 }
+                if (nextFragment !is GameDetailsFragment) {
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.anim_fragment_enter,
+                        R.anim.anim_fragment_exit,
+                        R.anim.anim_fragment_exit,
+                        R.anim.anim_fragment_pop_exit
+                    )
+                }
             }
         }
 

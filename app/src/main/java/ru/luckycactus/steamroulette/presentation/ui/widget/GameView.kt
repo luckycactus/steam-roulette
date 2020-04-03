@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -95,9 +96,9 @@ class GameView : MaterialCardView {
         val differentAppId = current?.appId != game?.appId
 
         current = game
-        imageReady = false
+        if (differentAppId)
+            imageReady = false
         tvName.text = game?.name
-
         placeholder.visibility = View.VISIBLE
         if (game != null) {
             if (differentAppId)

@@ -9,7 +9,7 @@
         <item name="colorSecondaryVariant">@color/color_secondary_variant</item>
 
         <item name="android:colorBackground">@color/color_background</item>
-        <item name="android:windowBackground">@color/color_background</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="colorSurface">@color/color_surface</item>
         <item name="colorError">@color/color_error</item>
 

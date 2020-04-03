@@ -165,7 +165,6 @@ class RouletteViewModel @Inject constructor(
         if (fetchGamesState == Result.Loading) {
             _contentState.value = ContentState.Loading
         } else {
-            Log.d("ololo", "Games are refreshing")
             getPagingListJob = viewModelScope.launch {
                 try {
                     _contentState.value = ContentState.Loading
