@@ -6,18 +6,19 @@
     style="@style/GameDetailsItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?selectableItemBackground"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/default_activity_margin"
-    android:paddingRight="@dimen/default_activity_margin"
     >
 
     <LinearLayout
+        android:id="@+id/header"
         style="@style/Widget.MyTheme.GameDetailsHeadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
         tools:ignore="UseCompoundDrawables"
         >
 
@@ -43,6 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
         >
 
         <ImageView

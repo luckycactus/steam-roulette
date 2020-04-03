@@ -44,7 +44,9 @@
     <style name="Widget.MyTheme.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton"></style>
 
     <style name="Widget.MyTheme.GameDetailsHeadline" parent="Widget.MaterialComponents.TextView">
-        <item name="android:paddingBottom">@dimen/spacing_normal</item>
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
+        <item name="android:paddingTop">@dimen/spacing_small</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_small</item>
     </style>
 
     <style name="Widget.MyTheme.MetacriticScoreTextView" parent="Widget.MaterialComponents.TextView">
@@ -71,6 +73,10 @@
     </style>
 
     <style name="GameDetailsItem">
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
+    </style>
+
+    <style name="GameDetailsItem.NoTitle">
         <item name="android:paddingBottom">@dimen/spacing_small</item>
         <item name="android:paddingTop">@dimen/spacing_small</item>
     </style>

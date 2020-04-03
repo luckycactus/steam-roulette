@@ -11,7 +11,7 @@ class GamePlatformsViewHolder(
     viewModel: GameDetailsViewModel
 ) : GameDetailsViewHolder<GameDetailsUiModel.Platforms>(view) {
     init {
-        itemView.setOnClickListener { viewModel.onSystemRequirementsClick() }
+        header.setOnClickListener { viewModel.onSystemRequirementsClick() }
     }
 
     override fun bind(item: GameDetailsUiModel.Platforms) {
