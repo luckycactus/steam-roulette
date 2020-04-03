@@ -14,6 +14,10 @@ class GameHeaderViewHolder(
     view: View
 ) : GameDetailsViewHolder<GameDetailsUiModel.Header>(view) {
 
+    init {
+        gameView.memoryCacheEnabled = true
+    }
+
     fun bind(
         item: GameDetailsUiModel.Header,
         disableTransition: Boolean,

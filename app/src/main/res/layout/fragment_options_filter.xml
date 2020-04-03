@@ -39,6 +39,7 @@
             android:paddingLeft="@dimen/default_activity_margin"
             android:paddingTop="@dimen/spacing_small"
             android:paddingRight="@dimen/default_activity_margin"
+            android:paddingBottom="@dimen/spacing_small"
             app:prefTitle="@string/hidden_games_count"
             app:type="forward"
             />
@@ -52,6 +53,7 @@
             android:layout_marginEnd="@dimen/default_activity_margin"
             android:gravity="center_vertical|start"
             android:text="@string/btn_reset_hidden_games"
+            android:visibility="gone"
             />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
