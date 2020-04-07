@@ -1,10 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.features.hidden_games
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.ViewCompat
 import androidx.paging.PagedListAdapter
@@ -52,9 +54,6 @@ class HiddenGamesAdapter(
                 if (tracker?.selection?.size() == 0)
                     onGameClick(gameView.getSharedViews(), game)
             }
-            val checkDrawable =
-                (checkbox.drawable as LayerDrawable).findDrawableByLayerId(R.id.check)
-            DrawableCompat.setTint(checkDrawable, Color.WHITE)
         }
 
         fun bind(gameHeader: GameHeader, selected: Boolean) {

@@ -1,10 +1,8 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
@@ -17,18 +15,15 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.Screenshot
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
-import ru.luckycactus.steamroulette.presentation.utils.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.glide.crossfade.CrossFadeFactory
 import ru.luckycactus.steamroulette.presentation.utils.inflate
-import ru.luckycactus.steamroulette.presentation.utils.setDrawableColor
 
 class GameScreenshotsViewHolder(
     view: View
 ) : GameDetailsViewHolder<GameDetailsUiModel.Screenshots>(view) {
     private lateinit var screenshots: List<Screenshot>
     private var viewer: StfalconImageViewer<Screenshot>? = null
-    private val placeholder: Drawable
 
     init {
         rvMedia.layoutManager =
@@ -37,14 +32,6 @@ class GameScreenshotsViewHolder(
         rvMedia.addItemDecoration(
             SpaceDecoration(margin, 0, margin, false)
         )
-        //todo move color into xml on minSdkVersion >= 21
-        placeholder =
-            ContextCompat.getDrawable(itemView.context, R.drawable.screenshot_placeholder)!!.apply {
-                setDrawableColor(
-                    this,
-                    itemView.context.getThemeColorOrThrow(R.attr.colorSurface)
-                )
-            }
     }
 
     fun onScreenshotClick(position: Int, target: ImageView) {
@@ -108,7 +95,7 @@ class GameScreenshotsViewHolder(
                     .downsample(DownsampleStrategy.CENTER_INSIDE)
                     .skipMemoryCache(true)
                     .transition(DrawableTransitionOptions.with(CrossFadeFactory()))
-                    .placeholder(placeholder)
+                    .placeholder(R.drawable.screenshot_placeholder)
                     .into(ivScreenshot)
             }
         }
