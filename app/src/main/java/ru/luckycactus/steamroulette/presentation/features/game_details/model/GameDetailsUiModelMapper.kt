@@ -46,7 +46,8 @@ class GameDetailsUiModelMapper @Inject constructor(
             from.categories.map { it.description },
             from.genres.map { it.description },
             from.requiredAge,
-            from.metacritic
+            from.metacritic,
+            from.detailedDescription.isNotBlank()
         )
         if (model.isEmpty())
             return null

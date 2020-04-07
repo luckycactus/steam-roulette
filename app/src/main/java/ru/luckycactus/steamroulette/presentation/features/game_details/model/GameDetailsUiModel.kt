@@ -17,7 +17,8 @@ sealed class GameDetailsUiModel {
         val categories: List<String>?,
         val genres: List<String>?,
         val requiredAge: Int?,
-        val metacriticInfo: MetacriticInfo?
+        val metacriticInfo: MetacriticInfo?,
+        val detailedDescriptionAvailable: Boolean
     ) : GameDetailsUiModel() {
         fun isEmpty() =
             value.isNullOrEmpty() && categories.isNullOrEmpty() && genres.isNullOrEmpty()

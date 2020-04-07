@@ -43,6 +43,8 @@ class GameShortDescriptionViewHolder(
 
     override fun bind(item: GameDetailsUiModel.ShortDescription) {
         tvDescription.text = item.value?.let { HtmlCompat.fromHtml(it, 0) }
+        ivForward.visibility(item.detailedDescriptionAvailable)
+
         if (!item.genres.isNullOrEmpty()) {
             rvGenres.adapter = TagsAdapter(item.genres)
             rvGenres.visibility = View.VISIBLE
