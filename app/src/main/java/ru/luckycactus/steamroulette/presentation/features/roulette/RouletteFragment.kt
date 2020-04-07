@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -9,9 +8,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
-import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Transition
-import androidx.transition.TransitionListenerAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.empty_layout.*
@@ -95,7 +91,7 @@ class RouletteFragment : BaseFragment() {
                 when (it) {
                     fabNextGame -> R.string.next_game
                     fabHideGame -> R.string.hide_game
-                    fabGameInfo -> R.string.open_game_store_page
+                    fabGameInfo -> R.string.fab_info_hint
                     else -> 0
                 }
             )

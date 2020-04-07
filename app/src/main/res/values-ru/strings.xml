@@ -38,7 +38,7 @@
     <string name="supported_steamid_formats">Поддерживаемые форматы SteamID</string>
     <string name="next_game">Следующая игра</string>
     <string name="hide_game">Скрыть игру</string>
-    <string name="open_game_store_page">Открыть страницу в магазине</string>
+    <string name="fab_info_hint">Информация об игре</string>
     <string name="playtime">Показывать</string>
     <string name="playtime_pref_all">Все игры</string>
     <string name="playtime_pref_not_played">Игры, в которые я не играл</string>
@@ -58,4 +58,8 @@
         <item quantity="many">Игры, в которые я играл не более %d часов</item>
         <item quantity="other">Игры, в которые я играл не более %d часов</item>
     </plurals>
+    <string name="game_description">Описание</string>
+    <string name="hidden_games">Скрытые игры</string>
+    <string name="make_all_games_visible">Сделать все видимыми</string>
+    <string name="make_visible">Сделать видимой</string>
 </resources>
