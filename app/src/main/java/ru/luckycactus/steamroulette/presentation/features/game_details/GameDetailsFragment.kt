@@ -18,7 +18,7 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.*
 
-class GameDetailsFragment : BaseFragment(), Injectable {
+class GameDetailsFragment : BaseFragment() {
 
     lateinit var adapter: GameDetailsAdapter
 
@@ -85,10 +85,6 @@ class GameDetailsFragment : BaseFragment(), Injectable {
             changeBounds()
             setPathMotion(ArcMotion())
         }
-    }
-
-    override fun inject() {
-        findComponent<MainActivityComponent>().inject(this)
     }
 
     companion object {

@@ -67,4 +67,5 @@
     <string name="make_visible">Make visible</string>
     <string name="app_source_code">Project on Github</string>
     <string name="about_app">About</string>
+    <string name="show_app_source_code">Source code</string>
 </resources>

@@ -3,6 +3,8 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import dagger.BindsInstance
 import dagger.Subcomponent
 import ru.luckycactus.steamroulette.di.scopes.ActivityScope
+import ru.luckycactus.steamroulette.presentation.features.about.AboutFragment
+import ru.luckycactus.steamroulette.presentation.features.about.AboutViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.hidden_games.HiddenGamesViewModel
@@ -29,7 +31,7 @@ interface MainActivityComponent {
     val rouletteOptionsViewModel: RouletteOptionsViewModel
     val playtimeDialogViewModel: PlaytimeViewModel
     val hiddenGamesViewModel: HiddenGamesViewModel
+    val aboutViewModel: AboutViewModel
 
-    fun inject(gameDetailsFragment: GameDetailsFragment)
     fun inject(mainActivity: MainActivity)
 }

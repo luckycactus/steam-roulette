@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.data.repositories.app
 
 import android.content.*
 import androidx.lifecycle.LiveData
+import dagger.Reusable
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.int
 import ru.luckycactus.steamroulette.data.utils.BroadcastReceiverAdapter
@@ -11,6 +12,7 @@ import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import javax.inject.Inject
 
+@Reusable
 class AppRepositoryImpl @Inject constructor(
     @ForApplication private val context: Context,
     @Identified(R.id.appPrefs) private val appPrefs: SharedPreferences
@@ -20,6 +22,9 @@ class AppRepositoryImpl @Inject constructor(
 
     override val currentVersion: Int
         get() = context.packageManager.getPackageInfo(context.packageName, 0).versionCode
+
+    override val currentVersionName: String
+        get() = context.packageManager.getPackageInfo(context.packageName, 0).versionName
 
     override fun observeSystemLocaleChanges(): LiveData<Event<Unit>> {
         return LocaleChangeLiveData()

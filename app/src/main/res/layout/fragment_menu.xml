@@ -114,7 +114,7 @@
         style="@style/MenuItemTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_exit_to_app_black_24dp"
+        android:drawableStart="@drawable/ic_exit_to_app_24dp"
         android:text="@string/log_out"
         />
 

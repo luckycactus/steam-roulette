@@ -89,6 +89,13 @@
         <item name="android:paddingLeft">@dimen/default_activity_margin</item>
         <item name="android:drawablePadding">@dimen/default_activity_margin</item>
         <item name="android:alpha">?alphaEmphasisHigh</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:minHeight">@dimen/touchable_view_default_size</item>
+    </style>
 
+    <style name="AboutItemTextView" parent="MenuItemTextView">
+        <item name="android:background">?colorSurface</item>
+        <item name="android:foreground">@drawable/selectable_item_background</item>
+        <item name="android:textAppearance">?textAppearanceBody1</item>
     </style>
 </resources>
