@@ -36,7 +36,7 @@
         android:id="@+id/checkbox"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:elevation="1dp"
+        android:elevation="2dp"
         android:scaleX="0"
         android:scaleY="0"
         android:stateListAnimator="@drawable/hidden_games_checkbox_state_list_animator"
