@@ -6,7 +6,7 @@
     <string name="error_steam_api_unavailable">Steam service is unavailable. Please try later again</string>
     <string name="error_check_your_connection">No connection to network. Please, check that and try again later</string>
     <string name="error_unknown">Unknown error</string>
-    <string name="exit">Exit</string>
+    <string name="log_out">Log Out</string>
     <string name="retry">Retry</string>
     <string name="error_get_owned_games">Failed to get your games</string>
     <string name="error_get_owned_games_privacy">Your profile is private, please make it public</string>
@@ -65,4 +65,6 @@
     <string name="hidden_games">Hidden games</string>
     <string name="make_all_games_visible">Make all visible</string>
     <string name="make_visible">Make visible</string>
+    <string name="app_source_code">Project on Github</string>
+    <string name="about_app">About</string>
 </resources>

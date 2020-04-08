@@ -9,6 +9,7 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFr
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.utils.setDrawableColorFromAttribute
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
@@ -23,7 +24,11 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        btnExit.setOnClickListener {
+        listOf(tvExit, tvAbout).forEach {
+            it.setDrawableColorFromAttribute(R.attr.colorOnBackground)
+        }
+
+        tvExit.setOnClickListener {
             MessageDialogFragment.create(
                 context!!,
                 titleResId = R.string.exit_dialog_title,
@@ -34,6 +39,10 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
 
         btnRefreshProfile.setOnClickListener {
             viewModel.refreshProfile()
+        }
+
+        tvAbout.setOnClickListener {
+            viewModel.onAboutClick()
         }
 
         observe(viewModel.closeAction) {

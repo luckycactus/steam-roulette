@@ -35,7 +35,8 @@
             android:layout_width="@dimen/touchable_view_half_size"
             android:layout_height="@dimen/touchable_view_half_size"
             android:layout_marginStart="@dimen/spacing_small"
-            app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+            app:srcCompat="@drawable/ic_chevron_right"
+            android:tint="?colorOnBackground"
             />
 
     </LinearLayout>
@@ -53,7 +54,7 @@
             style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
             android:layout_marginEnd="@dimen/game_details_platform_icon_margin"
             android:visibility="gone"
-            app:srcCompat="@drawable/windows"
+            app:srcCompat="@drawable/ic_windows"
             tools:visibility="visible"
             />
 
@@ -62,7 +63,7 @@
             style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
             android:layout_marginEnd="@dimen/game_details_platform_icon_margin"
             android:visibility="gone"
-            app:srcCompat="@drawable/apple"
+            app:srcCompat="@drawable/ic_apple"
             tools:visibility="visible"
             />
 

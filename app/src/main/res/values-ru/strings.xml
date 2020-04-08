@@ -7,7 +7,7 @@
     <string name="error_steam_api_unavailable">Сервис Steam недоступен. Попробуйте позже</string>
     <string name="error_check_your_connection">Проверьте своё сетевое подключение</string>
     <string name="error_unknown">Неизвестная ошибка</string>
-    <string name="exit">Выход</string>
+    <string name="log_out">Выход</string>
     <string name="retry">Повторить</string>
     <string name="error_get_owned_games">Не удается получить список игр</string>
     <string name="error_get_owned_games_privacy">Ваш профиль приватный. Пожалуйста, сделайте его публичным</string>

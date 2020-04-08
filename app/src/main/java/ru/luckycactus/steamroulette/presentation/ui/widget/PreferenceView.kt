@@ -34,8 +34,8 @@ class PreferenceView @JvmOverloads constructor(
     var type: Type = Type.Dropdown
         set(value) {
             val img = when (value) {
-                Type.Dropdown -> R.drawable.ic_arrow_drop_down_black_24dp
-                Type.Forward -> R.drawable.ic_arrow_forward_white_24dp
+                Type.Dropdown -> R.drawable.ic_chevron_down
+                Type.Forward -> R.drawable.ic_chevron_right
             }
             imageView.setImageResource(img)
             field = value

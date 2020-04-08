@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.05"
         app:layout_constraintWidth_percent="0.25"
-        app:srcCompat="@drawable/ic_visibility_off_white_24dp"
+        app:srcCompat="@drawable/ic_visibility_off_24dp"
         tools:alpha="1"
         />
 
@@ -55,7 +55,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.05"
         app:layout_constraintWidth_percent="0.25"
-        app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+        app:srcCompat="@drawable/ic_arrow_forward_24dp"
         tools:alpha="1"
         />
 

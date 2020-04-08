@@ -11,15 +11,18 @@ import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
+import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.combine
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class MenuViewModel @Inject constructor(
     private val observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     private val observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     private val resourceManager: ResourceManager,
-    private val userViewModelDelegate: UserViewModelDelegate
+    private val userViewModelDelegate: UserViewModelDelegate,
+    private val router: Router
 ) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
     val gameCount: LiveData<Int> =
@@ -59,6 +62,11 @@ class MenuViewModel @Inject constructor(
         ) { a, b -> a || (b is Result.Loading) }
     }
 
+    fun onAboutClick() {
+        router.navigateTo(Screens.About)
+        close()
+    }
+
     fun exit() {
         userViewModelDelegate.exit()
     }
@@ -66,8 +74,12 @@ class MenuViewModel @Inject constructor(
     private fun closeWithDelay() {
         viewModelScope.launch {
             delay(CLOSE_DELAY)
-            _closeAction.value = Unit
+            close()
         }
+    }
+
+    private fun close() {
+        _closeAction.value = Unit
     }
 
     companion object {

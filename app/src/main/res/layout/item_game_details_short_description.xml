@@ -35,7 +35,8 @@
             android:layout_width="@dimen/touchable_view_half_size"
             android:layout_height="@dimen/touchable_view_half_size"
             android:layout_marginStart="@dimen/spacing_small"
-            app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+            app:srcCompat="@drawable/ic_chevron_right"
+            android:tint="?colorOnBackground"
             />
 
     </LinearLayout>

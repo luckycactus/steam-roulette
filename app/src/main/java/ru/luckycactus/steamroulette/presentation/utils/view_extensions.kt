@@ -1,12 +1,15 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
-import androidx.annotation.Px
+import android.widget.TextView
+import androidx.annotation.*
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
@@ -98,4 +101,18 @@ fun ViewGroup.traverseChildren(block: (View) -> Unit) {
         if (it is ViewGroup)
             it.traverseChildren(block)
     }
+}
+
+fun TextView.setDrawableColor(@ColorInt color: Int) {
+    compoundDrawables.filterNotNull().forEach {
+        it.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+    }
+}
+
+fun TextView.setDrawableColorResource(@ColorRes color: Int) {
+    setDrawableColor(getColor(context, color))
+}
+
+fun TextView.setDrawableColorFromAttribute(@AttrRes color: Int) {
+    setDrawableColor(context.getThemeColorOrThrow(color))
 }

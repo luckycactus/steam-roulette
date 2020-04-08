@@ -29,7 +29,6 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouch
 import ru.luckycactus.steamroulette.presentation.utils.*
 
 class RouletteFragment : BaseFragment() {
-
     private lateinit var fabs: List<FloatingActionButton>
 
     private val viewModel by viewModel {
@@ -214,7 +213,6 @@ class RouletteFragment : BaseFragment() {
     }
 
     private fun createDefaultExitTransition() = transitionSet {
-        //xcludeChildren(roulette_fragment_root, true)
         slide {
             excludeTarget(roulette_fragment_root, true)
             excludeTarget(rvRoulette, true)

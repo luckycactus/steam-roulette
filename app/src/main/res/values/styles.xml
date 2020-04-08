@@ -80,4 +80,15 @@
         <item name="android:paddingBottom">@dimen/spacing_small</item>
         <item name="android:paddingTop">@dimen/spacing_small</item>
     </style>
+
+    <style name="MenuItemTextView" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textAppearance">?textAppearanceBody2</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:background">@drawable/selectable_item_background</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingLeft">@dimen/default_activity_margin</item>
+        <item name="android:drawablePadding">@dimen/default_activity_margin</item>
+        <item name="android:alpha">?alphaEmphasisHigh</item>
+
+    </style>
 </resources>

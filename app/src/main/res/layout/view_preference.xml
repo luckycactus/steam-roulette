@@ -44,7 +44,8 @@
         android:layout_width="@dimen/touchable_view_half_size"
         android:layout_height="@dimen/touchable_view_half_size"
         android:layout_weight="0"
-        app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp"
+        app:srcCompat="@drawable/ic_arrow_drop_down_24dp"
+        android:tint="?colorOnBackground"
         />
 
 
