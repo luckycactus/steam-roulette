@@ -1,13 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.stfalcon.imageviewer.StfalconImageViewer
@@ -15,21 +12,18 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_details_screenshots.*
 import kotlinx.android.synthetic.main.item_screenshot.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.ScreenshotEntity
+import ru.luckycactus.steamroulette.domain.games.entity.Screenshot
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
-import ru.luckycactus.steamroulette.presentation.utils.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.glide.crossfade.CrossFadeFactory
 import ru.luckycactus.steamroulette.presentation.utils.inflate
-import ru.luckycactus.steamroulette.presentation.utils.setDrawableColor
 
 class GameScreenshotsViewHolder(
     view: View
 ) : GameDetailsViewHolder<GameDetailsUiModel.Screenshots>(view) {
-    private lateinit var screenshots: List<ScreenshotEntity>
-    private var viewer: StfalconImageViewer<ScreenshotEntity>? = null
-    private val placeholder: Drawable
+    private lateinit var screenshots: List<Screenshot>
+    private var viewer: StfalconImageViewer<Screenshot>? = null
 
     init {
         rvMedia.layoutManager =
@@ -38,24 +32,15 @@ class GameScreenshotsViewHolder(
         rvMedia.addItemDecoration(
             SpaceDecoration(margin, 0, margin, false)
         )
-        //todo move color into xml on minSdkVersion >= 21
-        placeholder =
-            ContextCompat.getDrawable(itemView.context, R.drawable.screenshot_placeholder)!!.apply {
-                setDrawableColor(
-                    this,
-                    itemView.context.getThemeColorOrThrow(R.attr.colorSurface)
-                )
-            }
     }
 
     fun onScreenshotClick(position: Int, target: ImageView) {
-        viewer = StfalconImageViewer.Builder<ScreenshotEntity>(
+        viewer = StfalconImageViewer.Builder<Screenshot>(
             target.context,
             screenshots
         ) { view, screenshot ->
             val thumbnail = GlideApp.with(view)
                 .load(screenshot.thumbnail)
-                .skipMemoryCache(true)
                 .downsample(DownsampleStrategy.CENTER_INSIDE)
 
             GlideApp.with(view)
@@ -98,20 +83,19 @@ class GameScreenshotsViewHolder(
         inner class ScreenshotViewHolder(
             override val containerView: View
         ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
-
             init {
                 ivScreenshot.setOnClickListener {
                     onScreenshotClick(adapterPosition, ivScreenshot)
                 }
             }
 
-            fun bind(screenshotEntity: ScreenshotEntity) {
+            fun bind(screenshot: Screenshot) {
                 GlideApp.with(itemView)
-                    .load(screenshotEntity.thumbnail)
+                    .load(screenshot.thumbnail)
                     .downsample(DownsampleStrategy.CENTER_INSIDE)
                     .skipMemoryCache(true)
                     .transition(DrawableTransitionOptions.with(CrossFadeFactory()))
-                    .placeholder(placeholder)
+                    .placeholder(R.drawable.screenshot_placeholder)
                     .into(ivScreenshot)
             }
         }

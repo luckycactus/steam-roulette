@@ -1,10 +1,11 @@
 package ru.luckycactus.steamroulette.domain.games
 
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.common.CachePolicy
+import androidx.paging.PagedList
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 interface GamesRepository {
@@ -16,11 +17,11 @@ interface GamesRepository {
         filter: PlaytimeFilter
     ): List<Int>
 
-    suspend fun getLocalOwnedGame(steamId: SteamId, gameId: Int): OwnedGame
+    suspend fun getLocalOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader>
 
-    suspend fun getLocalOwnedGames(steamId: SteamId, gameIds: List<Int>): List<OwnedGame>
+    suspend fun setLocalOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
 
-    suspend fun hideLocalOwnedGame(steamId: SteamId, gameId: Int)
+    suspend fun setAllLocalOwnedGamesHidden(steamId: SteamId, hide: Boolean)
 
     suspend fun isUserHasGames(steamId: SteamId): Boolean
 
@@ -28,12 +29,13 @@ interface GamesRepository {
 
     fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int>
 
+    fun getHiddenGamesPagedListLiveData(steamId: SteamId): LiveData<PagedList<GameHeader>>
+
     suspend fun resetHiddenGames(steamId: SteamId)
 
     fun observeGamesUpdates(steamId: SteamId): LiveData<Long>
 
     suspend fun clearUser(steamId: SteamId)
-
     suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo?
 }
 

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 
 abstract class BaseDialogFragment : DialogFragment() {
-
     abstract val layoutResId: Int
 
     override fun onCreateView(

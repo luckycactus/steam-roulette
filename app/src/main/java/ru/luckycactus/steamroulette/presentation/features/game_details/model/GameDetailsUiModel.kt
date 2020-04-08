@@ -1,12 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.model
 
 import ru.luckycactus.steamroulette.domain.games.entity.*
-import ru.luckycactus.steamroulette.presentation.common.ContentState
+import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 
 sealed class GameDetailsUiModel {
 
     data class Header(
-        val gameMinimal: GameMinimal,
+        val gameHeader: GameHeader,
         val developer: String? = null,
         val publisher: String? = null,
         val releaseDate: String? = null
@@ -17,11 +17,12 @@ sealed class GameDetailsUiModel {
         val categories: List<String>?,
         val genres: List<String>?,
         val requiredAge: Int?,
-        val metacriticInfoEntity: MetacriticInfoEntity?
+        val metacriticInfo: MetacriticInfo?,
+        val detailedDescriptionAvailable: Boolean
     ) : GameDetailsUiModel() {
         fun isEmpty() =
             value.isNullOrEmpty() && categories.isNullOrEmpty() && genres.isNullOrEmpty()
-                    && requiredAge == null && metacriticInfoEntity == null
+                    && requiredAge == null && metacriticInfo == null
     }
 
     object Links : GameDetailsUiModel()
@@ -31,11 +32,12 @@ sealed class GameDetailsUiModel {
     ) : GameDetailsUiModel()
 
     data class Platforms(
-        val platformsAvailability: PlatformsAvailability
+        val platforms: PlatformsAvailability,
+        val systemRequirementsAvailable: Boolean
     ) : GameDetailsUiModel()
 
     data class Screenshots(
-        val screenshots: List<ScreenshotEntity>
+        val screenshots: List<Screenshot>
     ) : GameDetailsUiModel()
 
     data class DataLoading(

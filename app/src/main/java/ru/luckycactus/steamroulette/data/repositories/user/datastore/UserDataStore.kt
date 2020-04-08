@@ -2,25 +2,26 @@ package ru.luckycactus.steamroulette.data.repositories.user.datastore
 
 import androidx.lifecycle.LiveData
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
+import ru.luckycactus.steamroulette.domain.common.SteamId
 
 interface UserDataStore {
 
-    suspend fun getUserSummary(steam64: Long): UserSummaryEntity
+    suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity
 
     interface Local : UserDataStore {
         suspend fun saveUserSummary(userSummary: UserSummaryEntity)
 
-        fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity>
+        fun observeUserSummary(steamId: SteamId): LiveData<UserSummaryEntity>
 
-        fun setCurrentUser(steam64: Long)
+        fun setCurrentUser(steamId: SteamId)
 
-        fun getCurrentUserSteam64(): Long
+        fun getCurrentUserSteam64(): SteamId?
 
-        fun observeCurrentUserSteam64(): LiveData<Long>
+        fun observeCurrentUserSteamId(): LiveData<SteamId?>
 
-        fun removeCurrentUserSteam64()
+        fun removeCurrentUserSteamId()
 
-        suspend fun removeUserSummary(steam64: Long)
+        suspend fun removeUserSummary(steamId: SteamId)
     }
 
     interface Remote : UserDataStore

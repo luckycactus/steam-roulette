@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.domain.common
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+//todo kotlin regex
 class SteamId private constructor(
     private val value: Long
 ) {

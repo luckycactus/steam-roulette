@@ -3,6 +3,9 @@
     <color name="steam">#192431</color>
     <color name="steam_light">#1C2A39</color>
     <color name="steam_light_2">#223349</color>
+    <color name="steam_light_3">#516587</color>
+    <color name="steam_light_4">#7693C4</color>
+    <color name="steam_light_5">#A4C7FA</color>
     <color name="steam_dark">#16202B</color>
     <color name="steam_dark_2">#141A25</color>
 
@@ -43,8 +46,4 @@
     <color name="color_overlay_hide">#951823</color>
 
     <color name="platforms_icon_tint">#38475B</color>
-    
-    <color name="metacritic_good">#81C94E</color>
-    <color name="metacritic_average">#F8CD55</color>
-    <color name="metacritic_poor">#EB3323</color>
 </resources>

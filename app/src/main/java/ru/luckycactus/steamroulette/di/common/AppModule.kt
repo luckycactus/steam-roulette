@@ -3,24 +3,23 @@ package ru.luckycactus.steamroulette.di.common
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.google.gson.Gson
-import com.squareup.inject.assisted.dagger2.AssistedModule
+import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
+import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
+import ru.luckycactus.steamroulette.data.local.db.DB
+import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.LocalGamesDataStore
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.RemoteGamesDataStore
-import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
-import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
-import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.RemoteLoginDataStore
-import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.UserRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserDataStore
@@ -28,19 +27,18 @@ import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataSto
 import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.di.qualifier.Identified
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
+import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
-import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.features.roulette.GlideCacheCleaner
 import javax.inject.Singleton
 
-@AssistedModule
-@Module(includes = [AssistedInject_AppModule::class])
+@Module
 abstract class AppModule {
 
     @Binds
@@ -92,7 +90,7 @@ abstract class AppModule {
         @JvmStatic
         @Singleton
         @Provides
-        fun provideAppsSharedPreferences(@ForApplication appContext: Context) =
+        fun provideAppSharedPreferences(@ForApplication appContext: Context) =
             appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
         @Identified(R.id.userSettingsPrefs)
@@ -122,13 +120,11 @@ abstract class AppModule {
         fun provideSteamRouletteDb(@ForApplication appContext: Context) =
             Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
                 .fallbackToDestructiveMigrationFrom(1)
-                .addMigrations()
                 .build()
-
 
         @Reusable
         @JvmStatic
         @Provides
-        fun provideGson() = Gson()
+        fun provideMoshi(): Moshi = Moshi.Builder().build()
     }
 }

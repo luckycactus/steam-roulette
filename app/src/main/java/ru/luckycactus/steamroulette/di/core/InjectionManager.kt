@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import ru.luckycactus.steamroulette.presentation.utils.ActivityLifecycleCallbacksAdapter
 import ru.luckycactus.steamroulette.presentation.utils.isFinishing
 
 object InjectionManager {
@@ -40,27 +41,7 @@ object InjectionManager {
         else owner.createComponent().also { componentStore.add(key, it) }
     }
 
-    private val activityLifecycleHelper = object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityPaused(activity: Activity?) {}
-
-        override fun onActivityResumed(activity: Activity?) {}
-
-        override fun onActivityStarted(activity: Activity?) {}
-
-        override fun onActivityDestroyed(activity: Activity?) {
-            if (activity is ComponentOwner<*> &&
-                (!activity.retainComponentOnConfigChanges || activity.isFinishing)
-            ) {
-                removeComponent(
-                    activity
-                )
-            }
-        }
-
-        override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {}
-
-        override fun onActivityStopped(activity: Activity?) {}
-
+    private val activityLifecycleHelper = object : ActivityLifecycleCallbacksAdapter() {
         override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
             if (activity is ComponentOwner<*>) {
                 getComponentOrCreate(
@@ -77,15 +58,19 @@ object InjectionManager {
                 )
             }
         }
+
+        override fun onActivityDestroyed(activity: Activity?) {
+            if (activity is ComponentOwner<*> && activity.isFinishing) {
+                removeComponent(activity)
+            }
+        }
     }
 
     private val fragmentLifecycleHelper = object : FragmentManager.FragmentLifecycleCallbacks() {
 
         override fun onFragmentPreAttached(fm: FragmentManager, f: Fragment, context: Context) {
             if (f is ComponentOwner<*>) {
-                getComponentOrCreate(
-                    f
-                )
+                getComponentOrCreate(f)
             }
             if (f is Injectable) {
                 f.inject()
@@ -96,10 +81,8 @@ object InjectionManager {
             if (f !is ComponentOwner<*>)
                 return
 
-            if (!f.retainComponentOnConfigChanges || f.isFinishing) {
-                removeComponent(
-                    f
-                )
+            if (f.isFinishing) {
+                removeComponent(f)
                 return
             }
         }

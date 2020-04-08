@@ -1,23 +1,24 @@
 package ru.luckycactus.steamroulette.data.repositories.games.models
 
-import com.google.gson.JsonElement
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-data class OwnedGamesResponse(
-    @SerializedName("response") val ownedGameResult: OwnedGamesResult?
-)
+//data class OwnedGamesResponse(
+//    @Json(name="response") val ownedGameResult: OwnedGamesResult?
+//)
+//
+//data class OwnedGamesResult(
+//    @Json(name="game_count") val gameCount: Int,
+//    @Json(name="games") val gamesJson: List<OwnedGameEntity>
+//)
 
-data class OwnedGamesResult(
-    @SerializedName("game_count") val gameCount: Int,
-    @SerializedName("games") val gamesJson: JsonElement
-)
-
+@JsonClass(generateAdapter = true)
 data class OwnedGameEntity(
-    @SerializedName("appid") val appId: Int,
-    @SerializedName("name") val name: String?,
-    @SerializedName("playtime_2weeks") val playtime2Weeks: Int,
-    @SerializedName("playtime_forever") val playtimeForever: Int,
-    @SerializedName("img_icon_url") val iconUrl: String?,
-    @SerializedName("img_logo_url") val logoUrl: String?,
-    @SerializedName("has_community_visible_stats") val hasCommunityVisibleStats: Boolean?
+    @Json(name="appid") val appId: Int,
+    @Json(name="name") val name: String?,
+    @Json(name="playtime_2weeks") val playtime2Weeks: Int = 0,
+    @Json(name="playtime_forever") val playtimeForever: Int = 0,
+    @Json(name="img_icon_url") val iconUrl: String?,
+    @Json(name="img_logo_url") val logoUrl: String?,
+    @Json(name="has_community_visible_stats") val hasCommunityVisibleStats: Boolean?
 )

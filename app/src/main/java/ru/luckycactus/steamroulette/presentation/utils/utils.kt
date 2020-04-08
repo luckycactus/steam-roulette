@@ -7,14 +7,13 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.ShapeDrawable
-import android.os.Handler
+import android.util.Log
+import android.util.Log.v
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
-import androidx.core.os.postDelayed
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.R
 import kotlin.math.floor
+
 
 fun dpF(dp: Float): Float {
     return TypedValue.applyDimension(
@@ -57,7 +56,14 @@ fun setDrawableColor(drawable: Drawable, @ColorInt color: Int) {
     }
 }
 
-inline fun testPostDelayed(delay: Long, crossinline block: () -> Unit) {
-    Handler().postDelayed({ block() }, delay)
+//todo
+fun longLog(tag: String, message: String) {
+    val maxLogSize = 1000
+    for (i in 0..message.length / maxLogSize) {
+        val start = i * maxLogSize
+        var end = (i + 1) * maxLogSize
+        end = if (end > message.length) message.length else end
+        Log.d(tag, message.substring(start, end))
+    }
 }
 

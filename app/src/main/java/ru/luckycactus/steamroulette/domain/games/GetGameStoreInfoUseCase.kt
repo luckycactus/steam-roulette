@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.domain.games
 
-import ru.luckycactus.steamroulette.domain.common.CachePolicy
-import ru.luckycactus.steamroulette.domain.common.SuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
+import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 
@@ -19,7 +19,7 @@ class GetGameStoreInfoUseCase @Inject constructor(
     suspend fun getFromCache(gameId: Int): GameStoreInfo? {
         return gamesRepository.getGameStoreInfo(
             gameId,
-            CachePolicy.OnlyCache
+            CachePolicy.Cache
         )
     }
 

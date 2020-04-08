@@ -1,76 +1,96 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.withTransaction
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.common.chunkBuffer
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.presentation.utils.chunkBuffer
 import javax.inject.Inject
 
 @Reusable
 class LocalGamesDataStore @Inject constructor(
     private val db: DB
 ) : GamesDataStore.Local {
+    override fun observeOwnedGamesCount(steamId: SteamId): LiveData<Int> =
+        db.ownedGamesDao().observeCount(steamId.asSteam64())
 
-    override fun observeOwnedGamesCount(steam64: Long): LiveData<Int> =
-        db.ownedGamesDao().observeCount(steam64)
+    override fun observeHiddenOwnedGamesCount(steamId: SteamId): LiveData<Int> =
+        db.ownedGamesDao().observeHiddenCount(steamId.asSteam64())
 
-    override fun observeHiddenOwnedGamesCount(steam64: Long): LiveData<Int> =
-        db.ownedGamesDao().observeHiddenCount(steam64)
-
-    override suspend fun saveOwnedGames(steam64: Long, gamesFlow: Flow<OwnedGameEntity>) {
+    override suspend fun saveOwnedGames(steamId: SteamId, gamesFlow: Flow<OwnedGameEntity>) {
         db.withTransaction {
-            val hiddenGameIds = db.ownedGamesDao().getHiddenIds(steam64).toSet()
-            val mapper = OwnedGameRoomEntityMapper(steam64, hiddenGameIds)
+            val gameIds = db.ownedGamesDao().getAllIds(steamId.asSteam64()).toSet()
+            val hiddenGameIds = db.ownedGamesDao().getHiddenIds(steamId.asSteam64()).toSet()
+            val mapper = OwnedGameRoomEntityMapper(steamId.asSteam64(), hiddenGameIds)
 
-            db.ownedGamesDao().deleteAll(steam64)
+            db.ownedGamesDao().deleteAll(steamId.asSteam64())
 
+            val gamesVerifier = GamesVerifier(gameIds, false)
             gamesFlow
+                .filter { gamesVerifier.verify(it) }
                 .map { mapper.mapFrom(it) }
                 .chunkBuffer(GAMES_BUFFER_SIZE)
                 .collect {
                     db.ownedGamesDao().insert(it)
                 }
+            gamesVerifier.log()
         }
     }
 
     override suspend fun getOwnedGamesIds(
-        steam64: Long,
+        steamId: SteamId,
         filter: PlaytimeFilter
     ): List<Int> = db.ownedGamesDao().run {
         when (filter) {
-            PlaytimeFilter.All -> getVisibleIds(steam64)
-            PlaytimeFilter.NotPlayed -> getVisibleLimitedByPlaytimeIds(steam64, 0)
-            is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(steam64, filter.maxTime)
+            PlaytimeFilter.All -> getVisibleIds(steamId.asSteam64())
+            PlaytimeFilter.NotPlayed -> getVisibleLimitedByPlaytimeIds(steamId.asSteam64(), 0)
+            is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(
+                steamId.asSteam64(),
+                filter.maxTime
+            )
         }
     }
 
-    override suspend fun resetHiddenOwnedGames(steam64: Long) {
-        db.ownedGamesDao().resetHidden(steam64)
+    override suspend fun resetHiddenOwnedGames(steamId: SteamId) {
+        db.ownedGamesDao().resetHidden(steamId.asSteam64())
     }
 
-    override suspend fun getOwnedGame(steam64: Long, gameId: Int): OwnedGame =
-        db.ownedGamesDao().get(steam64, gameId)
+    override suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader =
+        db.ownedGamesDao().getHeader(steamId.asSteam64(), gameId)
 
-    override suspend fun getOwnedGames(steam64: Long, gameIds: List<Int>): List<OwnedGame> =
-        db.ownedGamesDao().get(steam64, gameIds)
+    override suspend fun getOwnedGameHeaders(
+        steamId: SteamId,
+        gameIds: List<Int>
+    ): List<GameHeader> =
+        db.ownedGamesDao().getHeaders(steamId.asSteam64(), gameIds)
 
-    override suspend fun hideOwnedGame(steam64: Long, gameId: Int) {
-        db.ownedGamesDao().hide(steam64, gameId)
+    override suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean) {
+        db.ownedGamesDao().setHidden(steamId.asSteam64(), gameIds, hide)
     }
 
-    override suspend fun isUserHasGames(steam64: Long): Boolean =
-        db.ownedGamesDao().isUserHasGames(steam64)
+    override suspend fun setAllOwnedGamesHidden(steamId: SteamId, hide: Boolean) {
+        db.ownedGamesDao().setAllHidden(steamId.asSteam64(), hide)
+    }
 
-    override suspend fun clearOwnedGames(steam64: Long) {
-        db.ownedGamesDao().delete(steam64)
+    override suspend fun isUserHasGames(steamId: SteamId): Boolean =
+        db.ownedGamesDao().isUserHasGames(steamId.asSteam64())
+
+    override suspend fun clearOwnedGames(steamId: SteamId) {
+        db.ownedGamesDao().delete(steamId.asSteam64())
+    }
+
+    override fun getHiddenGamesDataSourceFactory(steamId: SteamId): DataSource.Factory<Int, GameHeader> {
+        return db.ownedGamesDao().getHiddenGamesDataSourceFactory(steamId.asSteam64())
     }
 
     companion object {

@@ -2,11 +2,11 @@ package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.view.View
 import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.fullscreen_progress.*
 import kotlinx.android.synthetic.main.item_empty_layout.*
-import ru.luckycactus.steamroulette.presentation.common.ContentState
+import kotlinx.android.synthetic.main.progress.*
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
+import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.ui.widget.DataLoadingViewHolder
 
 class GameLoadingViewHolder(

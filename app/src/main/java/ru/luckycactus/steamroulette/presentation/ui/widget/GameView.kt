@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -27,18 +28,15 @@ import com.bumptech.glide.request.transition.ViewAnimationFactory
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.GameMinimal
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.common.App
-import ru.luckycactus.steamroulette.presentation.utils.dp
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
-import ru.luckycactus.steamroulette.presentation.utils.glide.GameCoverModel
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.onApiAtLeast
 import ru.luckycactus.steamroulette.presentation.utils.sp
 
 class GameView : MaterialCardView {
-
     var textSize: Float
         set(value) {
             TextViewCompat.setAutoSizeTextTypeWithDefaults(
@@ -53,10 +51,11 @@ class GameView : MaterialCardView {
         }
         get() = tvName.textSize
 
-    var imageReady = false
-        private set
+    var memoryCacheEnabled = false
 
-    private var current: GameMinimal? = null
+    private var imageReady = false
+
+    private var current: GameHeader? = null
     private var userVisibleHint = true
 
     constructor(context: Context) : super(context) {
@@ -87,7 +86,7 @@ class GameView : MaterialCardView {
     }
 
     fun setGame(
-        game: GameMinimal?,
+        game: GameHeader?,
         disableTransition: Boolean = false,
         listener: RequestListener<Drawable>? = null
     ) {
@@ -97,15 +96,24 @@ class GameView : MaterialCardView {
         val differentAppId = current?.appId != game?.appId
 
         current = game
-        imageReady = false
+        if (differentAppId)
+            imageReady = false
         tvName.text = game?.name
-
         placeholder.visibility = View.VISIBLE
         if (game != null) {
             if (differentAppId)
                 createRequestBuilder(this, game, disableTransition, listener).into(ivGame)
+            ViewCompat.setTransitionName(
+                ivGame,
+                context.getString(R.string.image_shared_element_transition, game.appId)
+            )
+//            ViewCompat.setTransitionName(
+//                this,
+//                context.getString(R.string.cardview_shared_element_transition, game.appId)
+//            )
         } else {
             Glide.with(ivGame).clear(ivGame)
+            ViewCompat.setTransitionName(ivGame, null)
         }
     }
 
@@ -113,10 +121,16 @@ class GameView : MaterialCardView {
         userVisibleHint = visible
     }
 
+    fun getSharedViews(): List<View> {
+        return if (imageReady)
+            listOf<View>(ivGame)
+        else emptyList()
+    }
+
     //todo Грузить hd через wifi, обычную через мобильную сеть
     private fun createRequestBuilder(
         view: GameView,
-        game: GameMinimal,
+        game: GameHeader,
         disableTransition: Boolean,
         listener: RequestListener<Drawable>?
     ): RequestBuilder<Drawable> {
@@ -160,11 +174,11 @@ class GameView : MaterialCardView {
         )
 
         return GlideApp.with(view)
-            .load(GameCoverModel(game))
+            .load(game)
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .downsample(DownsampleStrategy.CENTER_INSIDE)
-            .skipMemoryCache(true)
+            .skipMemoryCache(!memoryCacheEnabled)
             .transform(headerImageTransformation)
             .transition(transitionOptions)
             .also { request ->
@@ -177,12 +191,15 @@ class GameView : MaterialCardView {
     companion object {
         private val headerImageTransformation = MultiTransformation<Bitmap>(
             //todo calculate blur scale width
-            CoverBlurTransformation(50, 200, 0.5f),
+            CoverBlurTransformation(25, 100, 0.5f),
             CoverGlareTransformation(
                 BitmapFactory.decodeResource(
                     App.getInstance().resources,
-                    R.drawable.cover_glare
-                )
+                    R.drawable.cover_glare,
+                    BitmapFactory.Options().apply { inScaled = false }
+                ).apply {
+                    density = Bitmap.DENSITY_NONE
+                }
             )
         )
 

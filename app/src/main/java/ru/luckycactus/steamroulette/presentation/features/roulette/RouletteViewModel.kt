@@ -1,20 +1,24 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.Event
-import ru.luckycactus.steamroulette.domain.common.ResourceManager
-import ru.luckycactus.steamroulette.domain.common.Result
-import ru.luckycactus.steamroulette.domain.exception.MissingOwnedGamesException
+import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
+import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
-import ru.luckycactus.steamroulette.domain.games.HideGameUseCase
-import ru.luckycactus.steamroulette.domain.games.ObserveResetHiddenGamesEventUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
+import ru.luckycactus.steamroulette.domain.games.SetGamesHiddenUseCase
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.presentation.common.ContentState
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
+import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
+import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import ru.luckycactus.steamroulette.presentation.utils.startWith
@@ -24,50 +28,55 @@ class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingList,
     private val observePlayTimeFilter: ObservePlaytimeFilterUseCase,
-    private val observeResetHiddenGamesEvent: ObserveResetHiddenGamesEventUseCase,
-    private val hideGame: HideGameUseCase,
+    private var observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
+    private val setGamesHidden: SetGamesHiddenUseCase,
     private val resourceManager: ResourceManager
-) : ViewModel() {
-
-    val games: LiveData<List<OwnedGame>?>
+) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
+    val games: LiveData<List<GameHeader>?>
     val itemRemoved: LiveData<Event<Int>?> //todo flow
         get() = _itemRemoved
     val itemsInserted: LiveData<Event<Pair<Int, Int>>?> //todo flow
     val contentState: LiveData<ContentState>
         get() = _contentState.distinctUntilChanged()
-    val openUrlAction: LiveData<Event<String>>
-        get() = _openUrlAction
     val controlsAvailable: LiveData<Boolean>
         get() = _controlsAvailable.distinctUntilChanged()
 
     private val _gamesPagingList = MutableLiveData<PagingGameList?>()
     private val _contentState = MediatorLiveData<ContentState>()
-    private val _openUrlAction = MutableLiveData<Event<String>>()
     private val _controlsAvailable = MutableLiveData<Boolean>().startWith(true)
     private val _itemRemoved = MediatorLiveData<Event<Int>>()
     private val currentUserPlayTimeFilter: LiveData<PlaytimeFilter>
 
     private var getPagingListJob: Job? = null
-    private var gamesEnded = false
+    private var allGamesShowed = false
+    private var viewVisible = true
+    private var hiddenGamesCount = 0
+    private var rouletteStateInvalidated = false
 
     init {
-        currentUserPlayTimeFilter =
-            userViewModelDelegate.currentUserSteamId.switchMap {
-                observePlayTimeFilter(it).distinctUntilChanged()
-            }
+        currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId.switchMap {
+            observePlayTimeFilter(it).distinctUntilChanged()
+        }
 
         _contentState.addSource(userViewModelDelegate.fetchGamesState) {
-            refreshGames()
+            rouletteStateInvalidated = true
+            syncRouletteState()
         }
 
         _contentState.addSource(currentUserPlayTimeFilter) {
-            refreshGames()
+            rouletteStateInvalidated = true
+            syncRouletteState()
         }
 
-        _contentState.addSource(userViewModelDelegate.currentUserSteamId.switchMap {
-            observeResetHiddenGamesEvent(it)
-        }) {
-            refreshGames()
+        val hiddenGamesCountLiveData = userViewModelDelegate.currentUserSteamId.switchMap {
+            observeHiddenGamesCount(it)
+        }
+
+        _contentState.addSource(hiddenGamesCountLiveData) {
+            if (it < hiddenGamesCount)
+                rouletteStateInvalidated = true
+            hiddenGamesCount = it
+            syncRouletteState()
         }
 
         games = _gamesPagingList.map { it?.list }
@@ -83,21 +92,12 @@ class RouletteViewModel @Inject constructor(
         _gamesPagingList.value?.let {
             if (!it.isEmpty()) {
                 val game = it.removeTop()
-                _itemRemoved.value =
-                    Event(0)
+                _itemRemoved.value = Event(0)
                 if (hide) {
-                    GlobalScope.launch {
-                        hideGame(
-                            HideGameUseCase.Params(
-                                userViewModelDelegate.getCurrentUserSteamId(),
-                                game.appId
-                            )
-                        )
-                    }
+                    hideGame(game)
                 }
-
-                if (it.gamesEnded()) {
-                    gamesEnded = true
+                if (it.allGamesShowed()) {
+                    allGamesShowed = true
                     _contentState.value = ContentState.Placeholder(
                         resourceManager.getString(R.string.games_queue_ended),
                         titleType = ContentState.TitleType.None,
@@ -109,11 +109,13 @@ class RouletteViewModel @Inject constructor(
                 }
             }
         }
+        _controlsAvailable.value = true
     }
 
     fun onRetryClick() {
-        if (gamesEnded) {
-            refreshGames()
+        if (allGamesShowed) {
+            rouletteStateInvalidated = true
+            syncRouletteState()
         } else {
             userViewModelDelegate.fetchGames()
         }
@@ -123,24 +125,44 @@ class RouletteViewModel @Inject constructor(
         _controlsAvailable.value = (progress == 0f)
     }
 
-    fun onAdapterUpdatedAfterSwipe() {
-        _controlsAvailable.value = true
+    fun onHiddenChanged(hidden: Boolean) {
+        viewVisible = !hidden
+        syncRouletteState()
     }
 
-    private fun refreshGames() {
-        val fetchGamesResult = userViewModelDelegate.fetchGamesState.value
+    private fun hideGame(game: GameHeader) {
+        GlobalScope.launch {
+            setGamesHidden(
+                SetGamesHiddenUseCase.Params(
+                    userViewModelDelegate.getCurrentUserSteamId(),
+                    listOf(game.appId),
+                    true
+                )
+            )
+        }
+    }
+
+    private fun syncRouletteState() {
+        if (!viewVisible)
+            return
+
+        if (!rouletteStateInvalidated)
+            return
+
+        val fetchGamesState = userViewModelDelegate.fetchGamesState.value
         val filter = currentUserPlayTimeFilter.value
 
         getPagingListJob?.cancel()
         _gamesPagingList.value?.finish()
         _gamesPagingList.value = null
 
-        gamesEnded = false
+        allGamesShowed = false
+        rouletteStateInvalidated = false
 
-        if (fetchGamesResult == null || filter == null)
+        if (fetchGamesState == null || filter == null)
             return
 
-        if (fetchGamesResult == Result.Loading) {
+        if (fetchGamesState == Result.Loading) {
             _contentState.value = ContentState.Loading
         } else {
             getPagingListJob = viewModelScope.launch {
@@ -166,39 +188,37 @@ class RouletteViewModel @Inject constructor(
                             )
                         }
                     }
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
-                    if (e is CancellationException) {
-                        throw e
-                    } else {
-                        when {
-                            fetchGamesResult is Result.Error -> _contentState.value =
-                                ContentState.Placeholder(
-                                    message = fetchGamesResult.message,
-                                    titleType = ContentState.TitleType.Custom(
-                                        resourceManager.getString(
-                                            R.string.error_get_owned_games
-                                        )
-                                    ),
-                                    buttonType = ContentState.ButtonType.Default
-                                )
-                            e is MissingOwnedGamesException -> _contentState.value =
-                                ContentState.Placeholder(
-                                    message = resourceManager.getString(R.string.error_zero_games),
-                                    titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
-                                    buttonType = ContentState.ButtonType.Default
-                                )
-                            else -> {
-                                _contentState.value = ContentState.Placeholder(
-                                    message = getCommonErrorDescription(resourceManager, e),
-                                    titleType = ContentState.TitleType.Custom(
-                                        resourceManager.getString(
-                                            R.string.error_get_owned_games
-                                        )
-                                    ),
-                                    buttonType = ContentState.ButtonType.Default
-                                )
-                                e.printStackTrace()
-                            }
+                    when {
+                        fetchGamesState is Result.Error -> _contentState.value =
+                            ContentState.Placeholder(
+                                message = fetchGamesState.message,
+                                titleType = ContentState.TitleType.Custom(
+                                    resourceManager.getString(
+                                        R.string.error_get_owned_games
+                                    )
+                                ),
+                                buttonType = ContentState.ButtonType.Default
+                            )
+                        e is MissingOwnedGamesException -> _contentState.value =
+                            ContentState.Placeholder(
+                                message = resourceManager.getString(R.string.error_zero_games),
+                                titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
+                                buttonType = ContentState.ButtonType.Default
+                            )
+                        else -> {
+                            _contentState.value = ContentState.Placeholder(
+                                message = getCommonErrorDescription(resourceManager, e),
+                                titleType = ContentState.TitleType.Custom(
+                                    resourceManager.getString(
+                                        R.string.error_get_owned_games
+                                    )
+                                ),
+                                buttonType = ContentState.ButtonType.Default
+                            )
+                            e.printStackTrace()
                         }
                     }
                 }

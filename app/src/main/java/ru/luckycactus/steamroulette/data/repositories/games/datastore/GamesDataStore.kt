@@ -1,39 +1,44 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import kotlinx.coroutines.flow.Flow
+import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 interface GamesDataStore {
 
     interface Local : GamesDataStore {
-        suspend fun saveOwnedGames(steam64: Long, gamesFlow: Flow<OwnedGameEntity>)
+        suspend fun saveOwnedGames(steamId: SteamId, gamesFlow: Flow<OwnedGameEntity>)
 
-        suspend fun getOwnedGamesIds(steam64: Long, filter: PlaytimeFilter): List<Int>
+        suspend fun getOwnedGamesIds(steamId: SteamId, filter: PlaytimeFilter): List<Int>
 
-        suspend fun hideOwnedGame(steam64: Long, gameId: Int)
+        suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
 
-        suspend fun getOwnedGame(steam64: Long, gameId: Int): OwnedGame
+        suspend fun setAllOwnedGamesHidden(steamId: SteamId, hide: Boolean)
 
-        suspend fun getOwnedGames(steam64: Long, gameIds: List<Int>): List<OwnedGame>
+        suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader
 
-        suspend fun isUserHasGames(steam64: Long): Boolean
+        suspend fun getOwnedGameHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader>
 
-        fun observeOwnedGamesCount(steam64: Long): LiveData<Int>
+        suspend fun isUserHasGames(steamId: SteamId): Boolean
 
-        fun observeHiddenOwnedGamesCount(steam64: Long): LiveData<Int>
+        fun observeOwnedGamesCount(steamId: SteamId): LiveData<Int>
 
-        suspend fun resetHiddenOwnedGames(steam64: Long)
+        fun observeHiddenOwnedGamesCount(steamId: SteamId): LiveData<Int>
 
-        suspend fun clearOwnedGames(steam64: Long)
+        suspend fun resetHiddenOwnedGames(steamId: SteamId)
+
+        suspend fun clearOwnedGames(steamId: SteamId)
+        fun getHiddenGamesDataSourceFactory(steamId: SteamId): DataSource.Factory<Int, GameHeader>
     }
 
     interface Remote : GamesDataStore {
-        suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity>
+        suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity>
 
-        suspend fun getGameStoreInfo(appId: Int): GameStoreInfo
+        suspend fun getGameStoreInfo(appId: Int): GameStoreInfoEntity
     }
 }

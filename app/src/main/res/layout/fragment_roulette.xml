@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    android:id="@+id/roulette_fragment_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:transitionGroup="false"
+    android:background="@color/color_background"
+    >
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -18,11 +29,11 @@
             android:splitMotionEvents="false"
             >
 
-        <androidx.recyclerview.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRoulette"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/spacing_normal"
                 android:clipChildren="false"
                 android:transitionGroup="true"
                 app:layout_constraintBottom_toTopOf="@id/fabGameInfo"
@@ -32,7 +43,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabHideGame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,12 +54,12 @@
                 app:srcCompat="@drawable/ic_visibility_off_white_24dp"
                 />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabGameInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="@dimen/spacing_normal"
+                android:layout_marginRight="@dimen/spacing_normal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/fabHideGame"
                 app:layout_constraintRight_toLeftOf="@id/fabNextGame"
@@ -56,7 +67,7 @@
                 />
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabNextGame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,10 +77,14 @@
                 app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
                 />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/empty_layout" />
+        <include layout="@layout/empty_layout" />
 
-    <include layout="@layout/fullscreen_progress" />
+        <include layout="@layout/fullscreen_progress" />
 
-</FrameLayout>
+    </FrameLayout>
+
+    <include layout="@layout/main_toolbar" />
+
+</LinearLayout>

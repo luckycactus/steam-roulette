@@ -2,13 +2,14 @@ package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_description_block_tag.*
 import kotlinx.android.synthetic.main.item_game_details_short_description.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.utils.inflate
@@ -16,7 +17,8 @@ import ru.luckycactus.steamroulette.presentation.utils.setDrawableColor
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class GameShortDescriptionViewHolder(
-    view: View
+    view: View,
+    viewModel: GameDetailsViewModel
 ) : GameDetailsViewHolder<GameDetailsUiModel.ShortDescription>(view) {
     init {
         val space = view.resources.getDimensionPixelSize(R.dimen.default_activity_margin)
@@ -29,10 +31,20 @@ class GameShortDescriptionViewHolder(
         rvCategories.layoutManager =
             LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
         rvCategories.addItemDecoration(decoration)
+
+        layoutMetacriticScore.setOnClickListener {
+            viewModel.onMetacriticClick()
+        }
+
+        header.setOnClickListener {
+            viewModel.onDetailedDescriptionClick()
+        }
     }
 
     override fun bind(item: GameDetailsUiModel.ShortDescription) {
-        tvDescription.text = item.value
+        tvDescription.text = item.value?.let { HtmlCompat.fromHtml(it, 0) }
+        ivForward.visibility(item.detailedDescriptionAvailable)
+
         if (!item.genres.isNullOrEmpty()) {
             rvGenres.adapter = TagsAdapter(item.genres)
             rvGenres.visibility = View.VISIBLE
@@ -55,18 +67,18 @@ class GameShortDescriptionViewHolder(
             ivAge.visibility(false)
         }
 
-        if (item.metacriticInfoEntity != null) {
-            tvMetacriticScore.text = item.metacriticInfoEntity.score.toString()
+        if (item.metacriticInfo != null) {
+            tvMetacriticScore.text = item.metacriticInfo.score.toString()
             setDrawableColor(
                 tvMetacriticScore.background,
-                getMetacriticScoreColor(item.metacriticInfoEntity.score)
+                item.metacriticInfo.color
             )
             layoutMetacriticScore.visibility(true)
         } else {
             layoutMetacriticScore.visibility(false)
         }
 
-        blockExtraInfo.visibility(ageResource != null || item.metacriticInfoEntity != null)
+        blockExtraInfo.visibility(ageResource != null || item.metacriticInfo != null)
     }
 
     private fun getAgeDrawableResource(age: Int): Int? {
@@ -78,17 +90,6 @@ class GameShortDescriptionViewHolder(
             18 -> R.drawable.age_18
             else -> null
         }
-    }
-
-    private fun getMetacriticScoreColor(score: Int): Int { //todo move to domain?
-        return ContextCompat.getColor(
-            itemView.context,
-            when (score) {
-                in 75..100 -> R.color.metacritic_good
-                in 50..74 -> R.color.metacritic_average
-                else -> R.color.metacritic_poor
-            }
-        )
     }
 
     class TagsAdapter(

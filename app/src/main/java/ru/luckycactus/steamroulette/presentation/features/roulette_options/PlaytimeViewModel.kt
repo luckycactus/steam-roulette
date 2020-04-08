@@ -8,6 +8,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUse
 import ru.luckycactus.steamroulette.domain.games_filter.SaveMaxPlaytimeSettingUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterTypeUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import javax.inject.Inject
 
@@ -17,7 +18,7 @@ class PlaytimeViewModel @Inject constructor(
     private val observeMaxPlaytimeSetting: ObserveMaxPlaytimeSettingUseCase,
     private val savePlayTimeFilterType: SavePlayTimeFilterTypeUseCase,
     private val saveMaxPlaytimeSetting: SaveMaxPlaytimeSettingUseCase
-) : ViewModel() {
+) : BaseViewModel() {
     //todo
     val currentPlaytimeFilterType: LiveData<PlaytimeFilter.Type> by lazyNonThreadSafe {
         userViewModelDelegate.currentUserSteamId.switchMap { steamId ->

@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.ui.widget.card_stack
 
 import android.graphics.Canvas
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 

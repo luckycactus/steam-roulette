@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:duration="100"
-        >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/dialog_anim_duration"
+    >
 
     <scale
-            android:fromXScale="80%"
-            android:fromYScale="80%"
-            android:pivotX="50%"
-            android:pivotY="50%"
-            android:toXScale="100%"
-            android:toYScale="100%"
-            />
+        android:fromXScale="80%"
+        android:fromYScale="80%"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="100%"
+        android:toYScale="100%"
+        />
 
     <alpha
-            android:fromAlpha="0"
-            android:toAlpha="1"
-            />
+        android:fromAlpha="0"
+        android:toAlpha="1"
+        />
 
 </set>

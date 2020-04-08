@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.MaterialToolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_gravity="bottom"
+    android:contentInsetStart="@dimen/spacing_tiny"
+    android:contentInsetLeft="@dimen/spacing_tiny"
+    android:elevation="@dimen/spacing_small"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    app:contentInsetLeft="4dp"
+    app:contentInsetStart="4dp"
+    >
+
+    <LinearLayout
+        android:id="@+id/avatarContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/touchable_view_default_size"
+        android:background="@drawable/selectable_item_background_capsule"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        >
+
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/touchable_view_half_size"
+            android:layout_height="@dimen/touchable_view_half_size"
+            app:srcCompat="@drawable/avatar_placeholder"
+            />
+
+        <TextView
+            android:id="@+id/tvNickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:layout_marginEnd="@dimen/spacing_small"
+            android:maxLines="1"
+            android:textAppearance="?textAppearanceSubtitle1"
+            tools:text="luckycactus"
+            />
+
+    </LinearLayout>
+
+</com.google.android.material.appbar.MaterialToolbar>

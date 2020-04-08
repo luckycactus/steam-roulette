@@ -9,7 +9,7 @@
         <item name="colorSecondaryVariant">@color/color_secondary_variant</item>
 
         <item name="android:colorBackground">@color/color_background</item>
-        <item name="android:windowBackground">@color/color_background</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="colorSurface">@color/color_surface</item>
         <item name="colorError">@color/color_error</item>
 
@@ -24,6 +24,7 @@
 
         <item name="colorControlActivated">@color/color_primary</item>
         <item name="android:textColorHighlight">@color/color_primary</item>
+        <item name="android:textColorLink">@color/link_color_selector</item>
 
         <!--Material shape attributes-->
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyTheme.SmallComponent
@@ -57,9 +58,12 @@
 
         <item name="elevationOverlayEnabled">false</item>
 
-        <item name="alphaEmphasisHigh">@dimen/alpha_emphasis_high</item>
-        <item name="alphaEmphasisMedium">@dimen/alpha_emphasis_medium</item>
-        <item name="alphaEmphasisDisabled">@dimen/alpha_emphasis_disabled</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+
+        <item format="float" name="alphaEmphasisDisabled" type="dimen">@dimen/alpha_emphasis_disabled</item>
+        <item format="float" name="alphaEmphasisHigh" type="dimen">@dimen/alpha_emphasis_high</item>
+        <item format="float" name="alphaEmphasisMedium" type="dimen">@dimen/alpha_emphasis_medium</item>
     </style>
 
     <style name="AppTheme" parent="BaseAppTheme" />

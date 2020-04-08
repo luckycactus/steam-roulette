@@ -14,13 +14,17 @@ class GameHeaderViewHolder(
     view: View
 ) : GameDetailsViewHolder<GameDetailsUiModel.Header>(view) {
 
+    init {
+        gameView.memoryCacheEnabled = true
+    }
+
     fun bind(
         item: GameDetailsUiModel.Header,
         disableTransition: Boolean,
         listener: RequestListener<Drawable>?
     ) {
-        gameView.setGame(item.gameMinimal, disableTransition, listener)
-        tvHeaderGameName.text = item.gameMinimal.name
+        gameView.setGame(item.gameHeader, disableTransition, listener)
+        tvHeaderGameName.text = item.gameHeader.name
         tvPublisher.text = item.publisher
         tvPublisher.visibility(!item.publisher.isNullOrBlank())
         tvDeveloper.text = item.developer
@@ -31,7 +35,7 @@ class GameHeaderViewHolder(
             gameView.ivGame,
             gameView.context.getString(
                 R.string.image_shared_element_transition,
-                item.gameMinimal.appId
+                item.gameHeader.appId
             )
         )
 //        ViewCompat.setTransitionName(

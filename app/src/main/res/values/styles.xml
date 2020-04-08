@@ -1,5 +1,8 @@
 <resources>
 
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="closeItemLayout">@layout/layout_action_mode_close_item</item>
+    </style>
 
     <style name="BaseBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:windowIsFloating">false</item>
@@ -40,16 +43,17 @@
 
     <style name="Widget.MyTheme.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton"></style>
 
-    <style name="Widget.MyTheme.GameDetailsHeadlineTextView" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textAppearance">@style/TextAppearance.MyTheme.GameDetailsHeadline</item>
-        <item name="android:layout_marginBottom">@dimen/default_activity_margin</item>
+    <style name="Widget.MyTheme.GameDetailsHeadline" parent="Widget.MaterialComponents.TextView">
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
+        <item name="android:paddingTop">@dimen/spacing_small</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_small</item>
     </style>
 
     <style name="Widget.MyTheme.MetacriticScoreTextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:background">@drawable/background_metacritic_score</item>
         <item name="android:gravity">center</item>
         <item name="android:includeFontPadding">false</item>
-        <item name="android:padding">@dimen/half_default_activity_margin</item>
+        <item name="android:padding">@dimen/spacing_small</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">30sp</item>
     </style>
@@ -58,4 +62,22 @@
         <item name="strokeColor">@color/btn_stroke_color_selector</item>
     </style>
 
+    <style name="Widget.MyTheme.CompoundButton.RadioButton.Dialog">
+        <item name="android:textAppearance">?textAppearanceBody2</item>
+    </style>
+
+    <style name="Widget.MyTheme.GameDetailsPlatformIcon" parent="">
+        <item name="android:layout_width">@dimen/game_details_platform_icon_size</item>
+        <item name="android:layout_height">@dimen/game_details_platform_icon_size</item>
+        <item name="android:tint">@color/platforms_icon_tint</item>
+    </style>
+
+    <style name="GameDetailsItem">
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
+    </style>
+
+    <style name="GameDetailsItem.NoTitle">
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
+        <item name="android:paddingTop">@dimen/spacing_small</item>
+    </style>
 </resources>

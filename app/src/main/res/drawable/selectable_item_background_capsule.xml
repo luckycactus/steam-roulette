@@ -3,13 +3,13 @@
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <solid android:color="@color/holo_ripple_color" />
-            <corners android:radius="1500dp"/>
+            <corners android:radius="1500dp" />
         </shape>
     </item>
     <item android:state_focused="true">
         <shape android:shape="rectangle">
             <solid android:color="@color/holo_focused_color" />
-            <corners android:radius="1500dp"/>
+            <corners android:radius="1500dp" />
         </shape>
     </item>
 </selector>

@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.data.repositories.games.mapper
 
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
-import ru.luckycactus.steamroulette.domain.common.Mapper
+import ru.luckycactus.steamroulette.domain.core.Mapper
 
 class OwnedGameRoomEntityMapper(
     private val steam64: Long,

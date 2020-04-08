@@ -1,88 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
-
-    <TextView
-            style="@style/Widget.MyTheme.GameDetailsHeadlineTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/default_activity_margin"
-            android:paddingRight="@dimen/default_activity_margin"
-            android:text="@string/game_details_description"
-            />
-
-    <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/default_activity_margin"
-            android:paddingRight="@dimen/default_activity_margin"
-            android:textAppearance="?textAppearanceBody1"
-            />
-
-    <Space
-            android:layout_width="0dp"
-            android:layout_height="8dp"
-            />
-
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvGenres"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCategories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/GameDetailsItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
 
     <LinearLayout
-            android:id="@+id/blockExtraInfo"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="@dimen/half_default_activity_margin"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/default_activity_margin"
-            android:paddingRight="@dimen/default_activity_margin"
-            >
+        android:id="@+id/header"
+        style="@style/Widget.MyTheme.GameDetailsHeadline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables"
+        android:background="?selectableItemBackground"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/game_details_description"
+            android:textAppearance="@style/TextAppearance.MyTheme.GameDetailsHeadline"
+            />
 
         <ImageView
-                android:id="@+id/ivAge"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/default_activity_margin"
-                android:adjustViewBounds="true"
-                tools:src="@drawable/age_18"
-                />
+            android:id="@+id/ivForward"
+            android:layout_width="@dimen/touchable_view_half_size"
+            android:layout_height="@dimen/touchable_view_half_size"
+            android:layout_marginStart="@dimen/spacing_small"
+            app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        android:textAppearance="?textAppearanceBody1"
+        />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="@dimen/spacing_small"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvGenres"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <LinearLayout
+        android:id="@+id/blockExtraInfo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/game_details_extra_info_block_height"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        >
+
+        <ImageView
+            android:id="@+id/ivAge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/default_activity_margin"
+            android:adjustViewBounds="true"
+            tools:src="@drawable/age_18"
+            />
 
         <LinearLayout
-                android:id="@+id/layoutMetacriticScore"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                >
+            android:id="@+id/layoutMetacriticScore"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:foreground="?selectableItemBackground"
+            android:orientation="horizontal"
+            >
 
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="@dimen/half_default_activity_margin"
-                    android:src="@drawable/metacritic_logo_no_text"
-                    />
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/spacing_small"
+                android:src="@drawable/metacritic_logo_no_text"
+                />
 
             <TextView
-                    android:id="@+id/tvMetacriticScore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    style="@style/Widget.MyTheme.MetacriticScoreTextView"
-                    tools:text="89"
-                    />
+                android:id="@+id/tvMetacriticScore"
+                style="@style/Widget.MyTheme.MetacriticScoreTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                tools:text="89"
+                />
 
         </LinearLayout>
 

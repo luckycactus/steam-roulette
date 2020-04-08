@@ -1,16 +1,25 @@
 package ru.luckycactus.steamroulette.data.local.db
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
 @Dao
 abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
-
     @Query("select appId from owned_game where userSteam64 = :steam64 and hidden = 0")
     abstract suspend fun getVisibleIds(steam64: Long): List<Int>
+
+    @Query("select appId from owned_game where userSteam64 = :steam64")
+    abstract suspend fun getAllIds(steam64: Long): List<Int>
+
+    @Query("select appId from owned_game where userSteam64 =:steam64 and hidden = 1")
+    abstract suspend fun getHiddenIds(steam64: Long): List<Int>
+
+    @Query("select appId, name from owned_game where userSteam64 =:steam64 and hidden = 1 order by name asc")
+    abstract fun getHiddenGamesDataSourceFactory(steam64: Long): DataSource.Factory<Int, GameHeader>
 
     @Query(
         """select appId 
@@ -20,32 +29,32 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     abstract suspend fun getVisibleLimitedByPlaytimeIds(steam64: Long, maxHours: Int): List<Int>
 
     @Query(
-        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
+        """select appId, name
         from owned_game 
         where appId = :gameId and userSteam64 = :steam64"""
     )
-    abstract suspend fun get(steam64: Long, gameId: Int): OwnedGame
+    abstract suspend fun getHeader(steam64: Long, gameId: Int): GameHeader
 
     @Query(
-        """select appId, name, playtime2Weeks, playtimeForever, iconUrl, logoUrl 
+        """select appId, name
         from owned_game 
         where appId in (:appIds) and userSteam64 = :steam64"""
     )
-    abstract suspend fun get(steam64: Long, appIds: List<Int>): List<OwnedGame>
+    abstract suspend fun getHeaders(steam64: Long, appIds: List<Int>): List<GameHeader>
 
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun delete(steam64: Long)
 
-    @Query("update owned_game SET hidden = 1 where userSteam64 =:steam64 and appId = :gameId")
-    abstract suspend fun hide(steam64: Long, gameId: Int)
-
-    @Query("select appId from owned_game where userSteam64 =:steam64 and hidden = 1")
-    abstract suspend fun getHiddenIds(steam64: Long): List<Int>
-
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun deleteAll(steam64: Long)
 
-    suspend fun isUserHasGames(steam64: Long) = _isUserHasOwnedGames(steam64) == 1
+    @Query("update owned_game SET hidden = :hidden where userSteam64 =:steam64 and appId in (:gameIds)")
+    abstract suspend fun setHidden(steam64: Long, gameIds: List<Int>, hidden: Boolean)
+
+    @Query("update owned_game SET hidden = :hidden where userSteam64 =:steam64")
+    abstract suspend fun setAllHidden(steam64: Long, hidden: Boolean)
+
+    suspend fun isUserHasGames(steam64: Long) = _isUserHasGames(steam64) == 1
 
     @Query("select COUNT(*) from owned_game  where userSteam64 = :steam64")
     abstract fun observeCount(steam64: Long): LiveData<Int>
@@ -65,5 +74,5 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
             limit 1
         )"""
     )
-    abstract suspend fun _isUserHasOwnedGames(steam64: Long): Int
+    abstract suspend fun _isUserHasGames(steam64: Long): Int
 }

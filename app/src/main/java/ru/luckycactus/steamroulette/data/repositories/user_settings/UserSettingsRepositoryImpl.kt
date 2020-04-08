@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import dagger.Reusable
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.utils.intLiveData
+import ru.luckycactus.steamroulette.data.core.intLiveData
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.common.SteamId

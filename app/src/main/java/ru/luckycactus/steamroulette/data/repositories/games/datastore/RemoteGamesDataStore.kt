@@ -1,22 +1,23 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
 import androidx.collection.arrayMapOf
-import com.google.gson.Gson
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.Moshi
 import dagger.Reusable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import ru.luckycactus.steamroulette.data.net.SteamApiService
-import ru.luckycactus.steamroulette.data.net.SteamStoreApiService
+import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.data.net.services.SteamApiService
+import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
+import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoResult
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
+import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
-import ru.luckycactus.steamroulette.domain.exception.GetGameStoreInfoException
-import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 import javax.inject.Named
@@ -25,26 +26,31 @@ import javax.inject.Named
 class RemoteGamesDataStore @Inject constructor(
     private val steamApiService: SteamApiService,
     private val steamStoreApiService: SteamStoreApiService,
-    @Named("api") private val gson: Gson,
+    @Named("api") private val moshi: Moshi,
     private val languageProvider: LanguageProvider
 ) : GamesDataStore.Remote {
 
-    override suspend fun getOwnedGames(steam64: Long): Flow<OwnedGameEntity> {
+    private val ownedGameAdapter =
+        moshi.adapter<OwnedGameEntity>(OwnedGameEntity::class.java)
+    private val gameStoreInfoResultAdapter =
+        moshi.adapter<GameStoreInfoResult>(GameStoreInfoResult::class.java)
+
+    override suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity> {
         val response = wrapCommonNetworkExceptions {
             steamApiService.getOwnedGames(
-                steam64,
+                steamId.asSteam64(),
                 includeAppInfo = true,
                 includePlayedFreeGames = false
             )
         }
 
         return flow {
-            val reader = JsonReader(response.charStream())
+            val reader = JsonReader.of(response.source())
             var noGames = true
 
             try {
                 while (reader.hasNext()) {
-                    if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+                    if (reader.peek() == JsonReader.Token.BEGIN_OBJECT) {
                         reader.beginObject()
                         if (reader.nextName() == "response") {
                             reader.beginObject()
@@ -53,10 +59,7 @@ class RemoteGamesDataStore @Inject constructor(
                                     noGames = false
                                     reader.beginArray()
                                     while (reader.hasNext()) {
-                                        val game = gson.fromJson<OwnedGameEntity>(
-                                            reader,
-                                            OwnedGameEntity::class.java
-                                        )
+                                        val game = ownedGameAdapter.fromJson(reader)!!
                                         emit(game)
                                     }
                                     reader.endArray()
@@ -78,7 +81,8 @@ class RemoteGamesDataStore @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun getGameStoreInfo(appId: Int): GameStoreInfo {
+    //todo document
+    override suspend fun getGameStoreInfo(appId: Int): GameStoreInfoEntity {
         val response = wrapCommonNetworkExceptions {
             steamStoreApiService.getGamesStoreInfo(
                 listOf(appId),
@@ -86,16 +90,13 @@ class RemoteGamesDataStore @Inject constructor(
             )
         }
 
-        val reader = JsonReader(response.charStream())
+        val reader = JsonReader.of(response.source())
         val results = arrayMapOf<String, GameStoreInfoResult>()
         try {
             reader.beginObject()
             while (reader.hasNext()) {
                 val name = reader.nextName()
-                val obj = gson.fromJson<GameStoreInfoResult>(
-                    reader,
-                    GameStoreInfoResult::class.java
-                )
+                val obj = gameStoreInfoResultAdapter.fromJson(reader)!!
                 results[name] = obj
             }
         } finally {

@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.absoluteValue
 
 class CardStackLayoutManager : RecyclerView.LayoutManager() {
-
     var maxChildrenCount: Int = 3
         set(value) {
             field = maxOf(1, value)

@@ -4,12 +4,15 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.db.DB
-import ru.luckycactus.steamroulette.data.utils.long
-import ru.luckycactus.steamroulette.data.utils.longLiveData
+import ru.luckycactus.steamroulette.data.core.long
+import ru.luckycactus.steamroulette.data.core.longLiveData
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.presentation.utils.nonNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,32 +32,35 @@ class LocalUserDataStore @Inject constructor(
         CURRENT_USER_DEFAULT_VALUE
     )
 
-    override suspend fun getUserSummary(steam64: Long): UserSummaryEntity =
-        db.userSummaryDao().get(steam64)
+    override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity =
+        db.userSummaryDao().get(steamId.asSteam64())
 
     override suspend fun saveUserSummary(userSummary: UserSummaryEntity) {
         db.userSummaryDao().upsert(userSummary)
     }
 
-    override suspend fun removeUserSummary(steam64: Long) {
-        db.userSummaryDao().delete(steam64)
+    override suspend fun removeUserSummary(steamId: SteamId) {
+        db.userSummaryDao().delete(steamId.asSteam64())
     }
 
-    override fun observeUserSummary(steam64: Long): LiveData<UserSummaryEntity> =
-        db.userSummaryDao().observe(steam64).distinctUntilChanged()
+    override fun observeUserSummary(steamId: SteamId): LiveData<UserSummaryEntity> =
+        db.userSummaryDao().observe(steamId.asSteam64()).distinctUntilChanged().nonNull()
 
-    override fun setCurrentUser(steam64: Long) {
-        currentUserSteam64Pref = steam64
+    override fun setCurrentUser(steamId: SteamId) {
+        currentUserSteam64Pref = steamId.asSteam64()
     }
 
-    override fun getCurrentUserSteam64(): Long = currentUserSteam64Pref
+    override fun getCurrentUserSteam64(): SteamId? = fromSteam64(currentUserSteam64Pref)
 
-    override fun observeCurrentUserSteam64(): LiveData<Long> =
-        currentUserSteam64LiveData
+    override fun observeCurrentUserSteamId(): LiveData<SteamId?> =
+        currentUserSteam64LiveData.map { fromSteam64(it) }
 
-    override fun removeCurrentUserSteam64() {
+    override fun removeCurrentUserSteamId() {
         userPreferences.edit { remove(CURRENT_USER_KEY) }
     }
+
+    private fun fromSteam64(steam64: Long) =
+        if (steam64 == 0L) null else SteamId.fromSteam64(steam64)
 
     companion object {
         const val CURRENT_USER_KEY = "signed_user_key"

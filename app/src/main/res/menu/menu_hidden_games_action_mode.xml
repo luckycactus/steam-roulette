@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/action_unhide"
+        android:icon="@drawable/ic_visibility_24dp"
+        android:title="@string/make_visible"
+        app:showAsAction="always"
+        />
+</menu>

@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.domain.games_filter
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.domain.common.UseCase
+import ru.luckycactus.steamroulette.domain.core.UseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository

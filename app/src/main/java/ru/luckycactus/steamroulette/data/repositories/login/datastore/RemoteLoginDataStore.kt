@@ -1,9 +1,9 @@
 package ru.luckycactus.steamroulette.data.repositories.login.datastore
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.data.net.SteamApiService
-import ru.luckycactus.steamroulette.data.utils.wrapCommonNetworkExceptions
-import ru.luckycactus.steamroulette.domain.exception.VanityNotFoundException
+import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
+import ru.luckycactus.steamroulette.data.net.services.SteamApiService
+import ru.luckycactus.steamroulette.domain.common.VanityNotFoundException
 import javax.inject.Inject
 
 @Reusable
@@ -19,7 +19,9 @@ class RemoteLoginDataStore @Inject constructor(
         if (result.success == 1 && !result.steamId.isNullOrEmpty())
             return result.steamId.toLong()
         else
-            throw VanityNotFoundException(vanityUrl)
+            throw VanityNotFoundException(
+                vanityUrl
+            )
     }
 }
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/GameDetailsItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:id="@+id/header"
+        style="@style/Widget.MyTheme.GameDetailsHeadline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        tools:ignore="UseCompoundDrawables"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/game_details_platforms"
+            android:textAppearance="@style/TextAppearance.MyTheme.GameDetailsHeadline"
+            />
+
+        <ImageView
+            android:id="@+id/ivForward"
+            android:layout_width="@dimen/touchable_view_half_size"
+            android:layout_height="@dimen/touchable_view_half_size"
+            android:layout_marginStart="@dimen/spacing_small"
+            app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        >
+
+        <ImageView
+            android:id="@+id/ivWindows"
+            style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
+            android:layout_marginEnd="@dimen/game_details_platform_icon_margin"
+            android:visibility="gone"
+            app:srcCompat="@drawable/windows"
+            tools:visibility="visible"
+            />
+
+        <ImageView
+            android:id="@+id/ivMacOs"
+            style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
+            android:layout_marginEnd="@dimen/game_details_platform_icon_margin"
+            android:visibility="gone"
+            app:srcCompat="@drawable/apple"
+            tools:visibility="visible"
+            />
+
+        <ImageView
+            android:id="@+id/ivSteamOs"
+            style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_steam"
+            tools:visibility="visible"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

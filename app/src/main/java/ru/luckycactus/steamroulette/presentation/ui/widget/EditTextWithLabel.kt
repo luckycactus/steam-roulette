@@ -12,7 +12,6 @@ import android.widget.EditText
 import androidx.annotation.MainThread
 
 class EditTextWithLabel : EditText {
-
     var label: CharSequence? = null
         @MainThread
         set(value) {

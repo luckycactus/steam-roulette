@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="default_activity_margin">16dp</dimen>
-    <dimen name="half_default_activity_margin">8dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_normal">16dp</dimen>
+    <dimen name="spacing_tiny">4dp</dimen>
+
+    <dimen name="default_activity_margin">@dimen/spacing_normal</dimen>
+    <dimen name="touchable_view_default_size">48dp</dimen>
+    <dimen name="touchable_view_half_size">24dp</dimen>
     <dimen name="standard_progress_bar_size">48dp</dimen>
     <dimen name="cardview_corner_radius">8dp</dimen>
     <dimen name="dialog_corner_radius">8dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
     <dimen name="game_details_platform_icon_size">28dp</dimen>
     <dimen name="game_details_platform_icon_margin">8dp</dimen>
+    <dimen name="dialog_content_extra_top_padding">4dp</dimen>
+    <dimen name="game_details_screenshot_height">100dp</dimen>
+    <dimen name="game_details_extra_info_block_height">50dp</dimen>
+    <dimen name="game_view_roulette_text_size">20sp</dimen>
+    <dimen name="game_view_details_text_size">16sp</dimen>
 </resources>

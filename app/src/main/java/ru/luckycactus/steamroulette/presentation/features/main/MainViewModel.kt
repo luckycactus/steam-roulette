@@ -4,18 +4,28 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
-import ru.luckycactus.steamroulette.domain.common.*
-import ru.luckycactus.steamroulette.domain.exception.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.Result
+import ru.luckycactus.steamroulette.domain.core.invoke
+import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.OwnedGame
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
+import ru.luckycactus.steamroulette.presentation.navigation.Screens
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.nonNull
+import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -25,8 +35,10 @@ class MainViewModel @Inject constructor(
     private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
     private val signOutUser: SignOutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
-    private val resourceManager: ResourceManager
-) : ViewModel(), UserViewModelDelegate {
+    private val clearHiddenGames: ClearHiddenGamesUseCase,
+    private val resourceManager: ResourceManager,
+    private val router: Router
+) : BaseViewModel(), UserViewModelDelegate {
     override val isUserLoggedIn: Boolean
         get() = _nullableCurrentUserSteamId.value != null
 
@@ -41,16 +53,12 @@ class MainViewModel @Inject constructor(
     val errorMessage: LiveData<Event<String>>
         get() = _errorMessage
 
-    val screen: LiveData<Event<Screen>>
-        get() = _screen
-
     private val _currentUserSteamId = MediatorLiveData<SteamId>()
     private val _nullableCurrentUserSteamId: LiveData<SteamId?>
 
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
     private val _errorMessage = MutableLiveData<Event<String>>()
-    private val _screen = MutableLiveData<Event<Screen>>()
 
     init {
         _nullableCurrentUserSteamId = observeCurrentUser()
@@ -66,43 +74,44 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
-        userSummary = _currentUserSteamId.switchMap {
+        userSummary = _nullableCurrentUserSteamId.nullableSwitchMap {
             observeUserSummary(it)
-        }
-        //todo
-        currentUserSteamId.observeForever { }
+        }.nonNull()
+
+        observe(currentUserSteamId) { /* nothing */ }
     }
 
     fun onColdStart() {
         viewModelScope.launch {
             migrateApp()
             _nullableCurrentUserSteamId.first {
-                val screen = if (it != null) Screen.Roulette else Screen.Login
-                _screen.value = Event(screen)
+                val screen = if (it != null) Screens.Roulette else Screens.Login
+                router.newRootScreen(screen)
             }
         }
     }
 
-    fun onSignInSuccess() {
-        _screen.value = Event(Screen.Roulette)
+    fun onGameClick(game: GameHeader, enableSharedElementTransition: Boolean) {
+        router.navigateTo(Screens.GameDetails(game, enableSharedElementTransition))
     }
 
-    fun onExit() {
-        _screen.value = Event(Screen.Login)
-        //todo progress
+    override fun resetHiddenGames() {
+        viewModelScope.launch {
+            clearHiddenGames(getCurrentUserSteamId())
+        }
+    }
+
+    override fun exit() {
+        viewModelScope.coroutineContext.cancelChildren()
+        router.newRootScreen(Screens.Login)
         viewModelScope.launch {
             signOutUser()
         }
     }
 
-    fun onGameClick(game: OwnedGame) {
-        _screen.value = Event(Screen.GameDetails(game))
-    }
-
     override fun getCurrentUserSteamId(): SteamId {
         return _currentUserSteamId.value!!
     }
-
 
     override fun fetchGames() {
         viewModelScope.launch {
@@ -124,28 +133,26 @@ class MainViewModel @Inject constructor(
 
     private fun handleUserFetchError(result: Result<Unit>) {
         if (result is Result.Error) {
-            _errorMessage.value =
-                Event(
-                    "%s: %s".format(
-                        resourceManager.getString(R.string.error_user_update),
-                        result.message
-                    )
+            _errorMessage.value = Event(
+                "%s: %s".format(
+                    resourceManager.getString(R.string.error_user_update),
+                    result.message
                 )
+            )
         }
     }
+
 
     private fun handleGamesFetchError(result: Result<Unit>) {
         if (result is Result.Error) {
-            _errorMessage.value =
-                Event(
-                    "%s: %s".format(
-                        resourceManager.getString(R.string.error_get_owned_games),
-                        result.message
-                    )
+            _errorMessage.value = Event(
+                "%s: %s".format(
+                    resourceManager.getString(R.string.error_get_owned_games),
+                    result.message
                 )
+            )
         }
     }
-
 
     private suspend fun fetchGames(reload: Boolean): Result<Unit> {
         getCurrentUserSteamId().let {
@@ -172,12 +179,7 @@ class MainViewModel @Inject constructor(
         getCurrentUserSteamId().let {
             return try {
                 _fetchUserSummaryState.value = true
-                fetchUserSummary(
-                    FetchUserSummaryUseCase.Params(
-                        it,
-                        reload
-                    )
-                )
+                fetchUserSummary(FetchUserSummaryUseCase.Params(it, reload))
                 Result.success
             } catch (e: Exception) {
                 if (e is CancellationException) {
@@ -190,11 +192,4 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
-    sealed class Screen {
-        object Login : Screen()
-        object Roulette : Screen()
-        class GameDetails(val game: OwnedGame) : Screen()
-    }
-
 }

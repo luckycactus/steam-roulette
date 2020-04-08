@@ -1,7 +1,6 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <AndroidXmlCodeStyleSettings>
-      <option name="ARRANGEMENT_SETTINGS_MIGRATED_TO_191" value="true" />
       <option name="LAYOUT_SETTINGS">
         <value>
           <option name="INSERT_LINE_BREAK_BEFORE_NAMESPACE_DECLARATION" value="true" />
@@ -12,6 +11,11 @@
         <value>
           <option name="INSERT_LINE_BREAK_BEFORE_NAMESPACE_DECLARATION" value="true" />
           <option name="INSERT_LINE_BREAK_AFTER_LAST_ATTRIBUTE" value="true" />
+        </value>
+      </option>
+      <option name="VALUE_RESOURCE_FILE_SETTINGS">
+        <value>
+          <option name="WRAP_ATTRIBUTES" value="2" />
         </value>
       </option>
       <option name="OTHER_SETTINGS">
@@ -25,6 +29,9 @@
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
     <codeStyleSettings language="XML">
+      <indentOptions>
+        <option name="CONTINUATION_INDENT_SIZE" value="4" />
+      </indentOptions>
       <arrangement>
         <rules>
           <section>

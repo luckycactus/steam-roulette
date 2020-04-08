@@ -1,23 +1,21 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.os.Bundle
-import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_menu.*
-import kotlinx.android.synthetic.main.fragment_menu.ivAvatar
-import kotlinx.android.synthetic.main.fragment_menu.tvNickname
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.findComponent
+import ru.luckycactus.steamroulette.di.core.findComponent
+import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
-import ru.luckycactus.steamroulette.presentation.features.main.MainFlowComponent
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
-import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
+import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.utils.viewModel
+import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
     private val viewModel by viewModel {
-        findComponent<MainFlowComponent>().menuViewModel
+        findComponent<MainActivityComponent>().menuViewModel
     }
 
     override val layoutResId: Int = R.layout.fragment_menu
@@ -67,7 +65,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
     }
 
     override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
-        (activity as MainActivity).viewModel.onExit()
+        viewModel.exit()
     }
 
     companion object {
