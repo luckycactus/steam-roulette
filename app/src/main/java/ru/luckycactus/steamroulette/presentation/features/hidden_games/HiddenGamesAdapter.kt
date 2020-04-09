@@ -35,8 +35,7 @@ class HiddenGamesAdapter(
 
     override fun onBindViewHolder(holder: HiddenGameViewHolder, position: Int) {
         val item = getItem(position)!!
-        //todo selection
-        holder.bind(item, tracker?.let { it.isSelected(item.appId.toLong()) } ?: false)
+        holder.bind(item, tracker?.isSelected(item.appId.toLong()) ?: false)
     }
 
     override fun getItemId(position: Int): Long {

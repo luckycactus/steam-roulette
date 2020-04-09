@@ -42,7 +42,7 @@ class GameDetailsUiModelMapper @Inject constructor(
 
     private fun mapShortDescription(from: GameStoreInfo): GameDetailsUiModel.ShortDescription? {
         val model = GameDetailsUiModel.ShortDescription(
-            from.shortDescription,//.replace("&quot", "\""), //todo
+            from.shortDescription,
             from.categories.map { it.description },
             from.genres.map { it.description },
             from.requiredAge,

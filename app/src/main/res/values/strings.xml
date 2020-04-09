@@ -39,11 +39,11 @@
     <string name="supported_steamid_formats">Supported SteamID Formats</string>
     <string name="next_game">Next game</string>
     <string name="hide_game">Hide game</string>
-    <string name="fab_info_hint">Game info</string>
+    <string name="fab_info_hint">Game info</string>r
     <string name="playtime">Show</string>
     <string name="playtime_pref_all">All games</string>
-    <string name="playtime_pref_not_played">Games I have not played</string>
-    <string name="playtime_pref_max_time">Games I have played for no more than:</string>
+    <string name="playtime_pref_not_played">Games I haven\'t played</string>
+    <string name="playtime_pref_max_time">Games I\'ve played for no more than:</string>
     <string name="playtime_hours_label">hour(s)</string>
     <string name="coming_soon">Coming soon</string>
     <string name="game_details_description">Description</string>
