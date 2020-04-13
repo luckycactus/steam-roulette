@@ -12,8 +12,7 @@ import ru.luckycactus.steamroulette.presentation.utils.isFinishing
 
 object InjectionManager {
 
-    private val componentStore =
-        ComponentStore()
+    private val componentStore = ComponentStore()
 
     fun init(app: Application) {
         app.registerActivityLifecycleCallbacks(activityLifecycleHelper)
@@ -21,9 +20,7 @@ object InjectionManager {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> bindComponent(owner: ComponentOwner<T>): T =
-        getComponentOrCreate(
-            owner
-        ) as T
+        getComponentOrCreate(owner) as T
 
     inline fun <reified T> findComponent(): T = findComponent { it is T } as T
 

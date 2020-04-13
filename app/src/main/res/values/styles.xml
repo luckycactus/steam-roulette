@@ -94,8 +94,7 @@
     </style>
 
     <style name="AboutItemTextView" parent="MenuItemTextView">
-        <item name="android:background">?colorSurface</item>
-        <item name="android:foreground">@drawable/selectable_item_background</item>
+        <item name="android:background">@drawable/surface_selectable_item_background</item>
         <item name="android:textAppearance">?textAppearanceBody1</item>
     </style>
 </resources>

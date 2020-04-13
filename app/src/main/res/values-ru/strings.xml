@@ -62,4 +62,6 @@
     <string name="hidden_games">Скрытые игры</string>
     <string name="make_all_games_visible">Сделать все видимыми</string>
     <string name="make_visible">Сделать видимой</string>
+    <string name="about_app">О приложении</string>
+    <string name="show_app_source_code">Исходный код</string>
 </resources>
