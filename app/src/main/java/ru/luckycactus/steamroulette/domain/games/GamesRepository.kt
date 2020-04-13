@@ -12,7 +12,7 @@ interface GamesRepository {
 
     suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy)
 
-    suspend fun getLocalOwnedGamesIds(
+    suspend fun getVisibleLocalOwnedGamesIds(
         steamId: SteamId,
         filter: PlaytimeFilter
     ): List<Int>

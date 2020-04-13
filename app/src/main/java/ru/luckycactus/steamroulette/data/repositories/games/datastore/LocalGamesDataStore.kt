@@ -47,7 +47,7 @@ class LocalGamesDataStore @Inject constructor(
         }
     }
 
-    override suspend fun getOwnedGamesIds(
+    override suspend fun getVisibleOwnedGamesIds(
         steamId: SteamId,
         filter: PlaytimeFilter
     ): List<Int> = db.ownedGamesDao().run {

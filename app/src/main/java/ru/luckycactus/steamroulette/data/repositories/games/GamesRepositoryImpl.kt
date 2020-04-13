@@ -53,11 +53,11 @@ class GamesRepositoryImpl @Inject constructor(
     override suspend fun isUserHasGames(steamId: SteamId): Boolean =
         localGamesDataStore.isUserHasGames(steamId)
 
-    override suspend fun getLocalOwnedGamesIds(
+    override suspend fun getVisibleLocalOwnedGamesIds(
         steamId: SteamId,
         filter: PlaytimeFilter
     ): List<Int> =
-        localGamesDataStore.getOwnedGamesIds(steamId, filter)
+        localGamesDataStore.getVisibleOwnedGamesIds(steamId, filter)
 
     override suspend fun getLocalOwnedGameHeaders(
         steamId: SteamId,
