@@ -21,6 +21,9 @@ class DetailedDescriptionFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
         toolbar.title = appName
         tvDescription.text = HtmlCompat.fromHtml(
             detailedDescription,
