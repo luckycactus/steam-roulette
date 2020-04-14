@@ -60,9 +60,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:drawableStart="@drawable/ic_github"
+                android:drawableEnd="@drawable/ic_chevron_right"
                 android:text="@string/show_app_source_code"
                 app:layout_constraintTop_toBottomOf="@id/tvVersion"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvUsedLibraries"
+                style="@style/AboutItemTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_layers_black_24dp"
                 android:drawableEnd="@drawable/ic_chevron_right"
+                android:text="@string/open_source_libraries"
+                app:layout_constraintTop_toBottomOf="@id/tvSourceCode"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

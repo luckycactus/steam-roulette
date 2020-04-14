@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.di.common
 
 import android.app.Application
 import android.content.Context
+import android.content.res.AssetManager
 import androidx.room.Room
 import com.squareup.moshi.Moshi
 import dagger.Binds
@@ -12,6 +13,9 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
 import ru.luckycactus.steamroulette.data.local.db.DB
+import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.about.data_store.AboutDataStore
+import ru.luckycactus.steamroulette.data.repositories.about.data_store.LocalAboutDataStore
 import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
@@ -27,6 +31,7 @@ import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataSto
 import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.domain.about.AboutRepository
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
@@ -67,6 +72,9 @@ abstract class AppModule {
     abstract fun bindGamesRepository(gamesRepository: GamesRepositoryImpl): GamesRepository
 
     @Binds
+    abstract fun bindAboutRepository(aboutRepositoryImpl: AboutRepositoryImpl): AboutRepository
+
+    @Binds
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner
 
     @Binds
@@ -83,6 +91,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindLanguageProvider(languageProviderImpl: LanguageProviderImpl): LanguageProvider
+
+    @Binds
+    abstract fun bindAboutDataStore(localAboutDataStore: LocalAboutDataStore): AboutDataStore
 
     @Module
     companion object {
@@ -126,5 +137,9 @@ abstract class AppModule {
         @JvmStatic
         @Provides
         fun provideMoshi(): Moshi = Moshi.Builder().build()
+
+        @JvmStatic
+        @Provides
+        fun provideAssets(@ForApplication context: Context): AssetManager = context.assets
     }
 }

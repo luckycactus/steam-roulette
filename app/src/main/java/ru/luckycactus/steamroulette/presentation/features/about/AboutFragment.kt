@@ -33,6 +33,11 @@ class AboutFragment : BaseFragment() {
         tvSourceCode.setOnClickListener {
             viewModel.onSourceCodeClick()
         }
+
+        tvUsedLibraries.setDrawableColorFromAttribute(R.attr.colorOnSurface)
+        tvUsedLibraries.setOnClickListener {
+            viewModel.onUsedLibrariesClick()
+        }
     }
 
     companion object {

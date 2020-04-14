@@ -17,4 +17,8 @@ class AboutViewModel @Inject constructor(
             Screens.ExternalBrowserFlow("https://github.com/luckycactus/steam-roulette")
         )
     }
+
+    fun onUsedLibrariesClick() {
+        router.navigateTo(Screens.UsedLibraries)
+    }
 }

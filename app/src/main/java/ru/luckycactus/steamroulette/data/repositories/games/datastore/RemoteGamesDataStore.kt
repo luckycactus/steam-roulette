@@ -22,6 +22,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 import javax.inject.Named
 
+//todo inappropriate blocking calls
 @Reusable
 class RemoteGamesDataStore @Inject constructor(
     private val steamApiService: SteamApiService,
@@ -31,9 +32,9 @@ class RemoteGamesDataStore @Inject constructor(
 ) : GamesDataStore.Remote {
 
     private val ownedGameAdapter =
-        moshi.adapter<OwnedGameEntity>(OwnedGameEntity::class.java)
+        moshi.adapter(OwnedGameEntity::class.java)
     private val gameStoreInfoResultAdapter =
-        moshi.adapter<GameStoreInfoResult>(GameStoreInfoResult::class.java)
+        moshi.adapter(GameStoreInfoResult::class.java)
 
     override suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity> {
         val response = wrapCommonNetworkExceptions {

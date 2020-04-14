@@ -9,4 +9,5 @@
 \u2022 https://steamcommunity.com/profiles/76561197960287930/
 \u2022 https://steamcommunity.com/profiles/[U:1:22202]/"</string>
     <string name="user_id_hint" translatable="false">SteamID / CommunityID / Profile URL</string>
+    <string name="app_library_template" translatable="false">%s / %s</string>
 </resources>
