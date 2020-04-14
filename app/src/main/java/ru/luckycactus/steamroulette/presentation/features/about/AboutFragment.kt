@@ -38,6 +38,11 @@ class AboutFragment : BaseFragment() {
         tvUsedLibraries.setOnClickListener {
             viewModel.onUsedLibrariesClick()
         }
+
+        tvPrivacyPolicy.setDrawableColorFromAttribute(R.attr.colorOnSurface)
+        tvPrivacyPolicy.setOnClickListener {
+            viewModel.onPrivacyPolicyClick()
+        }
     }
 
     companion object {

@@ -14,11 +14,22 @@ class AboutViewModel @Inject constructor(
 
     fun onSourceCodeClick() {
         router.navigateTo(
-            Screens.ExternalBrowserFlow("https://github.com/luckycactus/steam-roulette")
+            Screens.ExternalBrowserFlow(SOURCE_URL)
         )
     }
 
     fun onUsedLibrariesClick() {
         router.navigateTo(Screens.UsedLibraries)
+    }
+
+    fun onPrivacyPolicyClick() {
+        router.navigateTo(
+            Screens.ExternalBrowserFlow(PRIVACY_POLICY_URL)
+        )
+    }
+
+    companion object {
+        private const val SOURCE_URL = "https://github.com/luckycactus/steam-roulette"
+        private const val PRIVACY_POLICY_URL = "$SOURCE_URL/blob/master/PRIVACY_POLICY.md"
     }
 }

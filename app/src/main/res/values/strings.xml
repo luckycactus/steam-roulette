@@ -68,4 +68,5 @@
     <string name="about_app">About</string>
     <string name="show_app_source_code">Source code</string>
     <string name="open_source_libraries">Open Source Libraries</string>
+    <string name="privacy_policy">Privacy policy</string>
 </resources>
