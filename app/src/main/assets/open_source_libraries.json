@@ -1,8 +1,86 @@
 [
   {
-    "name": "AppCompat",
+    "name": "Android Jetpack",
     "author": "Google",
-    "source": "http://sample.net",
+    "source": "https://android.googlesource.com/platform/frameworks/support.git",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Material Components for Android",
+    "author": "Google",
+    "source": "https://github.com/material-components/material-components-android",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Retrofit",
+    "author": "Square",
+    "source": "https://github.com/square/retrofit",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "OkHttp",
+    "author": "Square",
+    "source": "https://github.com/square/okhttp",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Moshi",
+    "author": "Square",
+    "source": "https://github.com/square/moshi",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Glide",
+    "author": "Bumptech",
+    "source": "https://github.com/bumptech/glide",
+    "license_type": "Custom"
+  },
+  {
+    "name": "Stfalcon ImageViewer",
+    "author": "stfalcon-studio",
+    "source": "https://github.com/stfalcon-studio/StfalconImageViewer",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Glide Transformations",
+    "author": "Wasabeef",
+    "source": "https://github.com/wasabeef/glide-transformations",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Firebase Crashlytics SDK",
+    "author": "Firebase",
+    "source": "https://github.com/firebase/firebase-android-sdk",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Dagger",
+    "author": "Google",
+    "source": "https://github.com/google/dagger",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "AssistedInject",
+    "author": "Square",
+    "source": "https://github.com/square/AssistedInject",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "Cicerone",
+    "author": "Terrakok",
+    "source": "https://github.com/terrakok/Cicerone",
     "license_type": "MIT"
+  },
+  {
+    "name": "Stetho",
+    "author": "Facebook",
+    "source": "https://github.com/facebook/stetho",
+    "license_type": "MIT"
+  },
+  {
+    "name": "LeakCanary",
+    "author": "Square",
+    "source": "https://github.com/square/leakcanary",
+    "license_type": "Apache2"
   }
 ]

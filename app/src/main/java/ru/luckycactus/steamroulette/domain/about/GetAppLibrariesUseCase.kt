@@ -6,9 +6,8 @@ import javax.inject.Inject
 
 class GetAppLibrariesUseCase @Inject constructor(
     private val aboutRepository: AboutRepository
-): SuspendUseCase<Unit, List<AppLibrary>>() {
+) : SuspendUseCase<Unit, List<AppLibrary>>() {
 
-    override suspend fun getResult(params: Unit): List<AppLibrary> {
-        return aboutRepository.getAppLibraries()
-    }
+    override suspend fun getResult(params: Unit): List<AppLibrary> =
+        aboutRepository.getAppLibraries()
 }

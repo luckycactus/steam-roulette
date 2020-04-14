@@ -64,4 +64,5 @@
     <string name="make_visible">Сделать видимой</string>
     <string name="about_app">О приложении</string>
     <string name="show_app_source_code">Исходный код</string>
+    <string name="open_source_libraries">Библиотеки с открытым исходным кодом</string>
 </resources>

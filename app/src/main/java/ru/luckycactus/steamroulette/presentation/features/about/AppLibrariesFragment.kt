@@ -31,7 +31,6 @@ class AppLibrariesFragment : BaseFragment() {
             val adapter = AppLibrariesAdapter(it, ::onItemClick)
             rvAppLibraries.layoutManager = LinearLayoutManager(requireContext())
             rvAppLibraries.adapter = adapter
-            Log.d("ololo", it.toString())
         }
     }
 

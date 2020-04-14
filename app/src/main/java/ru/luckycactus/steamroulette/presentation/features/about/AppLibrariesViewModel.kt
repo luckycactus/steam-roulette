@@ -24,7 +24,8 @@ class AppLibrariesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _libraries.value = getAppLibraries()
+            _libraries.value =
+                getAppLibraries().sortedWith(compareBy(AppLibrary::author, AppLibrary::name))
         }
     }
 
