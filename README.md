@@ -1,16 +1,16 @@
-<br>
-<img alt="Icon" src="app/src/main/ic_launcher-web.png" width="20%" align="left">
-<a alt='Get it on Google Play' href='https://play.google.com/store/apps/details?id=ru.luckycactus.steamroulette' target='_blank' align='right'><img 
-align='right' height='36' style='border:0px;height:36px;' src='https://developer.android.com/images/brand/en_generic_rgb_wo_60.png' border='0' /></a>
-
 # Steam Shuffle
 
-Android app to help you choose a game from your Steam library to play
+<img src="app/src/main/ic_launcher-web.png" width="200px"> 
 
-<br>
+Android app to help you choose a game from your Steam library to play 
 
-<img src="demo/screen1.png" width="250px"> <img src="demo/screen2.png" width="250px" hspace=5>
+## Screenshots
 
+<img src="demo/screen1.png" width="250px"> <img src="demo/screen2.png" width="250px">
+
+## Download
+
+<a href="https://play.google.com/store/apps/details?id=ru.luckycactus.steamroulette"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width=200px></a>
 
 ## Libraries and tools
 
