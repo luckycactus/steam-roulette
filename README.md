@@ -1,6 +1,6 @@
 # Steam Shuffle
 
-<img src="app/src/main/ic_launcher-web.png" width="200px"> 
+<img src="demo/banner.jpg" width="500px"> 
 
 Android app to help you choose a game from your Steam library to play 
 
