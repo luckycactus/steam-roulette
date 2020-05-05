@@ -8,9 +8,7 @@ import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
-import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPagingList
-import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
-import ru.luckycactus.steamroulette.domain.games.SetGamesHiddenUseCase
+import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
@@ -26,12 +24,15 @@ import javax.inject.Inject
 
 class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
-    private val getOwnedGamesPagingList: GetOwnedGamesPagingList,
+    private val getOwnedGamesPagingList: GetOwnedGamesPagingListUseCase,
     private val observePlayTimeFilter: ObservePlaytimeFilterUseCase,
     private var observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
+    private val setGamesShown: SetGamesShownUseCase,
+    private val setAllGamesShown: SetAllGamesShownUseCase,
     private val resourceManager: ResourceManager
 ) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
+
     val games: LiveData<List<GameHeader>?>
     val itemRemoved: LiveData<Event<Int>?> //todo flow
         get() = _itemRemoved
@@ -46,12 +47,18 @@ class RouletteViewModel @Inject constructor(
     private val _controlsAvailable = MutableLiveData<Boolean>().startWith(true)
     private val _itemRemoved = MediatorLiveData<Event<Int>>()
     private val currentUserPlayTimeFilter: LiveData<PlaytimeFilter>
+    private val topGame = MediatorLiveData<GameHeader?>()
 
     private var getPagingListJob: Job? = null
     private var allGamesShowed = false
     private var viewVisible = true
     private var hiddenGamesCount = 0
     private var rouletteStateInvalidated = false
+
+    // first game in list that was previously shown
+    // when we get that game on top it means that all games are shown
+    // so we must clear shown state for all games
+    private var firstPreviouslyShownGameId: Int? = null
 
     init {
         currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId.switchMap {
@@ -86,6 +93,16 @@ class RouletteViewModel @Inject constructor(
                 _itemRemoved.value = null
             }
         }
+
+        topGame.addSource(itemsInserted) {
+            updateTopGame()
+        }
+
+        topGame.addSource(_itemRemoved) {
+            updateTopGame()
+        }
+
+        observe(topGame, this::onTopGameUpdated)
     }
 
     fun onGameSwiped(hide: Boolean) {
@@ -96,7 +113,7 @@ class RouletteViewModel @Inject constructor(
                 if (hide) {
                     hideGame(game)
                 }
-                if (it.allGamesShowed()) {
+                if (it.isFinished()) {
                     allGamesShowed = true
                     _contentState.value = ContentState.Placeholder(
                         resourceManager.getString(R.string.games_queue_ended),
@@ -130,6 +147,34 @@ class RouletteViewModel @Inject constructor(
         syncRouletteState()
     }
 
+    private fun updateTopGame() {
+        val newTopGame = _gamesPagingList.value?.peekTop()
+        if (topGame.value != newTopGame)
+            topGame.value = newTopGame
+    }
+
+    private fun onTopGameUpdated(game: GameHeader?) {
+        if (game != null) {
+            GlobalScope.launch {
+                if (game.appId == firstPreviouslyShownGameId) {
+                    setAllGamesShown(
+                        SetAllGamesShownUseCase.Params(
+                            userViewModelDelegate.getCurrentUserSteamId(),
+                            false
+                        )
+                    )
+                }
+                setGamesShown(
+                    SetGamesShownUseCase.Params(
+                        userViewModelDelegate.getCurrentUserSteamId(),
+                        listOf(game.appId),
+                        true
+                    )
+                )
+            }
+        }
+    }
+
     private fun hideGame(game: GameHeader) {
         GlobalScope.launch {
             setGamesHidden(
@@ -153,7 +198,7 @@ class RouletteViewModel @Inject constructor(
         val filter = currentUserPlayTimeFilter.value
 
         getPagingListJob?.cancel()
-        _gamesPagingList.value?.finish()
+        _gamesPagingList.value?.close()
         _gamesPagingList.value = null
 
         allGamesShowed = false
@@ -169,14 +214,16 @@ class RouletteViewModel @Inject constructor(
                 try {
                     _contentState.value = ContentState.Loading
 
-                    val pagingGameList = getOwnedGamesPagingList(
-                        GetOwnedGamesPagingList.Params(
+                    val (pagingGameList, firstShownGameId) = getOwnedGamesPagingList(
+                        GetOwnedGamesPagingListUseCase.Params(
                             userViewModelDelegate.getCurrentUserSteamId(),
                             filter,
                             viewModelScope
                         )
                     )
+                    firstPreviouslyShownGameId = firstShownGameId
                     _gamesPagingList.value = pagingGameList
+
                     if (isActive) {
                         if (!pagingGameList.isEmpty()) {
                             _contentState.value = ContentState.Success

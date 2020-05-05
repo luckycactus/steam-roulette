@@ -14,11 +14,15 @@ interface GamesDataStore {
     interface Local : GamesDataStore {
         suspend fun saveOwnedGames(steamId: SteamId, gamesFlow: Flow<OwnedGameEntity>)
 
-        suspend fun getVisibleOwnedGamesIds(steamId: SteamId, filter: PlaytimeFilter): List<Int>
+        suspend fun getVisibleOwnedGamesIds(steamId: SteamId, filter: PlaytimeFilter, shown: Boolean): List<Int>
 
         suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
 
         suspend fun setAllOwnedGamesHidden(steamId: SteamId, hide: Boolean)
+
+        suspend fun setOwnedGamesShown(steamId: SteamId, gameIds: List<Int>, shown: Boolean)
+
+        suspend fun setAllOwnedGamesShown(steamId: SteamId, shown: Boolean)
 
         suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader
 

@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.res.AssetManager
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
@@ -128,10 +130,17 @@ abstract class AppModule {
         @Singleton
         @JvmStatic
         @Provides
-        fun provideSteamRouletteDb(@ForApplication appContext: Context) =
-            Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
+        fun provideSteamRouletteDb(@ForApplication appContext: Context): DB {
+            val migration2To3 = object : Migration(2, 3) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE owned_game ADD COLUMN shown INTEGER DEFAULT 0 NOT NULL");
+                }
+            }
+            return Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
                 .fallbackToDestructiveMigrationFrom(1)
+                .addMigrations(migration2To3)
                 .build()
+        }
 
         @Reusable
         @JvmStatic

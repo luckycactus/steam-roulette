@@ -55,9 +55,10 @@ class GamesRepositoryImpl @Inject constructor(
 
     override suspend fun getVisibleLocalOwnedGamesIds(
         steamId: SteamId,
-        filter: PlaytimeFilter
+        filter: PlaytimeFilter,
+        shown: Boolean
     ): List<Int> =
-        localGamesDataStore.getVisibleOwnedGamesIds(steamId, filter)
+        localGamesDataStore.getVisibleOwnedGamesIds(steamId, filter, shown)
 
     override suspend fun getLocalOwnedGameHeaders(
         steamId: SteamId,
@@ -65,12 +66,28 @@ class GamesRepositoryImpl @Inject constructor(
     ): List<GameHeader> =
         localGamesDataStore.getOwnedGameHeaders(steamId, gameIds)
 
-    override suspend fun setLocalOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean) {
+    override suspend fun setLocalOwnedGamesHidden(
+        steamId: SteamId,
+        gameIds: List<Int>,
+        hide: Boolean
+    ) {
         localGamesDataStore.setOwnedGamesHidden(steamId, gameIds, hide)
     }
 
     override suspend fun setAllLocalOwnedGamesHidden(steamId: SteamId, hide: Boolean) {
         localGamesDataStore.setAllOwnedGamesHidden(steamId, hide)
+    }
+
+    override suspend fun setLocalOwnedGamesShown(
+        steamId: SteamId,
+        gameIds: List<Int>,
+        shown: Boolean
+    ) {
+        localGamesDataStore.setOwnedGamesShown(steamId, gameIds, shown)
+    }
+
+    override suspend fun setAllLocalOwnedGamesShown(steamId: SteamId, shown: Boolean) {
+        localGamesDataStore.setAllOwnedGamesShown(steamId, shown)
     }
 
     private fun createOwnedGamesResource(

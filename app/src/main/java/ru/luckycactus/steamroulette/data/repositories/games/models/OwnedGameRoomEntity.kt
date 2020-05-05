@@ -20,6 +20,8 @@ data class OwnedGameRoomEntity(
 
     val hidden: Boolean,
 
+    val shown: Boolean,
+
     @Embedded
     val ownedGameEntity: OwnedGameEntity
 )

@@ -6,13 +6,15 @@ import ru.luckycactus.steamroulette.domain.core.Mapper
 
 class OwnedGameRoomEntityMapper(
     private val steam64: Long,
-    private val hiddenGameIds: Set<Int>
+    private val hiddenGameIds: Set<Int>,
+    private val shownGameIds: Set<Int>
 ) : Mapper<OwnedGameEntity, OwnedGameRoomEntity>() {
 
     override fun mapFrom(from: OwnedGameEntity): OwnedGameRoomEntity {
         return OwnedGameRoomEntity(
             steam64,
             hiddenGameIds.contains(from.appId),
+            shownGameIds.contains(from.appId),
             from
         )
     }

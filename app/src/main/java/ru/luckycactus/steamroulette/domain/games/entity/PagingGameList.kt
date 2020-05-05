@@ -10,13 +10,14 @@ import ru.luckycactus.steamroulette.domain.core.Event
 
 interface PagingGameList {
     val list: List<GameHeader>
-    val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>>
+    val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>> //todo flow?
     fun isEmpty(): Boolean
-    fun allGamesShowed(): Boolean
+    fun isFinished(): Boolean
     @MainThread
     fun removeTop(): GameHeader
+    fun peekTop(): GameHeader?
     @MainThread
-    fun finish()
+    fun close()
 }
 
 class PagingGameListImpl constructor(
@@ -37,7 +38,7 @@ class PagingGameListImpl constructor(
     private var nextFetchIndex = 0
     private var fetching = false
     private var fetchJob: Job? = null
-    private val tmpIndiciesMap = SparseIntArray(fetchDistance)
+    private val tmpIndicesMap = SparseIntArray(fetchDistance)
 
     init {
         if (gameIds.isNotEmpty())
@@ -46,7 +47,7 @@ class PagingGameListImpl constructor(
 
     override fun isEmpty() = gameIds.isEmpty()
 
-    override fun allGamesShowed() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
+    override fun isFinished() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
 
     @MainThread
     override fun removeTop(): GameHeader {
@@ -57,7 +58,10 @@ class PagingGameListImpl constructor(
     }
 
     @MainThread
-    override fun finish() {
+    override fun peekTop(): GameHeader? = _list.firstOrNull()
+
+    @MainThread
+    override fun close() {
         fetchJob?.cancel()
     }
 
@@ -71,13 +75,13 @@ class PagingGameListImpl constructor(
                     fetchEnd
                 )
                 fetchIds.forEachIndexed { index, i ->
-                    tmpIndiciesMap[i] = index
+                    tmpIndicesMap[i] = index
                 }
                 val games = gamesFactory(fetchIds)
                     .sortedWith(Comparator { o1, o2 ->
-                        tmpIndiciesMap[o1.appId] - tmpIndiciesMap[o2.appId]
+                        tmpIndicesMap[o1.appId] - tmpIndicesMap[o2.appId]
                     })
-                tmpIndiciesMap.clear()
+                tmpIndicesMap.clear()
                 if (isActive) {
                     nextFetchIndex = fetchEnd
                     _list.addAll(games)
