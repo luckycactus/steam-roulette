@@ -9,10 +9,11 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        StorageModule::class
     ]
 )
-interface ReleaseBaseAppComponent: BaseAppComponent {
+interface ReleaseBaseAppComponent : BaseAppComponent {
 
     @Component.Builder
     interface Builder {
