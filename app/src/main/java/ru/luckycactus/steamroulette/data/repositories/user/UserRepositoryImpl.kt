@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.data.repositories.user
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import dagger.Reusable
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
@@ -14,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.days
 
-@Singleton
+@Reusable
 class UserRepositoryImpl @Inject constructor(
     private val localUserDataStore: UserDataStore.Local,
     private val remoteUserDataStore: UserDataStore.Remote,

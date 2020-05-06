@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.data.repositories.games
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
+import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
@@ -18,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.days
 
-@Singleton
+@Reusable
 class GamesRepositoryImpl @Inject constructor(
     private val localGamesDataStore: GamesDataStore.Local,
     private val remoteGamesDataStore: GamesDataStore.Remote,

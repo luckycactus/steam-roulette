@@ -10,8 +10,7 @@ import java.util.concurrent.atomic.AtomicReference
 fun <R> Flow<R>.chunkBuffer(bufferSize: Int) =
     object : Flow<List<R>> {
 
-        private var buffer =
-            AtomicReference<ArrayList<R>>()
+        private var buffer = AtomicReference<ArrayList<R>>()
 
         init {
             createBuffer()

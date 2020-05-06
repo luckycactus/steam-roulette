@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
+import dagger.Reusable
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.core.long
@@ -16,7 +17,7 @@ import ru.luckycactus.steamroulette.presentation.utils.nonNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
+@Reusable
 class LocalUserDataStore @Inject constructor(
     private val db: DB,
     @Identified(R.id.userCachePrefs) private val userPreferences: SharedPreferences
