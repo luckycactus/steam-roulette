@@ -1,8 +1,8 @@
 package ru.luckycactus.steamroulette.domain.games_filter
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import javax.inject.Inject
 

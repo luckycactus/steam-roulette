@@ -3,8 +3,8 @@ package ru.luckycactus.steamroulette.domain.login
 import dagger.Reusable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
+import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository

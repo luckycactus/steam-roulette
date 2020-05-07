@@ -9,14 +9,13 @@ import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.GameStoreInfoEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.time.days
 
 @Reusable
@@ -30,10 +29,10 @@ class GamesRepositoryImpl @Inject constructor(
         createOwnedGamesResource(steamId).updateIfNeed(cachePolicy)
     }
 
-    override fun observeGamesCount(steamId: SteamId): LiveData<Int> =
+    override fun observeGamesCount(steamId: SteamId): Flow<Int> =
         localGamesDataStore.observeOwnedGamesCount(steamId)
 
-    override fun observeHiddenGamesCount(steamId: SteamId): LiveData<Int> =
+    override fun observeHiddenGamesCount(steamId: SteamId): Flow<Int> =
         localGamesDataStore.observeHiddenOwnedGamesCount(steamId)
 
     override fun getHiddenGamesPagedListLiveData(steamId: SteamId): LiveData<PagedList<GameHeader>> =
@@ -43,7 +42,7 @@ class GamesRepositoryImpl @Inject constructor(
         localGamesDataStore.resetHiddenOwnedGames(steamId)
     }
 
-    override fun observeGamesUpdates(steamId: SteamId): LiveData<Long> =
+    override fun observeGamesUpdates(steamId: SteamId): Flow<Long> =
         createOwnedGamesResource(steamId).observeCacheUpdates()
 
     override suspend fun clearUser(steamId: SteamId) {

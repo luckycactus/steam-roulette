@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.core
 
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
@@ -51,5 +51,5 @@ class CacheHelper @Inject constructor(
         prefsEditor.apply { remove(key) }
     }
 
-    fun observeCacheUpdates(key: String): LiveData<Long> = prefs.longLiveData(key, 0L)
+    fun observeCacheUpdates(key: String): Flow<Long> = prefs.longFlow(key, 0L)
 }

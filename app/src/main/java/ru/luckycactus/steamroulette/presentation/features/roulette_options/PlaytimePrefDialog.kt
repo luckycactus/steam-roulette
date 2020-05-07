@@ -8,13 +8,16 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.dialog_pref_playtime.*
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
+import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.observeFirst
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
@@ -77,16 +80,16 @@ class PlaytimePrefDialog : DialogFragment() {
             etPlaytime.label = getString(R.string.playtime_hours_label)
 
             if (savedInstanceState == null) {
-                observeFirst(viewModel.currentPlaytimeFilterType) {
-                    when (it) {
+                lifecycleScope.launch {
+                    when (viewModel.getCurrentPlaytimeFilterType()) {
                         PlaytimeFilter.Type.All -> rbPlaytimeAll
                         PlaytimeFilter.Type.NotPlayed -> rbPlayTimeNotPlayed
                         PlaytimeFilter.Type.Limited -> rbPlaytimeLimit
                     }.isChecked = true
                 }
 
-                observeFirst(viewModel.currentMaxPlaytimeSetting) {
-                    etPlaytime.setText(it.toString())
+                lifecycleScope.launch {
+                    etPlaytime.setText(viewModel.getCurrentMaxPlaytimeSetting().toString())
                 }
             }
         }

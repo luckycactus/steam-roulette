@@ -3,12 +3,9 @@ package ru.luckycactus.steamroulette.presentation.utils.glide
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.util.Log
 import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.common.App
 import java.security.MessageDigest
 
 class CoverGlareTransformation(

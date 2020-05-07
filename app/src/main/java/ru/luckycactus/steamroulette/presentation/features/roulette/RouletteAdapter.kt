@@ -2,11 +2,9 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
-import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback

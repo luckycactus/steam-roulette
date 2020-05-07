@@ -2,14 +2,14 @@ package ru.luckycactus.steamroulette.data.repositories.user_settings
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import dagger.Reusable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.core.intLiveData
+import ru.luckycactus.steamroulette.data.core.intFlow
 import ru.luckycactus.steamroulette.di.qualifier.Identified
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import javax.inject.Inject
 
@@ -21,12 +21,12 @@ class UserSettingsRepositoryImpl @Inject constructor(
     override fun observePlaytimeFilterType(
         steamId: SteamId,
         default: PlaytimeFilter.Type
-    ): LiveData<PlaytimeFilter.Type> =
-        userSettingsPrefs.intLiveData(playTimeKey(steamId), default.ordinal)
+    ): Flow<PlaytimeFilter.Type> =
+        userSettingsPrefs.intFlow(playTimeKey(steamId), default.ordinal)
             .map { PlaytimeFilter.Type.fromOrdinal(it) }
 
-    override fun observeMaxPlaytime(steamId: SteamId, default: Int): LiveData<Int> =
-        userSettingsPrefs.intLiveData(maximumPlayTimeKey(steamId), default)
+    override fun observeMaxPlaytime(steamId: SteamId, default: Int): Flow<Int> =
+        userSettingsPrefs.intFlow(maximumPlayTimeKey(steamId), default)
 
     override fun savePlayTimeFilterType(
         steamId: SteamId,

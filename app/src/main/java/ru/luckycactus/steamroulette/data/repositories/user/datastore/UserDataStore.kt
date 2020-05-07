@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.data.repositories.user.datastore
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
 
@@ -11,13 +11,13 @@ interface UserDataStore {
     interface Local : UserDataStore {
         suspend fun saveUserSummary(userSummary: UserSummaryEntity)
 
-        fun observeUserSummary(steamId: SteamId): LiveData<UserSummaryEntity>
+        fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity>
 
         fun setCurrentUser(steamId: SteamId)
 
         fun getCurrentUserSteam64(): SteamId?
 
-        fun observeCurrentUserSteamId(): LiveData<SteamId?>
+        val currentUserSteamIdFlow: Flow<SteamId?>
 
         fun removeCurrentUserSteamId()
 

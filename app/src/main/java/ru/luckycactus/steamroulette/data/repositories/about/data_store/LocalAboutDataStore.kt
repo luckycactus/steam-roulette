@@ -1,14 +1,11 @@
 package ru.luckycactus.steamroulette.data.repositories.about.data_store
 
 import android.content.res.AssetManager
-import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
-import java.io.BufferedInputStream
-import java.lang.reflect.Type
 import javax.inject.Inject
 
 class LocalAboutDataStore @Inject constructor(

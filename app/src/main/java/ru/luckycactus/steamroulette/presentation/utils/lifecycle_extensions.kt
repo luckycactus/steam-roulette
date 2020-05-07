@@ -28,13 +28,13 @@ fun <T> LifecycleOwner.observeFirst(liveData: LiveData<T>, body: (T) -> Unit) {
     liveData.observe(this, observer)
 }
 
-fun <T> LifecycleOwner.observeNonNull(liveData: LiveData<T>, body: (T) -> Unit) {
+fun <T> LifecycleOwner.observeNotNull(liveData: LiveData<T>, body: (T) -> Unit) {
     liveData.observe(this, Observer { it?.let { body(it) } })
 }
 
-fun <T> LiveData<T?>.nonNull(): LiveData<T> {
+fun <T> LiveData<T?>.filterNotNull(): LiveData<T> {
     return MediatorLiveData<T>().apply {
-        addSource(this@nonNull) { it?.let { value = it } }
+        addSource(this@filterNotNull) { it?.let { value = it } }
     }
 }
 

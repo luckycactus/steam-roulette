@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.withTransaction
 import dagger.Reusable
@@ -22,10 +21,10 @@ class LocalGamesDataStore @Inject constructor(
     private val db: DB
 ) : GamesDataStore.Local {
 
-    override fun observeOwnedGamesCount(steamId: SteamId): LiveData<Int> =
+    override fun observeOwnedGamesCount(steamId: SteamId): Flow<Int> =
         db.ownedGamesDao().observeCount(steamId.asSteam64())
 
-    override fun observeHiddenOwnedGamesCount(steamId: SteamId): LiveData<Int> =
+    override fun observeHiddenOwnedGamesCount(steamId: SteamId): Flow<Int> =
         db.ownedGamesDao().observeHiddenCount(steamId.asSteam64())
 
     override suspend fun saveOwnedGames(

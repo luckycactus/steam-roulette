@@ -2,7 +2,9 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.distinctUntilChanged
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -29,7 +31,8 @@ class RouletteViewModel @Inject constructor(
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
-    private val resourceManager: ResourceManager
+    private val resourceManager: ResourceManager,
+    @ForApplication private val appScope: CoroutineScope
 ) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
     val games: LiveData<List<GameHeader>?>
@@ -61,7 +64,7 @@ class RouletteViewModel @Inject constructor(
 
     init {
         currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId.switchMap {
-            observePlayTimeFilter(it).distinctUntilChanged()
+            observePlayTimeFilter(it).distinctUntilChanged().asLiveData()
         }
 
         _contentState.addSource(userViewModelDelegate.fetchGamesState) {
@@ -75,7 +78,7 @@ class RouletteViewModel @Inject constructor(
         }
 
         val hiddenGamesCountLiveData = userViewModelDelegate.currentUserSteamId.switchMap {
-            observeHiddenGamesCount(it)
+            observeHiddenGamesCount(it).asLiveData()
         }
 
         _contentState.addSource(hiddenGamesCountLiveData) {
@@ -154,7 +157,7 @@ class RouletteViewModel @Inject constructor(
 
     private fun onTopGameUpdated(game: GameHeader?) {
         if (game != null) {
-            GlobalScope.launch {
+            appScope.launch {
                 if (game.appId == firstPreviouslyShownGameId) {
                     setAllGamesShown(
                         SetAllGamesShownUseCase.Params(
@@ -175,7 +178,7 @@ class RouletteViewModel @Inject constructor(
     }
 
     private fun hideGame(game: GameHeader) {
-        GlobalScope.launch {
+        appScope.launch {
             setGamesHidden(
                 SetGamesHiddenUseCase.Params(
                     userViewModelDelegate.getCurrentUserSteamId(),

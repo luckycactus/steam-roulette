@@ -1,6 +1,9 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.model
 
-import ru.luckycactus.steamroulette.domain.games.entity.*
+import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.MetacriticInfo
+import ru.luckycactus.steamroulette.domain.games.entity.PlatformsAvailability
+import ru.luckycactus.steamroulette.domain.games.entity.Screenshot
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 
 sealed class GameDetailsUiModel {

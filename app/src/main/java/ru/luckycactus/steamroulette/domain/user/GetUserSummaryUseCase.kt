@@ -1,9 +1,9 @@
 package ru.luckycactus.steamroulette.domain.user
 
 import dagger.Reusable
+import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import javax.inject.Inject
 

@@ -1,14 +1,17 @@
 package ru.luckycactus.steamroulette.data.repositories.app
 
-import android.content.*
-import androidx.lifecycle.LiveData
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import dagger.Reusable
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.int
 import ru.luckycactus.steamroulette.data.utils.BroadcastReceiverAdapter
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.di.qualifier.Identified
-import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import javax.inject.Inject
 
@@ -26,24 +29,9 @@ class AppRepositoryImpl @Inject constructor(
     override val currentVersionName: String
         get() = context.packageManager.getPackageInfo(context.packageName, 0).versionName
 
-    override fun observeSystemLocaleChanges(): LiveData<Event<Unit>> {
-        return LocaleChangeLiveData()
-    }
-
-    private inner class LocaleChangeLiveData : LiveData<Event<Unit>>() {
-        private val receiver = BroadcastReceiverAdapter { updateValue() }
-        private val filter = IntentFilter(Intent.ACTION_LOCALE_CHANGED)
-
-        override fun onActive() {
-            context.registerReceiver(receiver, filter)
-        }
-
-        override fun onInactive() {
-            context.unregisterReceiver(receiver)
-        }
-
-        private fun updateValue() {
-            value = Event(Unit)
-        }
+    override fun observeSystemLocaleChanges() = callbackFlow {
+        val receiver = BroadcastReceiverAdapter { offer(Unit) }
+        context.registerReceiver(receiver, IntentFilter(Intent.ACTION_LOCALE_CHANGED))
+        awaitClose { context.unregisterReceiver(receiver) }
     }
 }

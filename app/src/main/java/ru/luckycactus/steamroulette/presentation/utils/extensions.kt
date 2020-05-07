@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.NetworkConnectionException
 import ru.luckycactus.steamroulette.data.core.ServerException

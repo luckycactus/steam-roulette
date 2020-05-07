@@ -3,15 +3,21 @@ package ru.luckycactus.steamroulette.data.core
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+//todo refactor
+
 private val compositeListeners = WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
 
-private val SharedPreferences.compositeListener
-    @Synchronized
-    get() = compositeListeners.getOrPut(this, {
+@Synchronized
+private fun SharedPreferences.getCompositeListener() =
+    compositeListeners.getOrPut(this, {
         CompositePreferenceChangeListener().also {
             registerOnSharedPreferenceChangeListener(it)
         }
@@ -44,28 +50,35 @@ fun SharedPreferences.string(key: String, defValue: String? = null) =
 
 
 fun SharedPreferences.intLiveData(key: String, defValue: Int) =
-    liveData(Int::class.java, key, defValue)
+    liveData(key, IntPreference(this, key, defValue))
 
 fun SharedPreferences.longLiveData(key: String, defValue: Long) =
-    liveData(Long::class.java, key, defValue)
+    liveData(key, LongPreference(this, key, defValue))
 
 fun SharedPreferences.floatLiveData(key: String, defValue: Float) =
-    liveData(Float::class.java, key, defValue)
+    liveData(key, FloatPreference(this, key, defValue))
 
 fun SharedPreferences.booleanLiveData(key: String, defValue: Boolean) =
-    liveData(Boolean::class.java, key, defValue)
+    liveData(key, BooleanPreference(this, key, defValue))
 
 fun SharedPreferences.stringLiveData(key: String, defValue: String?): LiveData<String?> =
-    SharedPreferenceLiveData(
-        this,
-        key,
-        StringPreference(
-            this,
-            key,
-            defValue
-        )
-    )
+    liveData(key, StringPreference(this, key, defValue))
 
+
+fun SharedPreferences.intFlow(key: String, defValue: Int) =
+    flow(key, IntPreference(this, key, defValue))
+
+fun SharedPreferences.longFlow(key: String, defValue: Long) =
+    flow(key, LongPreference(this, key, defValue))
+
+fun SharedPreferences.floatFlow(key: String, defValue: Float) =
+    flow(key, FloatPreference(this, key, defValue))
+
+fun SharedPreferences.booleanFlow(key: String, defValue: Boolean) =
+    flow(key, BooleanPreference(this, key, defValue))
+
+fun SharedPreferences.stringFlow(key: String, defValue: String?): Flow<String?> =
+    flow(key, StringPreference(this, key, defValue))
 
 class IntPreference(
     private val prefs: SharedPreferences,
@@ -143,48 +156,31 @@ class StringPreference(
 }
 
 private fun <T> SharedPreferences.liveData(
-    clazz: Class<T>,
     key: String,
-    defValue: T
+    delegate: ReadWriteProperty<Any, T>
 ): LiveData<T> =
     SharedPreferenceLiveData(
         this,
         key,
-        getDelegate(clazz, key, defValue)
+        delegate
     )
 
-private fun <T> SharedPreferences.getDelegate(
-    clazz: Class<T>,
+private fun <T> SharedPreferences.flow(
     key: String,
-    defValue: T
-) = when (clazz) {
-    Int::class.java -> IntPreference(
-        this,
-        key,
-        defValue as Int
-    )
-    Long::class.java -> LongPreference(
-        this,
-        key,
-        defValue as Long
-    )
-    Float::class.java -> FloatPreference(
-        this,
-        key,
-        defValue as Float
-    )
-    Boolean::class.java -> BooleanPreference(
-        this,
-        key,
-        defValue as Boolean
-    )
-    String::class.java -> StringPreference(
-        this,
-        key,
-        defValue as String?
-    )
-    else -> throw Exception()
-} as ReadWriteProperty<Any, T>
+    delegate: ReadWriteProperty<Any, T>
+) = callbackFlow {
+    val prefHolder = object : Any() {
+        val prefValue by delegate
+    }
+    val compositeListener = getCompositeListener()
+    val listener = {
+        offer(prefHolder.prefValue)
+        Unit
+    }
+    listener.invoke()
+    compositeListener.addListener(key, listener)
+    awaitClose { compositeListener.removeListener(key, listener) }
+}.distinctUntilChanged()
 
 private class SharedPreferenceLiveData<T>(
     prefs: SharedPreferences,
@@ -192,7 +188,7 @@ private class SharedPreferenceLiveData<T>(
     delegate: ReadWriteProperty<Any, T>
 ) : LiveData<T>() {
 
-    private val compositeListener = prefs.compositeListener
+    private val compositeListener = prefs.getCompositeListener()
     private val prefValue by delegate
     private val listener = { updateValue() }
 

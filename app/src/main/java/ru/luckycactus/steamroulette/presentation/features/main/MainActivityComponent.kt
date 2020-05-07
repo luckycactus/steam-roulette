@@ -3,10 +3,8 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import dagger.BindsInstance
 import dagger.Subcomponent
 import ru.luckycactus.steamroulette.di.scopes.ActivityScope
-import ru.luckycactus.steamroulette.presentation.features.about.AboutFragment
 import ru.luckycactus.steamroulette.presentation.features.about.AboutViewModel
 import ru.luckycactus.steamroulette.presentation.features.about.AppLibrariesViewModel
-import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.hidden_games.HiddenGamesViewModel
 import ru.luckycactus.steamroulette.presentation.features.login.LoginComponent

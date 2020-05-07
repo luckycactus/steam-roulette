@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.data.net.adapters
 
 import com.squareup.moshi.FromJson
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.ToJson
 import org.json.JSONException

@@ -1,9 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import androidx.lifecycle.liveData
 import ru.luckycactus.steamroulette.domain.about.GetAppLibrariesUseCase
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.domain.core.invoke
@@ -17,16 +15,8 @@ class AppLibrariesViewModel @Inject constructor(
     private val router: Router
 ) : BaseViewModel() {
 
-    val libraries: LiveData<List<AppLibrary>>
-        get() = _libraries
-
-    private val _libraries = MutableLiveData<List<AppLibrary>>()
-
-    init {
-        viewModelScope.launch {
-            _libraries.value =
-                getAppLibraries().sortedWith(compareBy(AppLibrary::author, AppLibrary::name))
-        }
+    val libraries: LiveData<List<AppLibrary>> = liveData {
+        emit(getAppLibraries().sortedWith(compareBy(AppLibrary::author, AppLibrary::name)))
     }
 
     fun onLibraryClick(library: AppLibrary) {

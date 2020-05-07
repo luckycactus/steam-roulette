@@ -5,13 +5,9 @@ import androidx.core.os.bundleOf
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.fragment_system_reqs.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.argument
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
 class SystemReqsFragment : BaseFragment() {
     private val appName: String by argument(ARG_APP_NAME)

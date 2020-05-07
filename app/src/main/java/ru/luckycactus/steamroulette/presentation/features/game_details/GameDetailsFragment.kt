@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ArcMotion
 import kotlinx.android.synthetic.main.fragment_game_details.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter

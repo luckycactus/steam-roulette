@@ -2,10 +2,10 @@ package ru.luckycactus.steamroulette.presentation.features.roulette_options
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
@@ -13,7 +13,6 @@ import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDele
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
-import java.lang.Exception
 import javax.inject.Inject
 
 class RouletteOptionsViewModel @Inject constructor(
@@ -32,11 +31,11 @@ class RouletteOptionsViewModel @Inject constructor(
 
     init {
         playTimePrefValue = userViewModelDelegate.currentUserSteamId.switchMap {
-            observePlayTimeFilter(it).map(this@RouletteOptionsViewModel::getPlayTimeFilterText)
+            observePlayTimeFilter(it).map { getPlayTimeFilterText(it) }.asLiveData()
         }
 
         hiddenGamesCount = userViewModelDelegate.currentUserSteamId.switchMap {
-            observeHiddenGamesCount(it)
+            observeHiddenGamesCount(it).asLiveData()
         }
     }
 

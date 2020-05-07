@@ -6,7 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig

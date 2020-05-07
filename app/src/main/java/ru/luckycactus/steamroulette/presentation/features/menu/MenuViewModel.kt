@@ -27,7 +27,7 @@ class MenuViewModel @Inject constructor(
 
     val gameCount: LiveData<Int> =
         userViewModelDelegate.currentUserSteamId.switchMap {
-            observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it))
+            observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it)).asLiveData()
         }
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
@@ -44,7 +44,7 @@ class MenuViewModel @Inject constructor(
     init {
         gamesLastUpdate =
             userViewModelDelegate.currentUserSteamId.switchMap {
-                observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it))
+                observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it)).asLiveData()
             }.map {
                 val ago = if (it <= 0)
                     resourceManager.getString(R.string.never)

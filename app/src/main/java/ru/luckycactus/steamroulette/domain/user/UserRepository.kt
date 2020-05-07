@@ -1,21 +1,21 @@
 package ru.luckycactus.steamroulette.domain.user
 
-import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.core.CachePolicy
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 
 interface UserRepository {
 
     suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary?
 
-    fun observeUserSummary(steamId: SteamId): LiveData<UserSummary>
+    fun observeUserSummary(steamId: SteamId): Flow<UserSummary>
 
     fun setCurrentUser(steamId: SteamId)
 
     fun getCurrentUserSteamId(): SteamId?
 
-    fun observeCurrentUserSteamId(): LiveData<SteamId?>
+    fun observeCurrentUserSteamId(): Flow<SteamId?>
 
     fun isUserSignedIn(): Boolean
 

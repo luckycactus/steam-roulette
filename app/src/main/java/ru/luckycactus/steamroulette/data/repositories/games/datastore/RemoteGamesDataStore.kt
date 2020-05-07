@@ -18,7 +18,6 @@ import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 import javax.inject.Named
 

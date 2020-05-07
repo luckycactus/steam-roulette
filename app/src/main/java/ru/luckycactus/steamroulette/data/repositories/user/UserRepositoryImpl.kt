@@ -1,18 +1,17 @@
 package ru.luckycactus.steamroulette.data.repositories.user
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import dagger.Reusable
-import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.mapper.UserSummaryMapper
-import ru.luckycactus.steamroulette.domain.core.CachePolicy
+import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.user.UserRepository
+import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.time.days
 
 @Reusable
@@ -28,8 +27,8 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun getCurrentUserSteamId(): SteamId? = localUserDataStore.getCurrentUserSteam64()
 
-    override fun observeCurrentUserSteamId(): LiveData<SteamId?> =
-        localUserDataStore.observeCurrentUserSteamId()
+    override fun observeCurrentUserSteamId(): Flow<SteamId?> =
+        localUserDataStore.currentUserSteamIdFlow
 
     override fun isUserSignedIn(): Boolean = localUserDataStore.getCurrentUserSteam64() != null
 
@@ -38,7 +37,7 @@ class UserRepositoryImpl @Inject constructor(
         cachePolicy: CachePolicy
     ): UserSummary? = createUserSummaryResource(steamId).get(cachePolicy)
 
-    override fun observeUserSummary(steamId: SteamId): LiveData<UserSummary> =
+    override fun observeUserSummary(steamId: SteamId): Flow<UserSummary> =
         localUserDataStore.observeUserSummary(steamId)
             .map { mapper.mapFrom(it) }
 

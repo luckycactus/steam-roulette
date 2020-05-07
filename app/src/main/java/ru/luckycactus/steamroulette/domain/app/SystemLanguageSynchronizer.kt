@@ -1,7 +1,10 @@
 package ru.luckycactus.steamroulette.domain.app
 
-import androidx.lifecycle.Observer
-import ru.luckycactus.steamroulette.domain.core.Event
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -9,20 +12,21 @@ import javax.inject.Singleton
 @Singleton
 class SystemLanguageSynchronizer @Inject constructor(
     appRepository: AppRepository,
-    private val languageProvider: LanguageProvider
+    private val languageProvider: LanguageProvider,
+    @ForApplication private val appScope: CoroutineScope
 ) {
-    private val liveData = appRepository.observeSystemLocaleChanges()
-    private val observer = Observer<Event<Unit>> {
-        it.ifNotHandled {
-            languageProvider.updateLanguage()
+    private val localeChangesFlow = appRepository.observeSystemLocaleChanges()
+    private var job: Job? = null
+
+    fun start() {
+        job = appScope.launch {
+            localeChangesFlow.collect {
+                languageProvider.updateLanguage()
+            }
         }
     }
 
-    fun start() {
-        liveData.observeForever(observer)
-    }
-
     fun stop() {
-        liveData.removeObserver(observer)
+        job?.cancel()
     }
 }

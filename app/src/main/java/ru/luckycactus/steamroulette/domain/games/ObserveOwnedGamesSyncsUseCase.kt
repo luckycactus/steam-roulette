@@ -1,17 +1,17 @@
 package ru.luckycactus.steamroulette.domain.games
 
-import androidx.lifecycle.LiveData
 import dagger.Reusable
-import ru.luckycactus.steamroulette.domain.core.UseCase
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.core.UseCase
 import javax.inject.Inject
 
 @Reusable
 class ObserveOwnedGamesSyncsUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
-) : UseCase<ObserveOwnedGamesSyncsUseCase.Params, LiveData<Long>>() {
+) : UseCase<ObserveOwnedGamesSyncsUseCase.Params, Flow<Long>>() {
 
-    override fun getResult(params: Params): LiveData<Long> {
+    override fun getResult(params: Params): Flow<Long> {
         return gamesRepository.observeGamesUpdates(params.steamId)
     }
 

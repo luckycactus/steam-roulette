@@ -1,12 +1,11 @@
 package ru.luckycactus.steamroulette.domain.app
 
-import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.core.Event
+import kotlinx.coroutines.flow.Flow
 
 interface AppRepository {
     var lastVersion: Int
     val currentVersion: Int
     val currentVersionName: String
 
-    fun observeSystemLocaleChanges(): LiveData<Event<Unit>>
+    fun observeSystemLocaleChanges(): Flow<Unit>
 }

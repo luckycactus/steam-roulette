@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
@@ -30,9 +29,9 @@ interface GamesDataStore {
 
         suspend fun isUserHasGames(steamId: SteamId): Boolean
 
-        fun observeOwnedGamesCount(steamId: SteamId): LiveData<Int>
+        fun observeOwnedGamesCount(steamId: SteamId): Flow<Int>
 
-        fun observeHiddenOwnedGamesCount(steamId: SteamId): LiveData<Int>
+        fun observeHiddenOwnedGamesCount(steamId: SteamId): Flow<Int>
 
         suspend fun resetHiddenOwnedGames(steamId: SteamId)
 

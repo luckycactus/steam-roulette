@@ -2,20 +2,19 @@ package ru.luckycactus.steamroulette.data.repositories.user.datastore
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
 import dagger.Reusable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.core.long
-import ru.luckycactus.steamroulette.data.core.longLiveData
+import ru.luckycactus.steamroulette.data.core.longFlow
+import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.presentation.utils.nonNull
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @Reusable
 class LocalUserDataStore @Inject constructor(
@@ -28,10 +27,10 @@ class LocalUserDataStore @Inject constructor(
         CURRENT_USER_DEFAULT_VALUE
     )
 
-    private var currentUserSteam64LiveData = userPreferences.longLiveData(
+    override val currentUserSteamIdFlow = userPreferences.longFlow(
         CURRENT_USER_KEY,
         CURRENT_USER_DEFAULT_VALUE
-    )
+    ).map { fromSteam64(it) }
 
     override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity =
         db.userSummaryDao().get(steamId.asSteam64())
@@ -44,17 +43,14 @@ class LocalUserDataStore @Inject constructor(
         db.userSummaryDao().delete(steamId.asSteam64())
     }
 
-    override fun observeUserSummary(steamId: SteamId): LiveData<UserSummaryEntity> =
-        db.userSummaryDao().observe(steamId.asSteam64()).distinctUntilChanged().nonNull()
+    override fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity> =
+        db.userSummaryDao().observe(steamId.asSteam64()).distinctUntilChanged().filterNotNull()
 
     override fun setCurrentUser(steamId: SteamId) {
         currentUserSteam64Pref = steamId.asSteam64()
     }
 
     override fun getCurrentUserSteam64(): SteamId? = fromSteam64(currentUserSteam64Pref)
-
-    override fun observeCurrentUserSteamId(): LiveData<SteamId?> =
-        currentUserSteam64LiveData.map { fromSteam64(it) }
 
     override fun removeCurrentUserSteamId() {
         userPreferences.edit { remove(CURRENT_USER_KEY) }

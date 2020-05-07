@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_app_libraries.*
 import ru.luckycactus.steamroulette.R

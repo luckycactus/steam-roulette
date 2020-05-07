@@ -2,18 +2,16 @@ package ru.luckycactus.steamroulette.presentation.features.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.common.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.common.SteamIdNotFoundException
 import ru.luckycactus.steamroulette.domain.common.VanityNotFoundException
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.login.SignInUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
-import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription

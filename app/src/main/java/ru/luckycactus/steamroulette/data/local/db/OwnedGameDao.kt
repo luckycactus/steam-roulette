@@ -1,9 +1,9 @@
 package ru.luckycactus.steamroulette.data.local.db
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
@@ -70,10 +70,10 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     suspend fun isUserHasGames(steam64: Long) = _isUserHasGames(steam64) == 1
 
     @Query("select COUNT(*) from owned_game  where userSteam64 = :steam64")
-    abstract fun observeCount(steam64: Long): LiveData<Int>
+    abstract fun observeCount(steam64: Long): Flow<Int>
 
     @Query("select COUNT(*) from owned_game  where userSteam64 = :steam64 and hidden = 1")
-    abstract fun observeHiddenCount(steam64: Long): LiveData<Int>
+    abstract fun observeHiddenCount(steam64: Long): Flow<Int>
 
     @Query("update owned_game set hidden = 0 where userSteam64 =:steam64 and hidden = 1")
     abstract suspend fun resetHidden(steam64: Long)

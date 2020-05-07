@@ -21,9 +21,9 @@ import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
+import ru.luckycactus.steamroulette.presentation.utils.filterNotNull
 import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.utils.nonNull
 import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -61,7 +61,7 @@ class MainViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<Event<String>>()
 
     init {
-        _nullableCurrentUserSteamId = observeCurrentUser()
+        _nullableCurrentUserSteamId = observeCurrentUser().asLiveData()
         _currentUserSteamId.addSource(_nullableCurrentUserSteamId) {
             viewModelScope.coroutineContext.cancelChildren()
             it?.let {
@@ -75,8 +75,8 @@ class MainViewModel @Inject constructor(
             }
         }
         userSummary = _nullableCurrentUserSteamId.nullableSwitchMap {
-            observeUserSummary(it)
-        }.nonNull()
+            observeUserSummary(it).asLiveData()
+        }.filterNotNull()
 
         observe(currentUserSteamId) { /* nothing */ }
     }

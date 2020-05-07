@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.util.Log
-import android.util.Log.v
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.lifecycle.LiveData

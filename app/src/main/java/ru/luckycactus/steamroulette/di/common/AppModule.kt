@@ -2,19 +2,16 @@ package ru.luckycactus.steamroulette.di.common
 
 import android.app.Application
 import android.content.Context
-import android.content.res.AssetManager
-import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
-import ru.luckycactus.steamroulette.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
-import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.about.data_store.AboutDataStore
 import ru.luckycactus.steamroulette.data.repositories.about.data_store.LocalAboutDataStore
@@ -32,7 +29,6 @@ import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserD
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
-import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.about.AboutRepository
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
@@ -104,5 +100,12 @@ abstract class AppModule {
         @JvmStatic
         @Provides
         fun provideMoshi(): Moshi = Moshi.Builder().build()
+
+        @Singleton
+        @JvmStatic
+        @Provides
+        @ForApplication
+        fun provideApplicationCoroutineScope() =
+            CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     }
 }

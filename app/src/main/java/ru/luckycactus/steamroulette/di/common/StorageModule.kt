@@ -5,10 +5,8 @@ import android.content.res.AssetManager
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.db.DB
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication

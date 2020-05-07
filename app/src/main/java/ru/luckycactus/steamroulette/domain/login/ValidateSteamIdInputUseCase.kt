@@ -1,8 +1,8 @@
 package ru.luckycactus.steamroulette.domain.login
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.domain.core.UseCase
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.core.UseCase
 import javax.inject.Inject
 
 @Reusable

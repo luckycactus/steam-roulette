@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.core
 
 import android.util.LruCache
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.di.common.BaseAppComponent
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
@@ -33,7 +33,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         return getCachedData()
     }
 
-    fun observeCacheUpdates(): LiveData<Long> = cacheHelper.observeCacheUpdates(key)
+    fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
 
     fun invalidateCache() {
         cacheHelper.invalidateCache(key)

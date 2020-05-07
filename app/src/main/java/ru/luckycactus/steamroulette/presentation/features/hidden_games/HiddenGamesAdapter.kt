@@ -1,14 +1,8 @@
 package ru.luckycactus.steamroulette.presentation.features.hidden_games
 
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.ViewCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
@@ -16,7 +10,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_hidden_game.*
-import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.utils.inflate

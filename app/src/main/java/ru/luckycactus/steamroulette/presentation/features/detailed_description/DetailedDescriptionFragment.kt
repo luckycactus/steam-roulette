@@ -5,8 +5,6 @@ import android.text.method.LinkMovementMethod
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import kotlinx.android.synthetic.main.fragment_detailed_description.*
-import kotlinx.android.synthetic.main.fragment_detailed_description.toolbar
-import kotlinx.android.synthetic.main.fragment_system_reqs.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.argument
