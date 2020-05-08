@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
@@ -63,9 +64,10 @@ class RouletteViewModel @Inject constructor(
     private var firstPreviouslyShownGameId: Int? = null
 
     init {
-        currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId.switchMap {
-            observePlayTimeFilter(it).distinctUntilChanged().asLiveData()
-        }
+        currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId
+            .flatMapLatest { observePlayTimeFilter(it) }
+            .distinctUntilChanged()
+            .asLiveData()
 
         _contentState.addSource(userViewModelDelegate.fetchGamesState) {
             rouletteStateInvalidated = true
@@ -77,9 +79,9 @@ class RouletteViewModel @Inject constructor(
             syncRouletteState()
         }
 
-        val hiddenGamesCountLiveData = userViewModelDelegate.currentUserSteamId.switchMap {
-            observeHiddenGamesCount(it).asLiveData()
-        }
+        val hiddenGamesCountLiveData = userViewModelDelegate.currentUserSteamId
+            .flatMapLatest { observeHiddenGamesCount(it) }
+            .asLiveData()
 
         _contentState.addSource(hiddenGamesCountLiveData) {
             if (it < hiddenGamesCount)

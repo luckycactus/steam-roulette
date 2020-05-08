@@ -4,6 +4,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.games.GetHiddenGamesPagedListUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
@@ -24,13 +25,13 @@ class HiddenGamesViewModel @Inject constructor(
     private val router: Router
 ) : BaseViewModel() {
 
-    val hiddenGames = userViewModelDelegate.currentUserSteamId.switchMap {
+    val hiddenGames = userViewModelDelegate.currentUserSteamId.asLiveData().switchMap {
         getHiddenGamesPagedList(it)
     }
 
-    val hiddenGamesCount = userViewModelDelegate.currentUserSteamId.switchMap {
-        observeHiddenGamesCount(it).asLiveData()
-    }
+    val hiddenGamesCount = userViewModelDelegate.currentUserSteamId
+        .flatMapLatest { observeHiddenGamesCount(it) }
+        .asLiveData()
 
     init {
         observe(hiddenGamesCount) {

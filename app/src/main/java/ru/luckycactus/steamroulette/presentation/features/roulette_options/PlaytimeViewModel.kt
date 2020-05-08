@@ -21,14 +21,15 @@ class PlaytimeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     suspend fun getCurrentPlaytimeFilterType() =
-        userViewModelDelegate.currentUserSteamId.asFlow().flatMapLatest { steamId ->
-            observePlaytimeFilter(steamId).map { it.type }
-        }.first()
+        userViewModelDelegate.currentUserSteamId
+            .flatMapLatest { observePlaytimeFilter(it) }
+            .map { it.type }
+            .first()
 
     suspend fun getCurrentMaxPlaytimeSetting() =
-        userViewModelDelegate.currentUserSteamId.asFlow().flatMapLatest { steamId ->
-            observeMaxPlaytimeSetting(steamId)
-        }.first()
+        userViewModelDelegate.currentUserSteamId
+            .flatMapLatest { observeMaxPlaytimeSetting(it) }
+            .first()
 
     fun onOkClick(newFilterType: PlaytimeFilter.Type, newMaxPlaytime: Int) {
         viewModelScope.launch {

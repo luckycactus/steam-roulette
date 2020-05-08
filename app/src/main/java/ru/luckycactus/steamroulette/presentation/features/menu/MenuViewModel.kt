@@ -1,8 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.text.format.DateUtils
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -25,10 +30,9 @@ class MenuViewModel @Inject constructor(
     private val router: Router
 ) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
-    val gameCount: LiveData<Int> =
-        userViewModelDelegate.currentUserSteamId.switchMap {
-            observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it)).asLiveData()
-        }
+    val gameCount: LiveData<Int> = userViewModelDelegate.currentUserSteamId
+        .flatMapLatest { observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it)) }
+        .asLiveData()
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
     val closeAction: LiveData<Unit>
@@ -43,8 +47,8 @@ class MenuViewModel @Inject constructor(
 
     init {
         gamesLastUpdate =
-            userViewModelDelegate.currentUserSteamId.switchMap {
-                observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it)).asLiveData()
+            userViewModelDelegate.currentUserSteamId.flatMapLatest {
+                observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it))
             }.map {
                 val ago = if (it <= 0)
                     resourceManager.getString(R.string.never)
@@ -55,7 +59,7 @@ class MenuViewModel @Inject constructor(
                         DateUtils.MINUTE_IN_MILLIS
                     )
                 resourceManager.getString(R.string.games_last_sync, ago)
-            }
+            }.asLiveData()
 
         refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combine(
             userViewModelDelegate.fetchGamesState

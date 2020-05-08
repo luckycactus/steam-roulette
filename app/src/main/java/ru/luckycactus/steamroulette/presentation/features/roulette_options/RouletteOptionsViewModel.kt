@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.roulette_options
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
@@ -30,13 +31,14 @@ class RouletteOptionsViewModel @Inject constructor(
     private val _closeAction = MutableLiveData<Unit>()
 
     init {
-        playTimePrefValue = userViewModelDelegate.currentUserSteamId.switchMap {
-            observePlayTimeFilter(it).map { getPlayTimeFilterText(it) }.asLiveData()
-        }
+        playTimePrefValue = userViewModelDelegate.currentUserSteamId
+            .flatMapLatest { observePlayTimeFilter(it) }
+            .map { getPlayTimeFilterText(it) }
+            .asLiveData()
 
-        hiddenGamesCount = userViewModelDelegate.currentUserSteamId.switchMap {
-            observeHiddenGamesCount(it).asLiveData()
-        }
+        hiddenGamesCount = userViewModelDelegate.currentUserSteamId
+            .flatMapLatest { observeHiddenGamesCount(it) }
+            .asLiveData()
     }
 
     fun onClearHiddenGames() {

@@ -1,9 +1,13 @@
 package ru.luckycactus.steamroulette.domain.common
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicReference
 
 @UseExperimental(InternalCoroutinesApi::class)
@@ -36,3 +40,14 @@ fun <R> Flow<R>.chunkBuffer(bufferSize: Int) =
             buffer.set(ArrayList(bufferSize))
         }
     }
+
+fun <T> Flow<T>.toConflatedBroadcastChannel(scope: CoroutineScope): ConflatedBroadcastChannel<T> {
+    val channel = ConflatedBroadcastChannel<T>()
+    scope.launch {
+        collect { channel.offer(it) }
+    }
+    return channel
+}
+
+//fun <T> Flow<T>.share(scope: CoroutineScope): Flow<T> =
+//    toConflatedBroadcastChannel(scope).asFlow()

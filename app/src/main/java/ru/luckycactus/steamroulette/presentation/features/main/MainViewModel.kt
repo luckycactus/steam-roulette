@@ -1,11 +1,17 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.common.toConflatedBroadcastChannel
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
@@ -21,10 +27,7 @@ import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.utils.filterNotNull
-import ru.luckycactus.steamroulette.presentation.utils.first
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -40,51 +43,57 @@ class MainViewModel @Inject constructor(
     private val router: Router
 ) : BaseViewModel(), UserViewModelDelegate {
     override val isUserLoggedIn: Boolean
-        get() = _nullableCurrentUserSteamId.value != null
+        get() = _nullableCurrentUserSteamIdChannel.value != null
 
-    override val currentUserSteamId: LiveData<SteamId>
-        get() = _currentUserSteamId
     override val userSummary: LiveData<UserSummary>
     override val fetchGamesState: LiveData<Result<Unit>>
         get() = _fetchGamesState
     override val fetchUserSummaryState: LiveData<Boolean>
         get() = _fetchUserSummaryState
+    override val currentUserSteamId: Flow<SteamId>
 
     val errorMessage: LiveData<Event<String>>
         get() = _errorMessage
 
-    private val _currentUserSteamId = MediatorLiveData<SteamId>()
-    private val _nullableCurrentUserSteamId: LiveData<SteamId?>
+    private val _nullableCurrentUserSteamIdChannel: ConflatedBroadcastChannel<SteamId?>
+    private val _nullableCurrentUserSteamIdFlow: Flow<SteamId?>
 
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
     private val _errorMessage = MutableLiveData<Event<String>>()
 
+    private val userScope = viewModelScope + SupervisorJob(viewModelScope.coroutineContext[Job])
+
     init {
-        _nullableCurrentUserSteamId = observeCurrentUser().asLiveData()
-        _currentUserSteamId.addSource(_nullableCurrentUserSteamId) {
-            viewModelScope.coroutineContext.cancelChildren()
-            it?.let {
-                _currentUserSteamId.value = it
-                viewModelScope.launch {
+        _nullableCurrentUserSteamIdChannel = observeCurrentUser()
+            .toConflatedBroadcastChannel(viewModelScope)
+
+        _nullableCurrentUserSteamIdFlow = _nullableCurrentUserSteamIdChannel.asFlow()
+
+        currentUserSteamId = _nullableCurrentUserSteamIdFlow
+            .onEach { userScope.coroutineContext.cancelChildren() }
+            .filterNotNull()
+            .onEach {
+                userScope.launch {
                     fetchGames(false)
                 }
-                viewModelScope.launch {
+                userScope.launch {
                     fetchUserSummary(false)
                 }
             }
-        }
-        userSummary = _nullableCurrentUserSteamId.nullableSwitchMap {
-            observeUserSummary(it).asLiveData()
-        }.filterNotNull()
+            .toConflatedBroadcastChannel(viewModelScope)
+            .asFlow()
 
-        observe(currentUserSteamId) { /* nothing */ }
+        userSummary = _nullableCurrentUserSteamIdFlow
+            .filterNotNull()
+            .flatMapLatest { observeUserSummary(it) }
+            .asLiveData()
     }
 
     fun onColdStart() {
         viewModelScope.launch {
             migrateApp()
-            _nullableCurrentUserSteamId.first {
+            _nullableCurrentUserSteamIdFlow.first().let {
                 val screen = if (it != null) Screens.Roulette else Screens.Login
                 router.newRootScreen(screen)
             }
@@ -96,33 +105,33 @@ class MainViewModel @Inject constructor(
     }
 
     override fun resetHiddenGames() {
-        viewModelScope.launch {
+        userScope.launch {
             clearHiddenGames(getCurrentUserSteamId())
         }
     }
 
     override fun exit() {
-        viewModelScope.coroutineContext.cancelChildren()
+        userScope.coroutineContext.cancelChildren()
         router.newRootScreen(Screens.Login)
-        viewModelScope.launch {
+        userScope.launch {
             signOutUser()
         }
     }
 
     override fun getCurrentUserSteamId(): SteamId {
-        return _currentUserSteamId.value!!
+        return _nullableCurrentUserSteamIdChannel.value!!
     }
 
     override fun fetchGames() {
-        viewModelScope.launch {
+        userScope.launch {
             handleGamesFetchError(fetchGames(true))
         }
     }
 
     override fun fetchUserAndGames() {
-        viewModelScope.launch {
+        userScope.launch {
             supervisorScope {
-                val userDeferred = viewModelScope.async { fetchUserSummary(true) }
+                val userDeferred = userScope.async { fetchUserSummary(true) }
                 val gamesState = fetchGames(true).also { handleGamesFetchError(it) }
                 if (gamesState !is Result.Error) {
                     handleUserFetchError(userDeferred.await())
@@ -181,12 +190,10 @@ class MainViewModel @Inject constructor(
                 _fetchUserSummaryState.value = true
                 fetchUserSummary(FetchUserSummaryUseCase.Params(it, reload))
                 Result.success
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                if (e is CancellationException) {
-                    throw e
-                } else {
-                    Result.Error(getCommonErrorDescription(resourceManager, e))
-                }
+                Result.Error(getCommonErrorDescription(resourceManager, e))
             } finally {
                 _fetchUserSummaryState.value = false
             }

@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.user
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
@@ -12,8 +13,7 @@ interface UserViewModelDelegatePublic {
 
 interface UserViewModelDelegate : UserViewModelDelegatePublic {
     val isUserLoggedIn: Boolean
-    //todo flow
-    val currentUserSteamId: LiveData<SteamId>
+    val currentUserSteamId: Flow<SteamId>
     val fetchGamesState: LiveData<Result<Unit>>
     val fetchUserSummaryState: LiveData<Boolean>
     fun getCurrentUserSteamId(): SteamId
