@@ -3,10 +3,7 @@ package ru.luckycactus.steamroulette.domain.common
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicReference
 
@@ -47,6 +44,10 @@ fun <T> Flow<T>.toConflatedBroadcastChannel(scope: CoroutineScope): ConflatedBro
         collect { channel.offer(it) }
     }
     return channel
+}
+
+fun <T> Flow<T?>.switchNullsToEmpty(): Flow<T> = flatMapLatest {
+    it?.let { flowOf(it) } ?: emptyFlow()
 }
 
 //fun <T> Flow<T>.share(scope: CoroutineScope): Flow<T> =

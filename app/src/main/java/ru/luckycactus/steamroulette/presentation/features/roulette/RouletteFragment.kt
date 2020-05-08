@@ -8,12 +8,15 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import kotlinx.android.synthetic.main.main_toolbar.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
@@ -131,18 +134,14 @@ class RouletteFragment : BaseFragment() {
             viewModel::onRetryClick
         )
 
-        observe(
-            viewModel.itemRemoved
-        ) {
-            it?.ifNotHandled {
+        lifecycleScope.launch {
+            viewModel.itemRemoved.collect {
                 rouletteAdapter.notifyItemRemoved(it)
             }
         }
 
-        observe(
-            viewModel.itemsInserted
-        ) {
-            it?.ifNotHandled {
+        lifecycleScope.launch {
+            viewModel.itemsInserted.collect {
                 rouletteAdapter.notifyItemRangeInserted(it.first, it.second)
             }
         }
@@ -159,6 +158,8 @@ class RouletteFragment : BaseFragment() {
             val listener = if (it) fabClickListener else null
             fabs.forEach { fab -> fab.setOnClickListener(listener) }
         }
+
+        lifecycleScope
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

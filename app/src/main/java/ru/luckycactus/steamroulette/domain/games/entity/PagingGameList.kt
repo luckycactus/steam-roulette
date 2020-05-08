@@ -3,19 +3,22 @@ package ru.luckycactus.steamroulette.domain.games.entity
 import android.util.SparseIntArray
 import androidx.annotation.MainThread
 import androidx.core.util.set
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
-import ru.luckycactus.steamroulette.domain.core.Event
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 interface PagingGameList {
     val list: List<GameHeader>
-    val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>> //todo flow?
+    val itemsInsertedChannel: ReceiveChannel<Pair<Int, Int>>
+    val itemRemovedChannel: ReceiveChannel<Int>
     fun isEmpty(): Boolean
     fun isFinished(): Boolean
+
     @MainThread
     fun removeTop(): GameHeader
     fun peekTop(): GameHeader?
+
     @MainThread
     fun close()
 }
@@ -30,11 +33,15 @@ class PagingGameListImpl constructor(
 
     override val list: List<GameHeader>
         get() = _list
-    override val itemsInsertedLiveData: LiveData<Event<Pair<Int, Int>>>
-        get() = _itemsInsertedLiveData
+    override val itemsInsertedChannel: ReceiveChannel<Pair<Int, Int>>
+        get() = _itemsInsertedChannel
+    override val itemRemovedChannel: ReceiveChannel<Int>
+        get() = _itemRemovedChannel
 
     private val _list = mutableListOf<GameHeader>()
-    private val _itemsInsertedLiveData = MutableLiveData<Event<Pair<Int, Int>>>()
+    private val _itemsInsertedChannel = Channel<Pair<Int, Int>>()
+    private val _itemRemovedChannel = Channel<Int>(0)
+
     private var nextFetchIndex = 0
     private var fetching = false
     private var fetchJob: Job? = null
@@ -54,6 +61,7 @@ class PagingGameListImpl constructor(
         val removedItem = _list.removeAt(0)
         if (_list.size <= minSize && !fetching && nextFetchIndex < gameIds.size)
             fetch()
+        _itemRemovedChannel.offer(0)
         return removedItem
     }
 
@@ -85,7 +93,7 @@ class PagingGameListImpl constructor(
                 if (isActive) {
                     nextFetchIndex = fetchEnd
                     _list.addAll(games)
-                    _itemsInsertedLiveData.value = Event(_list.size - games.size to games.size)
+                    _itemsInsertedChannel.send(_list.size - games.size to games.size)
                     fetching = false
                 }
             }

@@ -2,12 +2,11 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
-import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.common.switchNullsToEmpty
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.games.*
@@ -20,7 +19,6 @@ import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDele
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.utils.nullableSwitchMap
 import ru.luckycactus.steamroulette.presentation.utils.startWith
 import javax.inject.Inject
 
@@ -37,9 +35,8 @@ class RouletteViewModel @Inject constructor(
 ) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
     val games: LiveData<List<GameHeader>?>
-    val itemRemoved: LiveData<Event<Int>?> //todo flow
-        get() = _itemRemoved
-    val itemsInserted: LiveData<Event<Pair<Int, Int>>?> //todo flow
+    val itemRemoved: Flow<Int>
+    val itemsInserted: Flow<Pair<Int, Int>>
     val contentState: LiveData<ContentState>
         get() = _contentState.distinctUntilChanged()
     val controlsAvailable: LiveData<Boolean>
@@ -48,7 +45,6 @@ class RouletteViewModel @Inject constructor(
     private val _gamesPagingList = MutableLiveData<PagingGameList?>()
     private val _contentState = MediatorLiveData<ContentState>()
     private val _controlsAvailable = MutableLiveData<Boolean>().startWith(true)
-    private val _itemRemoved = MediatorLiveData<Event<Int>>()
     private val currentUserPlayTimeFilter: LiveData<PlaytimeFilter>
     private val topGame = MediatorLiveData<GameHeader?>()
 
@@ -91,20 +87,21 @@ class RouletteViewModel @Inject constructor(
         }
 
         games = _gamesPagingList.map { it?.list }
-        itemsInserted = _gamesPagingList.nullableSwitchMap { it.itemsInsertedLiveData }
-        _itemRemoved.addSource(_gamesPagingList) {
-            if (it == null) {
-                _itemRemoved.value = null
+        itemsInserted = _gamesPagingList
+            .asFlow()
+            .switchNullsToEmpty()
+            .flatMapLatest { it.itemsInsertedChannel.consumeAsFlow() }
+            .onEach {
+                updateTopGame()
             }
-        }
 
-        topGame.addSource(itemsInserted) {
-            updateTopGame()
-        }
-
-        topGame.addSource(_itemRemoved) {
-            updateTopGame()
-        }
+        itemRemoved = _gamesPagingList
+            .asFlow()
+            .switchNullsToEmpty()
+            .flatMapLatest { it.itemRemovedChannel.consumeAsFlow() }
+            .onEach {
+                updateTopGame()
+            }
 
         observe(topGame, this::onTopGameUpdated)
     }
@@ -113,7 +110,6 @@ class RouletteViewModel @Inject constructor(
         _gamesPagingList.value?.let {
             if (!it.isEmpty()) {
                 val game = it.removeTop()
-                _itemRemoved.value = Event(0)
                 if (hide) {
                     hideGame(game)
                 }
