@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
 import ru.luckycactus.steamroulette.domain.common.InvalidSteamIdFormatException
 import ru.luckycactus.steamroulette.domain.common.SteamIdNotFoundException
 import ru.luckycactus.steamroulette.domain.common.VanityNotFoundException

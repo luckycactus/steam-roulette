@@ -10,6 +10,7 @@ import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import ru.luckycactus.steamroulette.data.SyncGamesPeriodicJobWorkManagerImpl
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
 import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
@@ -31,6 +32,7 @@ import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettings
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.about.AboutRepository
 import ru.luckycactus.steamroulette.domain.app.AppRepository
+import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -50,6 +52,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindResourceManager(androidResourceManager: AndroidResourceManager): ResourceManager
+
+    @Binds
+    abstract fun bindSyncGamesPeriodicJob(job: SyncGamesPeriodicJobWorkManagerImpl): SyncGamesPeriodicJob
 
     @Binds
     abstract fun bindAppSettingsRepository(appRepositoryImpl: AppRepositoryImpl): AppRepository

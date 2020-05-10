@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -9,6 +10,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
+import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
 import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.toConflatedBroadcastChannel
@@ -39,6 +41,7 @@ class MainViewModel @Inject constructor(
     private val signOutUser: SignOutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
     private val clearHiddenGames: ClearHiddenGamesUseCase,
+    private val syncGamesPeriodicJob: SyncGamesPeriodicJob,
     private val resourceManager: ResourceManager,
     private val router: Router
 ) : BaseViewModel(), UserViewModelDelegate {
@@ -71,16 +74,7 @@ class MainViewModel @Inject constructor(
         _nullableCurrentUserSteamIdFlow = _nullableCurrentUserSteamIdChannel.asFlow()
 
         currentUserSteamId = _nullableCurrentUserSteamIdFlow
-            .onEach { userScope.coroutineContext.cancelChildren() }
             .filterNotNull()
-            .onEach {
-                userScope.launch {
-                    fetchGames(false)
-                }
-                userScope.launch {
-                    fetchUserSummary(false)
-                }
-            }
             .toConflatedBroadcastChannel(viewModelScope)
             .asFlow()
 
@@ -88,6 +82,28 @@ class MainViewModel @Inject constructor(
             .filterNotNull()
             .flatMapLatest { observeUserSummary(it) }
             .asLiveData()
+
+        viewModelScope.launch {
+            _nullableCurrentUserSteamIdFlow.collect {
+                userScope.coroutineContext.cancelChildren()
+
+                it?.let {
+                    syncGamesPeriodicJob.start()
+                    Log.d("ololo", "start")
+
+                    userScope.launch {
+                        fetchGames(false)
+                    }
+                    userScope.launch {
+                        fetchUserSummary(false)
+                    }
+                } ?: run {
+                    syncGamesPeriodicJob.stop()
+                    Log.d("ololo", "stop")
+
+                }
+            }
+        }
     }
 
     fun onColdStart() {
@@ -168,6 +184,7 @@ class MainViewModel @Inject constructor(
             _fetchGamesState.value = Result.Loading
             return try {
                 fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
+                syncGamesPeriodicJob.start(true)
                 Result.success.also { _fetchGamesState.value = it }
             } catch (e: CancellationException) {
                 throw e
