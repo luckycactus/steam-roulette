@@ -89,7 +89,6 @@ class MainViewModel @Inject constructor(
 
                 it?.let {
                     syncGamesPeriodicJob.start()
-                    Log.d("ololo", "start")
 
                     userScope.launch {
                         fetchGames(false)
@@ -99,7 +98,6 @@ class MainViewModel @Inject constructor(
                     }
                 } ?: run {
                     syncGamesPeriodicJob.stop()
-                    Log.d("ololo", "stop")
 
                 }
             }
