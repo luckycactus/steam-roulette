@@ -1,11 +1,10 @@
-package ru.luckycactus.steamroulette.domain.user
+package ru.luckycactus.steamroulette.domain.common
 
 import org.junit.Test
-import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.SteamId.Format.*
 import ru.luckycactus.steamroulette.domain.common.SteamId.VanityUrlFormat.Full
 
-class FormatTest {
+class SteamIdTest {
 
     @Test
     fun testSteam64Pattern() {

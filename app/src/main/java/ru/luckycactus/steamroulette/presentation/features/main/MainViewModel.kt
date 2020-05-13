@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
