@@ -36,7 +36,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
 
     fun invalidateCache() {
-        cacheHelper.invalidateCache(key)
+        cacheHelper.remove(key)
         memoryCache.remove(memoryKey)
     }
 

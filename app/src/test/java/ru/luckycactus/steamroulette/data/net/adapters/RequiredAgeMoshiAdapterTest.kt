@@ -11,12 +11,8 @@ import ru.luckycactus.steamroulette.data.repositories.games.models.RequiredAgeEn
 
 class RequiredAgeMoshiAdapterTest {
 
-    private lateinit var adapter: JsonAdapter<POJO>
-
-    @Before
-    fun setup() {
-        adapter = Moshi.Builder().add(RequiredAgeMoshiAdapter()).build().adapter(POJO::class.java)
-    }
+    private val adapter: JsonAdapter<POJO> =
+        Moshi.Builder().add(RequiredAgeMoshiAdapter()).build().adapter(POJO::class.java)
 
     @Test
     fun testRequiredAgeZero() {
@@ -38,7 +34,7 @@ class RequiredAgeMoshiAdapterTest {
         adapter.fromJson(json)
     }
 
-    @Test(expected = Exception::class)
+    @Test
     fun testJsonRequiredAgeMiss() {
         val json = """{}"""
         val pojo = adapter.fromJson(json)

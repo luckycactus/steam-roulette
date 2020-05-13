@@ -13,13 +13,8 @@ import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 
 class SystemRequirementsMoshiAdapterTest {
 
-    private lateinit var adapter: JsonAdapter<Pojo>
-
-    @Before
-    fun setup() {
-        adapter = Moshi.Builder().add(SystemRequirementsMoshiAdapter()).build()
-            .adapter(Pojo::class.java)
-    }
+    private val adapter = Moshi.Builder().add(SystemRequirementsMoshiAdapter()).build()
+        .adapter(Pojo::class.java)
 
     @Test
     fun testNormal() {

@@ -35,7 +35,9 @@ import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
+import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.SystemClock
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
@@ -49,6 +51,9 @@ abstract class AppModule {
     @Binds
     @ForApplication
     abstract fun bindContext(application: Application): Context
+
+    @Binds
+    abstract fun bindClock(clock: SystemClock): Clock
 
     @Binds
     abstract fun bindResourceManager(androidResourceManager: AndroidResourceManager): ResourceManager

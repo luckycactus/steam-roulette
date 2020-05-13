@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
+import ru.luckycactus.steamroulette.domain.core.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
@@ -12,7 +13,8 @@ import kotlin.time.milliseconds
 
 @Singleton
 class CacheHelper @Inject constructor(
-    @Identified(R.id.cacheHelperPrefs) private val prefs: SharedPreferences
+    @Identified(R.id.cacheHelperPrefs) private val prefs: SharedPreferences,
+    private val clock: Clock
 ) {
     private val prefsEditor = prefs.edit()
 
@@ -26,7 +28,7 @@ class CacheHelper @Inject constructor(
         if (savedTime == 0L)
             return true
 
-        val passedTime = (System.currentTimeMillis() - savedTime).milliseconds
+        val passedTime = (clock.currentTimeMillis() - savedTime).milliseconds
         return passedTime >= window
     }
 
@@ -44,11 +46,15 @@ class CacheHelper @Inject constructor(
     ): Boolean = !shouldUseCache(cachePolicy, key, window)
 
     fun setCachedNow(key: String) {
-        prefsEditor.apply { putLong(key, System.currentTimeMillis()) }
+        prefsEditor.apply { putLong(key, clock.currentTimeMillis()) }
     }
 
-    fun invalidateCache(key: String) {
+    fun remove(key: String) {
         prefsEditor.apply { remove(key) }
+    }
+
+    fun clear() {
+        prefsEditor.apply { clear() }
     }
 
     fun observeCacheUpdates(key: String): Flow<Long> = prefs.longFlow(key, 0L)

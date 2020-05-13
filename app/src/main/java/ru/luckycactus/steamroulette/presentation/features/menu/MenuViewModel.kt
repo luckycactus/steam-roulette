@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
@@ -27,7 +28,8 @@ class MenuViewModel @Inject constructor(
     private val observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     private val resourceManager: ResourceManager,
     private val userViewModelDelegate: UserViewModelDelegate,
-    private val router: Router
+    private val router: Router,
+    private val clock: Clock
 ) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
 
     val gameCount: LiveData<Int> = userViewModelDelegate.currentUserSteamId
@@ -55,7 +57,7 @@ class MenuViewModel @Inject constructor(
                 else
                     DateUtils.getRelativeTimeSpanString(
                         it,
-                        System.currentTimeMillis(),
+                        clock.currentTimeMillis(),
                         DateUtils.MINUTE_IN_MILLIS
                     )
                 resourceManager.getString(R.string.games_last_sync, ago)
