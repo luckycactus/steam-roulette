@@ -1,9 +1,5 @@
 package ru.luckycactus.steamroulette.domain.common
 
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
-//todo kotlin regex
 class SteamId private constructor(
     private val value: Long
 ) {
@@ -33,7 +29,7 @@ class SteamId private constructor(
 
         fun getFormat(input: String): Format {
             Format.values().forEach {
-                if (it.pattern.matcher(input).matches())
+                if (it.regex.matches(input))
                     return it
             }
             return Format.Invalid
@@ -41,24 +37,18 @@ class SteamId private constructor(
 
         fun getVanityUrlFormat(input: String): VanityUrlFormat {
             VanityUrlFormat.values().forEach {
-                if (it.pattern.matcher(input).matches())
+                if (it.regex.matches(input))
                     return it
             }
             return VanityUrlFormat.Invalid
         }
 
         fun tryGetVanityUrl(input: String): String? {
-            if (VanityUrlFormat.Short.pattern.matcher(input).matches())
+            if (VanityUrlFormat.Short.regex.matches(input))
                 return input
-
-            VanityUrlFormat.Full.pattern.matcher(input).apply {
-                if (matches()) {
-                    //find()
-                    return group(2)
-                }
+            return VanityUrlFormat.Full.regex.find(input)?.let {
+                it.groupValues[2]
             }
-
-            return null
         }
 
         fun tryParse(input: String): SteamId? {
@@ -173,9 +163,9 @@ class SteamId private constructor(
                 As for the 32-bit method, the path can be found in the table above, again after the slash.
                 Example: http://steamcommunity.com/profiles/76561197960287930
                  */
-                return matcherFind(input) {
-                    val y = it.group(3).toLong()
-                    val z = it.group(4).toLong()
+                return regex.find(input)!!.let {
+                    val y = it.groupValues[3].toLong()
+                    val z = it.groupValues[4].toLong()
                     fromSteam64(
                         z * 2 + v + y
                     )
@@ -188,8 +178,8 @@ class SteamId private constructor(
          */
         Steam3("\\[U:1:(\\d+)(:1)?\\]") {
             override fun parseSteamId(input: String): SteamId {
-                val accountId = matcherFind(input) {
-                    it.group(1).toLong()
+                val accountId = regex.find(input)!!.let {
+                    it.groupValues[1].toLong()
                 }
                 return from(
                     Universe.Public,
@@ -203,10 +193,10 @@ class SteamId private constructor(
         /**
          * Example: https://steamcommunity.com/profiles/76561197960287930/
          */
-        Steam64Url("(https?://)?steamcommunity\\.com/profiles/(${Steam64.pattern.pattern()})/?") {
+        Steam64Url("(https?://)?steamcommunity\\.com/profiles/(${Steam64.regex.pattern})/?") {
             override fun parseSteamId(input: String): SteamId {
-                return matcherFind(input) {
-                    Steam64.parseSteamId(it.group(2))
+                return regex.find(input)!!.let {
+                    Steam64.parseSteamId(it.groupValues[2])
                 }
             }
         },
@@ -214,10 +204,10 @@ class SteamId private constructor(
         /**
          * Example: https://steamcommunity.com/profiles/[U:1:22202]/
          */
-        Steam3Url("(https?://)?steamcommunity\\.com/profiles/(${Steam3.pattern.pattern()})/?") {
+        Steam3Url("(https?://)?steamcommunity\\.com/profiles/(${Steam3.regex.pattern})/?") {
             override fun parseSteamId(input: String): SteamId {
-                return matcherFind(input) {
-                    Steam3.parseSteamId(it.group())
+                return regex.find(input)!!.let {
+                    Steam3.parseSteamId(it.groupValues[0])
                 }
             }
         },
@@ -228,18 +218,11 @@ class SteamId private constructor(
             }
         };
 
-        var pattern: Pattern = Pattern.compile(regExp)
+        var regex = regExp.toRegex()
 
-
-        fun matches(input: String) = pattern.matcher(input).matches()
+        fun matches(input: String) = regex.matches(input)
 
         abstract fun parseSteamId(input: String): SteamId
-
-        protected fun <T> matcherFind(input: String, block: (Matcher) -> T): T {
-            val matcher = pattern.matcher(input)
-            matcher.find()
-            return block(matcher)
-        }
     }
 
     enum class VanityUrlFormat(
@@ -257,6 +240,6 @@ class SteamId private constructor(
 
         Invalid("\$a");
 
-        val pattern: Pattern = Pattern.compile(regExp)
+        val regex: Regex = regExp.toRegex()
     }
 }

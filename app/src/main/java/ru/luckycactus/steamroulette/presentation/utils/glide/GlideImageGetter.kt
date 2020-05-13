@@ -25,6 +25,7 @@ class GlideImageGetter(
     private val imagesHandler: HtmlImagesHandler? = null,
     densityAware: Boolean = false
 ) : Html.ImageGetter {
+
     private var container = WeakReference(textView)
     private var density = if (densityAware) textView.resources.displayMetrics.density else 1f
 
