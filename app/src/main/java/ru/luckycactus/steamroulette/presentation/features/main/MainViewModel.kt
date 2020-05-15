@@ -5,14 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
 import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.common.toConflatedBroadcastChannel
+import ru.luckycactus.steamroulette.domain.common.toStateFlow
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.Result
@@ -45,7 +44,7 @@ class MainViewModel @Inject constructor(
     private val router: Router
 ) : BaseViewModel(), UserViewModelDelegate {
     override val isUserLoggedIn: Boolean
-        get() = _nullableCurrentUserSteamIdChannel.value != null
+        get() = _nullableCurrentUserSteamIdFlow.value != null
 
     override val userSummary: LiveData<UserSummary>
     override val fetchGamesState: LiveData<Result<Unit>>
@@ -57,8 +56,7 @@ class MainViewModel @Inject constructor(
     val errorMessage: LiveData<Event<String>>
         get() = _errorMessage
 
-    private val _nullableCurrentUserSteamIdChannel: ConflatedBroadcastChannel<SteamId?>
-    private val _nullableCurrentUserSteamIdFlow: Flow<SteamId?>
+    private val _nullableCurrentUserSteamIdFlow: StateFlow<SteamId?>
 
     private val _fetchGamesState = MutableLiveData<Result<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
@@ -67,18 +65,11 @@ class MainViewModel @Inject constructor(
     private val userScope = viewModelScope + SupervisorJob(viewModelScope.coroutineContext[Job])
 
     init {
-        _nullableCurrentUserSteamIdChannel = observeCurrentUser()
-            .toConflatedBroadcastChannel(viewModelScope)
+        _nullableCurrentUserSteamIdFlow = observeCurrentUser().toStateFlow(viewModelScope, null)
 
-        _nullableCurrentUserSteamIdFlow = _nullableCurrentUserSteamIdChannel.asFlow()
+        currentUserSteamId = _nullableCurrentUserSteamIdFlow.filterNotNull()
 
-        currentUserSteamId = _nullableCurrentUserSteamIdFlow
-            .filterNotNull()
-            .toConflatedBroadcastChannel(viewModelScope)
-            .asFlow()
-
-        userSummary = _nullableCurrentUserSteamIdFlow
-            .filterNotNull()
+        userSummary = currentUserSteamId
             .flatMapLatest { observeUserSummary(it) }
             .asLiveData()
 
@@ -132,7 +123,7 @@ class MainViewModel @Inject constructor(
     }
 
     override fun getCurrentUserSteamId(): SteamId {
-        return _nullableCurrentUserSteamIdChannel.value!!
+        return _nullableCurrentUserSteamIdFlow.value!!
     }
 
     override fun fetchGames() {

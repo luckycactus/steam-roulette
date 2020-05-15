@@ -38,17 +38,14 @@ fun <R> Flow<R>.chunkBuffer(bufferSize: Int) =
         }
     }
 
-fun <T> Flow<T>.toConflatedBroadcastChannel(scope: CoroutineScope): ConflatedBroadcastChannel<T> {
-    val channel = ConflatedBroadcastChannel<T>()
+fun <T> Flow<T>.toStateFlow(scope: CoroutineScope, default: T): StateFlow<T> {
+    val mutableStateFlow = MutableStateFlow(default)
     scope.launch {
-        collect { channel.offer(it) }
+        collect { mutableStateFlow.value = it }
     }
-    return channel
+    return mutableStateFlow
 }
 
 fun <T> Flow<T?>.switchNullsToEmpty(): Flow<T> = flatMapLatest {
     it?.let { flowOf(it) } ?: emptyFlow()
 }
-
-//fun <T> Flow<T>.share(scope: CoroutineScope): Flow<T> =
-//    toConflatedBroadcastChannel(scope).asFlow()
