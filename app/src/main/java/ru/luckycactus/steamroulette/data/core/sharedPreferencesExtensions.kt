@@ -11,18 +11,6 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-//todo refactor
-
-private val compositeListeners = WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
-
-@Synchronized
-private fun SharedPreferences.getCompositeListener() =
-    compositeListeners.getOrPut(this, {
-        CompositePreferenceChangeListener().also {
-            registerOnSharedPreferenceChangeListener(it)
-        }
-    })
-
 fun SharedPreferences.Editor.apply(block: SharedPreferences.Editor.() -> Unit) {
     block()
     apply()
@@ -32,53 +20,6 @@ fun SharedPreferences.Editor.commit(block: SharedPreferences.Editor.() -> Unit) 
     block()
     commit()
 }
-
-fun SharedPreferences.int(key: String, defValue: Int = 0) =
-    IntPreference(this, key, defValue)
-
-fun SharedPreferences.long(key: String, defValue: Long = 0) =
-    LongPreference(this, key, defValue)
-
-fun SharedPreferences.float(key: String, defValue: Float = 0f) =
-    FloatPreference(this, key, defValue)
-
-fun SharedPreferences.boolean(key: String, defValue: Boolean = false) =
-    BooleanPreference(this, key, defValue)
-
-fun SharedPreferences.string(key: String, defValue: String? = null) =
-    StringPreference(this, key, defValue)
-
-
-fun SharedPreferences.intLiveData(key: String, defValue: Int) =
-    liveData(key, IntPreference(this, key, defValue))
-
-fun SharedPreferences.longLiveData(key: String, defValue: Long) =
-    liveData(key, LongPreference(this, key, defValue))
-
-fun SharedPreferences.floatLiveData(key: String, defValue: Float) =
-    liveData(key, FloatPreference(this, key, defValue))
-
-fun SharedPreferences.booleanLiveData(key: String, defValue: Boolean) =
-    liveData(key, BooleanPreference(this, key, defValue))
-
-fun SharedPreferences.stringLiveData(key: String, defValue: String?): LiveData<String?> =
-    liveData(key, StringPreference(this, key, defValue))
-
-
-fun SharedPreferences.intFlow(key: String, defValue: Int) =
-    flow(key, IntPreference(this, key, defValue))
-
-fun SharedPreferences.longFlow(key: String, defValue: Long) =
-    flow(key, LongPreference(this, key, defValue))
-
-fun SharedPreferences.floatFlow(key: String, defValue: Float) =
-    flow(key, FloatPreference(this, key, defValue))
-
-fun SharedPreferences.booleanFlow(key: String, defValue: Boolean) =
-    flow(key, BooleanPreference(this, key, defValue))
-
-fun SharedPreferences.stringFlow(key: String, defValue: String?): Flow<String?> =
-    flow(key, StringPreference(this, key, defValue))
 
 class IntPreference(
     private val prefs: SharedPreferences,
@@ -155,6 +96,68 @@ class StringPreference(
     }
 }
 
+
+fun SharedPreferences.int(key: String, defValue: Int = 0) =
+    IntPreference(this, key, defValue)
+
+fun SharedPreferences.long(key: String, defValue: Long = 0) =
+    LongPreference(this, key, defValue)
+
+fun SharedPreferences.float(key: String, defValue: Float = 0f) =
+    FloatPreference(this, key, defValue)
+
+fun SharedPreferences.boolean(key: String, defValue: Boolean = false) =
+    BooleanPreference(this, key, defValue)
+
+fun SharedPreferences.string(key: String, defValue: String? = null) =
+    StringPreference(this, key, defValue)
+
+
+fun SharedPreferences.intLiveData(key: String, defValue: Int) =
+    liveData(key, IntPreference(this, key, defValue))
+
+fun SharedPreferences.longLiveData(key: String, defValue: Long) =
+    liveData(key, LongPreference(this, key, defValue))
+
+fun SharedPreferences.floatLiveData(key: String, defValue: Float) =
+    liveData(key, FloatPreference(this, key, defValue))
+
+fun SharedPreferences.booleanLiveData(key: String, defValue: Boolean) =
+    liveData(key, BooleanPreference(this, key, defValue))
+
+fun SharedPreferences.stringLiveData(key: String, defValue: String?): LiveData<String?> =
+    liveData(key, StringPreference(this, key, defValue))
+
+
+fun SharedPreferences.intFlow(key: String, defValue: Int) =
+    flow(key, IntPreference(this, key, defValue))
+
+fun SharedPreferences.longFlow(key: String, defValue: Long) =
+    flow(key, LongPreference(this, key, defValue))
+
+fun SharedPreferences.floatFlow(key: String, defValue: Float) =
+    flow(key, FloatPreference(this, key, defValue))
+
+fun SharedPreferences.booleanFlow(key: String, defValue: Boolean) =
+    flow(key, BooleanPreference(this, key, defValue))
+
+fun SharedPreferences.stringFlow(key: String, defValue: String?): Flow<String?> =
+    flow(key, StringPreference(this, key, defValue))
+
+
+private typealias PrefChangeListener = () -> Unit
+
+private val compositeListeners = WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
+
+private fun SharedPreferences.getCompositeListener() =
+    synchronized(this) {
+        compositeListeners.getOrPut(this, {
+            CompositePreferenceChangeListener().also {
+                registerOnSharedPreferenceChangeListener(it)
+            }
+        })
+    }
+
 private fun <T> SharedPreferences.liveData(
     key: String,
     delegate: ReadWriteProperty<Any, T>
@@ -221,25 +224,25 @@ private class SharedPreferenceLiveData<T>(
 
 private class CompositePreferenceChangeListener :
     SharedPreferences.OnSharedPreferenceChangeListener {
-    private val listeners = mutableMapOf<String, MutableSet<() -> Unit>>()
+    val keyListenersMultimap = mutableMapOf<String, MutableSet<PrefChangeListener>>()
 
     override fun onSharedPreferenceChanged(
         sharedPreferences: SharedPreferences?,
         key: String
     ) {
-        listeners[key]?.forEach { it.invoke() }
+        keyListenersMultimap[key]?.forEach { it.invoke() }
     }
 
-    fun addListener(key: String, listener: () -> Unit) {
+    fun addListener(key: String, listener: PrefChangeListener) {
         synchronized(key.intern()) {
-            listeners.getOrPut(
+            keyListenersMultimap.getOrPut(
                 key,
-                { Collections.newSetFromMap<() -> Unit>(WeakHashMap<() -> Unit, Boolean>()) }
+                { Collections.newSetFromMap(WeakHashMap()) }
             ).add(listener)
         }
     }
 
-    fun removeListener(key: String, listener: () -> Unit) {
-        listeners[key]?.remove(listener)
+    fun removeListener(key: String, listener: PrefChangeListener) {
+        keyListenersMultimap[key]?.remove(listener)
     }
 }
