@@ -71,8 +71,7 @@ class CoverBlurTransformation(
 
         pool.put(blurBitmap)
 
-        var y = bias * height - toTransform.height / 2
-        y = y.coerceIn(0f, height - toTransform.height / 2f)
+        val y = (height - toTransform.height) * bias
         canvas.translate(0f, y)
         canvas.drawBitmap(toTransform, 0f, 0f, paint)
 
@@ -99,7 +98,7 @@ class CoverBlurTransformation(
     }
 
     companion object {
-        private const val VERSION = 6
+        private const val VERSION = 7
         private const val ID = "ru.luckycactus.steamroulette.CoverBlurTransformation.$VERSION"
     }
 }
