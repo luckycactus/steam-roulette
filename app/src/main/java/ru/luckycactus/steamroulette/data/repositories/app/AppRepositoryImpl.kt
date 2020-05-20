@@ -21,7 +21,7 @@ class AppRepositoryImpl @Inject constructor(
     @Identified(R.id.appPrefs) private val appPrefs: SharedPreferences
 ) : AppRepository {
 
-    override var lastVersion by appPrefs.int("last_version", -1)
+    override var lastVersion by appPrefs.int("last_version", 0)
 
     override val currentVersion: Int
         get() = context.packageManager.getPackageInfo(context.packageName, 0).versionCode
