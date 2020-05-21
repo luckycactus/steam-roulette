@@ -3,8 +3,10 @@ package ru.luckycactus.steamroulette.data.core
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.*
@@ -13,8 +15,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import ru.luckycactus.steamroulette.di.common.StorageModule
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
-import ru.luckycactus.steamroulette.domain.core.Clock
-import kotlin.time.Duration
+import ru.luckycactus.steamroulette.test.util.fakes.FakeClock
+import kotlin.math.exp
 import kotlin.time.days
 import kotlin.time.milliseconds
 import kotlin.time.minutes
@@ -24,8 +26,8 @@ class CacheHelperTest {
 
     private lateinit var cacheHelper: CacheHelper
     private lateinit var clock: FakeClock
-    private lateinit var key: String
-    private var window: Duration = Duration.ZERO
+    private var key = "key"
+    private var window = 2.days
 
     @Before
     fun setup() {
@@ -41,47 +43,49 @@ class CacheHelperTest {
     }
 
     @Test
-    fun testNormal() {
-        key = "key"
-        window = 2.days
+    fun `cache should not be cached and valid before insert`() {
+        checkCacheState(shouldBeCached = false, shouldBeValid = false)
+    }
 
-        checkConstantCases()
-        assertFalse(cacheHelper.isCached(key))
-        assertTrue(cacheHelper.isExpired(key, window))
-        assertTrue(cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window))
-        assertFalse(cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window))
-
+    @Test
+    fun `cache should be valid if just inserted`() {
         cacheHelper.setCachedNow(key)
+        checkCacheState(shouldBeCached = true, shouldBeValid = true)
+    }
 
-        checkConstantCases()
-        assertTrue(cacheHelper.isCached(key))
-        assertFalse(cacheHelper.isExpired(key, window))
-        assertFalse(cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window))
-        assertTrue(cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window))
-
+    @Test
+    fun `cache should be valid right before window end`() {
+        cacheHelper.setCachedNow(key)
         clock.offset(window - 1.milliseconds)
+        checkCacheState(shouldBeCached = true, shouldBeValid = true)
+    }
 
-        checkConstantCases()
-        assertTrue(cacheHelper.isCached(key))
-        assertFalse(cacheHelper.isExpired(key, window))
-        assertFalse(cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window))
-        assertTrue(cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window))
+    @Test
+    fun `cache should be invalid after window end`() {
+        cacheHelper.setCachedNow(key)
+        clock.offset(window)
+        checkCacheState(shouldBeCached = true, shouldBeValid = false)
+    }
 
-        clock.offset(1.milliseconds)
-
-        checkConstantCases()
-        assertTrue(cacheHelper.isCached(key))
-        assertTrue(cacheHelper.isExpired(key, window))
-        assertTrue(cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window))
-        assertFalse(cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window))
-
+    @Test
+    fun `cache should be invalid and not exist after remove`() {
+        cacheHelper.setCachedNow(key)
         cacheHelper.remove(key)
+        checkCacheState(shouldBeCached = false, shouldBeValid = false)
+    }
 
+    private fun checkCacheState(shouldBeCached: Boolean, shouldBeValid: Boolean) {
         checkConstantCases()
-        assertFalse(cacheHelper.isCached(key))
-        assertTrue(cacheHelper.isExpired(key, window))
-        assertTrue(cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window))
-        assertFalse(cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window))
+        assertEquals(cacheHelper.isCached(key), shouldBeCached)
+        assertEquals(cacheHelper.isExpired(key, window), !shouldBeValid)
+        assertEquals(
+            cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window),
+            !shouldBeValid
+        )
+        assertEquals(
+            cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window),
+            shouldBeValid
+        )
     }
 
     private fun checkConstantCases() {
@@ -92,53 +96,56 @@ class CacheHelperTest {
     }
 
     @Test
-    fun testObserveCacheUpdates() = runBlockingTest {
-        key = "key"
+    fun `obsereCacheUpdates() should emit zero if not cached`() =
+        cacheHelper.observeCacheUpdates(key).testFlow(listOf(0L)) {}
 
-        val actualValues = mutableListOf<Long>()
-        val expectedValues = mutableListOf<Long>()
-        val job = launch {
-            cacheHelper.observeCacheUpdates(key).collect { actualValues.add(it) }
+    @Test
+    fun `obsereCacheUpdates() should emit value after cache insert`() {
+        val expectedValues = listOf(0L, clock.currentTimeMillis())
+        cacheHelper.observeCacheUpdates(key).testFlow(expectedValues) {
+            cacheHelper.setCachedNow(key)
         }
-
-        expectedValues.add(0L)
-        assertEquals(actualValues, expectedValues)
-
-        cacheHelper.setCachedNow(key)
-        expectedValues.add(clock.currentTimeMillis())
-        assertEquals(actualValues, expectedValues)
-
-        cacheHelper.setCachedNow(key)
-        assertEquals(actualValues, expectedValues)
-
-        clock.offset(24.minutes)
-        cacheHelper.setCachedNow(key)
-        expectedValues.add(clock.currentTimeMillis())
-        assertEquals(actualValues, expectedValues)
-
-        clock.offset(1.minutes)
-        cacheHelper.remove(key)
-        expectedValues.add(0L)
-        assertEquals(actualValues, expectedValues)
-
-        job.cancel()
     }
 
-    class FakeClock : Clock {
-        private var current: Long = 0
+    @Test
+    fun `obsereCacheUpdates() should emit distinct values until changed`() {
+        val expectedValues = mutableListOf(0L)
+        cacheHelper.observeCacheUpdates(key).testFlow(expectedValues) {
+            cacheHelper.setCachedNow(key)
+            cacheHelper.setCachedNow(key)
+            expectedValues += clock.currentTimeMillis()
 
-        init {
-            setToSystem()
+            clock.offset(1.days)
+            cacheHelper.setCachedNow(key)
+            expectedValues += clock.currentTimeMillis()
+        }
+    }
+
+    @Test
+    fun `obsereCacheUpdates() should emit zero if cache removed`() {
+        val expectedValues = mutableListOf(0L)
+        cacheHelper.observeCacheUpdates(key).testFlow(expectedValues) {
+            cacheHelper.setCachedNow(key)
+            expectedValues += clock.currentTimeMillis()
+
+            clock.offset(1.minutes)
+            cacheHelper.remove(key)
+            expectedValues += 0L
+        }
+    }
+
+    private fun <T> Flow<T>.testFlow(
+        expectedValues: List<T>,
+        testBody: suspend TestCoroutineScope.() -> Unit
+    ) = runBlockingTest {
+        val actualValues = mutableListOf<T>()
+        val job = launch {
+            collect { actualValues.add(it) }
         }
 
-        override fun currentTimeMillis() = current
+        testBody()
 
-        fun setToSystem() {
-            current = System.currentTimeMillis()
-        }
-
-        fun offset(offset: Duration) {
-            current += offset.toLongMilliseconds()
-        }
+        assertEquals(actualValues, expectedValues)
+        job.cancel()
     }
 }
