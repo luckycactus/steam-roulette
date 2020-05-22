@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import ru.luckycactus.steamroulette.data.local.db.DB
+import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @Reusable
 class LocalGamesDataStore @Inject constructor(
-    private val db: DB
+    private val db: AppDatabase
 ) : GamesDataStore.Local {
 
     override fun observeOwnedGamesCount(steamId: SteamId): Flow<Int> =

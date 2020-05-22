@@ -106,11 +106,6 @@ abstract class AppModule {
     @Module
     companion object {
 
-        @Reusable
-        @JvmStatic
-        @Provides
-        fun provideMoshi(): Moshi = Moshi.Builder().build()
-
         @Singleton
         @JvmStatic
         @Provides

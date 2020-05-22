@@ -13,6 +13,7 @@ class GamesVerifier(
     private val logger = GamesParseLogger(log)
 
     fun verify(game: OwnedGameEntity): Boolean {
+        //usually games have iconUrl and logoUrl
         val suspicious = game.iconUrl.isNullOrEmpty() || game.logoUrl.isNullOrEmpty()
         if (previouslyVerifiedAppIds.contains(game.appId)) {
             onDebug {

@@ -3,11 +3,6 @@ package ru.luckycactus.steamroulette.data.core
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -16,7 +11,7 @@ import org.junit.runner.RunWith
 import ru.luckycactus.steamroulette.di.common.StorageModule
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.test.util.fakes.FakeClock
-import kotlin.math.exp
+import ru.luckycactus.steamroulette.test.util.checkValues
 import kotlin.time.days
 import kotlin.time.milliseconds
 import kotlin.time.minutes
@@ -56,14 +51,14 @@ class CacheHelperTest {
     @Test
     fun `cache should be valid right before window end`() {
         cacheHelper.setCachedNow(key)
-        clock.offset(window - 1.milliseconds)
+        clock.advanceTimeBy(window - 1.milliseconds)
         checkCacheState(shouldBeCached = true, shouldBeValid = true)
     }
 
     @Test
     fun `cache should be invalid after window end`() {
         cacheHelper.setCachedNow(key)
-        clock.offset(window)
+        clock.advanceTimeBy(window)
         checkCacheState(shouldBeCached = true, shouldBeValid = false)
     }
 
@@ -97,12 +92,12 @@ class CacheHelperTest {
 
     @Test
     fun `obsereCacheUpdates() should emit zero if not cached`() =
-        cacheHelper.observeCacheUpdates(key).testFlow(listOf(0L)) {}
+        cacheHelper.observeCacheUpdates(key).checkValues(listOf(0L)) {}
 
     @Test
     fun `obsereCacheUpdates() should emit value after cache insert`() {
         val expectedValues = listOf(0L, clock.currentTimeMillis())
-        cacheHelper.observeCacheUpdates(key).testFlow(expectedValues) {
+        cacheHelper.observeCacheUpdates(key).checkValues(expectedValues) {
             cacheHelper.setCachedNow(key)
         }
     }
@@ -110,12 +105,12 @@ class CacheHelperTest {
     @Test
     fun `obsereCacheUpdates() should emit distinct values until changed`() {
         val expectedValues = mutableListOf(0L)
-        cacheHelper.observeCacheUpdates(key).testFlow(expectedValues) {
+        cacheHelper.observeCacheUpdates(key).checkValues(expectedValues) {
             cacheHelper.setCachedNow(key)
             cacheHelper.setCachedNow(key)
             expectedValues += clock.currentTimeMillis()
 
-            clock.offset(1.days)
+            clock.advanceTimeBy(1.days)
             cacheHelper.setCachedNow(key)
             expectedValues += clock.currentTimeMillis()
         }
@@ -124,28 +119,13 @@ class CacheHelperTest {
     @Test
     fun `obsereCacheUpdates() should emit zero if cache removed`() {
         val expectedValues = mutableListOf(0L)
-        cacheHelper.observeCacheUpdates(key).testFlow(expectedValues) {
+        cacheHelper.observeCacheUpdates(key).checkValues(expectedValues) {
             cacheHelper.setCachedNow(key)
             expectedValues += clock.currentTimeMillis()
 
-            clock.offset(1.minutes)
+            clock.advanceTimeBy(1.minutes)
             cacheHelper.remove(key)
             expectedValues += 0L
         }
-    }
-
-    private fun <T> Flow<T>.testFlow(
-        expectedValues: List<T>,
-        testBody: suspend TestCoroutineScope.() -> Unit
-    ) = runBlockingTest {
-        val actualValues = mutableListOf<T>()
-        val job = launch {
-            collect { actualValues.add(it) }
-        }
-
-        testBody()
-
-        assertEquals(actualValues, expectedValues)
-        job.cancel()
     }
 }

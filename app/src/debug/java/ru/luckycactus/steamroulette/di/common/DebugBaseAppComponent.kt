@@ -12,6 +12,7 @@ import javax.inject.Singleton
         NetworkModule::class,
         StorageModule::class,
         AppMigrationModule::class,
+        MoshiModule::class,
         DebugModule::class
     ]
 )

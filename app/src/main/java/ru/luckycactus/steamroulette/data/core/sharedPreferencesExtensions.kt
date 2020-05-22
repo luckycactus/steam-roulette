@@ -183,7 +183,7 @@ private fun <T> SharedPreferences.flow(
     listener.invoke()
     compositeListener.addListener(key, listener)
     awaitClose { compositeListener.removeListener(key, listener) }
-}.distinctUntilChanged()
+}
 
 private class SharedPreferenceLiveData<T>(
     prefs: SharedPreferences,

@@ -7,7 +7,7 @@ import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import javax.inject.Inject
 import javax.inject.Provider
 
-class Migration5to6 @Inject constructor(
+class AppMigration5to6 @Inject constructor(
     private val getCurrentUserSteamId: GetCurrentUserSteamIdUseCase,
     private val userSettingsRepository: UserSettingsRepository,
     private val imageCacheCleaner: Provider<ImageCacheCleaner>

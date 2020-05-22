@@ -9,7 +9,7 @@ class FakeClock(
 
     override fun currentTimeMillis() = current
 
-    fun offset(offset: Duration) {
+    fun advanceTimeBy(offset: Duration) {
         current += offset.toLongMilliseconds()
     }
 

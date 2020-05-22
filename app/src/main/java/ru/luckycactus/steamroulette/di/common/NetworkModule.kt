@@ -11,8 +11,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
-import ru.luckycactus.steamroulette.data.net.adapters.RequiredAgeMoshiAdapter
-import ru.luckycactus.steamroulette.data.net.adapters.SystemRequirementsMoshiAdapter
 import ru.luckycactus.steamroulette.data.net.interceptors.AuthInterceptor
 import ru.luckycactus.steamroulette.data.net.interceptors.MyHttpLoggingInterceptor
 import ru.luckycactus.steamroulette.data.net.services.SteamApiService
@@ -55,7 +53,10 @@ abstract class NetworkModule {
         @JvmStatic
         @Provides
         @Named("steam-api")
-        fun provideRetrofitForSteamApi(okHttpClient: OkHttpClient, @Named("api") moshi: Moshi): Retrofit =
+        fun provideRetrofitForSteamApi(
+            okHttpClient: OkHttpClient,
+            @Named("api") moshi: Moshi
+        ): Retrofit =
             Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://api.steampowered.com/")
@@ -65,7 +66,10 @@ abstract class NetworkModule {
         @JvmStatic
         @Provides
         @Named("steam-store-api")
-        fun provideRetrofitForSteamStoreApi(okHttpClient: OkHttpClient, @Named("api") moshi: Moshi): Retrofit {
+        fun provideRetrofitForSteamStoreApi(
+            okHttpClient: OkHttpClient,
+            @Named("api") moshi: Moshi
+        ): Retrofit {
             return Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://store.steampowered.com/api/")
@@ -102,18 +106,5 @@ abstract class NetworkModule {
                 else
                     MyHttpLoggingInterceptor.Level.NONE
             }
-
-        @JvmStatic
-        @Provides
-        @Named("api")
-        fun provideMoshiForApi(
-            systemRequirementsMoshiAdapter: SystemRequirementsMoshiAdapter,
-            requiredAgeMoshiAdapter: RequiredAgeMoshiAdapter
-        ): Moshi {
-            return Moshi.Builder()
-                .add(systemRequirementsMoshiAdapter)
-                .add(requiredAgeMoshiAdapter)
-                .build()
-        }
     }
 }
