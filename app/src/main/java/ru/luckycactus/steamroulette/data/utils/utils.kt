@@ -7,18 +7,26 @@ import okhttp3.TlsVersion
 import ru.luckycactus.steamroulette.data.net.Tls12SocketFactory
 import ru.luckycactus.steamroulette.presentation.utils.onApiAtLeast
 import ru.luckycactus.steamroulette.presentation.utils.onApiLower
+import java.security.KeyStore
 import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 fun enableTls12OnOldApis(client: OkHttpClient.Builder): OkHttpClient.Builder? {
     onApiAtLeast(16) {
         onApiLower(22) {
             try {
+                val trustManager =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+                        .apply { init(null as KeyStore?) }
+                        .trustManagers
+                        .first { it is X509TrustManager } as X509TrustManager
+
                 val sc: SSLContext = SSLContext.getInstance("TLSv1.2")
                 sc.init(null, null, null)
                 client.sslSocketFactory(
-                    Tls12SocketFactory(
-                        sc.socketFactory
-                    )
+                    Tls12SocketFactory(sc.socketFactory),
+                    trustManager
                 )
                 val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                     .tlsVersions(TlsVersion.TLS_1_2)
