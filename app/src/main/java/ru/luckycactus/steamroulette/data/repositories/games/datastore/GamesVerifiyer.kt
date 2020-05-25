@@ -6,13 +6,23 @@ import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEnti
 import ru.luckycactus.steamroulette.presentation.utils.longLog
 import ru.luckycactus.steamroulette.presentation.utils.onDebug
 
-class GamesVerifier(
+interface GamesVerifier {
+    fun verify(game: OwnedGameEntity): Boolean
+
+    interface Factory {
+        fun create(previouslyVerifiedAppIds: Set<Int>): GamesVerifier
+    }
+
+    fun log()
+}
+
+class GamesVerifierImpl(
     private val previouslyVerifiedAppIds: Set<Int>,
     log: Boolean = BuildConfig.DEBUG
-) {
+) : GamesVerifier {
     private val logger = GamesParseLogger(log)
 
-    fun verify(game: OwnedGameEntity): Boolean {
+    override fun verify(game: OwnedGameEntity): Boolean {
         //usually games have iconUrl and logoUrl
         val suspicious = game.iconUrl.isNullOrEmpty() || game.logoUrl.isNullOrEmpty()
         if (previouslyVerifiedAppIds.contains(game.appId)) {
@@ -39,7 +49,7 @@ class GamesVerifier(
         }
     }
 
-    fun log() {
+    override fun log() {
         logger.log()
     }
 
@@ -74,6 +84,14 @@ class GamesVerifier(
                     )}"
                 )
             }
+        }
+    }
+
+    class Factory constructor(
+        private val log: Boolean = BuildConfig.DEBUG
+    ) : GamesVerifier.Factory {
+        override fun create(previouslyVerifiedAppIds: Set<Int>): GamesVerifier {
+            return GamesVerifierImpl(previouslyVerifiedAppIds, log)
         }
     }
 

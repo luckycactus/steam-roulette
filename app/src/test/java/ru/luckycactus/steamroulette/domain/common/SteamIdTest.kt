@@ -45,16 +45,16 @@ class SteamIdTest {
     @Test
     fun testSteam2Parsing() {
         with(Steam2) {
-            assert(parseSteamId("STEAM_0:1:41833838").asSteam64() == 76561198043933405)
-            assert(parseSteamId("STEAM_0:0:11101").asSteam64() == 76561197960287930)
+            assert(parseSteamId("STEAM_0:1:41833838").as64() == 76561198043933405)
+            assert(parseSteamId("STEAM_0:0:11101").as64() == 76561197960287930)
         }
     }
 
     @Test
     fun testSteam3Parsing() {
         with(Steam3) {
-            assert(parseSteamId("[U:1:83667677]").asSteam64() == 76561198043933405)
-            assert(parseSteamId("[U:1:22202]").asSteam64() == 76561197960287930)
+            assert(parseSteamId("[U:1:83667677]").as64() == 76561198043933405)
+            assert(parseSteamId("[U:1:22202]").as64() == 76561197960287930)
         }
     }
 

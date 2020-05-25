@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.di.common
 
 import android.app.Application
 import android.content.Context
-import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -10,6 +9,7 @@ import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.SyncGamesPeriodicJobWorkManagerImpl
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
@@ -18,9 +18,7 @@ import ru.luckycactus.steamroulette.data.repositories.about.data_store.AboutData
 import ru.luckycactus.steamroulette.data.repositories.about.data_store.LocalAboutDataStore
 import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.GamesRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
-import ru.luckycactus.steamroulette.data.repositories.games.datastore.LocalGamesDataStore
-import ru.luckycactus.steamroulette.data.repositories.games.datastore.RemoteGamesDataStore
+import ru.luckycactus.steamroulette.data.repositories.games.datastore.*
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.RemoteLoginDataStore
@@ -112,5 +110,12 @@ abstract class AppModule {
         @ForApplication
         fun provideApplicationCoroutineScope() =
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+        @Provides
+        @JvmStatic
+        @Reusable
+        fun provideGamesVerifier(): GamesVerifier.Factory {
+            return GamesVerifierImpl.Factory(BuildConfig.DEBUG)
+        }
     }
 }

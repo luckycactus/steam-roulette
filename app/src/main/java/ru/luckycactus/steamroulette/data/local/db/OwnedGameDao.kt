@@ -3,7 +3,9 @@ package ru.luckycactus.steamroulette.data.local.db
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
+import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
@@ -23,6 +25,10 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         maxHours: Int,
         shown: Boolean
     ): List<Int>
+
+    @Transaction
+    @Query("select * from owned_game where userSteam64 = :steam64")
+    abstract suspend fun getAll(steam64: Long): List<OwnedGameEntity>
 
     @Query("select appId from owned_game where userSteam64 = :steam64")
     abstract suspend fun getAllIds(steam64: Long): List<Int>
@@ -51,10 +57,10 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     abstract suspend fun getHeaders(steam64: Long, appIds: List<Int>): List<GameHeader>
 
     @Query("delete from owned_game where userSteam64 = :steam64")
-    abstract suspend fun delete(steam64: Long)
+    abstract suspend fun clear(steam64: Long)
 
-    @Query("delete from owned_game where userSteam64 = :steam64")
-    abstract suspend fun deleteAll(steam64: Long)
+    @Query("delete from owned_game")
+    abstract suspend fun clear()
 
     @Query("update owned_game SET hidden = :hidden where userSteam64 =:steam64 and appId in (:gameIds)")
     abstract suspend fun setHidden(steam64: Long, gameIds: List<Int>, hidden: Boolean)

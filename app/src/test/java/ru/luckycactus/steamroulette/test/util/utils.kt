@@ -1,6 +1,9 @@
 package ru.luckycactus.steamroulette.test.util
 
-import com.nhaarman.mockitokotlin2.given
+import io.mockk.MockKMatcherScope
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -14,8 +17,7 @@ import ru.luckycactus.steamroulette.data.core.ServerException
 import java.io.File
 import java.io.IOException
 
-fun getJson(path : String) : String {
-    // Load the JSON response
+fun getJson(path: String): String {
     val file = File("src/test/resources/$path")
     return String(file.readBytes())
 }
@@ -35,8 +37,11 @@ fun <T> Flow<T>.checkValues(
     job.cancel()
 }
 
-suspend fun testCommonNetworkExceptions(methodCall: Any, block: suspend () -> Unit) {
-    given(methodCall).willThrow(HttpException::class.java)
+suspend fun <T> testCommonNetworkExceptions(
+    stubBlock: suspend MockKMatcherScope.() -> T,
+    block: suspend () -> Unit
+) {
+    coEvery(stubBlock) throws mockk<HttpException>()
     try {
         block()
         fail("ServerException expected")
@@ -44,7 +49,7 @@ suspend fun testCommonNetworkExceptions(methodCall: Any, block: suspend () -> Un
         assertEquals(HttpException::class.java, e.cause?.javaClass)
     }
 
-    given(methodCall).willAnswer { throw IOException("exception") }
+    coEvery(stubBlock) throws IOException("exception")
     try {
         block()
         fail("NetworkConnectionException expected")
@@ -52,9 +57,10 @@ suspend fun testCommonNetworkExceptions(methodCall: Any, block: suspend () -> Un
         assertEquals(IOException::class.java, e.cause?.javaClass)
     }
 
-    given(methodCall).willThrow(RuntimeException::class.java)
+    coEvery(stubBlock) throws RuntimeException()
     try {
         block()
         fail("RuntimeException expected")
-    } catch (e: RuntimeException) { }
+    } catch (e: RuntimeException) {
+    }
 }

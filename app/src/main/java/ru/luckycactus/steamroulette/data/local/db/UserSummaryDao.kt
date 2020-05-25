@@ -16,4 +16,7 @@ abstract class UserSummaryDao : BaseDao<UserSummaryEntity>() {
 
     @Query("delete from user_summary where steam64 = :steam64")
     abstract suspend fun delete(steam64: Long)
+
+    @Query("delete from user_summary")
+    abstract suspend fun clear()
 }

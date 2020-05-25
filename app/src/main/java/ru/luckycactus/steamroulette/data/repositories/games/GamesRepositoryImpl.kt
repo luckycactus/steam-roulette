@@ -93,7 +93,7 @@ class GamesRepositoryImpl @Inject constructor(
     private fun createOwnedGamesResource(
         steamId: SteamId
     ): NetworkBoundResource<Flow<OwnedGameEntity>, Unit> {
-        val cacheKey = "owned_games_${steamId.asSteam64()}"
+        val cacheKey = "owned_games_${steamId.as64()}"
         return object : NetworkBoundResource<Flow<OwnedGameEntity>, Unit>(
             cacheKey,
             cacheKey,
@@ -103,7 +103,7 @@ class GamesRepositoryImpl @Inject constructor(
                 remoteGamesDataStore.getOwnedGames(steamId)
 
             override suspend fun saveToCache(data: Flow<OwnedGameEntity>) =
-                localGamesDataStore.saveOwnedGames(steamId, data)
+                localGamesDataStore.updateOwnedGames(steamId, data)
 
             override suspend fun getFromCache() {
                 throw UnsupportedOperationException()

@@ -33,21 +33,21 @@ class LocalUserDataStore @Inject constructor(
     ).map { fromSteam64(it) }
 
     override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity =
-        db.userSummaryDao().get(steamId.asSteam64())
+        db.userSummaryDao().get(steamId.as64())
 
     override suspend fun saveUserSummary(userSummary: UserSummaryEntity) {
         db.userSummaryDao().upsert(userSummary)
     }
 
     override suspend fun removeUserSummary(steamId: SteamId) {
-        db.userSummaryDao().delete(steamId.asSteam64())
+        db.userSummaryDao().delete(steamId.as64())
     }
 
     override fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity> =
-        db.userSummaryDao().observe(steamId.asSteam64()).distinctUntilChanged().filterNotNull()
+        db.userSummaryDao().observe(steamId.as64()).distinctUntilChanged().filterNotNull()
 
     override fun setCurrentUser(steamId: SteamId) {
-        currentUserSteam64Pref = steamId.asSteam64()
+        currentUserSteam64Pref = steamId.as64()
     }
 
     override fun getCurrentUserSteam64(): SteamId? = fromSteam64(currentUserSteam64Pref)

@@ -11,7 +11,9 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 interface GamesDataStore {
 
     interface Local : GamesDataStore {
-        suspend fun saveOwnedGames(steamId: SteamId, gamesFlow: Flow<OwnedGameEntity>)
+        suspend fun updateOwnedGames(steamId: SteamId, gamesFlow: Flow<OwnedGameEntity>)
+
+        suspend fun getOwnedGames(steamId: SteamId): List<OwnedGameEntity>
 
         suspend fun getVisibleOwnedGamesIds(steamId: SteamId, filter: PlaytimeFilter, shown: Boolean): List<Int>
 
