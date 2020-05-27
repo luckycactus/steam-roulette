@@ -15,10 +15,16 @@ class RequiredAgeMoshiAdapter @Inject constructor() {
     fun fromJson(jsonReader: JsonReader): RequiredAgeEntity? {
         return when (jsonReader.peek()) {
             JsonReader.Token.STRING -> {
-                RequiredAgeEntity(jsonReader.nextString().toInt())
+                jsonReader.nextString().toIntOrNull()?.let {
+                    RequiredAgeEntity(it)
+                }
             }
             JsonReader.Token.NUMBER -> {
                 jsonReader.nextInt()
+                null
+            }
+            JsonReader.Token.NULL -> {
+                jsonReader.nextNull<RequiredAgeEntity>()
                 null
             }
             else -> throw JSONException("Cannot parse requiredAge")

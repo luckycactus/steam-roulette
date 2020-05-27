@@ -38,7 +38,7 @@ class RemoteGamesDataStore @Inject constructor(
     override suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity> {
         val response = wrapCommonNetworkExceptions {
             steamApiService.getOwnedGames(
-                steamId.asSteam64(),
+                steamId.as64(),
                 includeAppInfo = true,
                 includePlayedFreeGames = false
             )

@@ -57,7 +57,7 @@ class UserRepositoryImpl @Inject constructor(
     private fun createUserSummaryResource(
         steamId: SteamId
     ): NetworkBoundResource<UserSummaryEntity, UserSummary> {
-        val cacheKey = "user_summary_${steamId.asSteam64()}"
+        val cacheKey = "user_summary_${steamId.as64()}"
         return object : NetworkBoundResource<UserSummaryEntity, UserSummary>(
             cacheKey,
             cacheKey,

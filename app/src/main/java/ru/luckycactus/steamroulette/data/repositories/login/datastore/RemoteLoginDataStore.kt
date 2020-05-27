@@ -19,9 +19,7 @@ class RemoteLoginDataStore @Inject constructor(
         if (result.success == 1 && !result.steamId.isNullOrEmpty())
             return result.steamId.toLong()
         else
-            throw VanityNotFoundException(
-                vanityUrl
-            )
+            throw VanityNotFoundException(vanityUrl)
     }
 }
 

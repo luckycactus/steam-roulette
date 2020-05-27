@@ -61,6 +61,6 @@ class UserSettingsRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun playTimeKey(steamId: SteamId) = "playTimeFilter-${steamId.asSteam64()}"
-    private fun maximumPlayTimeKey(steamId: SteamId) = "maximumPlayTime-${steamId.asSteam64()}"
+    private fun playTimeKey(steamId: SteamId) = "playTimeFilter-${steamId.as64()}"
+    private fun maximumPlayTimeKey(steamId: SteamId) = "maximumPlayTime-${steamId.as64()}"
 }

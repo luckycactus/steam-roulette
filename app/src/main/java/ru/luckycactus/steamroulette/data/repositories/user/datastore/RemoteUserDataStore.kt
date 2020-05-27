@@ -15,7 +15,7 @@ class RemoteUserDataStore @Inject constructor(
 
     override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity {
         val response = wrapCommonNetworkExceptions {
-            steamApiService.getUserSummaries(listOf(steamId.asSteam64()))
+            steamApiService.getUserSummaries(listOf(steamId.as64()))
         }
 
         return response.result.players.getOrNull(0)

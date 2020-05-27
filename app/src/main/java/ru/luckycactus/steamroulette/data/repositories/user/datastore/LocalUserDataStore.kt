@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.long
 import ru.luckycactus.steamroulette.data.core.longFlow
-import ru.luckycactus.steamroulette.data.local.db.DB
+import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @Reusable
 class LocalUserDataStore @Inject constructor(
-    private val db: DB,
+    private val db: AppDatabase,
     @Identified(R.id.userCachePrefs) private val userPreferences: SharedPreferences
 ) : UserDataStore.Local {
 
@@ -33,21 +33,21 @@ class LocalUserDataStore @Inject constructor(
     ).map { fromSteam64(it) }
 
     override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity =
-        db.userSummaryDao().get(steamId.asSteam64())
+        db.userSummaryDao().get(steamId.as64())
 
     override suspend fun saveUserSummary(userSummary: UserSummaryEntity) {
         db.userSummaryDao().upsert(userSummary)
     }
 
     override suspend fun removeUserSummary(steamId: SteamId) {
-        db.userSummaryDao().delete(steamId.asSteam64())
+        db.userSummaryDao().delete(steamId.as64())
     }
 
     override fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity> =
-        db.userSummaryDao().observe(steamId.asSteam64()).distinctUntilChanged().filterNotNull()
+        db.userSummaryDao().observe(steamId.as64()).distinctUntilChanged().filterNotNull()
 
     override fun setCurrentUser(steamId: SteamId) {
-        currentUserSteam64Pref = steamId.asSteam64()
+        currentUserSteam64Pref = steamId.as64()
     }
 
     override fun getCurrentUserSteam64(): SteamId? = fromSteam64(currentUserSteam64Pref)

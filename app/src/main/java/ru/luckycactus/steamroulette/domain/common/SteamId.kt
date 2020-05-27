@@ -7,7 +7,7 @@ class SteamId private constructor(
         return value.toString()
     }
 
-    fun asSteam64(): Long = value
+    fun as64(): Long = value
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

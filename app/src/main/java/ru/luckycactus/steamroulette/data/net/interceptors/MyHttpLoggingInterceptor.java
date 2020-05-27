@@ -102,7 +102,7 @@ public final class MyHttpLoggingInterceptor implements Interceptor {
         MyHttpLoggingInterceptor.Logger DEFAULT = new MyHttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                Platform.get().log(INFO, message, null);
+                Platform.get().log(message, INFO, null);
             }
         };
     }

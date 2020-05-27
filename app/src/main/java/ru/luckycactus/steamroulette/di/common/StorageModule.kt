@@ -2,13 +2,10 @@ package ru.luckycactus.steamroulette.di.common
 
 import android.content.Context
 import android.content.res.AssetManager
-import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.local.db.DB
+import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.di.qualifier.Identified
 import javax.inject.Singleton
@@ -49,17 +46,7 @@ class StorageModule {
         @Singleton
         @JvmStatic
         @Provides
-        fun provideSteamRouletteDb(@ForApplication appContext: Context): DB {
-            val migration2To3 = object : Migration(2, 3) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE owned_game ADD COLUMN shown INTEGER DEFAULT 0 NOT NULL");
-                }
-            }
-            return Room.databaseBuilder(appContext, DB::class.java, "steam_roulette_db")
-                .fallbackToDestructiveMigrationFrom(1)
-                .addMigrations(migration2To3)
-                .build()
-        }
+        fun provideSteamRouletteDb(@ForApplication appContext: Context) = AppDatabase.buildDatabase(appContext)
 
         @JvmStatic
         @Provides

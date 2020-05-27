@@ -1,0 +1,41 @@
+{
+  "response": {
+    "game_count": 3,
+    "games": [
+      {
+        "appid": 17460,
+        "name": "Mass Effect",
+        "playtime_forever": 1751,
+        "img_icon_url": "57be81f70afa48c65437df93d75ba167a29687bc",
+        "img_logo_url": "7501ea5009533fa5c017ec1f4b94725d67ad4936",
+        "has_community_visible_stats": true,
+        "playtime_windows_forever": 27,
+        "playtime_mac_forever": 0,
+        "playtime_linux_forever": 0
+      },
+      {
+        "appid": 30,
+        "name": "Day of Defeat",
+        "playtime_forever": 0,
+        "img_icon_url": "aadc0ce51ff6ba2042d633f8ec033b0de62091d0",
+        "img_logo_url": "beff21c4d29d2579e794c930bae599cd0c8a8f17",
+        "has_community_visible_stats": true,
+        "playtime_windows_forever": 0,
+        "playtime_mac_forever": 0,
+        "playtime_linux_forever": 0
+      },
+      {
+        "appid": 40,
+        "name": "Deathmatch Classic",
+        "playtime_forever": 30,
+        "playtime_2weeks": 20,
+        "img_icon_url": "c525f76c8bc7353db4fd74b128c4ae2028426c2a",
+        "img_logo_url": "4bb69695ef9d0ae73e73488fb6456aa4ea1215fa",
+        "has_community_visible_stats": true,
+        "playtime_windows_forever": 0,
+        "playtime_mac_forever": 0,
+        "playtime_linux_forever": 0
+      }
+    ]
+  }
+}

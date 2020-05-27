@@ -1,0 +1,299 @@
+{
+  "252950": {
+    "success": true,
+    "data": {
+      "type": "game",
+      "name": "Rocket League®",
+      "steam_appid": 252950,
+      "required_age": 0,
+      "is_free": false,
+      "controller_support": "full",
+      "dlc": [
+        457193,
+        823220,
+        848820,
+        919100,
+        971930,
+        393580,
+        457161
+      ],
+      "detailed_description": "Rocket League is a high-powered hybrid of arcade-style soccer and vehicular mayhem with easy-to-understand controls and fluid, physics-driven competition. Rocket League includes casual and competitive Online Matches, a fully-featured offline Season Mode, special “Mutators” that let you change the rules entirely, hockey and basketball-inspired Extra Modes, and more than 500 trillion possible cosmetic customization combinations.&lt;br&gt;&lt;br&gt;Winner or nominee of more than 150 “Game of the Year” awards, Rocket League is one of the most critically-acclaimed sports games of all time. Boasting a community of more than 57 million players, Rocket League features ongoing free and paid updates, including new DLCs, content packs, features, modes and arenas.&lt;br&gt;&lt;br&gt;&lt;strong&gt;What's New:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;Rocket Pass - Purchase Rocket Pass Premium to get an initial 50% XP bonus and earn up to 70 unique rewards, including a new Battle-Car, Goal Explosion, Keys, and more!&lt;br&gt;&lt;/li&gt;&lt;li&gt;Challenge System - Play Online Matches and complete Weekly Challenges to tier up and unlock unique rewards only found in Rocket Pass.&lt;br&gt;&lt;/li&gt;&lt;li&gt;Esports Shop - Show off your team pride for your favorite teams in Rocket League Esports! The Rocket League Esports Shop pilot program brings new Decals, Wheels, and Player Banners that represent some of the best teams in the sport. of the best teams in the sport. &lt;br&gt;&lt;br&gt;&lt;strong&gt;SteamOS and Mac Beta Versions&lt;/strong&gt;&lt;br&gt;As we continue to upgrade &lt;strong&gt;Rocket League®&lt;/strong&gt; with new technologies like DirectX 11 and a 64-bit client, it is no longer viable for us to maintain support for the macOS and Linux (SteamOS) platforms. As a result, the final patch for the macOS and Linux versions of Rocket League was released on March 10, 2020. This update disabled online functionality (such as Casual and Competitive Playlists) for players on macOS and Linux, but offline features including Local Matches, and splitscreen play are still accessible.&lt;br&gt;&lt;br&gt;Please note that Rocket League® on SteamOS and macOS may have bugs and stability issues not seen in the Windows version of the game, and these issues may not be fixed in future updates.&lt;br&gt;&lt;br&gt;&lt;i&gt;NOTE: Because of agreements with our online service provider, there are certain regions that are unable to connect to Rocket League®’s online multiplayer component. As a result, server access is restricted in China, Crimea, Cuba, Iran, North Korea, Sudan, and Syria. Apologies to our customers in those regions.&lt;/i&gt;&lt;br&gt;&lt;br&gt;Software and online features are subject to license, terms of use, and privacy policy ( &lt;a href=\"https://steamcommunity.com/linkfilter/?url=http://rocketleague.com/eula\" target=\"_blank\" rel=\"noopener\"  &gt;rocketleague.com/eula&lt;/a&gt; , &lt;a href=\"https://steamcommunity.com/linkfilter/?url=http://rocketleague.com/tou\" target=\"_blank\" rel=\"noopener\"  &gt;rocketleague.com/tou&lt;/a&gt; ,  and &lt;a href=\"https://steamcommunity.com/linkfilter/?url=http://rocketleague.com/privacy\" target=\"_blank\" rel=\"noopener\"  &gt;rocketleague.com/privacy&lt;/a&gt; ).&lt;/li&gt;&lt;/ul&gt;",
+      "about_the_game": "Rocket League is a high-powered hybrid of arcade-style soccer and vehicular mayhem with easy-to-understand controls and fluid, physics-driven competition. Rocket League includes casual and competitive Online Matches, a fully-featured offline Season Mode, special “Mutators” that let you change the rules entirely, hockey and basketball-inspired Extra Modes, and more than 500 trillion possible cosmetic customization combinations.&lt;br&gt;&lt;br&gt;Winner or nominee of more than 150 “Game of the Year” awards, Rocket League is one of the most critically-acclaimed sports games of all time. Boasting a community of more than 57 million players, Rocket League features ongoing free and paid updates, including new DLCs, content packs, features, modes and arenas.&lt;br&gt;&lt;br&gt;&lt;strong&gt;What's New:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;Rocket Pass - Purchase Rocket Pass Premium to get an initial 50% XP bonus and earn up to 70 unique rewards, including a new Battle-Car, Goal Explosion, Keys, and more!&lt;br&gt;&lt;/li&gt;&lt;li&gt;Challenge System - Play Online Matches and complete Weekly Challenges to tier up and unlock unique rewards only found in Rocket Pass.&lt;br&gt;&lt;/li&gt;&lt;li&gt;Esports Shop - Show off your team pride for your favorite teams in Rocket League Esports! The Rocket League Esports Shop pilot program brings new Decals, Wheels, and Player Banners that represent some of the best teams in the sport. of the best teams in the sport. &lt;br&gt;&lt;br&gt;&lt;strong&gt;SteamOS and Mac Beta Versions&lt;/strong&gt;&lt;br&gt;As we continue to upgrade &lt;strong&gt;Rocket League®&lt;/strong&gt; with new technologies like DirectX 11 and a 64-bit client, it is no longer viable for us to maintain support for the macOS and Linux (SteamOS) platforms. As a result, the final patch for the macOS and Linux versions of Rocket League was released on March 10, 2020. This update disabled online functionality (such as Casual and Competitive Playlists) for players on macOS and Linux, but offline features including Local Matches, and splitscreen play are still accessible.&lt;br&gt;&lt;br&gt;Please note that Rocket League® on SteamOS and macOS may have bugs and stability issues not seen in the Windows version of the game, and these issues may not be fixed in future updates.&lt;br&gt;&lt;br&gt;&lt;i&gt;NOTE: Because of agreements with our online service provider, there are certain regions that are unable to connect to Rocket League®’s online multiplayer component. As a result, server access is restricted in China, Crimea, Cuba, Iran, North Korea, Sudan, and Syria. Apologies to our customers in those regions.&lt;/i&gt;&lt;br&gt;&lt;br&gt;Software and online features are subject to license, terms of use, and privacy policy ( &lt;a href=\"https://steamcommunity.com/linkfilter/?url=http://rocketleague.com/eula\" target=\"_blank\" rel=\"noopener\"  &gt;rocketleague.com/eula&lt;/a&gt; , &lt;a href=\"https://steamcommunity.com/linkfilter/?url=http://rocketleague.com/tou\" target=\"_blank\" rel=\"noopener\"  &gt;rocketleague.com/tou&lt;/a&gt; ,  and &lt;a href=\"https://steamcommunity.com/linkfilter/?url=http://rocketleague.com/privacy\" target=\"_blank\" rel=\"noopener\"  &gt;rocketleague.com/privacy&lt;/a&gt; ).&lt;/li&gt;&lt;/ul&gt;",
+      "short_description": "Rocket League is a high-powered hybrid of arcade-style soccer and vehicular mayhem with easy-to-understand controls and fluid, physics-driven competition. Rocket League includes casual and competitive Online Matches, a fully-featured offline Season Mode, special “Mutators” that let you change the rules entirely, hockey and...",
+      "supported_languages": "English, French, Italian, German, Spanish - Spain, Dutch, Portuguese, Japanese, Korean, Russian, Turkish, Polish",
+      "header_image": "https://steamcdn-a.akamaihd.net/steam/apps/252950/header_alt_assets_11.jpg?t=1585155609",
+      "website": "http://www.rocketleague.com/",
+      "pc_requirements": {
+        "minimum": "&lt;strong&gt;Minimum:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;&lt;strong&gt;OS:&lt;/strong&gt; Windows 7 (64 bit) or Newer (64 bit) Windows OS&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Processor:&lt;/strong&gt; 2.5 GHz Dual core&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Memory:&lt;/strong&gt; 4 GB RAM&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Graphics:&lt;/strong&gt; NVIDIA GeForce 760, AMD Radeon R7 270X, or better&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;DirectX:&lt;/strong&gt; Version 11&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Network:&lt;/strong&gt; Broadband Internet connection&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Storage:&lt;/strong&gt; 20 GB available space&lt;/li&gt;&lt;/ul&gt;",
+        "recommended": "&lt;strong&gt;Recommended:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;&lt;strong&gt;OS:&lt;/strong&gt; Windows 7 (64 bit) or Newer (64 bit) Windows OS&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Processor:&lt;/strong&gt; 3.0+ GHz Quad core&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Memory:&lt;/strong&gt; 8 GB RAM&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Graphics:&lt;/strong&gt; NVIDIA GeForce GTX 1060, AMD Radeon RX 470, or better&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;DirectX:&lt;/strong&gt; Version 11&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Network:&lt;/strong&gt; Broadband Internet connection&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Storage:&lt;/strong&gt; 20 GB available space&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Additional Notes:&lt;/strong&gt; Gamepad or Controller Recommended&lt;/li&gt;&lt;/ul&gt;"
+      },
+      "mac_requirements": {
+        "minimum": "&lt;strong&gt;Minimum:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;&lt;strong&gt;OS:&lt;/strong&gt; MacOS X 10.8.5&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Processor:&lt;/strong&gt; Intel Core i5 2.4 GHz&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Memory:&lt;/strong&gt; 8 GB RAM&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Graphics:&lt;/strong&gt; OpenGL 4.1 - ATI Radeon HD 5670, NVIDIA GeForce GT 640M, Intel HD Graphics 4000 or Iris Pro Graphics&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Network:&lt;/strong&gt; Broadband Internet connection&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Storage:&lt;/strong&gt; 7 GB available space&lt;/li&gt;&lt;/ul&gt;",
+        "recommended": "&lt;strong&gt;Recommended:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;&lt;strong&gt;OS:&lt;/strong&gt; MacOS X 10.8.5 or Newer&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Processor:&lt;/strong&gt; Intel Core i7 2.4 GHz+&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Memory:&lt;/strong&gt; 8 GB RAM&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Graphics:&lt;/strong&gt; OpenGL 4.1 - ATI Radeon HD 5670, NVIDIA GeForce GT 640M&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Network:&lt;/strong&gt; Broadband Internet connection&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Storage:&lt;/strong&gt; 7 GB available space&lt;/li&gt;&lt;/ul&gt;"
+      },
+      "linux_requirements": {
+        "minimum": "&lt;strong&gt;Minimum:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;&lt;strong&gt;Processor:&lt;/strong&gt; 2.4+ GHz Quad core&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Memory:&lt;/strong&gt; 2 GB RAM&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Graphics:&lt;/strong&gt; NVIDIA GTX 260 or ATI 4850&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Network:&lt;/strong&gt; Broadband Internet connection&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Storage:&lt;/strong&gt; 7 GB available space&lt;/li&gt;&lt;/ul&gt;",
+        "recommended": "&lt;strong&gt;Recommended:&lt;/strong&gt;&lt;br&gt;&lt;ul class=\"bb_ul\"&gt;&lt;li&gt;&lt;strong&gt;Processor:&lt;/strong&gt; 2.5+ GHz Quad core&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Memory:&lt;/strong&gt; 4 GB RAM&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Graphics:&lt;/strong&gt; NVIDIA GTX 660 or better, ATI 7950 or better&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Network:&lt;/strong&gt; Broadband Internet connection&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Storage:&lt;/strong&gt; 7 GB available space&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Additional Notes:&lt;/strong&gt; Gamepad or Controller Recommended&lt;/li&gt;&lt;/ul&gt;"
+      },
+      "legal_notice": "Copyright © 2015-2019 Psyonix Inc. Rocket League, Psyonix, and all related marks and logos are registered trademarks or trademarks of Psyonix Inc. All rights reserved. All other trademarks are property of their respective owners.",
+      "developers": [
+        "Psyonix LLC"
+      ],
+      "publishers": [
+        "Psyonix LLC"
+      ],
+      "price_overview": {
+        "currency": "RUB",
+        "initial": 41900,
+        "final": 41900,
+        "discount_percent": 0,
+        "initial_formatted": "",
+        "final_formatted": "419 pуб."
+      },
+      "packages": [
+        30948
+      ],
+      "package_groups": [
+        {
+          "name": "default",
+          "title": "Buy Rocket League®",
+          "description": "",
+          "selection_text": "Select a purchase option",
+          "save_text": "",
+          "display_type": 0,
+          "is_recurring_subscription": "false",
+          "subs": [
+            {
+              "packageid": 30948,
+              "percent_savings_text": "",
+              "percent_savings": 0,
+              "option_text": "Rocket League - 419 pуб.",
+              "option_description": "",
+              "can_get_free_license": "0",
+              "is_free_license": false,
+              "price_in_cents_with_discount": 41900
+            }
+          ]
+        }
+      ],
+      "platforms": {
+        "windows": true,
+        "mac": false,
+        "linux": false
+      },
+      "metacritic": {
+        "score": 86,
+        "url": "https://www.metacritic.com/game/pc/rocket-league?ftag=MCD-06-10aaa1f"
+      },
+      "categories": [
+        {
+          "id": 2,
+          "description": "Single-player"
+        },
+        {
+          "id": 1,
+          "description": "Multi-player"
+        },
+        {
+          "id": 49,
+          "description": "PvP"
+        },
+        {
+          "id": 36,
+          "description": "Online PvP"
+        },
+        {
+          "id": 37,
+          "description": "Shared/Split Screen PvP"
+        },
+        {
+          "id": 9,
+          "description": "Co-op"
+        },
+        {
+          "id": 38,
+          "description": "Online Co-op"
+        },
+        {
+          "id": 39,
+          "description": "Shared/Split Screen Co-op"
+        },
+        {
+          "id": 24,
+          "description": "Shared/Split Screen"
+        },
+        {
+          "id": 27,
+          "description": "Cross-Platform Multiplayer"
+        },
+        {
+          "id": 22,
+          "description": "Steam Achievements"
+        },
+        {
+          "id": 28,
+          "description": "Full controller support"
+        },
+        {
+          "id": 29,
+          "description": "Steam Trading Cards"
+        },
+        {
+          "id": 30,
+          "description": "Steam Workshop"
+        },
+        {
+          "id": 23,
+          "description": "Steam Cloud"
+        },
+        {
+          "id": 15,
+          "description": "Stats"
+        },
+        {
+          "id": 41,
+          "description": "Remote Play on Phone"
+        },
+        {
+          "id": 42,
+          "description": "Remote Play on Tablet"
+        },
+        {
+          "id": 43,
+          "description": "Remote Play on TV"
+        },
+        {
+          "id": 44,
+          "description": "Remote Play Together"
+        }
+      ],
+      "genres": [
+        {
+          "id": "1",
+          "description": "Action"
+        },
+        {
+          "id": "23",
+          "description": "Indie"
+        },
+        {
+          "id": "9",
+          "description": "Racing"
+        },
+        {
+          "id": "18",
+          "description": "Sports"
+        }
+      ],
+      "screenshots": [
+        {
+          "id": 0,
+          "path_thumbnail": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_3cfe939b4c8decf10adebb6167d755ff001c58dd.600x338.jpg?t=1585155609",
+          "path_full": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_3cfe939b4c8decf10adebb6167d755ff001c58dd.1920x1080.jpg?t=1585155609"
+        },
+        {
+          "id": 1,
+          "path_thumbnail": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_42da6de20dc696e07c5f9d23b6ffe8bba8561125.600x338.jpg?t=1585155609",
+          "path_full": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_42da6de20dc696e07c5f9d23b6ffe8bba8561125.1920x1080.jpg?t=1585155609"
+        },
+        {
+          "id": 2,
+          "path_thumbnail": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_2fbb8a1afb36a1ead638b5f21a7a82d724f49fe0.600x338.jpg?t=1585155609",
+          "path_full": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_2fbb8a1afb36a1ead638b5f21a7a82d724f49fe0.1920x1080.jpg?t=1585155609"
+        },
+        {
+          "id": 3,
+          "path_thumbnail": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_154a2164e6e03a822785c7397d849ed0a1f7f46c.600x338.jpg?t=1585155609",
+          "path_full": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_154a2164e6e03a822785c7397d849ed0a1f7f46c.1920x1080.jpg?t=1585155609"
+        },
+        {
+          "id": 4,
+          "path_thumbnail": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_c48fefc96d422b263b70c1bb043d25dad0d9871f.600x338.jpg?t=1585155609",
+          "path_full": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_c48fefc96d422b263b70c1bb043d25dad0d9871f.1920x1080.jpg?t=1585155609"
+        },
+        {
+          "id": 5,
+          "path_thumbnail": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_2340b9c581fb424b381181e589274cf17ee0ea5b.600x338.jpg?t=1585155609",
+          "path_full": "https://steamcdn-a.akamaihd.net/steam/apps/252950/ss_2340b9c581fb424b381181e589274cf17ee0ea5b.1920x1080.jpg?t=1585155609"
+        }
+      ],
+      "movies": [
+        {
+          "id": 256778454,
+          "name": "Rocket Pass 6",
+          "thumbnail": "https://steamcdn-a.akamaihd.net/steam/apps/256778454/movie.293x165.jpg?t=1584634588",
+          "webm": {
+            "480": "http://steamcdn-a.akamaihd.net/steam/apps/256778454/movie480.webm?t=1584634588",
+            "max": "http://steamcdn-a.akamaihd.net/steam/apps/256778454/movie_max.webm?t=1584634588"
+          },
+          "mp4": {
+            "480": "http://steamcdn-a.akamaihd.net/steam/apps/256778454/movie480.mp4?t=1584634588",
+            "max": "http://steamcdn-a.akamaihd.net/steam/apps/256778454/movie_max.mp4?t=1584634588"
+          },
+          "highlight": true
+        }
+      ],
+      "recommendations": {
+        "total": 308899
+      },
+      "achievements": {
+        "total": 88,
+        "highlighted": [
+          {
+            "name": "Virtuoso",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/d63287a74492218ac97000af0147f6e40bd51f1d.jpg"
+          },
+          {
+            "name": "Stocked",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/689d4370df62dab7b3f904d4f7b182310958efd2.jpg"
+          },
+          {
+            "name": "Far, Far Away...",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/c3c40f439d804bbcf892229ed76b2bedb25058c7.jpg"
+          },
+          {
+            "name": "Super Victorious",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/710fa884cc942b05b4ff2856eda4a1eebe909f21.jpg"
+          },
+          {
+            "name": "Champion",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/ef9fc46837a6a31b2fedd4d227f27cd3af0a9867.jpg"
+          },
+          {
+            "name": "The Streak",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/9974f05905881b45c7a2dbbd3c84d5e8c57fa01a.jpg"
+          },
+          {
+            "name": "Helen's Pride",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/d25f78987a4f8a3500172ef5c8019c02684ae2ba.jpg"
+          },
+          {
+            "name": "Battle-Car Collector",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/b69193ec416423e20757130026768b5c71bf3177.jpg"
+          },
+          {
+            "name": "Drops in the Bucket",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/19c6744ebc45507a746469e1ba71e9654bf77a11.jpg"
+          },
+          {
+            "name": "Rocketeer",
+            "path": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/252950/90d781a6891727c11ddec87f6535bd74d22ef580.jpg"
+          }
+        ]
+      },
+      "release_date": {
+        "coming_soon": false,
+        "date": "8 Jul, 2015"
+      },
+      "support_info": {
+        "url": "https://support.rocketleague.com/",
+        "email": ""
+      },
+      "background": "https://steamcdn-a.akamaihd.net/steam/apps/252950/page_bg_generated_v6b.jpg?t=1585155609",
+      "content_descriptors": {
+        "ids": [],
+        "notes": null
+      }
+    }
+  }
+}
