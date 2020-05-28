@@ -5,15 +5,15 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
-import ru.luckycactus.steamroulette.domain.common.MissingOwnedGamesException
 import ru.luckycactus.steamroulette.domain.common.switchNullsToEmpty
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.core.Result
+import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
@@ -207,69 +207,81 @@ class RouletteViewModel @Inject constructor(
         if (fetchGamesState == null || filter == null)
             return
 
-        if (fetchGamesState == Result.Loading) {
+        if (fetchGamesState == RequestState.Loading) {
             _contentState.value = ContentState.Loading
+            return
+        }
+
+        getPagingListJob = viewModelScope.launch {
+            _contentState.value = ContentState.Loading
+
+            val result = getOwnedGamesPagingList(
+                GetOwnedGamesPagingListUseCase.Params(
+                    userViewModelDelegate.getCurrentUserSteamId(),
+                    filter,
+                    viewModelScope
+                )
+            )
+
+            if (!isActive) return@launch
+
+            when (result) {
+                is GetOwnedGamesPagingListUseCase.Result.Success ->
+                    renderUpdatePagedListSuccess(result)
+                is GetOwnedGamesPagingListUseCase.Result.Fail -> renderUpdatePagedListFail(
+                    fetchGamesState,
+                    result
+                )
+            }.exhaustive
+        }
+
+    }
+
+    private fun renderUpdatePagedListSuccess(result: GetOwnedGamesPagingListUseCase.Result.Success) {
+        firstPreviouslyShownGameId = result.firstShownGameId
+        _gamesPagingList.value = result.pagingList
+        _contentState.value = if (!result.pagingList.isEmpty()) {
+            ContentState.Success
         } else {
-            getPagingListJob = viewModelScope.launch {
-                try {
-                    _contentState.value = ContentState.Loading
+            ContentState.Placeholder(
+                resourceManager.getString(R.string.error_filtered_games_not_found),
+                titleType = ContentState.TitleType.None,
+                buttonType = ContentState.ButtonType.None
+            )
+        }
+    }
 
-                    val (pagingGameList, firstShownGameId) = getOwnedGamesPagingList(
-                        GetOwnedGamesPagingListUseCase.Params(
-                            userViewModelDelegate.getCurrentUserSteamId(),
-                            filter,
-                            viewModelScope
-                        )
-                    )
-                    firstPreviouslyShownGameId = firstShownGameId
-                    _gamesPagingList.value = pagingGameList
 
-                    if (isActive) {
-                        if (!pagingGameList.isEmpty()) {
-                            _contentState.value = ContentState.Success
-                        } else {
-                            _contentState.value = ContentState.Placeholder(
-                                resourceManager.getString(R.string.error_filtered_games_not_found),
-                                titleType = ContentState.TitleType.None,
-                                buttonType = ContentState.ButtonType.None
-                            )
-                        }
-                    }
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    when {
-                        fetchGamesState is Result.Error -> _contentState.value =
-                            ContentState.Placeholder(
-                                message = fetchGamesState.message,
-                                titleType = ContentState.TitleType.Custom(
-                                    resourceManager.getString(
-                                        R.string.error_get_owned_games
-                                    )
-                                ),
-                                buttonType = ContentState.ButtonType.Default
-                            )
-                        e is MissingOwnedGamesException -> _contentState.value =
-                            ContentState.Placeholder(
-                                message = resourceManager.getString(R.string.error_zero_games),
-                                titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
-                                buttonType = ContentState.ButtonType.Default
-                            )
-                        else -> {
-                            _contentState.value = ContentState.Placeholder(
-                                message = getCommonErrorDescription(resourceManager, e),
-                                titleType = ContentState.TitleType.Custom(
-                                    resourceManager.getString(
-                                        R.string.error_get_owned_games
-                                    )
-                                ),
-                                buttonType = ContentState.ButtonType.Default
-                            )
-                            e.printStackTrace()
-                        }
+    private fun renderUpdatePagedListFail(
+        fetchGamesState: RequestState<*>,
+        fail: GetOwnedGamesPagingListUseCase.Result.Fail
+    ) {
+        _contentState.value = when (fail) {
+            GetOwnedGamesPagingListUseCase.Result.Fail.NoOwnedGames ->
+                ContentState.Placeholder(
+                    message = resourceManager.getString(R.string.error_zero_games),
+                    titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
+                    buttonType = ContentState.ButtonType.Default
+                )
+            is GetOwnedGamesPagingListUseCase.Result.Fail.Error -> {
+                val message = when (fetchGamesState) {
+                    is RequestState.Error -> fetchGamesState.message
+                    else -> {
+                        fail.cause.printStackTrace()
+                        resourceManager.getCommonErrorDescription(fail.cause)
                     }
                 }
+                ContentState.Placeholder(
+                    message = message,
+                    titleType = ContentState.TitleType.Custom(
+                        resourceManager.getString(
+                            R.string.error_get_owned_games
+                        )
+                    ),
+                    buttonType = ContentState.ButtonType.Default
+                )
             }
         }
+
     }
 }

@@ -7,7 +7,7 @@ import ru.luckycactus.steamroulette.di.common.BaseAppComponent
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
-import ru.luckycactus.steamroulette.domain.core.invoke
+import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
 import java.util.concurrent.TimeUnit

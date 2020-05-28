@@ -5,15 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
+import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
@@ -87,19 +86,14 @@ class GameDetailsViewModel @AssistedInject constructor(
             else null
             if (gameStoreInfo == null) {
                 renderLoading()
-                try {
-                    gameStoreInfo = getGameStoreInfo(
-                        GetGameStoreInfoUseCase.Params(
-                            gameHeader.appId,
-                            false
-                        )
-                    )
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    renderError(e)
-                }
+
+                val result = getGameStoreInfo(GetGameStoreInfoUseCase.Params(gameHeader.appId))
+                when (result) {
+                    is GetGameStoreInfoUseCase.Result.Success -> {
+                        gameStoreInfo = result.data
+                    }
+                    is GetGameStoreInfoUseCase.Result.Fail -> renderError(result)
+                }.exhaustive
             }
             gameStoreInfo?.let {
                 this@GameDetailsViewModel.gameStoreInfo = gameStoreInfo
@@ -108,12 +102,19 @@ class GameDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private fun renderError(e: Exception) {
-        val errorMessage = if (e is GetGameStoreInfoException)
-            resourceManager.getString(R.string.fail_steam_store_info)
-        else getCommonErrorDescription(resourceManager, e)
-        val contentState = ContentState.errorPlaceholder(errorMessage)
+    private fun renderError(fail: GetGameStoreInfoUseCase.Result.Fail) {
+        val errorMessage = with(resourceManager) {
+            when (fail) {
+                GetGameStoreInfoUseCase.Result.Fail.GameNotFound ->
+                    getString(R.string.fail_steam_store_info)
 
+                is GetGameStoreInfoUseCase.Result.Fail.Error -> {
+                    fail.cause.printStackTrace()
+                    getCommonErrorDescription(fail.cause)
+                }
+            }
+        }
+        val contentState = ContentState.errorPlaceholder(errorMessage)
         _gameDetails.value = listOf(
             getInitialHeader(),
             GameDetailsUiModel.DataLoading(contentState)

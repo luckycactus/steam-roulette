@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.data.repositories.user.datastore
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.user.SteamIdNotFoundException
 
 interface UserDataStore {
 
@@ -24,6 +25,10 @@ interface UserDataStore {
         suspend fun removeUserSummary(steamId: SteamId)
     }
 
-    interface Remote : UserDataStore
+    interface Remote : UserDataStore {
+
+        @Throws(SteamIdNotFoundException::class)
+        override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity
+    }
 }
 

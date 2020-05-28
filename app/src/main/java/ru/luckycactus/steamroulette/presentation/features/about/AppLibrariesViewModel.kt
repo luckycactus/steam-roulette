@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import ru.luckycactus.steamroulette.domain.about.GetAppLibrariesUseCase
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
-import ru.luckycactus.steamroulette.domain.core.invoke
+import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router

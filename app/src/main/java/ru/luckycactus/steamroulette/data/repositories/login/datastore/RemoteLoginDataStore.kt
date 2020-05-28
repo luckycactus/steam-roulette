@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.data.repositories.login.datastore
 import dagger.Reusable
 import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.data.net.services.SteamApiService
-import ru.luckycactus.steamroulette.domain.common.VanityNotFoundException
+import ru.luckycactus.steamroulette.domain.login.VanityNotFoundException
 import javax.inject.Inject
 
 @Reusable

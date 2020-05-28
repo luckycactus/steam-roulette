@@ -15,8 +15,8 @@ import ru.luckycactus.steamroulette.data.net.services.SteamApiService
 import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.di.common.MoshiModule
-import ru.luckycactus.steamroulette.domain.common.GetGameStoreInfoException
-import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
+import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
+import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.test.util.TestData
 import ru.luckycactus.steamroulette.test.util.fakes.FixedLanguageProvider
 import ru.luckycactus.steamroulette.test.util.getJson

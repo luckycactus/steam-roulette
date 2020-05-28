@@ -7,6 +7,7 @@ import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 
 interface UserRepository {
 
+    @Throws(SteamIdNotFoundException::class)
     suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary?
 
     fun observeUserSummary(steamId: SteamId): Flow<UserSummary>
@@ -25,3 +26,5 @@ interface UserRepository {
 
     suspend fun clearUserSummary(steamId: SteamId)
 }
+
+class SteamIdNotFoundException(val steamId: String): Exception()

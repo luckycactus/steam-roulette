@@ -1,9 +1,9 @@
 package ru.luckycactus.steamroulette.domain.login
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.domain.common.InvalidSteamIdFormatException
+import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.core.SuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
@@ -14,13 +14,42 @@ class SignInUseCase @Inject constructor(
     private val getUserSummaryUseCase: GetUserSummaryUseCase,
     private val userRepository: UserRepository,
     private val loginRepository: LoginRepository
-) : SuspendUseCase<String, UserSummary>() {
+) : AbstractSuspendUseCase<String, SignInUseCase.Result>() {
 
-    override suspend fun getResult(params: String): UserSummary {
-        val steamId =
-            tryParse(params) ?: tryResolveVanity(params) ?: throw InvalidSteamIdFormatException()
-        return getUserSummaryUseCase(GetUserSummaryUseCase.Params(steamId, true)).also {
-            userRepository.setCurrentUser(it.steamId)
+    override suspend fun execute(params: String): Result {
+        try {
+            var steamId = tryParse(params)
+            if (steamId == null) {
+                steamId = SteamId.tryGetVanityUrl(params)?.let {
+                    try {
+                        loginRepository.resolveVanityUrl(it)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: VanityNotFoundException) {
+                        return Result.Fail.VanityNotFound
+                    } catch (e: Exception) {
+                        return Result.Fail.Error(e)
+                    }
+                }
+            }
+            if (steamId == null)
+                return Result.Fail.InvalidSteamIdFormat
+
+            val userSummary =
+                getUserSummaryUseCase(GetUserSummaryUseCase.Params(steamId, true)).let {
+                    when (it) {
+                        is GetUserSummaryUseCase.Result.Success -> it.userSummary
+                        GetUserSummaryUseCase.Result.Fail.SteamIdNotFound -> return Result.Fail.SteamIdNotFound
+                        is GetUserSummaryUseCase.Result.Fail.Error -> return Result.Fail.Error(it.exception)
+                    }
+                }
+
+            userRepository.setCurrentUser(userSummary.steamId)
+            return Result.Success(userSummary)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Result.Fail.Error(e)
         }
     }
 
@@ -32,9 +61,20 @@ class SignInUseCase @Inject constructor(
         else null
     }
 
-    private suspend fun tryResolveVanity(input: String): SteamId? {
-        return SteamId.tryGetVanityUrl(input)?.let {
-            loginRepository.resolveVanityUrl(it)
+    sealed class Result {
+
+        data class Success(
+            val userSummary: UserSummary
+        ) : Result()
+
+        sealed class Fail : Result() {
+            object InvalidSteamIdFormat : Fail()
+
+            object VanityNotFound : Fail()
+
+            object SteamIdNotFound : Fail()
+
+            class Error(val exception: Exception) : Fail()
         }
     }
 }

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
@@ -45,6 +46,7 @@ interface GamesDataStore {
     interface Remote : GamesDataStore {
         suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity>
 
+        @Throws(GetGameStoreInfoException::class)
         suspend fun getGameStoreInfo(appId: Int): GameStoreInfoEntity
     }
 }

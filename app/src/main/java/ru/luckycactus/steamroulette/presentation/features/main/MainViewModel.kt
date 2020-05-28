@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
-import ru.luckycactus.steamroulette.domain.common.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.toStateFlow
 import ru.luckycactus.steamroulette.domain.core.Event
+import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.core.Result
-import ru.luckycactus.steamroulette.domain.core.invoke
+import ru.luckycactus.steamroulette.domain.core.usecase.Result
+import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
@@ -47,7 +47,7 @@ class MainViewModel @Inject constructor(
         get() = _nullableCurrentUserSteamIdFlow.value != null
 
     override val userSummary: LiveData<UserSummary>
-    override val fetchGamesState: LiveData<Result<Unit>>
+    override val fetchGamesState: LiveData<RequestState<Unit>>
         get() = _fetchGamesState
     override val fetchUserSummaryState: LiveData<Boolean>
         get() = _fetchUserSummaryState
@@ -58,7 +58,7 @@ class MainViewModel @Inject constructor(
 
     private val _nullableCurrentUserSteamIdFlow: StateFlow<SteamId?>
 
-    private val _fetchGamesState = MutableLiveData<Result<Unit>>()
+    private val _fetchGamesState = MutableLiveData<RequestState<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
     private val _errorMessage = MutableLiveData<Event<String>>()
 
@@ -137,69 +137,72 @@ class MainViewModel @Inject constructor(
             supervisorScope {
                 val userDeferred = userScope.async { fetchUserSummary(true) }
                 val gamesState = fetchGames(true).also { handleGamesFetchError(it) }
-                if (gamesState !is Result.Error) {
+                if (gamesState !is RequestState.Error) {
                     handleUserFetchError(userDeferred.await())
                 }
             }
         }
     }
 
-    private fun handleUserFetchError(result: Result<Unit>) {
-        if (result is Result.Error) {
+    private fun handleUserFetchError(requestState: RequestState<Unit>) {
+        if (requestState is RequestState.Error) {
             _errorMessage.value = Event(
                 "%s: %s".format(
                     resourceManager.getString(R.string.error_user_update),
-                    result.message
+                    requestState.message
                 )
             )
         }
     }
 
 
-    private fun handleGamesFetchError(result: Result<Unit>) {
-        if (result is Result.Error) {
+    private fun handleGamesFetchError(requestState: RequestState<Unit>) {
+        if (requestState is RequestState.Error) {
             _errorMessage.value = Event(
                 "%s: %s".format(
                     resourceManager.getString(R.string.error_get_owned_games),
-                    result.message
+                    requestState.message
                 )
             )
         }
     }
 
-    private suspend fun fetchGames(reload: Boolean): Result<Unit> {
+    private suspend fun fetchGames(reload: Boolean): RequestState<Unit> {
         getCurrentUserSteamId().let {
-            _fetchGamesState.value = Result.Loading
-            return try {
-                fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
-                syncGamesPeriodicJob.start(true)
-                Result.success.also { _fetchGamesState.value = it }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                Result.Error(
-                    if (e is GetOwnedGamesPrivacyException)
-                        resourceManager.getString(R.string.error_get_owned_games_privacy)
-                    else {
-                        e.printStackTrace()
-                        getCommonErrorDescription(resourceManager, e)
+            _fetchGamesState.value = RequestState.Loading
+            val result = fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
+            return when (result) {
+                is FetchUserOwnedGamesUseCase.Result.Success -> {
+                    syncGamesPeriodicJob.start(true)
+                    RequestState.success.also { _fetchGamesState.value = it }
+                }
+                is FetchUserOwnedGamesUseCase.Result.Fail -> {
+                    val message = when (result) {
+                        FetchUserOwnedGamesUseCase.Result.Fail.PrivateProfile ->
+                            resourceManager.getString(R.string.error_get_owned_games_privacy)
+                        is FetchUserOwnedGamesUseCase.Result.Fail.Error -> {
+                            result.cause.printStackTrace()
+                            resourceManager.getCommonErrorDescription(result.cause)
+                        }
                     }
-                ).also { _fetchGamesState.value = it }
+                    RequestState.Error(message).also {
+                        _fetchGamesState.value = it
+                    }
+                }
             }
         }
     }
 
-    private suspend fun fetchUserSummary(reload: Boolean): Result<Unit> {
+    private suspend fun fetchUserSummary(reload: Boolean): RequestState<Unit> {
         getCurrentUserSteamId().let {
-            return try {
-                _fetchUserSummaryState.value = true
-                fetchUserSummary(FetchUserSummaryUseCase.Params(it, reload))
-                Result.success
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                Result.Error(getCommonErrorDescription(resourceManager, e))
-            } finally {
+            _fetchUserSummaryState.value = true
+            val result = fetchUserSummary(FetchUserSummaryUseCase.Params(it, reload))
+            return when (result) {
+                is Result.Success -> RequestState.success
+                is Result.Error -> RequestState.Error(
+                    resourceManager.getCommonErrorDescription(result.cause)
+                )
+            }.also {
                 _fetchUserSummaryState.value = false
             }
         }

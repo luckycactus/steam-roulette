@@ -3,13 +3,8 @@ package ru.luckycactus.steamroulette.presentation.features.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
-import ru.luckycactus.steamroulette.domain.common.InvalidSteamIdFormatException
-import ru.luckycactus.steamroulette.domain.common.SteamIdNotFoundException
-import ru.luckycactus.steamroulette.domain.common.VanityNotFoundException
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.login.SignInUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
@@ -41,25 +36,30 @@ class LoginViewModel @Inject constructor(
 
     fun onSteamIdConfirmed(id: String) {
         viewModelScope.launch {
-            try {
-                _progressState.value = true
-                signInUseCase(id.trim())
-                router.newRootScreen(Screens.Roulette)
-            } catch (e: VanityNotFoundException) {
-                _errorState.value =
-                    resourceManager.getString(R.string.error_user_with_vanity_url_not_found)
-            } catch (e: InvalidSteamIdFormatException) {
-                _errorState.value = resourceManager.getString(R.string.error_invalid_steamid_format)
-            } catch (e: SteamIdNotFoundException) {
-                _errorState.value =
-                    resourceManager.getString(R.string.error_user_with_steamid_not_found)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _errorState.value = getCommonErrorDescription(resourceManager, e)
-            } finally {
-                _progressState.value = false
+            _progressState.value = true
+            signInUseCase(id.trim()).let {
+                when (it) {
+                    is SignInUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
+                    is SignInUseCase.Result.Fail -> renderFail(it)
+                }
+            }
+            _progressState.value = false
+        }
+    }
+
+    private fun renderFail(fail: SignInUseCase.Result.Fail) {
+        _errorState.value = with(resourceManager) {
+            when (fail) {
+                SignInUseCase.Result.Fail.InvalidSteamIdFormat ->
+                    getString(R.string.error_invalid_steamid_format)
+                SignInUseCase.Result.Fail.VanityNotFound ->
+                    getString(R.string.error_user_with_vanity_url_not_found)
+                SignInUseCase.Result.Fail.SteamIdNotFound ->
+                    getString(R.string.error_user_with_steamid_not_found)
+                is SignInUseCase.Result.Fail.Error -> {
+                    fail.exception.printStackTrace()
+                    getCommonErrorDescription(fail.exception)
+                }
             }
         }
     }

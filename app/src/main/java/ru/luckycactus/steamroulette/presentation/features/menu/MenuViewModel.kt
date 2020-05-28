@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.core.Result
+import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
@@ -65,7 +65,7 @@ class MenuViewModel @Inject constructor(
 
         refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combine(
             userViewModelDelegate.fetchGamesState
-        ) { a, b -> a || (b is Result.Loading) }
+        ) { a, b -> a || (b is RequestState.Loading) }
     }
 
     fun onAboutClick() {

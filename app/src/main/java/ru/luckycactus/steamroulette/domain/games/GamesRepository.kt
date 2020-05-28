@@ -11,6 +11,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 interface GamesRepository {
 
+    @Throws(GetOwnedGamesPrivacyException::class)
     suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy)
 
     suspend fun getVisibleLocalOwnedGamesIds(
@@ -44,6 +45,11 @@ interface GamesRepository {
 
     suspend fun clearUser(steamId: SteamId)
 
+    @Throws(GetGameStoreInfoException::class)
     suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo?
 }
+
+class GetOwnedGamesPrivacyException: Exception()
+
+class GetGameStoreInfoException: Exception()
 
