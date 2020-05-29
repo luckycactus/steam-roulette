@@ -70,7 +70,7 @@ class LocalGamesDataStore @Inject constructor(
             )
             is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(
                 steamId.as64(),
-                filter.maxTime,
+                filter.maxHours,
                 shown
             )
         }
@@ -86,8 +86,7 @@ class LocalGamesDataStore @Inject constructor(
     override suspend fun getOwnedGameHeaders(
         steamId: SteamId,
         gameIds: List<Int>
-    ): List<GameHeader> =
-        db.ownedGamesDao().getHeaders(steamId.as64(), gameIds)
+    ): List<GameHeader> = db.ownedGamesDao().getHeaders(steamId.as64(), gameIds)
 
     override suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean) {
         db.ownedGamesDao().setHidden(steamId.as64(), gameIds, hide)

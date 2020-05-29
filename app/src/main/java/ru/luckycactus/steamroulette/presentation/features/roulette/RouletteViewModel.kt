@@ -241,6 +241,7 @@ class RouletteViewModel @Inject constructor(
         firstPreviouslyShownGameId = result.firstShownGameId
         _gamesPagingList.value = result.pagingList
         _contentState.value = if (!result.pagingList.isEmpty()) {
+            result.pagingList.start()
             ContentState.Success
         } else {
             ContentState.Placeholder(

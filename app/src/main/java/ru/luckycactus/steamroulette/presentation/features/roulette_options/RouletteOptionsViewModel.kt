@@ -63,8 +63,8 @@ class RouletteOptionsViewModel @Inject constructor(
             PlaytimeFilter.NotPlayed -> resourceManager.getString(R.string.playtime_pref_not_played)
             is PlaytimeFilter.Limited -> resourceManager.getQuantityString(
                 R.plurals.playtime_pref_max_time_full_plurals,
-                playTimeFilter.maxTime,
-                playTimeFilter.maxTime
+                playTimeFilter.maxHours,
+                playTimeFilter.maxHours
             )
         }
 

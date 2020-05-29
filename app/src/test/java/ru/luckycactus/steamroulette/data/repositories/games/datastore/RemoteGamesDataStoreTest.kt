@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
