@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 interface PagingGameList {
     val list: List<GameHeader>
+    val gameIds: List<Int>
     val itemsInsertedChannel: ReceiveChannel<Pair<Int, Int>>
     val itemRemovedChannel: ReceiveChannel<Int>
 
@@ -31,7 +32,7 @@ interface PagingGameList {
 
 class PagingGameListImpl constructor(
     private val gamesFactory: suspend (List<Int>) -> List<GameHeader>,
-    private val gameIds: List<Int>,
+    override val gameIds: List<Int>,
     private val minSize: Int,
     private val fetchDistance: Int,
     private val coroutineScope: CoroutineScope
