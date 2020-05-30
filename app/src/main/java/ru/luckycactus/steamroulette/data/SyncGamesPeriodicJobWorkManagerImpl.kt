@@ -21,7 +21,6 @@ class SyncGamesPeriodicJobWorkManagerImpl @Inject constructor(
     override fun start(restart: Boolean) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
-            .setRequiresCharging(true)
             .build()
 
         val work = PeriodicWorkRequestBuilder<SyncGamesPeriodicWorker>(
