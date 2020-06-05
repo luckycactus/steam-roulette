@@ -53,6 +53,19 @@
                 tools:text="1.2.0 (8)"
                 />
 
+            <TextView
+                android:id="@+id/tvCopyright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceOverline"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvVersion"
+                android:layout_marginTop="@dimen/spacing_normal"
+                android:text="\u00A9 luckycactus"
+                android:textColor="?colorOnBackground"
+                />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvSourceCode"
                 style="@style/AboutItemTextView"
@@ -62,7 +75,7 @@
                 android:drawableStart="@drawable/ic_github"
                 android:drawableEnd="@drawable/ic_chevron_right"
                 android:text="@string/show_app_source_code"
-                app:layout_constraintTop_toBottomOf="@id/tvVersion"
+                app:layout_constraintTop_toBottomOf="@id/tvCopyright"
                 />
 
             <com.google.android.material.textview.MaterialTextView
