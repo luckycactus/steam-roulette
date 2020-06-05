@@ -1,35 +1,30 @@
-package ru.luckycactus.steamroulette.data
+package ru.luckycactus.steamroulette.data.repositories.app
 
 import android.content.Context
+import android.util.Log
 import androidx.work.*
-import dagger.Reusable
 import ru.luckycactus.steamroulette.di.common.BaseAppComponent
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
-import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
-import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
-import ru.luckycactus.steamroulette.domain.user.GetCurrentUserSteamIdUseCase
+import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.minutes
 
-@Reusable
-class SyncGamesPeriodicJobWorkManagerImpl @Inject constructor(
+@Singleton
+class GamesPeriodicFetcherManager @Inject constructor(
     @ForApplication private val context: Context
-) : SyncGamesPeriodicJob {
+) : GamesPeriodicFetcher.Manager {
 
-    override fun start(restart: Boolean) {
+    override fun enqueue(restart: Boolean) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             .build()
 
-        val work = PeriodicWorkRequestBuilder<SyncGamesPeriodicWorker>(
-            5,
-            TimeUnit.DAYS,
-            1,
-            TimeUnit.DAYS
-        ).setConstraints(constraints)
-            .setInitialDelay(4, TimeUnit.DAYS)
+        val work = PeriodicWorkRequestBuilder<Worker>(5, TimeUnit.DAYS)
+            .setConstraints(constraints)
+            .setInitialDelay(5, TimeUnit.DAYS)
             .build()
 
         WorkManager.getInstance(context)
@@ -40,19 +35,16 @@ class SyncGamesPeriodicJobWorkManagerImpl @Inject constructor(
             )
     }
 
-    override fun stop() {
+    override fun cancel() {
         WorkManager.getInstance(context).cancelUniqueWork(workName)
     }
 
-    class SyncGamesPeriodicWorker(
+    class Worker(
         appContext: Context, params: WorkerParameters
     ) : CoroutineWorker(appContext, params) {
 
         @Inject
-        lateinit var fetchUserOwnedGames: FetchUserOwnedGamesUseCase
-
-        @Inject
-        lateinit var getCurrentUserSteamId: GetCurrentUserSteamIdUseCase
+        lateinit var work: GamesPeriodicFetcher.Work
 
         init {
             InjectionManager.findComponent<BaseAppComponent>()
@@ -60,10 +52,7 @@ class SyncGamesPeriodicJobWorkManagerImpl @Inject constructor(
         }
 
         override suspend fun doWork(): Result {
-            return getCurrentUserSteamId()?.let {
-                fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, true))
-                Result.success()
-            } ?: Result.failure()
+            return work.run()
         }
     }
 

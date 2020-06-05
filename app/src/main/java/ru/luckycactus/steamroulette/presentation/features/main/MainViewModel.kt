@@ -8,7 +8,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
-import ru.luckycactus.steamroulette.domain.app.SyncGamesPeriodicJob
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.toStateFlow
 import ru.luckycactus.steamroulette.domain.core.Event
@@ -39,7 +38,6 @@ class MainViewModel @Inject constructor(
     private val signOutUser: SignOutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
     private val clearHiddenGames: ClearHiddenGamesUseCase,
-    private val syncGamesPeriodicJob: SyncGamesPeriodicJob,
     private val resourceManager: ResourceManager,
     private val router: Router
 ) : BaseViewModel(), UserViewModelDelegate {
@@ -78,17 +76,12 @@ class MainViewModel @Inject constructor(
                 userScope.coroutineContext.cancelChildren()
 
                 it?.let {
-                    syncGamesPeriodicJob.start()
-
                     userScope.launch {
                         fetchGames(false)
                     }
                     userScope.launch {
                         fetchUserSummary(false)
                     }
-                } ?: run {
-                    syncGamesPeriodicJob.stop()
-
                 }
             }
         }
@@ -173,7 +166,6 @@ class MainViewModel @Inject constructor(
             val result = fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(it, reload))
             return when (result) {
                 is FetchUserOwnedGamesUseCase.Result.Success -> {
-                    syncGamesPeriodicJob.start(true)
                     RequestState.success.also { _fetchGamesState.value = it }
                 }
                 is FetchUserOwnedGamesUseCase.Result.Fail -> {
