@@ -87,6 +87,7 @@ sealed class Screens : SupportAppScreen() {
                         R.anim.anim_fragment_pop_enter,
                         R.anim.anim_fragment_pop_exit
                     )
+                    setNavigationBarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
                 }.build().intent.apply {
                     data = Uri.parse(url)
                 }

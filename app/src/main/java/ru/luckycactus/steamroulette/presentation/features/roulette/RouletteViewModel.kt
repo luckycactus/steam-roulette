@@ -1,13 +1,19 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.qualifier.ForApplication
 import ru.luckycactus.steamroulette.domain.common.switchNullsToEmpty
-import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.RequestState
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
@@ -61,9 +67,11 @@ class RouletteViewModel @Inject constructor(
 
     init {
         currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId
-            .flatMapLatest { observePlayTimeFilter(it) }
-            .distinctUntilChanged()
+            .flatMapLatest {
+                observePlayTimeFilter(it)
+            }
             .asLiveData()
+            .distinctUntilChanged()
 
         _contentState.addSource(userViewModelDelegate.fetchGamesState) {
             rouletteStateInvalidated = true
@@ -76,7 +84,9 @@ class RouletteViewModel @Inject constructor(
         }
 
         val hiddenGamesCountLiveData = userViewModelDelegate.currentUserSteamId
-            .flatMapLatest { observeHiddenGamesCount(it) }
+            .flatMapLatest {
+                observeHiddenGamesCount(it)
+            }
             .asLiveData()
 
         _contentState.addSource(hiddenGamesCountLiveData) {
