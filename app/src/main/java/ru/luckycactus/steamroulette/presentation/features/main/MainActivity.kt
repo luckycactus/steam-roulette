@@ -125,13 +125,22 @@ class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>,
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                     }
                 }
-                if (nextFragment !is GameDetailsFragment && currentFragment != null) {
-                    fragmentTransaction.setCustomAnimations(
-                        R.anim.anim_fragment_enter,
-                        R.anim.anim_fragment_exit,
-                        R.anim.anim_fragment_pop_enter,
-                        R.anim.anim_fragment_pop_exit
-                    )
+                if (currentFragment != null) {
+                    if (nextFragment is LoginFragment || nextFragment is RouletteFragment) {
+                        fragmentTransaction.setCustomAnimations(
+                            R.anim.fragment_fade_in,
+                            R.anim.fragment_fade_exit,
+                            R.anim.fragment_fade_in,
+                            R.anim.fragment_fade_exit
+                        )
+                    } else if (nextFragment !is GameDetailsFragment) {
+                        fragmentTransaction.setCustomAnimations(
+                            R.anim.anim_fragment_enter,
+                            R.anim.anim_fragment_exit,
+                            R.anim.anim_fragment_pop_enter,
+                            R.anim.anim_fragment_pop_exit
+                        )
+                    }
                 }
             }
 

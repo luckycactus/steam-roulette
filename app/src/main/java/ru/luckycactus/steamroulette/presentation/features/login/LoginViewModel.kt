@@ -40,10 +40,12 @@ class LoginViewModel @Inject constructor(
             signInUseCase(id.trim()).let {
                 when (it) {
                     is SignInUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
-                    is SignInUseCase.Result.Fail -> renderFail(it)
+                    is SignInUseCase.Result.Fail -> {
+                        renderFail(it)
+                        _progressState.value = false
+                    }
                 }
             }
-            _progressState.value = false
         }
     }
 
