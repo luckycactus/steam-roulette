@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shareInterpolator="false"
+    android:shareInterpolator="true"
     >
+    <translate
+        android:duration="@integer/fragment_anim_duration"
+        android:fromXDelta="-20%"
+        android:toXDelta="0%"
+        />
     <alpha
         android:duration="@integer/fragment_anim_duration"
         android:fromAlpha="1"
-        android:toAlpha="1" />
-
-    <translate
-        android:duration="@integer/fragment_anim_duration"
-        android:fromXDelta="0%"
-        android:toXDelta="-20%"
+        android:toAlpha="1"
         />
-
 </set>

@@ -4,12 +4,12 @@
     android:shareInterpolator="true"
     >
     <translate
-        android:duration="@android:integer/config_shortAnimTime"
+        android:duration="@integer/fragment_anim_duration"
         android:fromXDelta="0%"
         android:toXDelta="20%"
         />
     <alpha
-        android:duration="@android:integer/config_shortAnimTime"
+        android:duration="@integer/fragment_anim_duration"
         android:fromAlpha="1"
         android:toAlpha="0"
         />

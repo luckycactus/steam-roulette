@@ -1,10 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -19,9 +21,11 @@ import ru.luckycactus.steamroulette.di.core.Injectable
 import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.di.core.component
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
+import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
 import ru.luckycactus.steamroulette.presentation.utils.viewModel
@@ -32,6 +36,7 @@ import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
+import ru.terrakok.cicerone.commands.Replace
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>, Injectable {
@@ -124,10 +129,28 @@ class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>,
                     fragmentTransaction.setCustomAnimations(
                         R.anim.anim_fragment_enter,
                         R.anim.anim_fragment_exit,
-                        R.anim.anim_fragment_exit,
+                        R.anim.anim_fragment_pop_enter,
                         R.anim.anim_fragment_pop_exit
                     )
                 }
+            }
+
+            override fun createStartActivityOptions(
+                command: Command,
+                activityIntent: Intent
+            ): Bundle? {
+                val screen = when (command) {
+                    is Forward -> command.screen
+                    is Replace -> command.screen
+                    else -> null
+                }
+                return if (screen is Screens.ExternalBrowserFlow) {
+                    ActivityOptionsCompat.makeCustomAnimation(
+                        App.getInstance(),
+                        R.anim.anim_fragment_enter,
+                        R.anim.anim_fragment_exit
+                    ).toBundle()
+                } else null
             }
         }
 

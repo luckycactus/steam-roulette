@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.data.repositories.app
 
 import android.content.Context
-import android.util.Log
 import androidx.work.*
 import ru.luckycactus.steamroulette.di.common.BaseAppComponent
 import ru.luckycactus.steamroulette.di.core.InjectionManager
@@ -10,7 +9,6 @@ import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.minutes
 
 @Singleton
 class GamesPeriodicFetcherManager @Inject constructor(

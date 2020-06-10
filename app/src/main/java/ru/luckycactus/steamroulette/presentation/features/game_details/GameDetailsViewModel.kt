@@ -47,7 +47,7 @@ class GameDetailsViewModel @AssistedInject constructor(
         router.navigateTo(
             Screens.ExternalBrowserFlow(
                 GameUrlUtils.storePage(gameStoreInfo?.appId ?: gameHeader.appId),
-                true
+                trySteamApp = true
             )
         )
     }
@@ -56,7 +56,7 @@ class GameDetailsViewModel @AssistedInject constructor(
         router.navigateTo(
             Screens.ExternalBrowserFlow(
                 GameUrlUtils.hubPage(gameStoreInfo?.appId ?: gameHeader.appId),
-                true
+                trySteamApp = true
             )
         )
     }
