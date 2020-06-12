@@ -267,32 +267,37 @@ class RouletteViewModel @Inject constructor(
         fetchGamesState: RequestState<*>,
         fail: GetOwnedGamesPagingListUseCase.Result.Fail
     ) {
-        _contentState.value = when (fail) {
-            GetOwnedGamesPagingListUseCase.Result.Fail.NoOwnedGames ->
-                ContentState.Placeholder(
-                    message = resourceManager.getString(R.string.error_zero_games),
-                    titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
-                    buttonType = ContentState.ButtonType.Default
-                )
-            is GetOwnedGamesPagingListUseCase.Result.Fail.Error -> {
-                val message = when (fetchGamesState) {
-                    is RequestState.Error -> fetchGamesState.message
-                    else -> {
-                        fail.cause.printStackTrace()
-                        resourceManager.getCommonErrorDescription(fail.cause)
-                    }
+        _contentState.value = when (fetchGamesState) {
+            is RequestState.Error -> ContentState.Placeholder(
+                message = fetchGamesState.message,
+                titleType = ContentState.TitleType.Custom(
+                    resourceManager.getString(
+                        R.string.error_get_owned_games
+                    )
+                ),
+                buttonType = ContentState.ButtonType.Default
+            )
+            else -> when (fail) {
+                GetOwnedGamesPagingListUseCase.Result.Fail.NoOwnedGames -> {
+                    ContentState.Placeholder(
+                        message = resourceManager.getString(R.string.error_zero_games),
+                        titleType = ContentState.TitleType.Custom("¯\\_(ツ)_/¯"),
+                        buttonType = ContentState.ButtonType.Default
+                    )
                 }
-                ContentState.Placeholder(
-                    message = message,
-                    titleType = ContentState.TitleType.Custom(
-                        resourceManager.getString(
-                            R.string.error_get_owned_games
-                        )
-                    ),
-                    buttonType = ContentState.ButtonType.Default
-                )
+                is GetOwnedGamesPagingListUseCase.Result.Fail.Error -> {
+                    fail.cause.printStackTrace()
+                    ContentState.Placeholder(
+                        resourceManager.getCommonErrorDescription(fail.cause),
+                        titleType = ContentState.TitleType.Custom(
+                            resourceManager.getString(
+                                R.string.error_get_owned_games
+                            )
+                        ),
+                        buttonType = ContentState.ButtonType.Default
+                    )
+                }
             }
         }
-
     }
 }
