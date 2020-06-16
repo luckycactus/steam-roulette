@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.intFlow
-import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository

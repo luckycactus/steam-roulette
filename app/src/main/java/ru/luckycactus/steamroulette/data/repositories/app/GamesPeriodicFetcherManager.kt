@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.*
 import ru.luckycactus.steamroulette.di.common.BaseAppComponent
 import ru.luckycactus.steamroulette.di.core.InjectionManager
-import ru.luckycactus.steamroulette.di.qualifier.ForApplication
+import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

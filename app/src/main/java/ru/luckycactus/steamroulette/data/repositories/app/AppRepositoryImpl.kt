@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.int
 import ru.luckycactus.steamroulette.data.utils.BroadcastReceiverAdapter
-import ru.luckycactus.steamroulette.di.qualifier.ForApplication
-import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.di.ForApplication
+import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import javax.inject.Inject
 

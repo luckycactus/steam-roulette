@@ -6,8 +6,8 @@ import dagger.Module
 import dagger.Provides
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
-import ru.luckycactus.steamroulette.di.qualifier.ForApplication
-import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.di.ForApplication
+import ru.luckycactus.steamroulette.di.Identified
 import javax.inject.Singleton
 
 @Module

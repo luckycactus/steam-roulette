@@ -27,7 +27,7 @@ import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDa
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
-import ru.luckycactus.steamroulette.di.qualifier.ForApplication
+import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.domain.about.AboutRepository
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher

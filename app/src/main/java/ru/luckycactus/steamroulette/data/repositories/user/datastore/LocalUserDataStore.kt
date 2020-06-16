@@ -12,7 +12,7 @@ import ru.luckycactus.steamroulette.data.core.long
 import ru.luckycactus.steamroulette.data.core.longFlow
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
-import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import javax.inject.Inject
 

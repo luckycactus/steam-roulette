@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.Provides
-import ru.luckycactus.steamroulette.di.scopes.ActivityScope
+import ru.luckycactus.steamroulette.di.ActivityScope
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder

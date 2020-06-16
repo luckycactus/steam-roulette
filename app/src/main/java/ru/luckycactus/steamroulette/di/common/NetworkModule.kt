@@ -16,8 +16,8 @@ import ru.luckycactus.steamroulette.data.net.interceptors.MyHttpLoggingIntercept
 import ru.luckycactus.steamroulette.data.net.services.SteamApiService
 import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.utils.enableTls12OnOldApis
-import ru.luckycactus.steamroulette.di.qualifier.InterceptorSet
-import ru.luckycactus.steamroulette.di.qualifier.NetworkInterceptorSet
+import ru.luckycactus.steamroulette.di.InterceptorSet
+import ru.luckycactus.steamroulette.di.NetworkInterceptorSet
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton

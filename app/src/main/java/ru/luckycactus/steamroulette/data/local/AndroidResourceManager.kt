@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import dagger.Reusable
-import ru.luckycactus.steamroulette.di.qualifier.ForApplication
+import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import javax.inject.Inject
 

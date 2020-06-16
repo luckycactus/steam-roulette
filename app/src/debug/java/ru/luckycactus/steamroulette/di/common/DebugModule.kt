@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
 import okhttp3.Interceptor
-import ru.luckycactus.steamroulette.di.qualifier.NetworkInterceptorSet
+import ru.luckycactus.steamroulette.di.NetworkInterceptorSet
 
 @Module
 abstract class DebugModule {

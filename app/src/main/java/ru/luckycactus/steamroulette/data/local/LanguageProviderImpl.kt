@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.data.local
 
 import android.content.Context
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.qualifier.ForApplication
+import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import javax.inject.Inject
 import javax.inject.Singleton

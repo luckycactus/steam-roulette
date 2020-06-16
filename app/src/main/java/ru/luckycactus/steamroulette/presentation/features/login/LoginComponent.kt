@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.login
 
 import dagger.Subcomponent
-import ru.luckycactus.steamroulette.di.scopes.FeatureScope
+import ru.luckycactus.steamroulette.di.FeatureScope
 
 @Subcomponent
 @FeatureScope

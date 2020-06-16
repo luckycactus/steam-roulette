@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.data.core
 import android.content.SharedPreferences
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.qualifier.Identified
+import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.Clock
 import javax.inject.Inject

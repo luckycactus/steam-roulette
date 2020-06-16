@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.main
 
 import dagger.BindsInstance
 import dagger.Subcomponent
-import ru.luckycactus.steamroulette.di.scopes.ActivityScope
+import ru.luckycactus.steamroulette.di.ActivityScope
 import ru.luckycactus.steamroulette.presentation.features.about.AboutViewModel
 import ru.luckycactus.steamroulette.presentation.features.about.AppLibrariesViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel

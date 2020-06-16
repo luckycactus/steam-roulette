@@ -5,7 +5,7 @@ import com.bumptech.glide.Glide
 import dagger.Reusable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.luckycactus.steamroulette.di.qualifier.ForApplication
+import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import javax.inject.Inject
 
