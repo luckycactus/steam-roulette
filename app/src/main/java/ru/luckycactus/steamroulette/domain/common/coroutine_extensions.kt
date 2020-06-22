@@ -1,42 +1,31 @@
 package ru.luckycactus.steamroulette.domain.common
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicReference
 
-@UseExperimental(InternalCoroutinesApi::class)
-fun <R> Flow<R>.chunkBuffer(bufferSize: Int) =
-    object : Flow<List<R>> {
+fun <R> Flow<R>.chunkBuffer(bufferSize: Int): Flow<List<R>> = flow {
+    var buffer: MutableList<R>? = null
 
-        private var buffer = AtomicReference<ArrayList<R>>()
-
-        init {
-            createBuffer()
+    collect { value ->
+        if (buffer == null) {
+            buffer = ArrayList(bufferSize)
         }
-
-        override suspend fun collect(collector: FlowCollector<List<R>>) {
-            this@chunkBuffer.collect {
-                buffer.get().run {
-                    add(it)
-                    if (size == bufferSize) {
-                        collector.emit(this)
-                        createBuffer()
-                    }
-                }
+        buffer!!.let {
+            it.add(value)
+            if (it.size == bufferSize) {
+                emit(it)
+                buffer = null
             }
-
-            if (buffer.get().isNotEmpty()) {
-                collector.emit(buffer.get()!!)
-            }
-        }
-
-        private fun createBuffer() {
-            buffer.set(ArrayList(bufferSize))
         }
     }
+
+    buffer?.let {
+        if (it.isNotEmpty()) {
+            emit(it)
+        }
+    }
+}
 
 fun <T> Flow<T>.toStateFlow(scope: CoroutineScope, default: T): StateFlow<T> {
     val mutableStateFlow = MutableStateFlow(default)
