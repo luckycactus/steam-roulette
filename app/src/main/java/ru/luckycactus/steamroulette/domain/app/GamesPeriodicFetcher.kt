@@ -10,19 +10,20 @@ import ru.luckycactus.steamroulette.domain.common.switchNullsToEmpty
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
+import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GamesPeriodicFetcher @Inject constructor(
-    private val userRepository: UserRepository,
+    private val userSessionRepository: UserSessionRepository,
     private val gamesRepository: GamesRepository,
     private val manager: Manager,
     @ForApplication private val appScope: CoroutineScope
 ) {
     private val coroutineScope = appScope + Job(appScope.coroutineContext[Job])
 
-    private val currentUserFlow = userRepository.observeCurrentUserSteamId()
+    private val currentUserFlow = userSessionRepository.observeCurrentUser()
     private val gamesUpdatesFlow =
         currentUserFlow.switchNullsToEmpty()
             .flatMapLatest { gamesRepository.observeGamesUpdates(it).drop(1) }
@@ -50,10 +51,10 @@ class GamesPeriodicFetcher @Inject constructor(
 
     class Work @Inject constructor(
         private val gamesRepository: GamesRepository,
-        private val userRepository: UserRepository
+        private val userSessionRepository: UserSessionRepository
     ) {
         suspend fun run(): ListenableWorker.Result =
-            userRepository.getCurrentUserSteamId()?.let {
+            userSessionRepository.currentUser?.let {
                 gamesRepository.fetchOwnedGames(it, CachePolicy.Remote)
                 ListenableWorker.Result.success()
             } ?: ListenableWorker.Result.failure()

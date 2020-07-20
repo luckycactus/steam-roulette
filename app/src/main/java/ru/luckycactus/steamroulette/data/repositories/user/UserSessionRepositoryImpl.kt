@@ -1,0 +1,49 @@
+package ru.luckycactus.steamroulette.data.repositories.user
+
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.data.core.long
+import ru.luckycactus.steamroulette.data.core.longFlow
+import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
+import ru.luckycactus.steamroulette.di.Identified
+import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class UserSessionRepositoryImpl @Inject constructor(
+    @Identified(R.id.userCachePrefs) private val userPreferences: SharedPreferences
+) : UserSessionRepository {
+    private var currentUserPref by userPreferences.long(
+        LocalUserDataStore.CURRENT_USER_KEY,
+        LocalUserDataStore.CURRENT_USER_DEFAULT_VALUE
+    )
+
+    private val currentUserFlow = userPreferences.longFlow(
+        LocalUserDataStore.CURRENT_USER_KEY,
+        LocalUserDataStore.CURRENT_USER_DEFAULT_VALUE
+    ).map { fromSteam64(it) }
+
+    override val currentUser: SteamId?
+        get() = fromSteam64(currentUserPref)
+
+    override fun setCurrentUser(steamId: SteamId) {
+        currentUserPref = steamId.as64()
+    }
+
+    override fun observeCurrentUser(): Flow<SteamId?> =
+        currentUserFlow
+
+    override fun isUserLoggedIn(): Boolean = currentUser != null
+
+    override suspend fun logOut() {
+        userPreferences.edit { remove(LocalUserDataStore.CURRENT_USER_KEY) }
+    }
+
+    private fun fromSteam64(steam64: Long) =
+        if (steam64 == 0L) null else SteamId.fromSteam64(steam64)
+}

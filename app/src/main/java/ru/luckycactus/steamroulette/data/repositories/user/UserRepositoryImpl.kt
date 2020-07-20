@@ -21,17 +21,6 @@ class UserRepositoryImpl @Inject constructor(
     private val mapper: UserSummaryMapper
 ) : UserRepository {
 
-    override fun setCurrentUser(steamId: SteamId) {
-        localUserDataStore.setCurrentUser(steamId)
-    }
-
-    override fun getCurrentUserSteamId(): SteamId? = localUserDataStore.getCurrentUserSteam64()
-
-    override fun observeCurrentUserSteamId(): Flow<SteamId?> =
-        localUserDataStore.currentUserSteamIdFlow
-
-    override fun isUserSignedIn(): Boolean = localUserDataStore.getCurrentUserSteam64() != null
-
     override suspend fun getUserSummary(
         steamId: SteamId,
         cachePolicy: CachePolicy
@@ -45,11 +34,7 @@ class UserRepositoryImpl @Inject constructor(
         createUserSummaryResource(steamId).updateIfNeed(cachePolicy)
     }
 
-    override suspend fun signOut() {
-        localUserDataStore.removeCurrentUserSteamId()
-    }
-
-    override suspend fun clearUserSummary(steamId: SteamId) {
+    override suspend fun clearUser(steamId: SteamId) {
         localUserDataStore.removeUserSummary(steamId)
         createUserSummaryResource(steamId).invalidateCache()
     }

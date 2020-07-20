@@ -18,19 +18,8 @@ import javax.inject.Inject
 
 @Reusable
 class LocalUserDataStore @Inject constructor(
-    private val db: AppDatabase,
-    @Identified(R.id.userCachePrefs) private val userPreferences: SharedPreferences
+    private val db: AppDatabase
 ) : UserDataStore.Local {
-
-    private var currentUserSteam64Pref by userPreferences.long(
-        CURRENT_USER_KEY,
-        CURRENT_USER_DEFAULT_VALUE
-    )
-
-    override val currentUserSteamIdFlow = userPreferences.longFlow(
-        CURRENT_USER_KEY,
-        CURRENT_USER_DEFAULT_VALUE
-    ).map { fromSteam64(it) }
 
     override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity =
         db.userSummaryDao().get(steamId.as64())
@@ -45,19 +34,6 @@ class LocalUserDataStore @Inject constructor(
 
     override fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity> =
         db.userSummaryDao().observe(steamId.as64()).distinctUntilChanged().filterNotNull()
-
-    override fun setCurrentUser(steamId: SteamId) {
-        currentUserSteam64Pref = steamId.as64()
-    }
-
-    override fun getCurrentUserSteam64(): SteamId? = fromSteam64(currentUserSteam64Pref)
-
-    override fun removeCurrentUserSteamId() {
-        userPreferences.edit { remove(CURRENT_USER_KEY) }
-    }
-
-    private fun fromSteam64(steam64: Long) =
-        if (steam64 == 0L) null else SteamId.fromSteam64(steam64)
 
     companion object {
         const val CURRENT_USER_KEY = "signed_user_key"

@@ -14,14 +14,6 @@ interface UserDataStore {
 
         fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity>
 
-        fun setCurrentUser(steamId: SteamId)
-
-        fun getCurrentUserSteam64(): SteamId?
-
-        val currentUserSteamIdFlow: Flow<SteamId?>
-
-        fun removeCurrentUserSteamId()
-
         suspend fun removeUserSummary(steamId: SteamId)
     }
 

@@ -8,6 +8,7 @@ import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import javax.inject.Inject
 
+//todo user naming
 @Reusable
 class GetUserSummaryUseCase @Inject constructor(
     private val userRepository: UserRepository

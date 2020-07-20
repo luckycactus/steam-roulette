@@ -23,6 +23,7 @@ import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.RemoteLoginDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.UserRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.user.UserSessionRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
@@ -39,6 +40,7 @@ import ru.luckycactus.steamroulette.domain.core.SystemClock
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
+import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import ru.luckycactus.steamroulette.presentation.features.roulette.GlideCacheCleaner
 import javax.inject.Singleton
@@ -64,6 +66,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindUserRepository(userRepository: UserRepositoryImpl): UserRepository
+
+    @Binds
+    abstract fun bindUserSessionRepository(userSessionRepository: UserSessionRepositoryImpl): UserSessionRepository
 
     @Binds
     abstract fun bindUserSettingsRepository(userSettingsRepository: UserSettingsRepositoryImpl): UserSettingsRepository

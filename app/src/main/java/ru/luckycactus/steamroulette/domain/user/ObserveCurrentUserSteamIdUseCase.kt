@@ -8,10 +8,10 @@ import javax.inject.Inject
 
 @Reusable
 class ObserveCurrentUserSteamIdUseCase @Inject constructor(
-    private val userRepository: UserRepository
+    private val userSessionRepository: UserSessionRepository
 ) : AbstractUseCase<Unit?, Flow<SteamId?>>() {
 
     override fun execute(params: Unit?): Flow<SteamId?> {
-        return userRepository.observeCurrentUserSteamId()
+        return userSessionRepository.observeCurrentUser()
     }
 }

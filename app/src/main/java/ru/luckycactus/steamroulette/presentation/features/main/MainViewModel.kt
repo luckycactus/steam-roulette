@@ -18,7 +18,7 @@ import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.domain.login.SignOutUserUseCase
+import ru.luckycactus.steamroulette.domain.login.LogoutUserUseCase
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(
     private val observeUserSummary: ObserveUserSummaryUseCase,
     private val fetchUserSummary: FetchUserSummaryUseCase,
     private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
-    private val signOutUser: SignOutUserUseCase,
+    private val logoutUser: LogoutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
     private val clearHiddenGames: ClearHiddenGamesUseCase,
     private val resourceManager: ResourceManager,
@@ -111,7 +111,7 @@ class MainViewModel @Inject constructor(
         userScope.coroutineContext.cancelChildren()
         router.newRootScreen(Screens.Login)
         userScope.launch {
-            signOutUser()
+            logoutUser()
         }
     }
 

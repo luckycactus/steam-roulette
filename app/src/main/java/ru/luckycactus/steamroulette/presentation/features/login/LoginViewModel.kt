@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.login.SignInUseCase
+import ru.luckycactus.steamroulette.domain.login.LoginUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(
     private val validateSteamIdInputUseCase: ValidateSteamIdInputUseCase,
-    private val signInUseCase: SignInUseCase,
+    private val loginUseCase: LoginUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
 ) : BaseViewModel() {
@@ -37,10 +37,10 @@ class LoginViewModel @Inject constructor(
     fun onSteamIdConfirmed(id: String) {
         viewModelScope.launch {
             _progressState.value = true
-            signInUseCase(id.trim()).let {
+            loginUseCase(id.trim()).let {
                 when (it) {
-                    is SignInUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
-                    is SignInUseCase.Result.Fail -> {
+                    is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
+                    is LoginUseCase.Result.Fail -> {
                         renderFail(it)
                         _progressState.value = false
                     }
@@ -49,16 +49,16 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun renderFail(fail: SignInUseCase.Result.Fail) {
+    private fun renderFail(fail: LoginUseCase.Result.Fail) {
         _errorState.value = with(resourceManager) {
             when (fail) {
-                SignInUseCase.Result.Fail.InvalidSteamIdFormat ->
+                LoginUseCase.Result.Fail.InvalidSteamIdFormat ->
                     getString(R.string.error_invalid_steamid_format)
-                SignInUseCase.Result.Fail.VanityNotFound ->
+                LoginUseCase.Result.Fail.VanityNotFound ->
                     getString(R.string.error_user_with_vanity_url_not_found)
-                SignInUseCase.Result.Fail.SteamIdNotFound ->
+                LoginUseCase.Result.Fail.SteamIdNotFound ->
                     getString(R.string.error_user_with_steamid_not_found)
-                is SignInUseCase.Result.Fail.Error -> {
+                is LoginUseCase.Result.Fail.Error -> {
                     fail.exception.printStackTrace()
                     getCommonErrorDescription(fail.exception)
                 }

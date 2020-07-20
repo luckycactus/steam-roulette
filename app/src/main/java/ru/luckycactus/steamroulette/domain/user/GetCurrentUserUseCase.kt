@@ -6,10 +6,10 @@ import ru.luckycactus.steamroulette.domain.core.usecase.AbstractUseCase
 import javax.inject.Inject
 
 @Reusable
-class GetCurrentUserSteamIdUseCase @Inject constructor(
-    private val userRepository: UserRepository
+class GetCurrentUserUseCase @Inject constructor(
+    private val userSessionRepository: UserSessionRepository
 ) : AbstractUseCase<Unit?, SteamId?>() {
 
     override fun execute(params: Unit?): SteamId? =
-        userRepository.getCurrentUserSteamId()
+        userSessionRepository.currentUser
 }

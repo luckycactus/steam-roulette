@@ -12,19 +12,9 @@ interface UserRepository {
 
     fun observeUserSummary(steamId: SteamId): Flow<UserSummary>
 
-    fun setCurrentUser(steamId: SteamId)
-
-    fun getCurrentUserSteamId(): SteamId?
-
-    fun observeCurrentUserSteamId(): Flow<SteamId?>
-
-    fun isUserSignedIn(): Boolean
-
-    suspend fun signOut()
-
     suspend fun fetchUserSummary(steamId: SteamId, cachePolicy: CachePolicy)
 
-    suspend fun clearUserSummary(steamId: SteamId)
+    suspend fun clearUser(steamId: SteamId)
 }
 
 class SteamIdNotFoundException(val steamId: String): Exception()
