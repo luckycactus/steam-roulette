@@ -1,19 +1,19 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette_options
 
-import androidx.lifecycle.*
-import kotlinx.coroutines.flow.*
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveMaxPlaytimeSettingUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SaveMaxPlaytimeSettingUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterTypeUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class PlaytimeViewModel @Inject constructor(
-    private val userViewModelDelegate: UserViewModelDelegate,
     private val observePlaytimeFilter: ObservePlaytimeFilterUseCase,
     private val observeMaxPlaytimeSetting: ObserveMaxPlaytimeSettingUseCase,
     private val savePlayTimeFilterType: SavePlayTimeFilterTypeUseCase,
@@ -21,32 +21,17 @@ class PlaytimeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     suspend fun getCurrentPlaytimeFilterType() =
-        userViewModelDelegate.currentUserSteamId
-            .flatMapLatest { observePlaytimeFilter(it) }
-            .map { it.type }
-            .first()
+        observePlaytimeFilter().map { it.type }.first()
 
     suspend fun getCurrentMaxPlaytimeSetting() =
-        userViewModelDelegate.currentUserSteamId
-            .flatMapLatest { observeMaxPlaytimeSetting(it) }
-            .first()
+        observeMaxPlaytimeSetting().first()
 
     fun onOkClick(newFilterType: PlaytimeFilter.Type, newMaxPlaytime: Int) {
         viewModelScope.launch {
             if (newFilterType == PlaytimeFilter.Type.Limited) {
-                saveMaxPlaytimeSetting(
-                    SaveMaxPlaytimeSettingUseCase.Params(
-                        userViewModelDelegate.getCurrentUserSteamId(),
-                        newMaxPlaytime
-                    )
-                )
+                saveMaxPlaytimeSetting(SaveMaxPlaytimeSettingUseCase.Params(newMaxPlaytime))
             }
-            savePlayTimeFilterType(
-                SavePlayTimeFilterTypeUseCase.Params(
-                    userViewModelDelegate.getCurrentUserSteamId(),
-                    newFilterType
-                )
-            )
+            savePlayTimeFilterType(newFilterType)
         }
     }
 }

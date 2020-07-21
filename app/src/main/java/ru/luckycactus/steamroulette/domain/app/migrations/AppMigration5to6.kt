@@ -11,12 +11,11 @@ class AppMigration5to6 @Inject constructor(
     private val getCurrentUser: GetCurrentUserUseCase,
     private val userSettingsRepository: UserSettingsRepository,
     private val imageCacheCleaner: Provider<ImageCacheCleaner>
-): AppMigration {
+) : AppMigration {
 
     override suspend fun migrate() {
-        getCurrentUser()?.let {
-            userSettingsRepository.migrateEnPlayTimeFilter(it)
-        }
+        if (getCurrentUser() != null)
+            userSettingsRepository.migrateEnPlayTimeFilter()
         imageCacheCleaner.get().clearAllCache()
     }
 }

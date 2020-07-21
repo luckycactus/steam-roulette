@@ -12,11 +12,10 @@ class SaveMaxPlaytimeSettingUseCase @Inject constructor(
 ) : AbstractSuspendUseCase<SaveMaxPlaytimeSettingUseCase.Params, Unit>() {
 
     override suspend fun execute(params: Params) {
-        userSettingsRepository.saveMaxPlaytime(params.steamId, params.maxHours)
+        userSettingsRepository.saveMaxPlaytime(params.maxHours)
     }
 
     data class Params(
-        val steamId: SteamId,
         val maxHours: Int
     )
 }

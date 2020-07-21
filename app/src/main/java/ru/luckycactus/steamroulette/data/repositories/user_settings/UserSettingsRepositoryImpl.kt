@@ -10,36 +10,35 @@ import ru.luckycactus.steamroulette.data.core.intFlow
 import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import javax.inject.Inject
 
 @Reusable
 class UserSettingsRepositoryImpl @Inject constructor(
-    @Identified(R.id.userSettingsPrefs) private val userSettingsPrefs: SharedPreferences
+    @Identified(R.id.userSettingsPrefs) private val userSettingsPrefs: SharedPreferences,
+    private val userSession: UserSession
 ) : UserSettingsRepository {
 
-    override fun observePlaytimeFilterType(
-        steamId: SteamId,
-        default: PlaytimeFilter.Type
-    ): Flow<PlaytimeFilter.Type> =
-        userSettingsPrefs.intFlow(playTimeKey(steamId), default.ordinal)
+    private val currentUser
+        get() = userSession.requireCurrentUser()
+
+    override fun observePlaytimeFilterType(default: PlaytimeFilter.Type): Flow<PlaytimeFilter.Type> =
+        userSettingsPrefs.intFlow(playTimeKey(currentUser), default.ordinal)
             .map { PlaytimeFilter.Type.fromOrdinal(it) }
 
-    override fun observeMaxPlaytime(steamId: SteamId, default: Int): Flow<Int> =
-        userSettingsPrefs.intFlow(maximumPlayTimeKey(steamId), default)
+    override fun observeMaxPlaytime(default: Int): Flow<Int> =
+        userSettingsPrefs.intFlow(maximumPlayTimeKey(currentUser), default)
 
-    override fun savePlayTimeFilterType(
-        steamId: SteamId,
-        filterType: PlaytimeFilter.Type
-    ) {
+    override fun savePlayTimeFilterType(filterType: PlaytimeFilter.Type) {
         userSettingsPrefs.edit {
-            putInt(playTimeKey(steamId), filterType.ordinal)
+            putInt(playTimeKey(currentUser), filterType.ordinal)
         }
     }
 
-    override fun saveMaxPlaytime(steamId: SteamId, maxHours: Int) {
+    override fun saveMaxPlaytime(maxHours: Int) {
         userSettingsPrefs.edit {
-            putInt(maximumPlayTimeKey(steamId), maxHours)
+            putInt(maximumPlayTimeKey(currentUser), maxHours)
         }
     }
 
@@ -53,11 +52,11 @@ class UserSettingsRepositoryImpl @Inject constructor(
     /**
      * Migration of old EnPlayTimeFilter to new PlaytimeFilter.Type
      */
-    override fun migrateEnPlayTimeFilter(steamId: SteamId) {
-        val key = playTimeKey(steamId)
+    override fun migrateEnPlayTimeFilter() {
+        val key = playTimeKey(currentUser)
         // EnPlayTimeFilter.NotPlayedIn2Weeks.ordinal == 2
         if (userSettingsPrefs.getInt(key, -1) == 2) {
-            savePlayTimeFilterType(steamId, PlaytimeFilter.Type.All)
+            savePlayTimeFilterType(PlaytimeFilter.Type.All)
         }
     }
 

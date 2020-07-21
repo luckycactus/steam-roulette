@@ -34,7 +34,3 @@ fun <T> Flow<T>.toStateFlow(scope: CoroutineScope, default: T): StateFlow<T> {
     }
     return mutableStateFlow
 }
-
-fun <T> Flow<T?>.switchNullsToEmpty(): Flow<T> = flatMapLatest {
-    it?.let { flowOf(it) } ?: emptyFlow()
-}

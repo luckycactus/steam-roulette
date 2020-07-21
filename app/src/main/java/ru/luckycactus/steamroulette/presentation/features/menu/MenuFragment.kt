@@ -30,7 +30,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
 
         tvExit.setOnClickListener {
             MessageDialogFragment.create(
-                context!!,
+                requireContext(),
                 titleResId = R.string.exit_dialog_title,
                 messageResId = R.string.exit_warning,
                 negativeResId = R.string.cancel
@@ -74,7 +74,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
     }
 
     override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
-        viewModel.exit()
+        viewModel.logout()
     }
 
     companion object {

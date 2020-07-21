@@ -15,7 +15,6 @@ class FetchUserOwnedGamesUseCase @Inject constructor(
     override suspend fun execute(params: Params): Result {
         return try {
             gamesRepository.fetchOwnedGames(
-                params.steamId,
                 if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
             )
             Result.Success
@@ -29,7 +28,6 @@ class FetchUserOwnedGamesUseCase @Inject constructor(
     }
 
     data class Params(
-        val steamId: SteamId,
         val reload: Boolean
     )
 

@@ -8,7 +8,6 @@ interface UserSessionRepository {
 
     val currentUser: SteamId?
 
-    //todo user remove?
     fun observeCurrentUser(): Flow<SteamId?>
 
     fun isUserLoggedIn(): Boolean

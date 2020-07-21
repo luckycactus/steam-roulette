@@ -5,8 +5,6 @@ import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesDataStore
 import ru.luckycactus.steamroulette.data.repositories.games.mapper.GameStoreInfoEntityMapper
@@ -17,6 +15,7 @@ import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import javax.inject.Inject
 import kotlin.time.days
 
@@ -24,72 +23,72 @@ import kotlin.time.days
 class GamesRepositoryImpl @Inject constructor(
     private val localGamesDataStore: GamesDataStore.Local,
     private val remoteGamesDataStore: GamesDataStore.Remote,
-    private val gameStoreInfoEntityMapper: GameStoreInfoEntityMapper
+    private val gameStoreInfoEntityMapper: GameStoreInfoEntityMapper,
+    private val userSession: UserSession
 ) : GamesRepository {
 
-    override suspend fun fetchOwnedGames(steamId: SteamId, cachePolicy: CachePolicy) {
-        createOwnedGamesResource(steamId).updateIfNeed(cachePolicy)
+    private val currentUser
+        get() = userSession.requireCurrentUser()
+
+    override suspend fun fetchOwnedGames(cachePolicy: CachePolicy) {
+        createOwnedGamesResource(currentUser).updateIfNeed(cachePolicy)
     }
 
-    override fun observeGamesCount(steamId: SteamId): Flow<Int> =
-        localGamesDataStore.observeOwnedGamesCount(steamId)
+    override fun observeGamesCount(): Flow<Int> =
+        localGamesDataStore.observeOwnedGamesCount(currentUser)
 
-    override fun observeHiddenGamesCount(steamId: SteamId): Flow<Int> =
-        localGamesDataStore.observeHiddenOwnedGamesCount(steamId)
+    override fun observeHiddenGamesCount(): Flow<Int> =
+        localGamesDataStore.observeHiddenOwnedGamesCount(currentUser)
 
-    override fun getHiddenGamesPagedListLiveData(steamId: SteamId): LiveData<PagedList<GameHeader>> =
-        localGamesDataStore.getHiddenGamesDataSourceFactory(steamId).toLiveData(pageSize = 50)
+    override fun getHiddenGamesPagedListLiveData(): LiveData<PagedList<GameHeader>> =
+        localGamesDataStore.getHiddenGamesDataSourceFactory(currentUser).toLiveData(pageSize = 50)
 
-    override suspend fun resetHiddenGames(steamId: SteamId) {
-        localGamesDataStore.resetHiddenOwnedGames(steamId)
+    override suspend fun resetHiddenGames() {
+        localGamesDataStore.resetHiddenOwnedGames(currentUser)
     }
 
-    override fun observeGamesUpdates(steamId: SteamId): Flow<Long> =
-        createOwnedGamesResource(steamId).observeCacheUpdates()
+    override fun observeGamesUpdates(): Flow<Long> =
+        createOwnedGamesResource(currentUser).observeCacheUpdates()
 
     override suspend fun clearUser(steamId: SteamId) {
         localGamesDataStore.clearOwnedGames(steamId)
         createOwnedGamesResource(steamId).invalidateCache()
     }
 
-    override suspend fun isUserHasGames(steamId: SteamId): Boolean =
-        localGamesDataStore.isUserHasGames(steamId)
+    override suspend fun isUserHasGames(): Boolean =
+        localGamesDataStore.isUserHasGames(currentUser)
 
     override suspend fun getVisibleLocalOwnedGamesIds(
-        steamId: SteamId,
         filter: PlaytimeFilter,
         shown: Boolean
     ): List<Int> =
-        localGamesDataStore.getVisibleOwnedGamesIds(steamId, filter, shown)
+        localGamesDataStore.getVisibleOwnedGamesIds(currentUser, filter, shown)
 
     override suspend fun getLocalOwnedGameHeaders(
-        steamId: SteamId,
         gameIds: List<Int>
     ): List<GameHeader> =
-        localGamesDataStore.getOwnedGameHeaders(steamId, gameIds)
+        localGamesDataStore.getOwnedGameHeaders(currentUser, gameIds)
 
     override suspend fun setLocalOwnedGamesHidden(
-        steamId: SteamId,
         gameIds: List<Int>,
         hide: Boolean
     ) {
-        localGamesDataStore.setOwnedGamesHidden(steamId, gameIds, hide)
+        localGamesDataStore.setOwnedGamesHidden(currentUser, gameIds, hide)
     }
 
-    override suspend fun setAllLocalOwnedGamesHidden(steamId: SteamId, hide: Boolean) {
-        localGamesDataStore.setAllOwnedGamesHidden(steamId, hide)
+    override suspend fun setAllLocalOwnedGamesHidden(hide: Boolean) {
+        localGamesDataStore.setAllOwnedGamesHidden(currentUser, hide)
     }
 
     override suspend fun setLocalOwnedGamesShown(
-        steamId: SteamId,
         gameIds: List<Int>,
         shown: Boolean
     ) {
-        localGamesDataStore.setOwnedGamesShown(steamId, gameIds, shown)
+        localGamesDataStore.setOwnedGamesShown(currentUser, gameIds, shown)
     }
 
-    override suspend fun setAllLocalOwnedGamesShown(steamId: SteamId, shown: Boolean) {
-        localGamesDataStore.setAllOwnedGamesShown(steamId, shown)
+    override suspend fun setAllLocalOwnedGamesShown(shown: Boolean) {
+        localGamesDataStore.setAllOwnedGamesShown(currentUser, shown)
     }
 
     private fun createOwnedGamesResource(

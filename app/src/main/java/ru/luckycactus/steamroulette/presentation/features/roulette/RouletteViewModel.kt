@@ -3,25 +3,22 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.ForApplication
-import ru.luckycactus.steamroulette.domain.common.switchNullsToEmpty
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
-import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
@@ -31,15 +28,17 @@ import javax.inject.Inject
 class RouletteViewModel @Inject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingListUseCase,
-    private val observePlayTimeFilter: ObservePlaytimeFilterUseCase,
-    private var observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
+    observePlayTimeFilter: ObservePlaytimeFilterUseCase,
+    observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
+    observeUserSummary: ObserveUserSummaryUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
     private val resourceManager: ResourceManager,
     @ForApplication private val appScope: CoroutineScope
-) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
+) : BaseViewModel() {
 
+    val userSummary = observeUserSummary().asLiveData()
     val games: LiveData<List<GameHeader>?>
     val itemRemoved: Flow<Int>
     val itemsInserted: Flow<Pair<Int, Int>>
@@ -66,10 +65,7 @@ class RouletteViewModel @Inject constructor(
     private var firstPreviouslyShownGameId: Int? = null
 
     init {
-        currentUserPlayTimeFilter = userViewModelDelegate.currentUserSteamId
-            .flatMapLatest {
-                observePlayTimeFilter(it)
-            }
+        currentUserPlayTimeFilter = observePlayTimeFilter()
             .asLiveData()
             .distinctUntilChanged()
 
@@ -83,11 +79,7 @@ class RouletteViewModel @Inject constructor(
             syncRouletteState()
         }
 
-        val hiddenGamesCountLiveData = userViewModelDelegate.currentUserSteamId
-            .flatMapLatest {
-                observeHiddenGamesCount(it)
-            }
-            .asLiveData()
+        val hiddenGamesCountLiveData = observeHiddenGamesCount().asLiveData()
 
         _contentState.addSource(hiddenGamesCountLiveData) {
             if (it < hiddenGamesCount)
@@ -99,16 +91,14 @@ class RouletteViewModel @Inject constructor(
         games = _gamesPagingList.map { it?.list }
         itemsInserted = _gamesPagingList
             .asFlow()
-            .switchNullsToEmpty()
-            .flatMapLatest { it.itemsInsertedChannel.consumeAsFlow() }
+            .flatMapLatest { it?.itemsInsertedChannel?.consumeAsFlow() ?: emptyFlow() }
             .onEach {
                 updateTopGame()
             }
 
         itemRemoved = _gamesPagingList
             .asFlow()
-            .switchNullsToEmpty()
-            .flatMapLatest { it.itemRemovedChannel.consumeAsFlow() }
+            .flatMapLatest { it?.itemRemovedChannel?.consumeAsFlow() ?: emptyFlow() }
             .onEach {
                 updateTopGame()
             }
@@ -167,19 +157,10 @@ class RouletteViewModel @Inject constructor(
         if (game != null) {
             appScope.launch {
                 if (game.appId == firstPreviouslyShownGameId) {
-                    setAllGamesShown(
-                        SetAllGamesShownUseCase.Params(
-                            userViewModelDelegate.getCurrentUserSteamId(),
-                            false
-                        )
-                    )
+                    setAllGamesShown(SetAllGamesShownUseCase.Params(false))
                 }
                 setGamesShown(
-                    SetGamesShownUseCase.Params(
-                        userViewModelDelegate.getCurrentUserSteamId(),
-                        listOf(game.appId),
-                        true
-                    )
+                    SetGamesShownUseCase.Params(listOf(game.appId), true)
                 )
             }
         }
@@ -189,7 +170,6 @@ class RouletteViewModel @Inject constructor(
         appScope.launch {
             setGamesHidden(
                 SetGamesHiddenUseCase.Params(
-                    userViewModelDelegate.getCurrentUserSteamId(),
                     listOf(game.appId),
                     true
                 )
@@ -227,7 +207,6 @@ class RouletteViewModel @Inject constructor(
 
             val result = getOwnedGamesPagingList(
                 GetOwnedGamesPagingListUseCase.Params(
-                    userViewModelDelegate.getCurrentUserSteamId(),
                     filter,
                     viewModelScope
                 )

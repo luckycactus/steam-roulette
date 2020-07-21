@@ -6,18 +6,15 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 interface UserSettingsRepository {
 
-    fun observePlaytimeFilterType(
-        steamId: SteamId,
-        default: PlaytimeFilter.Type
-    ): Flow<PlaytimeFilter.Type>
+    fun observePlaytimeFilterType(default: PlaytimeFilter.Type): Flow<PlaytimeFilter.Type>
 
-    fun savePlayTimeFilterType(steamId: SteamId, filterType: PlaytimeFilter.Type)
+    fun savePlayTimeFilterType(filterType: PlaytimeFilter.Type)
 
-    fun saveMaxPlaytime(steamId: SteamId, maxHours: Int)
+    fun saveMaxPlaytime(maxHours: Int)
 
-    fun observeMaxPlaytime(steamId: SteamId, default: Int): Flow<Int>
+    fun observeMaxPlaytime(default: Int): Flow<Int>
 
     fun clearUser(steamId: SteamId)
 
-    fun migrateEnPlayTimeFilter(steamId: SteamId)
+    fun migrateEnPlayTimeFilter()
 }

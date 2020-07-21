@@ -10,28 +10,36 @@ import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEnt
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.user.UserRepository
+import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import javax.inject.Inject
 import kotlin.time.days
 
 @Reusable
 class UserRepositoryImpl @Inject constructor(
+    private val userSession: UserSession,
     private val localUserDataStore: UserDataStore.Local,
     private val remoteUserDataStore: UserDataStore.Remote,
     private val mapper: UserSummaryMapper
 ) : UserRepository {
+
+    private val currentUser
+        get() = userSession.requireCurrentUser()
+
+    override suspend fun getUserSummary(cachePolicy: CachePolicy): UserSummary? =
+        getUserSummary(currentUser, cachePolicy)
 
     override suspend fun getUserSummary(
         steamId: SteamId,
         cachePolicy: CachePolicy
     ): UserSummary? = createUserSummaryResource(steamId).get(cachePolicy)
 
-    override fun observeUserSummary(steamId: SteamId): Flow<UserSummary> =
-        localUserDataStore.observeUserSummary(steamId)
+    override fun observeUserSummary(): Flow<UserSummary> =
+        localUserDataStore.observeUserSummary(currentUser)
             .map { mapper.mapFrom(it) }
 
-    override suspend fun fetchUserSummary(steamId: SteamId, cachePolicy: CachePolicy) {
-        createUserSummaryResource(steamId).updateIfNeed(cachePolicy)
+    override suspend fun fetchUserSummary(cachePolicy: CachePolicy) {
+        createUserSummaryResource(currentUser).updateIfNeed(cachePolicy)
     }
 
     override suspend fun clearUser(steamId: SteamId) {

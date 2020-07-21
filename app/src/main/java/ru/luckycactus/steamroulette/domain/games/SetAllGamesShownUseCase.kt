@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.domain.games
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
 import javax.inject.Inject
 
@@ -11,11 +10,10 @@ class SetAllGamesShownUseCase @Inject constructor(
 ) : AbstractSuspendUseCase<SetAllGamesShownUseCase.Params, Unit>() {
 
     override suspend fun execute(params: Params) {
-        gamesRepository.setAllLocalOwnedGamesShown(params.steamId, params.shown)
+        gamesRepository.setAllLocalOwnedGamesShown(params.shown)
     }
 
     data class Params(
-        val steamId: SteamId,
         val shown: Boolean
     )
 }

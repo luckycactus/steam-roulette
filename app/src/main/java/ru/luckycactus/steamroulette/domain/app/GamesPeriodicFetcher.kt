@@ -4,33 +4,32 @@ import androidx.work.ListenableWorker
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import ru.luckycactus.steamroulette.di.ForApplication
-import ru.luckycactus.steamroulette.domain.common.switchNullsToEmpty
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
-import ru.luckycactus.steamroulette.domain.user.UserRepository
-import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
+import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GamesPeriodicFetcher @Inject constructor(
-    private val userSessionRepository: UserSessionRepository,
+    private val userSession: UserSession,
     private val gamesRepository: GamesRepository,
     private val manager: Manager,
     @ForApplication private val appScope: CoroutineScope
 ) {
     private val coroutineScope = appScope + Job(appScope.coroutineContext[Job])
 
-    private val currentUserFlow = userSessionRepository.observeCurrentUser()
     private val gamesUpdatesFlow =
-        currentUserFlow.switchNullsToEmpty()
-            .flatMapLatest { gamesRepository.observeGamesUpdates(it).drop(1) }
+        userSession.observeCurrentUser().flatMapLatest {
+            it?.let { gamesRepository.observeGamesUpdates().drop(1) } ?: emptyFlow()
+        }
 
     fun start() {
         coroutineScope.launch {
-            currentUserFlow.collect {
+            userSession.observeCurrentUser().collect {
                 if (it != null)
                     manager.enqueue(false)
                 else
@@ -51,11 +50,11 @@ class GamesPeriodicFetcher @Inject constructor(
 
     class Work @Inject constructor(
         private val gamesRepository: GamesRepository,
-        private val userSessionRepository: UserSessionRepository
+        private val userSession: UserSession
     ) {
         suspend fun run(): ListenableWorker.Result =
-            userSessionRepository.currentUser?.let {
-                gamesRepository.fetchOwnedGames(it, CachePolicy.Remote)
+            userSession.currentUser?.let {
+                gamesRepository.fetchOwnedGames(CachePolicy.Remote)
                 ListenableWorker.Result.success()
             } ?: ListenableWorker.Result.failure()
     }

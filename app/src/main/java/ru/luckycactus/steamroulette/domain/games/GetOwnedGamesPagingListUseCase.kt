@@ -3,14 +3,11 @@ package ru.luckycactus.steamroulette.domain.games
 import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
-import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import javax.inject.Inject
-import kotlin.Exception
 
 @Reusable
 class GetOwnedGamesPagingListUseCase @Inject constructor(
@@ -19,17 +16,16 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
 
     override suspend fun execute(params: Params): Result {
         try {
-            if (!gamesRepository.isUserHasGames(params.steamId)) {
+            if (!gamesRepository.isUserHasGames()) {
                 return Result.Fail.NoOwnedGames
             }
+
             val notShownIds = gamesRepository.getVisibleLocalOwnedGamesIds(
-                params.steamId,
                 params.filter,
                 false
             ).shuffled()
 
             val shownIds = gamesRepository.getVisibleLocalOwnedGamesIds(
-                params.steamId,
                 params.filter,
                 true
             ).shuffled()
@@ -37,7 +33,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
             val firstShownGame = shownIds.firstOrNull()
             val gameIds = notShownIds + shownIds
             val pagingList = PagingGameListImpl(
-                { gamesRepository.getLocalOwnedGameHeaders(params.steamId, it) },
+                { gamesRepository.getLocalOwnedGameHeaders(it) },
                 gameIds,
                 5,
                 10,
@@ -53,7 +49,6 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
     }
 
     data class Params(
-        val steamId: SteamId,
         val filter: PlaytimeFilter,
         val pagingCoroutineScope: CoroutineScope
     )

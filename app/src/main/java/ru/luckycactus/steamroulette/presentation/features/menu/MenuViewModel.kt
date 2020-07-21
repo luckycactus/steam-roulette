@@ -6,17 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.Clock
-import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.RequestState
+import ru.luckycactus.steamroulette.domain.core.ResourceManager
+import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
+import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
-import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegatePublic
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.combine
@@ -24,17 +24,17 @@ import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class MenuViewModel @Inject constructor(
-    private val observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
-    private val observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
+    observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
+    observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
+    observeUserSummary: ObserveUserSummaryUseCase,
     private val resourceManager: ResourceManager,
     private val userViewModelDelegate: UserViewModelDelegate,
     private val router: Router,
     private val clock: Clock
-) : BaseViewModel(), UserViewModelDelegatePublic by userViewModelDelegate {
+) : BaseViewModel() {
 
-    val gameCount: LiveData<Int> = userViewModelDelegate.currentUserSteamId
-        .flatMapLatest { observeOwnedGamesCount(ObserveOwnedGamesCountUseCase.Params(it)) }
-        .asLiveData()
+    val userSummary = observeUserSummary().asLiveData()
+    val gameCount: LiveData<Int> = observeOwnedGamesCount().asLiveData()
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
     val closeAction: LiveData<Unit>
@@ -48,10 +48,8 @@ class MenuViewModel @Inject constructor(
     }
 
     init {
-        gamesLastUpdate =
-            userViewModelDelegate.currentUserSteamId.flatMapLatest {
-                observeOwnedGamesSyncsUseCase(ObserveOwnedGamesSyncsUseCase.Params(it))
-            }.map {
+        gamesLastUpdate = observeOwnedGamesSyncsUseCase()
+            .map {
                 val ago = if (it <= 0)
                     resourceManager.getString(R.string.never)
                 else
@@ -73,8 +71,8 @@ class MenuViewModel @Inject constructor(
         close()
     }
 
-    fun exit() {
-        userViewModelDelegate.exit()
+    fun logout() {
+        userViewModelDelegate.logout()
     }
 
     private fun closeWithDelay() {

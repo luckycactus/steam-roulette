@@ -10,11 +10,14 @@ interface UserRepository {
     @Throws(SteamIdNotFoundException::class)
     suspend fun getUserSummary(steamId: SteamId, cachePolicy: CachePolicy): UserSummary?
 
-    fun observeUserSummary(steamId: SteamId): Flow<UserSummary>
+    @Throws(SteamIdNotFoundException::class)
+    suspend fun getUserSummary(cachePolicy: CachePolicy): UserSummary?
 
-    suspend fun fetchUserSummary(steamId: SteamId, cachePolicy: CachePolicy)
+    fun observeUserSummary(): Flow<UserSummary>
+
+    suspend fun fetchUserSummary(cachePolicy: CachePolicy)
 
     suspend fun clearUser(steamId: SteamId)
 }
 
-class SteamIdNotFoundException(val steamId: String): Exception()
+class SteamIdNotFoundException(val steamId: String) : Exception()
