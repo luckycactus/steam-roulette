@@ -32,15 +32,14 @@ class LocalGamesDataStore @Inject constructor(
         steamId: SteamId,
         gamesFlow: Flow<OwnedGameEntity>
     ) {
+        val steam64 = steamId.as64()
         db.withTransaction {
-            val gameIds = db.ownedGamesDao().getAllIds(steamId.as64()).toSet()
-            val hiddenGameIds = db.ownedGamesDao().getHiddenIds(steamId.as64()).toSet()
-            val shownGameIds = db.ownedGamesDao().getShownIds(steamId.as64()).toSet()
-            val mapper = OwnedGameRoomEntityMapper(steamId.as64(), hiddenGameIds, shownGameIds)
+            val appData = db.ownedGamesDao().getAllAppData(steam64).associateBy { it.appId }
+            val mapper = OwnedGameRoomEntityMapper(steam64, appData)
+            val gamesVerifier = gamesVerifierFactory.create(appData.keys)
 
-            db.ownedGamesDao().clear(steamId.as64())
+            db.ownedGamesDao().clear(steam64)
 
-            val gamesVerifier = gamesVerifierFactory.create(gameIds)
             gamesFlow
                 .filter { gamesVerifier.verify(it) }
                 .map { mapper.mapFrom(it) }

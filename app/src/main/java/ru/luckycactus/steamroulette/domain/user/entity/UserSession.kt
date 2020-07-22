@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.domain.user.entity
 
-import ru.luckycactus.steamroulette.domain.exceptions.UserNotLoggedInException
+import ru.luckycactus.steamroulette.domain.UserNotLoggedInException
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import javax.inject.Inject
 import javax.inject.Singleton

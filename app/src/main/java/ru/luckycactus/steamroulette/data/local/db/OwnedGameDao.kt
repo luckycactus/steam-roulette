@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
+import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameAppData
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
@@ -55,6 +56,13 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         where appId in (:appIds) and userSteam64 = :steam64"""
     )
     abstract suspend fun getHeaders(steam64: Long, appIds: List<Int>): List<GameHeader>
+
+    @Query(
+        """select appId, hidden, shown
+        from owned_game 
+        where userSteam64 = :steam64"""
+    )
+    abstract suspend fun getAllAppData(steam64: Long): List<OwnedGameAppData>
 
     @Query("delete from owned_game where userSteam64 = :steam64")
     abstract suspend fun clear(steam64: Long)
