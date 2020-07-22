@@ -55,24 +55,20 @@ class LocalGamesDataStore @Inject constructor(
         return db.ownedGamesDao().getAll(steamId.as64())
     }
 
-    override suspend fun getVisibleOwnedGamesIds(
+    override suspend fun getOwnedGamesIds(
         steamId: SteamId,
-        filter: PlaytimeFilter,
-        shown: Boolean
-    ): List<Int> = db.ownedGamesDao().run {
-        when (filter) {
-            PlaytimeFilter.All -> getVisibleIds(steamId.as64(), shown)
-            PlaytimeFilter.NotPlayed -> getVisibleLimitedByPlaytimeIds(
-                steamId.as64(),
-                0,
-                shown
-            )
-            is PlaytimeFilter.Limited -> getVisibleLimitedByPlaytimeIds(
-                steamId.as64(),
-                filter.maxHours,
-                shown
-            )
+        shown: Boolean?,
+        hidden: Boolean?,
+        filter: PlaytimeFilter?
+    ): List<Int> {
+        val maxHours = filter?.let {
+            when (filter) {
+                PlaytimeFilter.All -> null
+                PlaytimeFilter.NotPlayed -> 0
+                is PlaytimeFilter.Limited -> filter.maxHours
+            }
         }
+        return db.ownedGamesDao().getIds(steamId.as64(), shown, hidden, maxHours)
     }
 
     override suspend fun resetHiddenOwnedGames(steamId: SteamId) {

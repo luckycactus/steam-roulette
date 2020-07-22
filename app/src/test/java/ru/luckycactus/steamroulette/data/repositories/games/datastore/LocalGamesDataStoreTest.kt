@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -95,8 +95,7 @@ class LocalGamesDataStoreTest {
     }
 
     private suspend fun getAllVisibleSortedIds(shown: Boolean = false) =
-        db.ownedGamesDao().getVisibleIds(gabenSteamId.as64(), shown).sorted()
-
+        db.ownedGamesDao().getIds(gabenSteamId.as64(), shown = shown, hidden = false).sorted()
 
     @Test
     fun `getVisibleOwnedGamesIds() should properly filter output by playtime`() = runBlocking {
@@ -104,10 +103,11 @@ class LocalGamesDataStoreTest {
 
         assertEquals(
             TestData.ownedGamesData.map { it.appId }.sorted(),
-            localGamesDataStore.getVisibleOwnedGamesIds(
+            localGamesDataStore.getOwnedGamesIds(
                 gabenSteamId,
-                PlaytimeFilter.All,
-                shown = false
+                shown = false,
+                hidden = false,
+                filter = PlaytimeFilter.All
             ).sorted()
         )
 
@@ -117,10 +117,11 @@ class LocalGamesDataStoreTest {
                 .map { it.appId }
                 .sorted()
                 .toList(),
-            localGamesDataStore.getVisibleOwnedGamesIds(
+            localGamesDataStore.getOwnedGamesIds(
                 gabenSteamId,
-                PlaytimeFilter.NotPlayed,
-                shown = false
+                shown = false,
+                hidden = false,
+                filter = PlaytimeFilter.NotPlayed
             ).sorted()
         )
 
@@ -130,11 +131,12 @@ class LocalGamesDataStoreTest {
                 .map { it.appId }
                 .sorted()
                 .toList(),
-            localGamesDataStore.getVisibleOwnedGamesIds(
+            localGamesDataStore.getOwnedGamesIds(
                 gabenSteamId,
-                PlaytimeFilter.Limited(1),
-                shown = false
-            )
+                shown = false,
+                hidden = false,
+                filter = PlaytimeFilter.Limited(1)
+            ).sorted()
         )
     }
 
@@ -150,19 +152,21 @@ class LocalGamesDataStoreTest {
 
         assertEquals(
             filteredIds,
-            localGamesDataStore.getVisibleOwnedGamesIds(
+            localGamesDataStore.getOwnedGamesIds(
                 gabenSteamId,
-                PlaytimeFilter.Limited(1),
-                shown = false
+                shown = false,
+                hidden = false,
+                filter = PlaytimeFilter.Limited(1)
             ).sorted()
         )
 
         assertEquals(
             emptyList<Int>(),
-            localGamesDataStore.getVisibleOwnedGamesIds(
+            localGamesDataStore.getOwnedGamesIds(
                 gabenSteamId,
-                PlaytimeFilter.Limited(1),
-                shown = true
+                shown = true,
+                hidden = false,
+                filter = PlaytimeFilter.Limited(1)
             ).sorted()
         )
 
@@ -170,19 +174,21 @@ class LocalGamesDataStoreTest {
 
         assertEquals(
             filteredIds.drop(1),
-            localGamesDataStore.getVisibleOwnedGamesIds(
+            localGamesDataStore.getOwnedGamesIds(
                 gabenSteamId,
-                PlaytimeFilter.Limited(1),
-                shown = false
+                shown = false,
+                hidden = false,
+                filter = PlaytimeFilter.Limited(1)
             ).sorted()
         )
 
         assertEquals(
             filteredIds.take(1),
-            localGamesDataStore.getVisibleOwnedGamesIds(
+            localGamesDataStore.getOwnedGamesIds(
                 gabenSteamId,
-                PlaytimeFilter.Limited(1),
-                shown = true
+                shown = true,
+                hidden = false,
+                filter = PlaytimeFilter.Limited(1)
             ).sorted()
         )
     }

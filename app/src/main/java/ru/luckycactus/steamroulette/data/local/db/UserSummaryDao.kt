@@ -8,15 +8,15 @@ import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEnt
 @Dao
 abstract class UserSummaryDao : BaseDao<UserSummaryEntity>() {
 
-    @Query("select * from user_summary where steam64 = :steam64")
+    @Query("SELECT * FROM user_summary WHERE steam64 = :steam64")
     abstract suspend fun get(steam64: Long): UserSummaryEntity
 
-    @Query("select * from user_summary where steam64 = :steam64")
+    @Query("SELECT * FROM user_summary WHERE steam64 = :steam64")
     abstract fun observe(steam64: Long): Flow<UserSummaryEntity?>
 
-    @Query("delete from user_summary where steam64 = :steam64")
+    @Query("DELETE FROM user_summary WHERE steam64 = :steam64")
     abstract suspend fun delete(steam64: Long)
 
-    @Query("delete from user_summary")
+    @Query("DELETE FROM user_summary")
     abstract suspend fun clear()
 }

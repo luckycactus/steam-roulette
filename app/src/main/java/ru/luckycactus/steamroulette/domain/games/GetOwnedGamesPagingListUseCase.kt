@@ -20,14 +20,16 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                 return Result.Fail.NoOwnedGames
             }
 
-            val notShownIds = gamesRepository.getVisibleLocalOwnedGamesIds(
-                params.filter,
-                false
+            val notShownIds = gamesRepository.getOwnedGamesIds(
+                hidden = false,
+                shown = false,
+                playtimeFilter = params.filter
             ).shuffled()
 
-            val shownIds = gamesRepository.getVisibleLocalOwnedGamesIds(
-                params.filter,
-                true
+            val shownIds = gamesRepository.getOwnedGamesIds(
+                hidden = false,
+                shown = true,
+                playtimeFilter = params.filter
             ).shuffled()
 
             val firstShownGame = shownIds.firstOrNull()

@@ -16,7 +16,12 @@ interface GamesDataStore {
 
         suspend fun getOwnedGames(steamId: SteamId): List<OwnedGameEntity>
 
-        suspend fun getVisibleOwnedGamesIds(steamId: SteamId, filter: PlaytimeFilter, shown: Boolean): List<Int>
+        suspend fun getOwnedGamesIds(
+            steamId: SteamId,
+            shown: Boolean? = null,
+            hidden: Boolean? = null,
+            filter: PlaytimeFilter? = null
+        ): List<Int>
 
         suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
 

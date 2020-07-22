@@ -5,9 +5,9 @@ import io.mockk.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.test.util.TestData
@@ -39,9 +39,9 @@ class LocalGamesDataStoreInsertBufferTest {
     @Test
     fun `updateOwnedGames() should buffer games and insert them by chunks`() = runBlocking {
         val totalGames = 2000
-        coEvery { dbMock.ownedGamesDao().getAllIds(any()) } returns emptyList()
-        coEvery { dbMock.ownedGamesDao().getHiddenIds(any()) } returns emptyList()
-        coEvery { dbMock.ownedGamesDao().getShownIds(any()) } returns emptyList()
+        coEvery { dbMock.ownedGamesDao().getIds(any()) } returns emptyList()
+        coEvery { dbMock.ownedGamesDao().getIds(any(), hidden = true) } returns emptyList()
+        coEvery { dbMock.ownedGamesDao().getIds(any(), shown = true) } returns emptyList()
         val gamesSlot = slot<List<OwnedGameRoomEntity>>()
         var gamesInserted = 0
         coEvery {

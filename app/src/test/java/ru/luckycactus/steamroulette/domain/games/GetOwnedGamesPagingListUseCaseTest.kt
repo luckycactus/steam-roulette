@@ -25,10 +25,10 @@ class GetOwnedGamesPagingListUseCaseTest {
         val gamesRepositoryMock = mockk<GamesRepository>()
         coEvery { gamesRepositoryMock.isUserHasGames(any()) } returns true
         coEvery {
-            gamesRepositoryMock.getVisibleLocalOwnedGamesIds(any(), any(), true)
+            gamesRepositoryMock.getOwnedGamesIds(shown = true, hidden = false, playtimeFilter = any())
         } returns shownIds
         coEvery {
-            gamesRepositoryMock.getVisibleLocalOwnedGamesIds(any(), any(), false)
+            gamesRepositoryMock.getOwnedGamesIds(shown = false, hidden = false, playtimeFilter = any())
         } returns notShownIds
 
         val getOwnedGamesPagingListUseCase = GetOwnedGamesPagingListUseCase(gamesRepositoryMock)

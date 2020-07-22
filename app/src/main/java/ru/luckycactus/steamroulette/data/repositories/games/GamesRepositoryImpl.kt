@@ -58,11 +58,12 @@ class GamesRepositoryImpl @Inject constructor(
     override suspend fun isUserHasGames(): Boolean =
         localGamesDataStore.isUserHasGames(currentUser)
 
-    override suspend fun getVisibleLocalOwnedGamesIds(
-        filter: PlaytimeFilter,
-        shown: Boolean
-    ): List<Int> =
-        localGamesDataStore.getVisibleOwnedGamesIds(currentUser, filter, shown)
+    override suspend fun getOwnedGamesIds(
+        shown: Boolean?,
+        hidden: Boolean?,
+        playtimeFilter: PlaytimeFilter?
+    ) =
+        localGamesDataStore.getOwnedGamesIds(currentUser, shown, hidden, playtimeFilter)
 
     override suspend fun getLocalOwnedGameHeaders(
         gameIds: List<Int>

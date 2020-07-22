@@ -13,8 +13,7 @@ inline fun <T> wrapCommonNetworkExceptions(block: () -> T): T {
     } catch (e: Exception) {
         throw when (e) {
             is HttpException -> ServerException(e)
-            is IOException/*,
-            is SocketTimeoutException*/ -> NetworkConnectionException(e)
+            is IOException -> NetworkConnectionException(e)
             else -> e
         }
     }
