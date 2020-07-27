@@ -4,28 +4,25 @@ import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import androidx.core.view.marginBottom
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ArcMotion
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_game_details.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.*
 
+@AndroidEntryPoint
 class GameDetailsFragment : BaseFragment() {
 
     lateinit var adapter: GameDetailsAdapter
 
-    private val viewModel by viewModel {
-        findComponent<MainActivityComponent>().gameDetailsViewModelFactory.create(
-            requireArguments().getParcelable(ARG_GAME)!!
-        )
-    }
+    private val viewModel: GameDetailsViewModel by viewModels()
 
     private val enableTransition: Boolean by argument(ARG_ENABLE_TRANSITION)
 
@@ -87,13 +84,12 @@ class GameDetailsFragment : BaseFragment() {
     }
 
     companion object {
-        private const val ARG_GAME = "ARG_GAME"
         private const val ARG_ENABLE_TRANSITION = "ARG_ENABLE_SHARED_ELEMENT_TRANSITION"
 
         fun newInstance(game: GameHeader, enableSharedElementTransition: Boolean) =
             GameDetailsFragment().apply {
                 arguments = bundleOf(
-                    ARG_GAME to game,
+                    GameDetailsViewModel.ARG_GAME to game,
                     ARG_ENABLE_TRANSITION to enableSharedElementTransition
                 )
             }

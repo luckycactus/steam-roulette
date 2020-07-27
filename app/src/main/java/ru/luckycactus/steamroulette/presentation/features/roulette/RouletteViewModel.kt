@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -7,7 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.ForApplication
+import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
@@ -23,9 +24,8 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.startWith
-import javax.inject.Inject
 
-class RouletteViewModel @Inject constructor(
+class RouletteViewModel @ViewModelInject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingListUseCase,
     observePlayTimeFilter: ObservePlaytimeFilterUseCase,
@@ -35,7 +35,7 @@ class RouletteViewModel @Inject constructor(
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
     private val resourceManager: ResourceManager,
-    @ForApplication private val appScope: CoroutineScope
+    @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel() {
 
     val userSummary = observeUserSummary().asLiveData()

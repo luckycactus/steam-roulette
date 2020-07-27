@@ -1,22 +1,22 @@
 package ru.luckycactus.steamroulette.di.common
 
-import android.app.Application
-import android.content.Context
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import ru.luckycactus.steamroulette.BuildConfig
-import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicFetcherManager
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
 import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.about.data_store.AboutDataStore
 import ru.luckycactus.steamroulette.data.repositories.about.data_store.LocalAboutDataStore
 import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicFetcherManager
 import ru.luckycactus.steamroulette.data.repositories.games.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.datastore.*
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
@@ -28,7 +28,7 @@ import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDa
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
 import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
-import ru.luckycactus.steamroulette.di.ForApplication
+import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.about.AboutRepository
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
@@ -46,11 +46,8 @@ import ru.luckycactus.steamroulette.presentation.features.roulette.GlideCacheCle
 import javax.inject.Singleton
 
 @Module
+@InstallIn(ApplicationComponent::class)
 abstract class AppModule {
-
-    @Binds
-    @ForApplication
-    abstract fun bindContext(application: Application): Context
 
     @Binds
     abstract fun bindClock(clock: SystemClock): Clock
@@ -106,18 +103,15 @@ abstract class AppModule {
     @Binds
     abstract fun bindAboutDataStore(localAboutDataStore: LocalAboutDataStore): AboutDataStore
 
-    @Module
     companion object {
 
         @Singleton
-        @JvmStatic
         @Provides
-        @ForApplication
+        @AppCoScope
         fun provideApplicationCoroutineScope() =
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
         @Provides
-        @JvmStatic
         @Reusable
         fun provideGamesVerifier(): GamesVerifier.Factory {
             return GamesVerifierImpl.Factory(BuildConfig.DEBUG)

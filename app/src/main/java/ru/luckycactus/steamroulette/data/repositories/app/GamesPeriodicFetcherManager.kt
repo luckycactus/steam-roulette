@@ -1,10 +1,10 @@
 package ru.luckycactus.steamroulette.data.repositories.app
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.*
-import ru.luckycactus.steamroulette.di.common.BaseAppComponent
-import ru.luckycactus.steamroulette.di.core.InjectionManager
-import ru.luckycactus.steamroulette.di.ForApplication
+import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class GamesPeriodicFetcherManager @Inject constructor(
-    @ForApplication private val context: Context
+    @ApplicationContext private val context: Context
 ) : GamesPeriodicFetcher.Manager {
 
     override fun enqueue(restart: Boolean) {
@@ -37,17 +37,13 @@ class GamesPeriodicFetcherManager @Inject constructor(
         WorkManager.getInstance(context).cancelUniqueWork(workName)
     }
 
-    class Worker(
-        appContext: Context, params: WorkerParameters
+    class Worker @WorkerInject constructor(
+        @Assisted appContext: Context,
+        @Assisted params: WorkerParameters
     ) : CoroutineWorker(appContext, params) {
 
         @Inject
         lateinit var work: GamesPeriodicFetcher.Work
-
-        init {
-            InjectionManager.findComponent<BaseAppComponent>()
-                .inject(this)
-        }
 
         override suspend fun doWork(): Result {
             return work.run()

@@ -1,17 +1,14 @@
 package ru.luckycactus.steamroulette.presentation.common
 
 import android.app.Application
-import androidx.work.WorkManager
-import ru.luckycactus.steamroulette.di.common.BaseAppComponent
-import ru.luckycactus.steamroulette.di.common.DaggerReleaseBaseAppComponent
-import ru.luckycactus.steamroulette.di.core.ComponentOwner
-import ru.luckycactus.steamroulette.di.core.InjectionManager
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
+import dagger.hilt.android.HiltAndroidApp
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
 import ru.luckycactus.steamroulette.domain.app.SystemLanguageSynchronizer
 import javax.inject.Inject
 
-open class App : Application(),
-    ComponentOwner<BaseAppComponent> {
+open class App : Application(), Configuration.Provider {
 
     @Inject
     lateinit var systemLanguageSynchronizer: SystemLanguageSynchronizer
@@ -19,23 +16,23 @@ open class App : Application(),
     @Inject
     lateinit var gamesPeriodicFetcher: GamesPeriodicFetcher
 
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
     override fun onCreate() {
         super.onCreate()
-        InjectionManager.init(this)
-        InjectionManager.bindComponent(this).inject(this)
         instance = this
 
         systemLanguageSynchronizer.start()
         gamesPeriodicFetcher.start()
     }
 
-    override fun createComponent(): BaseAppComponent =
-        DaggerReleaseBaseAppComponent.builder()
-            .application(this)
-            .build()
-
     companion object {
         fun getInstance(): App = instance
         private lateinit var instance: App
     }
+
+    override fun getWorkManagerConfiguration() = Configuration.Builder()
+        .setWorkerFactory(workerFactory)
+        .build()
 }

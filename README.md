@@ -26,7 +26,7 @@ Android app to help you choose a game from your Steam library to play
 - OKHttp, Retrofit
 - Moshi
 - Glide
-- Dagger
+- Dagger-Hilt
 - Cicerone
 - Stetho
 - Leak Canary

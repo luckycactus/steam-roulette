@@ -8,9 +8,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
@@ -18,10 +20,8 @@ import kotlinx.android.synthetic.main.main_toolbar.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.findComponent
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.features.menu.MenuFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
@@ -31,12 +31,11 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackT
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 import ru.luckycactus.steamroulette.presentation.utils.*
 
+@AndroidEntryPoint
 class RouletteFragment : BaseFragment() {
     private lateinit var fabs: List<FloatingActionButton>
 
-    private val viewModel by viewModel {
-        findComponent<MainActivityComponent>().rouletteViewModel
-    }
+    private val viewModel: RouletteViewModel by viewModels()
 
     private lateinit var rouletteAdapter: RouletteAdapter
 

@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.hidden_games
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -9,14 +10,11 @@ import ru.luckycactus.steamroulette.domain.games.GetHiddenGamesPagedListUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.SetAllGamesHiddenUseCase
 import ru.luckycactus.steamroulette.domain.games.SetGamesHiddenUseCase
-import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
-class HiddenGamesViewModel @Inject constructor(
-    private val userViewModelDelegate: UserViewModelDelegate,
+class HiddenGamesViewModel @ViewModelInject constructor(
     getHiddenGamesPagedList: GetHiddenGamesPagedListUseCase,
     observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,

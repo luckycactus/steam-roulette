@@ -1,12 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.ForApplication
+import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.RequestState
@@ -24,9 +25,8 @@ import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
-class MainViewModel @Inject constructor(
+class MainViewModel @ViewModelInject constructor(
     observeCurrentUser: ObserveCurrentUserSteamIdUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
     private val fetchUserSummary: FetchUserSummaryUseCase,
@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(
     private val migrateApp: MigrateAppUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router,
-    @ForApplication private val appScope: CoroutineScope
+    @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel(), UserViewModelDelegate {
     override val fetchGamesState: LiveData<RequestState<Unit>>
         get() = _fetchGamesState
@@ -142,8 +142,7 @@ class MainViewModel @Inject constructor(
 
     private suspend fun fetchGames(reload: Boolean): RequestState<Unit> {
         _fetchGamesState.value = RequestState.Loading
-        val result = fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(reload))
-        return when (result) {
+        return when (val result = fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(reload))) {
             is FetchUserOwnedGamesUseCase.Result.Success -> {
                 RequestState.success.also { _fetchGamesState.value = it }
             }

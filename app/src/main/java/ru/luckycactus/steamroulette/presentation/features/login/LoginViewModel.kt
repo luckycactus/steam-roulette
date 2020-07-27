@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.login
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,9 +14,8 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.luckycactus.steamroulette.presentation.utils.startWith
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(
+class LoginViewModel @ViewModelInject constructor(
     private val validateSteamIdInputUseCase: ValidateSteamIdInputUseCase,
     private val loginUseCase: LoginUseCase,
     private val resourceManager: ResourceManager,

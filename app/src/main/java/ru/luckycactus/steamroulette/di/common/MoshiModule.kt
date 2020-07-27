@@ -1,23 +1,20 @@
 package ru.luckycactus.steamroulette.di.common
 
 import com.squareup.moshi.Moshi
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
-import dagger.multibindings.IntoSet
-import dagger.multibindings.Multibinds
-import okhttp3.Interceptor
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import ru.luckycactus.steamroulette.data.net.adapters.RequiredAgeMoshiAdapter
 import ru.luckycactus.steamroulette.data.net.adapters.SystemRequirementsMoshiAdapter
 import javax.inject.Named
 
 @Module
+@InstallIn(ApplicationComponent::class)
 abstract class MoshiModule {
 
-    @Module
     companion object {
-        @JvmStatic
         @Reusable
         @Named("api")
         @Provides
@@ -27,7 +24,6 @@ abstract class MoshiModule {
             .build()
 
         @Reusable
-        @JvmStatic
         @Provides
         fun provideMoshi(): Moshi = Moshi.Builder().build()
     }

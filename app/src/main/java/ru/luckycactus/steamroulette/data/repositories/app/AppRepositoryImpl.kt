@@ -5,19 +5,19 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import dagger.Reusable
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.int
 import ru.luckycactus.steamroulette.data.utils.BroadcastReceiverAdapter
-import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import javax.inject.Inject
 
 @Reusable
 class AppRepositoryImpl @Inject constructor(
-    @ForApplication private val context: Context,
+    @ApplicationContext private val context: Context,
     @Identified(R.id.appPrefs) private val appPrefs: SharedPreferences
 ) : AppRepository {
 

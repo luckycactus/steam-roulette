@@ -1,23 +1,21 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.os.Bundle
+import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_menu.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.findComponent
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.setDrawableColorFromAttribute
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
+@AndroidEntryPoint
 class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
 
-    private val viewModel by viewModel {
-        findComponent<MainActivityComponent>().menuViewModel
-    }
+    private val viewModel: MenuViewModel by viewModels()
 
     override val layoutResId: Int = R.layout.fragment_menu
 

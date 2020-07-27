@@ -1,15 +1,15 @@
 package ru.luckycactus.steamroulette.data.local
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LanguageProviderImpl @Inject constructor(
-    @ForApplication private val context: Context
+    @ApplicationContext private val context: Context
 ) : LanguageProvider {
 
     //system_locale - (store_api_code - web_api_code)

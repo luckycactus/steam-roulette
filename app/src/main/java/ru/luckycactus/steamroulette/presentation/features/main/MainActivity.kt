@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
@@ -12,14 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_toolbar.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.common.BaseAppComponent
-import ru.luckycactus.steamroulette.di.core.ComponentOwner
-import ru.luckycactus.steamroulette.di.core.Injectable
-import ru.luckycactus.steamroulette.di.core.InjectionManager
-import ru.luckycactus.steamroulette.di.core.component
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
@@ -28,7 +25,6 @@ import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragm
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -39,7 +35,8 @@ import ru.terrakok.cicerone.commands.Forward
 import ru.terrakok.cicerone.commands.Replace
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>, Injectable {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity(){
     private var sharedViews: List<View>? = null
 
     var runningTransitions = 0
@@ -50,7 +47,7 @@ class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>,
     @Inject
     lateinit var router: Router
 
-    val viewModel by viewModel { component.mainViewModel }
+    val viewModel: MainViewModel by viewModels()
 
     val touchSwitchTransitionListener = object : TransitionListenerAdapter() {
         override fun onTransitionEnd(transition: Transition) {
@@ -162,15 +159,6 @@ class MainActivity : AppCompatActivity(), ComponentOwner<MainActivityComponent>,
                 } else null
             }
         }
-
-    override fun createComponent(): MainActivityComponent =
-        InjectionManager.findComponent<BaseAppComponent>()
-            .mainActivityComponentFactory()
-            .create(this)
-
-    override fun inject() {
-        component.inject(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

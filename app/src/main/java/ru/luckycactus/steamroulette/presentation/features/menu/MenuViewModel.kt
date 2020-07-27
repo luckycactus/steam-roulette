@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.text.format.DateUtils
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -21,9 +22,8 @@ import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.combine
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
-class MenuViewModel @Inject constructor(
+class MenuViewModel @ViewModelInject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     observeUserSummary: ObserveUserSummaryUseCase,

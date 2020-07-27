@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import ru.luckycactus.steamroulette.domain.about.GetAppLibrariesUseCase
@@ -8,9 +9,8 @@ import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
-class AppLibrariesViewModel @Inject constructor(
+class AppLibrariesViewModel @ViewModelInject constructor(
     private val getAppLibraries: GetAppLibrariesUseCase,
     private val router: Router
 ) : BaseViewModel() {

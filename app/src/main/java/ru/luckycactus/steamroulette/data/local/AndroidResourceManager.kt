@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import dagger.Reusable
-import ru.luckycactus.steamroulette.di.ForApplication
+import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import javax.inject.Inject
 
 @Reusable
 class AndroidResourceManager @Inject constructor(
-    @ForApplication private val context: Context
+    @ApplicationContext private val context: Context
 ) : ResourceManager {
 
     override fun getString(@StringRes strId: Int): String =

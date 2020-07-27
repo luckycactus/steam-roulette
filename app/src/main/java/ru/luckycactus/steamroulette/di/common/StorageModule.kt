@@ -4,52 +4,49 @@ import android.content.Context
 import android.content.res.AssetManager
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
-import ru.luckycactus.steamroulette.di.ForApplication
 import ru.luckycactus.steamroulette.di.Identified
 import javax.inject.Singleton
 
 @Module
+@InstallIn(ApplicationComponent::class)
 class StorageModule {
 
-    @Module
     companion object {
         @Identified(R.id.appPrefs)
-        @JvmStatic
         @Singleton
         @Provides
-        fun provideAppSharedPreferences(@ForApplication appContext: Context) =
+        fun provideAppSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
         @Identified(R.id.userSettingsPrefs)
-        @JvmStatic
         @Singleton
         @Provides
-        fun provideUserSettingsSharedPreferences(@ForApplication appContext: Context) =
+        fun provideUserSettingsSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("user-settings", Context.MODE_PRIVATE)
 
         @Identified(R.id.userCachePrefs)
-        @JvmStatic
         @Singleton
         @Provides
-        fun provideUserCacheSharedPreferences(@ForApplication appContext: Context) =
+        fun provideUserCacheSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("user-cache", Context.MODE_PRIVATE)
 
         @Identified(R.id.cacheHelperPrefs)
-        @JvmStatic
         @Singleton
         @Provides
-        fun provideCacheHelperSharedPreferences(@ForApplication appContext: Context) =
+        fun provideCacheHelperSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("cache-helper", Context.MODE_PRIVATE)
 
         @Singleton
-        @JvmStatic
         @Provides
-        fun provideSteamRouletteDb(@ForApplication appContext: Context) = AppDatabase.buildDatabase(appContext)
+        fun provideSteamRouletteDb(@ApplicationContext appContext: Context) =
+            AppDatabase.buildDatabase(appContext)
 
-        @JvmStatic
         @Provides
-        fun provideAssets(@ForApplication context: Context): AssetManager = context.assets
+        fun provideAssets(@ApplicationContext context: Context): AssetManager = context.assets
     }
 }

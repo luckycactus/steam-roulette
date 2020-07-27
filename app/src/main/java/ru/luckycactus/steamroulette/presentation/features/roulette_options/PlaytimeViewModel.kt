@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette_options
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -11,9 +12,8 @@ import ru.luckycactus.steamroulette.domain.games_filter.SaveMaxPlaytimeSettingUs
 import ru.luckycactus.steamroulette.domain.games_filter.SavePlayTimeFilterTypeUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class PlaytimeViewModel @Inject constructor(
+class PlaytimeViewModel @ViewModelInject constructor(
     private val observePlaytimeFilter: ObservePlaytimeFilterUseCase,
     private val observeMaxPlaytimeSetting: ObserveMaxPlaytimeSettingUseCase,
     private val savePlayTimeFilterType: SavePlayTimeFilterTypeUseCase,

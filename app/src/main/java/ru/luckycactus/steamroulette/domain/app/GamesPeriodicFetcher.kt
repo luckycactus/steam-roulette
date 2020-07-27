@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import ru.luckycactus.steamroulette.di.ForApplication
+import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
@@ -18,7 +18,7 @@ class GamesPeriodicFetcher @Inject constructor(
     private val userSession: UserSession,
     private val gamesRepository: GamesRepository,
     private val manager: Manager,
-    @ForApplication private val appScope: CoroutineScope
+    @AppCoScope private val appScope: CoroutineScope
 ) {
     private val coroutineScope = appScope + Job(appScope.coroutineContext[Job])
 

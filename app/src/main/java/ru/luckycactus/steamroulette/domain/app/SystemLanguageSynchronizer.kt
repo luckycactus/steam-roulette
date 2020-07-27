@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import ru.luckycactus.steamroulette.di.ForApplication
+import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class SystemLanguageSynchronizer @Inject constructor(
     appRepository: AppRepository,
     private val languageProvider: LanguageProvider,
-    @ForApplication private val appScope: CoroutineScope
+    @AppCoScope private val appScope: CoroutineScope
 ) {
     private val localeChangesFlow = appRepository.observeSystemLocaleChanges()
     private var job: Job? = null

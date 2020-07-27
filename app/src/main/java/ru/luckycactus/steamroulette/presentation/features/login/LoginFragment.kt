@@ -3,21 +3,22 @@ package ru.luckycactus.steamroulette.presentation.features.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.progress.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.ComponentOwner
-import ru.luckycactus.steamroulette.di.core.component
-import ru.luckycactus.steamroulette.di.core.findComponent
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
-import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.hideKeyboard
+import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
+import ru.luckycactus.steamroulette.presentation.utils.visibility
 
+@AndroidEntryPoint
+class LoginFragment : BaseFragment() {
 
-class LoginFragment : BaseFragment(), ComponentOwner<LoginComponent> {
-
-    private val viewModel by viewModel { component.loginViewModel }
+    private val viewModel: LoginViewModel by viewModels()
 
     override val layoutResId = R.layout.fragment_login
 
@@ -40,7 +41,7 @@ class LoginFragment : BaseFragment(), ComponentOwner<LoginComponent> {
 
         tvSteamIdHelp.setOnClickListener {
             MessageDialogFragment.create(
-                context!!,
+                requireContext(),
                 titleResId = R.string.supported_steamid_formats,
                 messageResId = R.string.steamid_help
             ).show(childFragmentManager, null)
@@ -58,11 +59,6 @@ class LoginFragment : BaseFragment(), ComponentOwner<LoginComponent> {
             showSnackbar(it)
         }
     }
-
-    override fun createComponent(): LoginComponent =
-        findComponent<MainActivityComponent>()
-            .loginComponentFactory()
-            .create()
 
     private fun showProgress(show: Boolean) {
         progress.visibility(show)

@@ -1,10 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -21,8 +22,8 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
 
-class GameDetailsViewModel @AssistedInject constructor(
-    @Assisted private val gameHeader: GameHeader,
+class GameDetailsViewModel @ViewModelInject constructor(
+    @Assisted private val savedStateHandle: SavedStateHandle,
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase,
@@ -31,9 +32,15 @@ class GameDetailsViewModel @AssistedInject constructor(
     val gameDetails: LiveData<List<GameDetailsUiModel>>
         get() = _gameDetails
 
+    private val gameHeader = savedStateHandle.get<GameHeader>(ARG_GAME)!!
+
     private val _gameDetails = MutableLiveData<List<GameDetailsUiModel>>()
 
     private var gameStoreInfo: GameStoreInfo? = null
+
+    companion object {
+        const val ARG_GAME = "ARG_GAME"
+    }
 
     init {
         loadInfo(true)
@@ -130,9 +137,4 @@ class GameDetailsViewModel @AssistedInject constructor(
 
     private fun getInitialHeader(): GameDetailsUiModel =
         GameDetailsUiModel.Header(gameHeader)
-
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(gameHeader: GameHeader): GameDetailsViewModel
-    }
 }

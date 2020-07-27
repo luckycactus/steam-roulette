@@ -4,6 +4,8 @@ import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import okhttp3.Interceptor
@@ -24,6 +26,7 @@ import javax.inject.Singleton
 
 
 @Module
+@InstallIn(ApplicationComponent::class)
 abstract class NetworkModule {
 
     @Multibinds
@@ -35,16 +38,12 @@ abstract class NetworkModule {
     @Binds
     abstract fun provideAuthInterceptor(authInterceptor: AuthInterceptor): Interceptor
 
-    @Module
     companion object {
-
-        @JvmStatic
         @Singleton
         @Provides
         fun provideSteamApiService(@Named("steam-api") retrofit: Retrofit): SteamApiService =
             retrofit.create(SteamApiService::class.java)
 
-        @JvmStatic
         @Singleton
         @Provides
         fun provideSteamStoreApiService(@Named("steam-store-api") retrofit: Retrofit): SteamStoreApiService =

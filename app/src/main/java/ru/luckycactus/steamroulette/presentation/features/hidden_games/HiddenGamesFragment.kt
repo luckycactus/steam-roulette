@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.hidden_games
 
 import android.os.Bundle
 import android.view.*
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
@@ -9,23 +10,20 @@ import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_hidden_games.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.GridSpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.SimpleIdItemKeyProvider
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 
-
+@AndroidEntryPoint
 class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
-    private val viewModel by viewModel {
-        InjectionManager.findComponent<MainActivityComponent>().hiddenGamesViewModel
-    }
+    private val viewModel: HiddenGamesViewModel by viewModels()
 
     private val adapter = HiddenGamesAdapter(::onGameClick)
 
@@ -137,7 +135,7 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     private fun showClearAllConfirmation() {
         MessageDialogFragment.create(
-            context!!,
+            requireContext(),
             messageResId = R.string.dialog_message_reset_hidden_games,
             negativeResId = R.string.cancel
         ).show(childFragmentManager, null)

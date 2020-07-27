@@ -1,0 +1,14 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ru.luckycactus.steamroulette"
+    >
+
+    <application
+        android:name=".ReleaseApp"
+        tools:replace="android:name"
+        >
+
+    </application>
+
+</manifest>

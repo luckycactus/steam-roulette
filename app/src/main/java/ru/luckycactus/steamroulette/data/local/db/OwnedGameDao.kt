@@ -48,7 +48,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query(
         """SELECT appId, name 
         FROM owned_game
-        WHERE userSteam64 =:steam64 AND hidden = 1 order by name asc"""
+        WHERE userSteam64 =:steam64 AND hidden = 1 ORDER BY name ASC"""
     )
     abstract fun getHiddenGamesDataSourceFactory(steam64: Long): DataSource.Factory<Int, GameHeader>
 
@@ -62,7 +62,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query(
         """SELECT appId, name
         FROM owned_game 
-        WHERE appId in (:appIds) AND userSteam64 = :steam64"""
+        WHERE appId IN (:appIds) AND userSteam64 = :steam64"""
     )
     abstract suspend fun getHeaders(steam64: Long, appIds: List<Int>): List<GameHeader>
 

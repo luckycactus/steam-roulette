@@ -1,21 +1,18 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import android.os.Bundle
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_app_libraries.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
-import ru.luckycactus.steamroulette.presentation.features.main.MainActivityComponent
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.observeFirst
-import ru.luckycactus.steamroulette.presentation.utils.viewModel
 
+@AndroidEntryPoint
 class AppLibrariesFragment : BaseFragment() {
-
-    private val viewModel by viewModel {
-        InjectionManager.findComponent<MainActivityComponent>().appLibrariesViewModel
-    }
+    private val viewModel: AppLibrariesViewModel by viewModels()
 
     override val layoutResId = R.layout.fragment_app_libraries
 

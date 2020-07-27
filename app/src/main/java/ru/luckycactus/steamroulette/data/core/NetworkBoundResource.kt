@@ -1,10 +1,13 @@
 package ru.luckycactus.steamroulette.data.core
 
 import android.util.LruCache
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.di.common.BaseAppComponent
-import ru.luckycactus.steamroulette.di.core.InjectionManager
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
+import ru.luckycactus.steamroulette.presentation.common.App
 import kotlin.time.Duration
 
 abstract class NetworkBoundResource<RequestType, ResultType>(
@@ -61,9 +64,23 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     }
 
     companion object {
+        @EntryPoint
+        @InstallIn(ApplicationComponent::class)
+        interface NetworkBoundResourceCompanionEntryPoint {
+            fun cacheHelper(): CacheHelper
+        }
+
         private val memoryCache = LruCache<String, Any>(50)
-        private val cacheHelper: CacheHelper =
-            InjectionManager.findComponent<BaseAppComponent>().cacheHelper
+
+        private val cacheHelper: CacheHelper
+
+        init {
+            val entryPoint = EntryPointAccessors.fromApplication(
+                App.getInstance(),
+                NetworkBoundResourceCompanionEntryPoint::class.java
+            )
+            cacheHelper = entryPoint.cacheHelper()
+        }
 
         suspend fun <RequestType> withMemoryCache(
             memoryKey: String,
