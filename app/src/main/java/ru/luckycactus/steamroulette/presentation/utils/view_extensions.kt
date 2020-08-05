@@ -8,7 +8,10 @@ import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.*
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
@@ -17,19 +20,6 @@ import java.lang.reflect.Method
 
 fun View.visibility(visible: Boolean) {
     visibility = if (visible) View.VISIBLE else View.GONE
-}
-
-inline fun View.updatePadding(
-    @Px left: Int = paddingLeft,
-    @Px top: Int = paddingTop,
-    @Px right: Int = paddingRight,
-    @Px bottom: Int = paddingBottom
-) {
-    setPadding(left, top, right, bottom)
-}
-
-inline fun View.setPadding(@Px size: Int) {
-    setPadding(size, size, size, size)
 }
 
 fun View.expandTouchArea(desiredWidth: Int, desiredHeight: Int) {
@@ -51,10 +41,8 @@ fun View.expandTouchArea(desiredWidth: Int, desiredHeight: Int) {
     }
 }
 
-fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): View {
-    return LayoutInflater.from(context)
-        .inflate(resId, this, attachToRoot)
-}
+fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): View =
+    LayoutInflater.from(context).inflate(resId, this, attachToRoot)
 
 private val setTransitionAlphaMethod: Method? by lazy {
     try {

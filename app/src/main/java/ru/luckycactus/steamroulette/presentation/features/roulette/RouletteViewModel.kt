@@ -79,7 +79,9 @@ class RouletteViewModel @ViewModelInject constructor(
             syncRouletteState()
         }
 
-        val hiddenGamesCountLiveData = observeHiddenGamesCount().asLiveData()
+        val hiddenGamesCountLiveData = observeHiddenGamesCount()
+            .asLiveData()
+            .distinctUntilChanged()
 
         _contentState.addSource(hiddenGamesCountLiveData) {
             if (it < hiddenGamesCount)

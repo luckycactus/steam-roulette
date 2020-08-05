@@ -54,7 +54,7 @@
     "license_type": "Apache2"
   },
   {
-    "name": "Dagger",
+    "name": "Dagger-Hilt",
     "author": "Google",
     "source": "https://github.com/google/dagger",
     "license_type": "Apache2"
