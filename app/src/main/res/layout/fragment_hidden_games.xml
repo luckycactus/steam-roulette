@@ -32,6 +32,7 @@
         android:clipToPadding="false"
         android:padding="@dimen/default_activity_margin"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:scrollbars="vertical"
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

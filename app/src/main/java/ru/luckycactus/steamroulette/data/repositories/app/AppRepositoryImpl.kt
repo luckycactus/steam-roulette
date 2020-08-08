@@ -8,17 +8,16 @@ import dagger.Reusable
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.int
 import ru.luckycactus.steamroulette.data.utils.BroadcastReceiverAdapter
-import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import javax.inject.Inject
+import javax.inject.Named
 
 @Reusable
 class AppRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    @Identified(R.id.appPrefs) private val appPrefs: SharedPreferences
+    @Named("app") private val appPrefs: SharedPreferences
 ) : AppRepository {
 
     override var lastVersion by appPrefs.int("last_version", 0)

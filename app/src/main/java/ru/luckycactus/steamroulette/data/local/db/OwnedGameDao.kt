@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.data.local.db
 
 import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.RawQuery
@@ -50,7 +51,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         FROM owned_game
         WHERE userSteam64 =:steam64 AND hidden = 1 ORDER BY name ASC"""
     )
-    abstract fun getHiddenGamesDataSourceFactory(steam64: Long): DataSource.Factory<Int, GameHeader>
+    abstract fun getHiddenGamesPagingSource(steam64: Long): PagingSource<Int, GameHeader>
 
     @Query(
         """SELECT appId, name

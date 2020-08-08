@@ -7,9 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
-import ru.luckycactus.steamroulette.di.Identified
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -17,25 +16,25 @@ import javax.inject.Singleton
 class StorageModule {
 
     companion object {
-        @Identified(R.id.appPrefs)
+        @Named("app")
         @Singleton
         @Provides
         fun provideAppSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
-        @Identified(R.id.userSettingsPrefs)
+        @Named("user-settings")
         @Singleton
         @Provides
         fun provideUserSettingsSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("user-settings", Context.MODE_PRIVATE)
 
-        @Identified(R.id.userCachePrefs)
+        @Named("user-cache")
         @Singleton
         @Provides
         fun provideUserCacheSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("user-cache", Context.MODE_PRIVATE)
 
-        @Identified(R.id.cacheHelperPrefs)
+        @Named("cache-helper")
         @Singleton
         @Provides
         fun provideCacheHelperSharedPreferences(@ApplicationContext appContext: Context) =

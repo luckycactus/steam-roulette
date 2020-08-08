@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
 import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.withTransaction
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
@@ -106,8 +107,8 @@ class LocalGamesDataStore @Inject constructor(
         db.ownedGamesDao().clear(steamId.as64())
     }
 
-    override fun getHiddenGamesDataSourceFactory(steamId: SteamId): DataSource.Factory<Int, GameHeader> {
-        return db.ownedGamesDao().getHiddenGamesDataSourceFactory(steamId.as64())
+    override fun getHiddenGamesPagingSource(steamId: SteamId): PagingSource<Int, GameHeader> {
+        return db.ownedGamesDao().getHiddenGamesPagingSource(steamId.as64())
     }
 
     companion object {

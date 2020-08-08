@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
@@ -12,9 +11,9 @@ import ru.luckycactus.steamroulette.presentation.utils.setDrawableColorFromAttri
 @AndroidEntryPoint
 class AboutFragment : BaseFragment() {
     private val viewModel: AboutViewModel by viewModels()
+
     override val layoutResId = R.layout.fragment_about
 
-    @SuppressLint("SetTextI18n")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 

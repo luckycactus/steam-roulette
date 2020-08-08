@@ -1,18 +1,11 @@
 package ru.luckycactus.steamroulette.data.repositories.user.datastore
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
-import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.data.core.long
-import ru.luckycactus.steamroulette.data.core.longFlow
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
-import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import javax.inject.Inject
 

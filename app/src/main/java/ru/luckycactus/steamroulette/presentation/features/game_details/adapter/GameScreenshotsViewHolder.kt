@@ -85,7 +85,7 @@ class GameScreenshotsViewHolder(
         ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
             init {
                 ivScreenshot.setOnClickListener {
-                    onScreenshotClick(adapterPosition, ivScreenshot)
+                    onScreenshotClick(absoluteAdapterPosition, ivScreenshot)
                 }
             }
 

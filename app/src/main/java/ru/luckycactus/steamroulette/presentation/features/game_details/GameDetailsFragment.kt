@@ -21,9 +21,9 @@ import ru.luckycactus.steamroulette.presentation.utils.*
 @AndroidEntryPoint
 class GameDetailsFragment : BaseFragment() {
 
-    lateinit var adapter: GameDetailsAdapter
-
     private val viewModel: GameDetailsViewModel by viewModels()
+
+    lateinit var adapter: GameDetailsAdapter
 
     private val enableTransition: Boolean by argument(ARG_ENABLE_TRANSITION)
 

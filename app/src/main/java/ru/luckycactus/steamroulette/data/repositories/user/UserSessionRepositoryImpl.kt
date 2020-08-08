@@ -4,19 +4,18 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.long
 import ru.luckycactus.steamroulette.data.core.longFlow
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
-import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class UserSessionRepositoryImpl @Inject constructor(
-    @Identified(R.id.userCachePrefs) private val userPreferences: SharedPreferences
+    @Named("user-cache") private val userPreferences: SharedPreferences
 ) : UserSessionRepository {
     private var currentUserPref by userPreferences.long(
         LocalUserDataStore.CURRENT_USER_KEY,

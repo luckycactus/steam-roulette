@@ -5,18 +5,17 @@ import androidx.core.content.edit
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.intFlow
-import ru.luckycactus.steamroulette.di.Identified
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
 import javax.inject.Inject
+import javax.inject.Named
 
 @Reusable
 class UserSettingsRepositoryImpl @Inject constructor(
-    @Identified(R.id.userSettingsPrefs) private val userSettingsPrefs: SharedPreferences,
+    @Named("user-settings") private val userSettingsPrefs: SharedPreferences,
     private val userSession: UserSession
 ) : UserSettingsRepository {
 

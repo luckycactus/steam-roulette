@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.domain.games
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
@@ -37,7 +38,7 @@ interface GamesRepository {
     fun observeHiddenGamesCount(): Flow<Int>
 
     //todo flow
-    fun getHiddenGamesPagedListLiveData(): LiveData<PagedList<GameHeader>>
+    fun getHiddenGamesPagingSource(): PagingSource<Int, GameHeader>
 
     suspend fun resetHiddenGames()
 

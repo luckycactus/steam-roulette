@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.data.repositories.games.datastore
 
 import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
@@ -45,7 +46,7 @@ interface GamesDataStore {
 
         suspend fun clearOwnedGames(steamId: SteamId)
 
-        fun getHiddenGamesDataSourceFactory(steamId: SteamId): DataSource.Factory<Int, GameHeader>
+        fun getHiddenGamesPagingSource(steamId: SteamId): PagingSource<Int, GameHeader>
     }
 
     interface Remote : GamesDataStore {

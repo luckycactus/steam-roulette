@@ -3,20 +3,19 @@ package ru.luckycactus.steamroulette.presentation.features.hidden_games
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.selection.ItemDetailsLookup
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StorageStrategy
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_hidden_games.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.GridSpaceDecoration
-import ru.luckycactus.steamroulette.presentation.ui.SimpleIdItemKeyProvider
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
@@ -46,17 +45,14 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         rvHiddenGames.adapter = adapter
         rvHiddenGames.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         rvHiddenGames.addItemDecoration(
-            GridSpaceDecoration(
-                SPAN_COUNT,
-                resources.getDimensionPixelSize(R.dimen.spacing_small)
-            )
+            GridSpaceDecoration(SPAN_COUNT, resources.getDimensionPixelSize(R.dimen.spacing_small))
         )
 
         selectionTracker = SelectionTracker.Builder<Long>(
             "hidden_games",
             rvHiddenGames,
-            SimpleIdItemKeyProvider(rvHiddenGames),
-            MyItemDetailsLookup(rvHiddenGames),
+            HiddenGamesItemKeyProvider(rvHiddenGames),
+            HiddenGamesDetailsLookup(rvHiddenGames),
             StorageStrategy.createLongStorage()
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
             .build()
@@ -71,8 +67,10 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
         adapter.tracker = selectionTracker
 
-        observe(viewModel.hiddenGames) {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            viewModel.hiddenGames.collect {
+                adapter.submitData(it)
+            }
         }
 
         observe(viewModel.hiddenGamesCount) {
@@ -176,15 +174,34 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         }
     }
 
-    private class MyItemDetailsLookup(private val recyclerView: RecyclerView) :
-        ItemDetailsLookup<Long>() {
+    private class HiddenGamesDetailsLookup(
+        private val recyclerView: RecyclerView
+    ) : ItemDetailsLookup<Long>() {
         override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
             val view = recyclerView.findChildViewUnder(event.x, event.y)
-            if (view != null) {
-                return (recyclerView.getChildViewHolder(view) as HiddenGamesAdapter.HiddenGameViewHolder)
+            return if (view != null)
+                (recyclerView.getChildViewHolder(view) as HiddenGamesAdapter.HiddenGameViewHolder)
                     .getItemDetails()
+            else null
+        }
+    }
+
+    private class HiddenGamesItemKeyProvider(
+        recyclerView: RecyclerView
+    ) : ItemKeyProvider<Long>(SCOPE_MAPPED) {
+        private val adapter: HiddenGamesAdapter = (recyclerView.adapter as? HiddenGamesAdapter)
+            ?: throw IllegalStateException("RecyclerView must have HiddenGamesAdapter set")
+        private val lm = (recyclerView.layoutManager as? GridLayoutManager)
+            ?: throw IllegalStateException("RecyclerView must have GridLayoutManager set")
+
+        override fun getKey(position: Int): Long? = adapter.getSelectionKeyForPosition(position)
+
+        override fun getPosition(key: Long): Int {
+            for (i in lm.findFirstVisibleItemPosition()..lm.findLastVisibleItemPosition()) {
+                if (key == adapter.getSelectionKeyForPosition(i))
+                    return i
             }
-            return null
+            return RecyclerView.NO_POSITION
         }
     }
 

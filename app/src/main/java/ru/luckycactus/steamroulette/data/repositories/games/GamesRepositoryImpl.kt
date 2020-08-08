@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.data.repositories.games
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import androidx.paging.toLiveData
+import androidx.paging.PagingSource
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
@@ -40,8 +40,8 @@ class GamesRepositoryImpl @Inject constructor(
     override fun observeHiddenGamesCount(): Flow<Int> =
         localGamesDataStore.observeHiddenOwnedGamesCount(currentUser)
 
-    override fun getHiddenGamesPagedListLiveData(): LiveData<PagedList<GameHeader>> =
-        localGamesDataStore.getHiddenGamesDataSourceFactory(currentUser).toLiveData(pageSize = 50)
+    override fun getHiddenGamesPagingSource(): PagingSource<Int, GameHeader> =
+        localGamesDataStore.getHiddenGamesPagingSource(currentUser)
 
     override suspend fun resetHiddenGames() {
         localGamesDataStore.resetHiddenOwnedGames(currentUser)

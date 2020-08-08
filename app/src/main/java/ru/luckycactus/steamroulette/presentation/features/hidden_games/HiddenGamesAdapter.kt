@@ -3,8 +3,10 @@ package ru.luckycactus.steamroulette.presentation.features.hidden_games
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.ItemKeyProvider
+import androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,12 +18,8 @@ import ru.luckycactus.steamroulette.presentation.utils.inflate
 
 class HiddenGamesAdapter(
     private val onGameClick: (List<View>, GameHeader) -> Unit
-) : PagedListAdapter<GameHeader, HiddenGamesAdapter.HiddenGameViewHolder>(diffCallback) {
+) : PagingDataAdapter<GameHeader, HiddenGamesAdapter.HiddenGameViewHolder>(diffCallback) {
     var tracker: SelectionTracker<Long>? = null
-
-    init {
-        setHasStableIds(true)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HiddenGameViewHolder =
         HiddenGameViewHolder(parent.inflate(R.layout.item_hidden_game))
@@ -31,8 +29,12 @@ class HiddenGamesAdapter(
         holder.bind(item, tracker?.isSelected(item.appId.toLong()) ?: false)
     }
 
-    override fun getItemId(position: Int): Long {
-        return getItem(position)!!.appId.toLong()
+    fun getSelectionKeyForPosition(position: Int): Long? {
+        return getItem(position)?.let { getSelectionKeyForItem(it) }
+    }
+
+    private fun getSelectionKeyForItem(item: GameHeader): Long {
+        return item.appId.toLong()
     }
 
     inner class HiddenGameViewHolder(
@@ -58,17 +60,9 @@ class HiddenGamesAdapter(
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> {
             return object : ItemDetailsLookup.ItemDetails<Long>() {
-                override fun getSelectionKey(): Long? {
-                    return itemId
-                }
-
-                override fun getPosition(): Int {
-                    return adapterPosition
-                }
-
-                override fun inSelectionHotspot(e: MotionEvent): Boolean {
-                    return false
-                }
+                override fun getSelectionKey(): Long? = getSelectionKeyForItem(game)
+                override fun getPosition(): Int = absoluteAdapterPosition
+                override fun inSelectionHotspot(e: MotionEvent): Boolean = false
             }
         }
     }
