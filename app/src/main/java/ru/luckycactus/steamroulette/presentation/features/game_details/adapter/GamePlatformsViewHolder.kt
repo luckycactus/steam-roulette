@@ -19,6 +19,6 @@ class GamePlatformsViewHolder(
         ivMacOs.visibility(item.platforms.mac)
         ivSteamOs.visibility(item.platforms.linux)
         ivForward.visibility(item.systemRequirementsAvailable)
-        itemView.isClickable = item.systemRequirementsAvailable
+        header.isClickable = item.systemRequirementsAvailable
     }
 }

@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.transition.Hold
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
@@ -191,7 +190,16 @@ class RouletteFragment : BaseFragment() {
         }
         if (sharedViews.isNotEmpty()) {
             exitTransition = transitionSet {
-                addTransition(Hold())
+                excludeTarget(rvRoulette, true)
+                excludeTarget(roulette_fragment_root, true)
+                slide()
+                listener(onTransitionEnd = {
+                    exitTransition = null
+                    //todo comment
+                    sharedViews.forEach {
+                        it.trySetTransitionAlpha(1f)
+                    }
+                })
                 addListener((activity as MainActivity).touchSwitchTransitionListener)
             }
         } else {
