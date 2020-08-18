@@ -1,8 +1,15 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
 import ru.luckycactus.steamroulette.R
@@ -12,7 +19,8 @@ import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
 class RouletteAdapter constructor(
-    private val onGameClick: (List<View>, GameHeader) -> Unit
+    private val onGameClick: (List<View>, GameHeader) -> Unit,
+    private val paletteReadyListener: (Int) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
     var items: List<GameHeader>? = null
         set(value) {
@@ -36,7 +44,33 @@ class RouletteAdapter constructor(
         CardStackTouchHelperCallback.ViewHolderSwipeProgressListener,
         CardStackTouchHelperCallback.ViewHolderVisibleHintListener {
 
-        private lateinit var game: GameHeader
+        lateinit var game: GameHeader
+        var palette: Palette? = null
+            private set
+
+        private val imageRequestListener = object : RequestListener<Bitmap> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Bitmap>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                paletteReadyListener(bindingAdapterPosition)
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Bitmap?,
+                model: Any?,
+                target: Target<Bitmap>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                palette = resource?.let { Palette.from(it) }?.generate()
+                paletteReadyListener(bindingAdapterPosition)
+                return false
+            }
+        }
 
         init {
             itemView.setOnClickListener {
@@ -46,8 +80,9 @@ class RouletteAdapter constructor(
 
         fun bind(game: GameHeader) {
             this.game = game
-            setVisibleHint(adapterPosition == 0)
-            gameView.setGame(game)
+            this.palette = null
+            setVisibleHint(bindingAdapterPosition == 0)
+            gameView.setGame(game, listener = imageRequestListener)
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {

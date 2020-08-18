@@ -87,7 +87,7 @@ class GameView : MaterialCardView {
     fun setGame(
         game: GameHeader?,
         disableTransition: Boolean = false,
-        listener: RequestListener<Drawable>? = null
+        listener: RequestListener<Bitmap>? = null
     ) {
         if (game == current)
             return
@@ -131,8 +131,8 @@ class GameView : MaterialCardView {
         view: GameView,
         game: GameHeader,
         disableTransition: Boolean,
-        listener: RequestListener<Drawable>?
-    ): RequestBuilder<Drawable> {
+        listener: RequestListener<Bitmap>?
+    ): RequestBuilder<Bitmap> {
         val anim = AlphaAnimation(0f, 1f).apply {
             duration = 300
             setAnimationListener(object : Animation.AnimationListener {
@@ -151,12 +151,12 @@ class GameView : MaterialCardView {
             })
         }
 
-        val transitionOptions = GenericTransitionOptions<Drawable>().transition(
-            object : ViewAnimationFactory<Drawable>(anim) {
+        val transitionOptions = GenericTransitionOptions<Bitmap>().transition(
+            object : ViewAnimationFactory<Bitmap>(anim) {
                 override fun build(
                     dataSource: DataSource?,
                     isFirstResource: Boolean
-                ): Transition<Drawable> {
+                ): Transition<Bitmap> {
                     val transition = if (disableTransition || !userVisibleHint)
                         NoTransition.get()
                     else
@@ -173,6 +173,7 @@ class GameView : MaterialCardView {
         )
 
         return GlideApp.with(view)
+            .asBitmap()
             .load(game)
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.ALL)

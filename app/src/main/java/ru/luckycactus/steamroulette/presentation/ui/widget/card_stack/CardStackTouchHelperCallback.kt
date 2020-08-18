@@ -12,11 +12,12 @@ class CardStackTouchHelperCallback(
 ) : ItemTouchHelper.Callback() {
 
     private var inSwipeState = false
+    private var swipeProgress = 0f
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
-    ): Int = if (viewHolder.adapterPosition == 0) {
+    ): Int = if (viewHolder.bindingAdapterPosition == 0) {
         //doesn't work properly for some reason
         makeFlag(
             ItemTouchHelper.ACTION_STATE_IDLE,
@@ -43,6 +44,7 @@ class CardStackTouchHelperCallback(
             ItemTouchHelper.RIGHT -> onSwipedRight?.invoke()
         }
         onSwiped()
+        onSwipeProgress?.invoke(0f, getSwipeThreshold(viewHolder))
     }
 
     override fun getAnimationDuration(
@@ -63,15 +65,18 @@ class CardStackTouchHelperCallback(
     ) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         if (viewHolder.absoluteAdapterPosition == 0) {
-            val swipeProgress = (dX / recyclerView.width).coerceIn(-1f, 1f)
+            val newSwipeProgress = (dX / recyclerView.width).coerceIn(-1f, 1f)
             val lastSwipeState = this.inSwipeState
-            inSwipeState = (swipeProgress != 0f)
+            inSwipeState = (newSwipeProgress != 0f)
             val swipeStateChanged = this.inSwipeState != lastSwipeState
 
-            viewHolder.itemView.rotation = 15 * swipeProgress
-            onSwipeProgress?.invoke(swipeProgress, getSwipeThreshold(viewHolder))
+            viewHolder.itemView.rotation = 15 * newSwipeProgress
+            if (swipeProgress != newSwipeProgress) {
+                onSwipeProgress?.invoke(newSwipeProgress, getSwipeThreshold(viewHolder))
+                swipeProgress = newSwipeProgress
+            }
             if (viewHolder is ViewHolderSwipeProgressListener) {
-                viewHolder.onSwipeProgress(swipeProgress, getSwipeThreshold(viewHolder))
+                viewHolder.onSwipeProgress(newSwipeProgress, getSwipeThreshold(viewHolder))
             }
 
             if (recyclerView.childCount == 1) return
@@ -84,7 +89,7 @@ class CardStackTouchHelperCallback(
                     layoutManager.setChildGaps(
                         recyclerView.getChildAt(i),
                         adapterPosition,
-                        swipeProgress
+                        newSwipeProgress
                     )
                 }
                 if (swipeStateChanged && (adapterPosition == 1) && vh is ViewHolderVisibleHintListener) {

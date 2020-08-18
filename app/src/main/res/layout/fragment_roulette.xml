@@ -8,13 +8,13 @@
     android:clipChildren="false"
     android:orientation="vertical"
     android:transitionGroup="false"
-    android:background="?android:colorBackground"
     >
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:transitionGroup="false"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         >

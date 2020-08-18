@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
@@ -51,11 +52,11 @@ class GameDetailsAdapter constructor(
             is GameHeaderViewHolder -> {
                 val shouldWaitForHeader = waitForHeaderReadyForTransition && !headerWasBound
                 val listener = if (shouldWaitForHeader)
-                    object : RequestListener<Drawable> {
+                    object : RequestListener<Bitmap> {
                         override fun onLoadFailed(
                             e: GlideException?,
                             model: Any?,
-                            target: Target<Drawable>?,
+                            target: Target<Bitmap>?,
                             isFirstResource: Boolean
                         ): Boolean {
                             headerWasBound = true
@@ -64,9 +65,9 @@ class GameDetailsAdapter constructor(
                         }
 
                         override fun onResourceReady(
-                            resource: Drawable?,
+                            resource: Bitmap?,
                             model: Any?,
-                            target: Target<Drawable>?,
+                            target: Target<Bitmap>?,
                             dataSource: DataSource?,
                             isFirstResource: Boolean
                         ): Boolean {

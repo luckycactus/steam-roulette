@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.view.ViewCompat
@@ -21,7 +22,7 @@ class GameHeaderViewHolder(
     fun bind(
         item: GameDetailsUiModel.Header,
         disableTransition: Boolean,
-        listener: RequestListener<Drawable>?
+        listener: RequestListener<Bitmap>?
     ) {
         gameView.setGame(item.gameHeader, disableTransition, listener)
         tvHeaderGameName.text = item.gameHeader.name
