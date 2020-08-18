@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.utils.glide
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import androidx.core.graphics.applyCanvas
 import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
@@ -19,12 +20,13 @@ class CoverGlareTransformation(
         outWidth: Int,
         outHeight: Int
     ): Bitmap {
-        with(Canvas(toTransform)) {
-            scale(toTransform.width / glare.width.toFloat(), toTransform.height / glare.height.toFloat())
+        return toTransform.applyCanvas {
+            scale(
+                toTransform.width / glare.width.toFloat(),
+                toTransform.height / glare.height.toFloat()
+            )
             drawBitmap(glare, 0f, 0f, paint)
         }
-
-        return toTransform
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {

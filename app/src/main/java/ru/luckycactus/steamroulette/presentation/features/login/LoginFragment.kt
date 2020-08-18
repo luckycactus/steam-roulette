@@ -1,8 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.login
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -24,15 +23,10 @@ class LoginFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        etUserId.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                viewModel.onSteamIdInputChanged(s.toString())
-            }
-        })
+        etUserId.doOnTextChanged { text, _, _, _ ->
+            viewModel.onSteamIdInputChanged(text.toString())
+        }
 
         btnOk.setOnClickListener {
             activity?.hideKeyboard()
