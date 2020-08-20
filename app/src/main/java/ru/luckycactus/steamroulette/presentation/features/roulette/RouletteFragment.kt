@@ -2,6 +2,8 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,8 +12,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -33,6 +37,7 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackL
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 import ru.luckycactus.steamroulette.presentation.utils.*
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class RouletteFragment : BaseFragment() {
@@ -76,11 +81,16 @@ class RouletteFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        roulette_fragment_root.background = bgDrawable
         colorBackground =
             MaterialColors.getColor(roulette_fragment_root, android.R.attr.colorBackground)
         bgGradientColors[1] = colorBackground
         updateBgDrawable(colorBackground)
+
+        toolbar.doOnLayout {
+            val layerDrawable = LayerDrawable(arrayOf(bgDrawable))
+            layerDrawable.setLayerInset(0, 0, 0, 0, toolbar.height)
+            roulette_fragment_root.background = layerDrawable
+        }
 
         with(activity as AppCompatActivity) {
             setSupportActionBar(toolbar)
@@ -122,7 +132,7 @@ class RouletteFragment : BaseFragment() {
 
         itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
             onSwiped = {
-                updatePaletteHelper()
+                updatePaletteHelper(true)
             },
             onSwipedRight = {
                 viewModel.onGameSwiped(false)
@@ -130,9 +140,11 @@ class RouletteFragment : BaseFragment() {
             onSwipedLeft = {
                 viewModel.onGameSwiped(true)
             },
-            onSwipeProgress = { progress, _ ->
-                paletteHelper.progress = progress
-                viewModel.onSwipeProgress(progress)
+            onSwipeProgress = { _progress, _ ->
+                paletteHelper.edit {
+                    progress = abs(_progress)
+                }
+                viewModel.onSwipeProgress(_progress)
             }
         ), 1.5f)
         with(rvRoulette) {
@@ -165,6 +177,7 @@ class RouletteFragment : BaseFragment() {
 
         observe(viewModel.games) {
             rouletteAdapter.items = it
+            updatePaletteHelper()
         }
 
         observe(viewModel.contentState) {
@@ -179,14 +192,27 @@ class RouletteFragment : BaseFragment() {
         lifecycleScope
     }
 
-    private fun updatePaletteHelper() {
-        for (i in 0..1) {
-            val vh =
-                (rvRoulette.findViewHolderForAdapterPosition(i) as? RouletteAdapter.RouletteViewHolder)
-            val color = vh?.palette?.getDominantColor(Color.TRANSPARENT) ?: Color.TRANSPARENT
-            val key = vh?.game?.appId
-            paletteHelper.setPageColor(i, key, color)
+    private fun updatePaletteHelper(resetProgress: Boolean = false) {
+        paletteHelper.edit {
+            for (i in 0..1) {
+                val vh =
+                    (rvRoulette.findViewHolderForAdapterPosition(i) as? RouletteAdapter.RouletteViewHolder)
+                setPageColor(i, getColorFromPalette(vh?.palette))
+            }
+            if (resetProgress)
+                progress = 0f
         }
+    }
+
+    private fun getColorFromPalette(palette: Palette?): Int {
+        if (palette == null)
+            return Color.TRANSPARENT
+        var color = palette.getVibrantColor(Color.TRANSPARENT)
+        if (color != Color.TRANSPARENT) return color
+        color = palette.getLightMutedColor(Color.TRANSPARENT)
+        if (color != Color.TRANSPARENT) return color
+        color = palette.getDominantColor(Color.TRANSPARENT)
+        return color
     }
 
     private fun onPaletteReady(position: Int) {
@@ -273,6 +299,6 @@ class RouletteFragment : BaseFragment() {
         private const val MENU_FRAGMENT_TAG = "MENU_FRAGMENT_TAG"
         private const val FILTER_FRAGMENT_TAG = "FILTER_FRAGMENT_TAG"
 
-        private const val BG_TINT_ALPHA = 0.7f
+        private const val BG_TINT_ALPHA = 0.55f
     }
 }

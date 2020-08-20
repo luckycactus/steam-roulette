@@ -11,14 +11,15 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun SharedPreferences.Editor.apply(block: SharedPreferences.Editor.() -> Unit) {
+fun SharedPreferences.Editor.edit(
+    commit: Boolean = false,
+    block: SharedPreferences.Editor.() -> Unit
+) {
     block()
-    apply()
-}
-
-fun SharedPreferences.Editor.commit(block: SharedPreferences.Editor.() -> Unit) {
-    block()
-    commit()
+    if (commit)
+        commit()
+    else
+        apply()
 }
 
 class IntPreference(

@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.data.core
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.Clock
@@ -45,15 +46,15 @@ class CacheHelper @Inject constructor(
     ): Boolean = !shouldUseCache(cachePolicy, key, window)
 
     fun setCachedNow(key: String) {
-        prefsEditor.apply { putLong(key, clock.currentTimeMillis()) }
+        prefsEditor.edit { putLong(key, clock.currentTimeMillis()) }
     }
 
     fun remove(key: String) {
-        prefsEditor.apply { remove(key) }
+        prefsEditor.edit { remove(key) }
     }
 
     fun clear() {
-        prefsEditor.apply { clear() }
+        prefsEditor.edit { clear() }
     }
 
     fun observeCacheUpdates(key: String): Flow<Long> = prefs.longFlow(key, 0L)

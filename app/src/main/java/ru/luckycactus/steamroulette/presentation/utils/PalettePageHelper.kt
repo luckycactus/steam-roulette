@@ -12,39 +12,70 @@ class PalettePageHelper(
     private val colorEvaluator = ArgbEvaluatorCompat()
     private val pageBundles = arrayOf(PageBundle(), PageBundle())
     private var color: Int = 0
+    private var progress: Float = 0f
 
-    var progress: Float = 0f
-        set(value) {
-            val needUpdate = field != value
-            field = value
-            if (needUpdate)
+    private val editor by lazy { Editor() }
+
+    @PublishedApi
+    internal val `access$editor`: Editor
+        get() = editor
+
+    inline fun edit(block: Editor.() -> Unit) {
+        `access$editor`.edit(block)
+    }
+
+    fun edit() = Editor()
+
+    private fun update(newProgress: Float, newColors: IntArray) {
+        if (!checkColorsChanged(newColors)) {
+            if (progress != newProgress) {
+                progress = newProgress
                 updateColor()
+            }
+            return
         }
 
-    fun setPageColor(pageNumber: Int, key: Any?, color: Int) {
-        check(pageNumber in 0..1) { "pageNumber must be in 0..1 range" }
+        (0..1).forEach { updatePage(it, newProgress, newColors) }
+        progress = newProgress
+        updateColor()
+    }
 
-        val b = pageBundles[pageNumber]
-        if (color == b.targetColor)
+    private fun updatePage(pageNumber: Int, newProgress: Float, newColors: IntArray) {
+        val newColor = newColors[pageNumber]
+        val bundle = pageBundles[pageNumber]
+        if (newColor == bundle.targetColor)
             return
-        b.targetColor = color
-        b.animator?.cancel()
-        if (b.key == key && (pageNumber == 0 || progress != 0f)) {
-            b.animator = ValueAnimator.ofArgb(b.color, b.targetColor).apply {
+        if (pageNumber == 0 && newProgress == 0f && progress == 1f) {
+            bundle.color = pageBundles[1].color
+            bundle.targetColor = bundle.color
+        }
+        val notAnimate =
+            (pageNumber == 0 && newProgress == 0f && this.color == newColor)
+                    || (pageNumber == 1 && newProgress == 0f)
+        bundle.animator?.cancel()
+        bundle.targetColor = newColor
+        if (notAnimate) {
+            bundle.color = bundle.targetColor
+        } else {
+            bundle.animator = ValueAnimator.ofArgb(bundle.color, bundle.targetColor).apply {
                 duration = 300
                 addUpdateListener {
-                    b.color = it.animatedValue as Int
+                    bundle.color = it.animatedValue as Int
                     updateColor()
                 }
                 doOnEnd {
-                    b.animator = null
+                    bundle.animator = null
                 }
             }.also { it.start() }
-        } else {
-            b.color = b.targetColor
         }
-        b.key = key
-        updateColor()
+    }
+
+    private fun checkColorsChanged(newColors: IntArray): Boolean {
+        for (i in 0..1) {
+            if (pageBundles[i].targetColor != newColors[i])
+                return true
+        }
+        return false
     }
 
     private fun updateColor() {
@@ -56,10 +87,36 @@ class PalettePageHelper(
         }
     }
 
+    inner class Editor {
+        var progress: Float = this@PalettePageHelper.progress
+            set(value) {
+                check(value in 0f..1f)
+                field = value
+            }
+
+        private val colors = intArrayOf(pageBundles[0].targetColor, pageBundles[1].targetColor)
+
+        fun setPageColor(page: Int, color: Int) {
+            colors[page] = color
+        }
+
+        inline fun edit(block: Editor.() -> Unit) {
+            this.block()
+            apply()
+        }
+
+        fun apply() {
+            _apply()
+        }
+
+        private fun _apply() {
+            update(progress, colors)
+        }
+    }
+
     private class PageBundle {
         var animator: Animator? = null
         var color: Int = 0
         var targetColor = 0
-        var key: Any? = null
     }
 }

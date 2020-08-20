@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
@@ -20,7 +19,7 @@ import kotlin.math.absoluteValue
 
 class RouletteAdapter constructor(
     private val onGameClick: (List<View>, GameHeader) -> Unit,
-    private val paletteReadyListener: (Int) -> Unit
+    private val paletteChangeListener: (Int) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
     var items: List<GameHeader>? = null
         set(value) {
@@ -55,7 +54,7 @@ class RouletteAdapter constructor(
                 target: Target<Bitmap>?,
                 isFirstResource: Boolean
             ): Boolean {
-                paletteReadyListener(bindingAdapterPosition)
+                paletteChangeListener(bindingAdapterPosition)
                 return false
             }
 
@@ -66,8 +65,17 @@ class RouletteAdapter constructor(
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
-                palette = resource?.let { Palette.from(it) }?.generate()
-                paletteReadyListener(bindingAdapterPosition)
+                if (resource == null) {
+                    paletteChangeListener(bindingAdapterPosition)
+                } else {
+                    val game = this@RouletteViewHolder.game
+                    Palette.from(resource).generate {
+                        if (game == this@RouletteViewHolder.game) {
+                            palette = it
+                            paletteChangeListener(bindingAdapterPosition)
+                        }
+                    }
+                }
                 return false
             }
         }
