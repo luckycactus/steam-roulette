@@ -1,14 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
@@ -86,9 +84,11 @@ class RouletteFragment : BaseFragment() {
         bgGradientColors[1] = colorBackground
         updateBgDrawable(colorBackground)
 
-        toolbar.doOnLayout {
-            val layerDrawable = LayerDrawable(arrayOf(bgDrawable))
+        roulette_fragment_root.doOnLayout {
+            val toolbarBgDrawable = ColorDrawable(colorBackground)
+            val layerDrawable = LayerDrawable(arrayOf(bgDrawable, toolbarBgDrawable))
             layerDrawable.setLayerInset(0, 0, 0, 0, toolbar.height)
+            layerDrawable.setLayerInset(1, 0, roulette_fragment_root.height - toolbar.height, 0, 0)
             roulette_fragment_root.background = layerDrawable
         }
 
