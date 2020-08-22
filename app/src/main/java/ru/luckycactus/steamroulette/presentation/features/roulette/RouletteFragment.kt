@@ -1,20 +1,16 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.InsetDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.*
+import androidx.core.view.ViewGroupCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
-import com.bumptech.glide.Glide
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,6 +46,7 @@ class RouletteFragment : BaseFragment() {
     private lateinit var itemTouchHelper: ItemTouchHelper
 
     private var colorBackground: Int = 0
+    private var colorSurface: Int = 0
 
     override val layoutResId: Int = R.layout.fragment_roulette
 
@@ -79,42 +76,31 @@ class RouletteFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        toolbar.addSystemBottomPadding()
-        roulette_fragment_root.addSystemTopPadding()
+        fabs = listOf(fabNextGame, fabHideGame, fabGameInfo)
+
+        toolbar.addSystemTopPadding()
+        roulette_fragment_root.addSystemBottomPadding()
 
         colorBackground =
             MaterialColors.getColor(roulette_fragment_root, android.R.attr.colorBackground)
+        colorSurface =
+            MaterialColors.getColor(roulette_fragment_root, R.attr.colorSurface)
+
+        roulette_fragment_root.background = bgDrawable
         bgGradientColors[1] = colorBackground
         updateBgDrawable(colorBackground)
-
-        roulette_fragment_root.doOnLayout {
-            val toolbarBgDrawable = ColorDrawable(colorBackground)
-            val layerDrawable = LayerDrawable(arrayOf(bgDrawable, toolbarBgDrawable))
-            layerDrawable.setLayerInset(0, 0, 0, 0, toolbar.height)
-            layerDrawable.setLayerInset(1, 0, roulette_fragment_root.height - toolbar.height, 0, 0)
-            roulette_fragment_root.background = layerDrawable
-        }
 
         with(activity as AppCompatActivity) {
             setSupportActionBar(toolbar)
             supportActionBar!!.setDisplayShowTitleEnabled(false)
         }
 
-        avatarContainer.setOnClickListener {
+        toolbar.setNavigationIcon(R.drawable.ic_menu_24)
+        toolbar.setNavigationOnClickListener {
             childFragmentManager.showIfNotExist(MENU_FRAGMENT_TAG) {
                 MenuFragment.newInstance()
             }
         }
-
-        observe(viewModel.userSummary) {
-            tvNickname.text = it.personaName
-            Glide.with(this)
-                .load(it.avatarFull)
-                .placeholder(R.drawable.avatar_placeholder)
-                .into(ivAvatar)
-        }
-
-        fabs = listOf(fabNextGame, fabHideGame, fabGameInfo)
 
         val fabLongClickListener = View.OnLongClickListener {
             val text = getString(
@@ -227,6 +213,11 @@ class RouletteFragment : BaseFragment() {
     private fun updateBgDrawable(color: Int) {
         bgGradientColors[0] = MaterialColors.layer(colorBackground, color, BG_TINT_ALPHA)
         bgDrawable.colors = bgGradientColors
+
+        val fabTint = ColorStateList.valueOf(MaterialColors.layer(colorSurface, color, FAB_TINT_ALPHA))
+        fabs.forEach {
+            it.backgroundTintList = fabTint
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -258,9 +249,12 @@ class RouletteFragment : BaseFragment() {
         }
         if (sharedViews.isNotEmpty()) {
             exitTransition = transitionSet {
-                excludeTarget(rvRoulette, true)
-                excludeTarget(roulette_fragment_root, true)
-                slide()
+                slide(Gravity.BOTTOM) {
+                    fabs.forEach { addTarget(it) }
+                }
+                slide(Gravity.TOP) {
+                    addTarget(toolbar)
+                }
                 listener(onTransitionEnd = {
                     exitTransition = null
                     //todo comment
@@ -281,9 +275,11 @@ class RouletteFragment : BaseFragment() {
     }
 
     private fun createDefaultExitTransition() = transitionSet {
-        slide {
-            excludeTarget(roulette_fragment_root, true)
-            excludeTarget(rvRoulette, true)
+        slide(Gravity.BOTTOM) {
+            fabs.forEach { addTarget(it) }
+        }
+        slide(Gravity.TOP) {
+            addTarget(toolbar)
         }
         fade {
             addTarget(rvRoulette)
@@ -303,5 +299,6 @@ class RouletteFragment : BaseFragment() {
         private const val FILTER_FRAGMENT_TAG = "FILTER_FRAGMENT_TAG"
 
         private const val BG_TINT_ALPHA = 0.55f
+        private const val FAB_TINT_ALPHA = 0.2f
     }
 }

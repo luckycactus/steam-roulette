@@ -11,6 +11,8 @@
     android:transitionGroup="false"
     >
 
+    <include layout="@layout/main_toolbar" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -86,7 +88,5 @@
         <include layout="@layout/fullscreen_progress" />
 
     </FrameLayout>
-
-    <include layout="@layout/main_toolbar" />
 
 </LinearLayout>

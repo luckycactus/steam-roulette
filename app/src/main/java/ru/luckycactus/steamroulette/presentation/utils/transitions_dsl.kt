@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
+import android.view.Gravity
 import androidx.transition.*
 
 class TransitionSetBuilder : TransitionSet()
@@ -18,8 +19,8 @@ inline fun TransitionSetBuilder.fade(block: Fade.() -> Unit = {}): Fade =
         it.block()
     }
 
-inline fun TransitionSetBuilder.slide(block: Slide.() -> Unit = {}): Slide =
-    Slide().also {
+inline fun TransitionSetBuilder.slide(slideEdge: Int = Gravity.BOTTOM, block: Slide.() -> Unit = {}): Slide =
+    Slide(slideEdge).also {
         addTransition(it)
         it.block()
     }
