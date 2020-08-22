@@ -36,6 +36,7 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        toolbar.addSystemTopPadding()
         toolbar.apply {
             setNavigationOnClickListener(::onNavigationIconClick)
             setOnMenuItemClickListener(::onMenuItemClick)

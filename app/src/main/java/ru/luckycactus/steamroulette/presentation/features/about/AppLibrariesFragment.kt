@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.fragment_app_libraries.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.utils.addSystemTopPadding
 import ru.luckycactus.steamroulette.presentation.utils.observeFirst
 
 @AndroidEntryPoint
@@ -18,6 +19,8 @@ class AppLibrariesFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        toolbar.addSystemTopPadding()
 
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()

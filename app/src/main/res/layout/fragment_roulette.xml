@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/roulette_fragment_root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/roulette_fragment_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
+    android:clipToPadding="false"
     android:orientation="vertical"
     android:transitionGroup="false"
     >
@@ -14,9 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:transitionGroup="false"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
+        android:transitionGroup="false"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -71,11 +72,11 @@
                 android:id="@+id/fabNextGame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tint="#fff"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/fabGameInfo"
                 app:layout_constraintRight_toRightOf="parent"
                 app:srcCompat="@drawable/ic_chevron_right"
-                android:tint="#fff"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

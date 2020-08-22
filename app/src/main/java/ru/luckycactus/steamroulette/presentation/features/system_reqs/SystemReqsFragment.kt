@@ -2,11 +2,13 @@ package ru.luckycactus.steamroulette.presentation.features.system_reqs
 
 import android.os.Bundle
 import androidx.core.os.bundleOf
+import androidx.core.view.updateLayoutParams
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.fragment_system_reqs.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.utils.addSystemTopPadding
 import ru.luckycactus.steamroulette.presentation.utils.argument
 
 class SystemReqsFragment : BaseFragment() {
@@ -17,6 +19,12 @@ class SystemReqsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        appBarLayout.addSystemTopPadding()
+        statusBarBg.setOnApplyWindowInsetsListener { v, insets ->
+            v.updateLayoutParams { height = insets.systemWindowInsetTop }
+            insets
+        }
 
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()

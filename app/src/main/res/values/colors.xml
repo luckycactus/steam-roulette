@@ -12,6 +12,7 @@
     <color name="holo_ripple_color">#15ffffff</color>
     <color name="holo_focused_color">#10ffffff</color>
     <color name="divider">#141A25</color>
+    <color name="color_system_bar">#50000000</color>
 
     <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
     <!--colorSecondary colors are most often used as accents on components, such as FABs and -->

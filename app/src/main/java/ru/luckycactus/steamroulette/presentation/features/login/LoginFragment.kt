@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.login
 
 import android.os.Bundle
+import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
@@ -9,10 +10,7 @@ import kotlinx.android.synthetic.main.progress.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
-import ru.luckycactus.steamroulette.presentation.utils.hideKeyboard
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
-import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.utils.*
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment() {
@@ -23,6 +21,14 @@ class LoginFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        login_fragment_root.doOnApplyWindowInsets { view, insets, initialPadding ->
+            view.updatePadding(
+                top = initialPadding.top + insets.systemWindowInsetTop,
+                bottom = initialPadding.bottom + insets.systemWindowInsetBottom
+            )
+            insets
+        }
 
         etUserId.doOnTextChanged { text, _, _, _ ->
             viewModel.onSteamIdInputChanged(text.toString())

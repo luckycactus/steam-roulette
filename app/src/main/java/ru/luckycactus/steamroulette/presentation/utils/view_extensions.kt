@@ -13,7 +13,10 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import java.lang.reflect.Method
@@ -104,3 +107,64 @@ fun TextView.setDrawableColorResource(@ColorRes color: Int) {
 fun TextView.setDrawableColorFromAttribute(@AttrRes color: Int) {
     setDrawableColor(context.getThemeColorOrThrow(color))
 }
+
+fun View.addSystemTopPadding(
+    targetView: View = this,
+    isConsumed: Boolean = false
+) {
+    doOnApplyWindowInsets { _, insets, initialPadding ->
+        targetView.updatePadding(
+            top = initialPadding.top + insets.systemWindowInsetTop
+        )
+        if (isConsumed) {
+            insets.inset(0, insets.systemWindowInsetTop, 0, 0)
+        } else {
+            insets
+        }
+    }
+}
+
+fun View.addSystemBottomPadding(
+    targetView: View = this,
+    isConsumed: Boolean = false
+) {
+    doOnApplyWindowInsets { _, insets, initialPadding ->
+        targetView.updatePadding(
+            bottom = initialPadding.bottom + insets.systemWindowInsetBottom
+        )
+        if (isConsumed) {
+            insets.inset(
+                0, 0, 0, insets.systemWindowInsetBottom
+            )
+        } else {
+            insets
+        }
+    }
+}
+
+fun View.doOnApplyWindowInsets(block: (View, insets: WindowInsetsCompat, initialPadding: Rect) -> WindowInsetsCompat) {
+    val initialPadding = recordInitialPaddingForView(this)
+    ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
+        block(v, insets, initialPadding)
+    }
+    requestApplyInsetsWhenAttached()
+}
+
+private fun recordInitialPaddingForView(view: View) =
+    Rect(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
+
+private fun View.requestApplyInsetsWhenAttached() {
+    if (isAttachedToWindow) {
+        ViewCompat.requestApplyInsets(this)
+    } else {
+        addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                v.removeOnAttachStateChangeListener(this)
+                ViewCompat.requestApplyInsets(v)
+            }
+
+            override fun onViewDetachedFromWindow(v: View) = Unit
+        })
+    }
+}
+

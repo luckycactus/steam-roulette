@@ -6,6 +6,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_about.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.utils.addSystemTopPadding
 import ru.luckycactus.steamroulette.presentation.utils.setDrawableColorFromAttribute
 
 @AndroidEntryPoint
@@ -16,6 +17,8 @@ class AboutFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        toolbar.addSystemTopPadding()
 
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()

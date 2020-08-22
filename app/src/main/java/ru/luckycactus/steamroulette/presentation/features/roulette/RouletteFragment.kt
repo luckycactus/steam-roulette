@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
@@ -9,8 +10,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewGroupCompat
-import androidx.core.view.doOnLayout
+import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
@@ -78,6 +78,9 @@ class RouletteFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        toolbar.addSystemBottomPadding()
+        roulette_fragment_root.addSystemTopPadding()
 
         colorBackground =
             MaterialColors.getColor(roulette_fragment_root, android.R.attr.colorBackground)

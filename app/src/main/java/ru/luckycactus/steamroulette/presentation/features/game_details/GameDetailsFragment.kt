@@ -1,10 +1,9 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.os.Bundle
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
-import androidx.core.view.doOnLayout
-import androidx.core.view.marginBottom
-import androidx.core.view.updatePadding
+import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ArcMotion
@@ -48,16 +47,28 @@ class GameDetailsFragment : BaseFragment() {
             addItemDecoration(SpaceDecoration(margin, 0, 0))
         }
 
+        val fabInitialMargin = fabBack.marginBottom
+        rvGameDetails.doOnApplyWindowInsets { it, insets, padding ->
+            it.updatePadding(
+                top = padding.top + insets.systemWindowInsetTop,
+                bottom = padding.bottom + insets.systemWindowInsetBottom
+            )
+            fabBack.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                updateMargins(bottom = fabInitialMargin + insets.tappableElementInsets.bottom)
+            }
+            insets
+        }
+
         fabBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
 
-        observe(viewModel.gameDetails) {
-            adapter.submitList(it)
-        }
-
         fabBack.doOnLayout {
             rvGameDetails.updatePadding(bottom = it.height + it.marginBottom)
+        }
+
+        observe(viewModel.gameDetails) {
+            adapter.submitList(it)
         }
     }
 
