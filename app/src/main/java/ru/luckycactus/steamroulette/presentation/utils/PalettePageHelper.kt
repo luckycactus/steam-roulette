@@ -6,6 +6,7 @@ import androidx.core.animation.doOnEnd
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import kotlin.math.abs
 
+// can be improved for 3 pages
 class PalettePageHelper(
     private val onColorChange: (Int) -> Unit
 ) {

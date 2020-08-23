@@ -1,92 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/roulette_fragment_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:orientation="vertical"
+    android:splitMotionEvents="false"
     android:transitionGroup="false"
     >
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRoulette"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/default_activity_margin"
+        android:layout_marginRight="@dimen/default_activity_margin"
+        android:clipChildren="false"
+        android:transitionGroup="true"
+        app:layout_constraintBottom_toTopOf="@id/fabHideGame"
+        app:layout_constraintDimensionRatio="2:3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:listitem="@layout/item_game_card_stack"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabHideGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/fabGameInfo"
+        app:layout_constraintTop_toBottomOf="@id/rvRoulette"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:layout_marginTop="@dimen/spacing_normal"
+        app:srcCompat="@drawable/ic_visibility_off_24dp"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabGameInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        app:layout_constraintLeft_toRightOf="@id/fabHideGame"
+        app:layout_constraintRight_toLeftOf="@id/fabNextGame"
+        app:layout_constraintTop_toTopOf="@id/fabHideGame"
+        app:srcCompat="@drawable/ic_info_24dp"
+        />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabNextGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="#fff"
+        app:layout_constraintLeft_toRightOf="@id/fabGameInfo"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/fabHideGame"
+        app:srcCompat="@drawable/ic_chevron_right"
+        />
+
+    <include
+        layout="@layout/empty_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        />
+
+    <include
+        layout="@layout/fullscreen_progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="fabGameInfo,fabHideGame,fabNextGame,rvRoulette"
+        />
+
     <include layout="@layout/main_toolbar" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:animateLayoutChanges="true"
-        android:clipChildren="false"
-        android:transitionGroup="false"
-        >
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:padding="@dimen/default_activity_margin"
-            android:splitMotionEvents="false"
-            >
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRoulette"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="@dimen/spacing_normal"
-                android:clipChildren="false"
-                android:transitionGroup="true"
-                app:layout_constraintBottom_toTopOf="@id/fabGameInfo"
-                app:layout_constraintDimensionRatio="2:3"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabHideGame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/fabGameInfo"
-                app:srcCompat="@drawable/ic_visibility_off_24dp"
-                />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabGameInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/spacing_normal"
-                android:layout_marginRight="@dimen/spacing_normal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/fabHideGame"
-                app:layout_constraintRight_toLeftOf="@id/fabNextGame"
-                app:srcCompat="@drawable/ic_info_24dp"
-                />
-
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabNextGame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:tint="#fff"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/fabGameInfo"
-                app:layout_constraintRight_toRightOf="parent"
-                app:srcCompat="@drawable/ic_chevron_right"
-                />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <include layout="@layout/empty_layout" />
-
-        <include layout="@layout/fullscreen_progress" />
-
-    </FrameLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
