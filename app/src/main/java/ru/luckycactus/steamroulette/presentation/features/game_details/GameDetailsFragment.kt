@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -13,7 +12,6 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.ArcMotion
-import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_game_details.*
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +24,8 @@ import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
+import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 
 @AndroidEntryPoint
 class GameDetailsFragment : BaseFragment() {
@@ -37,11 +37,7 @@ class GameDetailsFragment : BaseFragment() {
     private val enableTransition: Boolean by argument(ARG_ENABLE_TRANSITION)
     private val initialTintColor: Int by argument(ARG_COLOR)
 
-    var colorBackground: Int = 0
-    private val bgTintDrawable = GradientDrawable().apply {
-        orientation = GradientDrawable.Orientation.TOP_BOTTOM
-    }
-    private val bgTintColors = IntArray(2)
+    private lateinit var tintContext: TintContext
 
     override val layoutResId: Int = R.layout.fragment_game_details
 
@@ -51,12 +47,7 @@ class GameDetailsFragment : BaseFragment() {
         postponeEnterTransition()
         setupTransition()
 
-        colorBackground =
-            MaterialColors.getColor(game_details_fragment_root, android.R.attr.colorBackground)
-
-        bgTint.background = bgTintDrawable
-        bgTintColors[1] = Color.TRANSPARENT
-        updateBgTint(initialTintColor)
+        setupTint()
 
         adapter = GameDetailsAdapter(
             enableTransition && savedInstanceState == null,
@@ -103,6 +94,17 @@ class GameDetailsFragment : BaseFragment() {
         }
     }
 
+    private fun setupTint() {
+        tintContext = TintContext(requireContext(), tintColor = initialTintColor)
+
+        bgTint.background =
+            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
+
+        observe(tintContext.fabBackgroundTint) {
+            fabBack.backgroundTintList = it
+        }
+    }
+
     private fun onCoverChanged(bitmap: Bitmap?) {
         if (initialTintColor == 0 || viewModel.resolvedGameHasDifferentId()) {
             lifecycleScope.launch {
@@ -111,18 +113,9 @@ class GameDetailsFragment : BaseFragment() {
                         Palette.from(it).generate()
                     }
                 }
-                updateBgTint(PaletteUtils.getColorForGameCover(palette))
+                tintContext.updateColor(PaletteUtils.getColorForGameCover(palette))
             }
         }
-    }
-
-    private fun updateBgTint(color: Int) {
-        bgTintColors[0] = MaterialColors.layer(
-            colorBackground,
-            color,
-            PaletteUtils.GAME_COVER_BG_TINT_ALPHA
-        )
-        bgTintDrawable.colors = bgTintColors
     }
 
     private fun setupTransition() {

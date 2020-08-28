@@ -2,6 +2,7 @@
 <com.google.android.material.chip.Chip
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tagView"
     style="@style/Widget.MaterialComponents.Chip.Choice"
     android:layout_width="wrap_content"
@@ -9,6 +10,8 @@
     android:checkable="false"
     android:clickable="false"
     tools:text="Action"
+    app:chipBackgroundColor="@color/color_chip_game_description"
+    app:chipSurfaceColor="#0000"
     >
 
 </com.google.android.material.chip.Chip>

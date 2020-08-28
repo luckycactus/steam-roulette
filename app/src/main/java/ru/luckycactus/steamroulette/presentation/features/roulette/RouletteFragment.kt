@@ -1,7 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.*
@@ -10,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.palette.graphics.Palette
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.empty_layout.*
@@ -31,6 +27,9 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackL
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.palette.PalettePageHelper
+import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
+import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 import kotlin.math.abs
 
 @AndroidEntryPoint
@@ -46,17 +45,12 @@ class RouletteFragment : BaseFragment() {
     private lateinit var itemTouchHelper: ItemTouchHelper
 
     private var colorBackground: Int = 0
-    private var colorSurface: Int = 0
 
     override val layoutResId: Int = R.layout.fragment_roulette
 
-    private val bgDrawable = GradientDrawable().apply {
-        orientation = GradientDrawable.Orientation.TOP_BOTTOM
-    }
-    private val bgGradientColors = IntArray(2)
-    private var tintColor: Int = Color.TRANSPARENT
+    private lateinit var tintContext: TintContext
     private val paletteHelper = PalettePageHelper {
-        updateBgDrawable(it)
+        tintContext.updateColor(it)
     }
 
     private val fabClickListener = View.OnClickListener { fab ->
@@ -82,14 +76,7 @@ class RouletteFragment : BaseFragment() {
         toolbar.addSystemTopPadding()
         roulette_fragment_root.addSystemBottomPadding()
 
-        colorBackground =
-            MaterialColors.getColor(roulette_fragment_root, android.R.attr.colorBackground)
-        colorSurface =
-            MaterialColors.getColor(roulette_fragment_root, R.attr.colorSurface)
-
-        roulette_fragment_root.background = bgDrawable
-        bgGradientColors[1] = colorBackground
-        updateBgDrawable(Color.TRANSPARENT)
+        setupTint()
 
         with(activity as AppCompatActivity) {
             setSupportActionBar(toolbar)
@@ -182,6 +169,19 @@ class RouletteFragment : BaseFragment() {
         lifecycleScope
     }
 
+    private fun setupTint() {
+        tintContext = TintContext(requireContext(), animate = false)
+
+        roulette_fragment_root.background =
+            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
+
+        observe(tintContext.fabBackgroundTint) { colorStateList ->
+            fabs.forEach {
+                it.backgroundTintList = colorStateList
+            }
+        }
+    }
+
     private fun updatePaletteHelper(resetProgress: Boolean = false) {
         paletteHelper.edit {
             for (i in 0..1) {
@@ -197,27 +197,6 @@ class RouletteFragment : BaseFragment() {
     private fun onPaletteReady(position: Int) {
         if (position in 0..1) {
             updatePaletteHelper()
-        }
-    }
-
-    private fun updateBgDrawable(color: Int) {
-        tintColor = color
-        bgGradientColors[0] = MaterialColors.layer(
-            colorBackground,
-            tintColor,
-            PaletteUtils.GAME_COVER_BG_TINT_ALPHA
-        )
-        bgDrawable.colors = bgGradientColors
-
-        val fabTint = ColorStateList.valueOf(
-            MaterialColors.layer(
-                colorSurface,
-                tintColor,
-                PaletteUtils.CONTROLS_TINT_ALPHA
-            )
-        )
-        fabs.forEach {
-            it.backgroundTintList = fabTint
         }
     }
 
@@ -272,7 +251,7 @@ class RouletteFragment : BaseFragment() {
                 })
             }
         }
-        (activity as MainActivity).onGameClick(sharedViews, game, tintColor)
+        (activity as MainActivity).onGameClick(sharedViews, game, tintContext.tintColor)
     }
 
     private fun createDefaultExitTransition() = transitionSet {

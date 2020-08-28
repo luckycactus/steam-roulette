@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.utils
+package ru.luckycactus.steamroulette.presentation.utils.palette
 
 import android.animation.Animator
 import android.animation.ValueAnimator
@@ -11,7 +11,10 @@ class PalettePageHelper(
     private val onColorChange: (Int) -> Unit
 ) {
     private val colorEvaluator = ArgbEvaluatorCompat()
-    private val pageBundles = arrayOf(PageBundle(), PageBundle())
+    private val pageBundles = arrayOf(
+        PageBundle(),
+        PageBundle()
+    )
     private var color: Int = 0
     private var progress: Float = 0f
 
