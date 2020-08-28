@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.item_game_card_stack.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
+import ru.luckycactus.steamroulette.presentation.utils.glide.RequestListenerAdapter
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
@@ -47,36 +48,17 @@ class RouletteAdapter constructor(
         var palette: Palette? = null
             private set
 
-        private val imageRequestListener = object : RequestListener<Bitmap> {
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any?,
-                target: Target<Bitmap>?,
-                isFirstResource: Boolean
-            ): Boolean {
+        private val imageRequestListener = RequestListenerAdapter<Bitmap> {
+            if (it == null) {
                 paletteChangeListener(bindingAdapterPosition)
-                return false
-            }
-
-            override fun onResourceReady(
-                resource: Bitmap?,
-                model: Any?,
-                target: Target<Bitmap>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-                if (resource == null) {
-                    paletteChangeListener(bindingAdapterPosition)
-                } else {
-                    val game = this@RouletteViewHolder.game
-                    Palette.from(resource).generate {
-                        if (game == this@RouletteViewHolder.game) {
-                            palette = it
-                            paletteChangeListener(bindingAdapterPosition)
-                        }
+            } else {
+                val game = this@RouletteViewHolder.game
+                Palette.from(it).generate { palette ->
+                    if (game == this@RouletteViewHolder.game) {
+                        this.palette = palette
+                        paletteChangeListener(bindingAdapterPosition)
                     }
                 }
-                return false
             }
         }
 
@@ -90,7 +72,7 @@ class RouletteAdapter constructor(
             this.game = game
             this.palette = null
             setVisibleHint(bindingAdapterPosition == 0)
-            gameView.setGame(game, listener = imageRequestListener)
+            gameView.setGame(game, false, imageRequestListener)
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {

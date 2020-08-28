@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.navigation
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
@@ -33,10 +34,11 @@ sealed class Screens : SupportAppScreen() {
 
     data class GameDetails(
         val game: GameHeader,
+        val color: Int,
         val enableSharedElementTransition: Boolean
     ) : Screens() {
         override fun getFragment(): Fragment =
-            GameDetailsFragment.newInstance(game, enableSharedElementTransition)
+            GameDetailsFragment.newInstance(game, color, enableSharedElementTransition)
     }
 
     data class SystemReqs(

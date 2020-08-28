@@ -32,7 +32,10 @@ class GameDetailsViewModel @ViewModelInject constructor(
     val gameDetails: LiveData<List<GameDetailsUiModel>>
         get() = _gameDetails
 
-    private val gameHeader = savedStateHandle.get<GameHeader>(ARG_GAME)!!
+    private val appId: Int
+        get() = gameStoreInfo?.appId ?: initialGameHeader.appId
+
+    private val initialGameHeader = savedStateHandle.get<GameHeader>(ARG_GAME)!!
 
     private val _gameDetails = MutableLiveData<List<GameDetailsUiModel>>()
 
@@ -53,7 +56,7 @@ class GameDetailsViewModel @ViewModelInject constructor(
     fun onStoreClick() {
         router.navigateTo(
             Screens.ExternalBrowserFlow(
-                GameUrlUtils.storePage(gameStoreInfo?.appId ?: gameHeader.appId),
+                GameUrlUtils.storePage(appId),
                 trySteamApp = true
             )
         )
@@ -62,7 +65,7 @@ class GameDetailsViewModel @ViewModelInject constructor(
     fun onHubClick() {
         router.navigateTo(
             Screens.ExternalBrowserFlow(
-                GameUrlUtils.hubPage(gameStoreInfo?.appId ?: gameHeader.appId),
+                GameUrlUtils.hubPage(appId),
                 trySteamApp = true
             )
         )
@@ -86,15 +89,19 @@ class GameDetailsViewModel @ViewModelInject constructor(
         }
     }
 
+    fun resolvedGameHasDifferentId() =
+        gameStoreInfo?.appId != null && gameStoreInfo?.appId != initialGameHeader.appId
+
     private fun loadInfo(tryCache: Boolean) {
         viewModelScope.launch {
             var gameStoreInfo = if (tryCache)
-                getGameStoreInfo.getFromCache(gameHeader.appId)
+                getGameStoreInfo.getFromCache(initialGameHeader.appId)
             else null
             if (gameStoreInfo == null) {
                 renderLoading()
 
-                val result = getGameStoreInfo(GetGameStoreInfoUseCase.Params(gameHeader.appId))
+                val result =
+                    getGameStoreInfo(GetGameStoreInfoUseCase.Params(initialGameHeader.appId))
                 when (result) {
                     is GetGameStoreInfoUseCase.Result.Success -> {
                         gameStoreInfo = result.data
@@ -136,5 +143,5 @@ class GameDetailsViewModel @ViewModelInject constructor(
     }
 
     private fun getInitialHeader(): GameDetailsUiModel =
-        GameDetailsUiModel.Header(gameHeader)
+        GameDetailsUiModel.Header(initialGameHeader)
 }

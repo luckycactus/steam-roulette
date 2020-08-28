@@ -2,25 +2,23 @@ package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
+import ru.luckycactus.steamroulette.presentation.utils.glide.RequestListenerAdapter
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
 class GameDetailsAdapter constructor(
     private val waitForHeaderReadyForTransition: Boolean,
     private val onHeaderImageReady: () -> Unit,
+    private val onHeaderBitmapChanged: (Bitmap?) -> Unit,
     private val gameDetailsViewModel: GameDetailsViewModel
 ) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
     diffCallback
@@ -51,33 +49,15 @@ class GameDetailsAdapter constructor(
         when (holder) {
             is GameHeaderViewHolder -> {
                 val shouldWaitForHeader = waitForHeaderReadyForTransition && !headerWasBound
-                val listener = if (shouldWaitForHeader)
-                    object : RequestListener<Bitmap> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Bitmap>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            headerWasBound = true
-                            onHeaderImageReady()
-                            return false
-                        }
 
-                        override fun onResourceReady(
-                            resource: Bitmap?,
-                            model: Any?,
-                            target: Target<Bitmap>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            headerWasBound = true
-                            onHeaderImageReady()
-                            return false
-                        }
-
+                val listener = RequestListenerAdapter<Bitmap> {
+                    if (!headerWasBound) {
+                        headerWasBound = true
+                        onHeaderImageReady()
                     }
-                else null
+                    onHeaderBitmapChanged(it)
+                }
+
                 holder.bind(
                     getItem(position) as GameDetailsUiModel.Header,
                     shouldWaitForHeader,

@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.request.RequestListener

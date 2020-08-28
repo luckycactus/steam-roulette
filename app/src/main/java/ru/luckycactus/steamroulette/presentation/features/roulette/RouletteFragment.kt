@@ -54,6 +54,7 @@ class RouletteFragment : BaseFragment() {
         orientation = GradientDrawable.Orientation.TOP_BOTTOM
     }
     private val bgGradientColors = IntArray(2)
+    private var tintColor: Int = Color.TRANSPARENT
     private val paletteHelper = PalettePageHelper {
         updateBgDrawable(it)
     }
@@ -88,7 +89,7 @@ class RouletteFragment : BaseFragment() {
 
         roulette_fragment_root.background = bgDrawable
         bgGradientColors[1] = colorBackground
-        updateBgDrawable(colorBackground)
+        updateBgDrawable(Color.TRANSPARENT)
 
         with(activity as AppCompatActivity) {
             setSupportActionBar(toolbar)
@@ -186,22 +187,11 @@ class RouletteFragment : BaseFragment() {
             for (i in 0..1) {
                 val vh =
                     (rvRoulette.findViewHolderForAdapterPosition(i) as? RouletteAdapter.RouletteViewHolder)
-                setPageColor(i, getColorFromPalette(vh?.palette))
+                setPageColor(i, PaletteUtils.getColorForGameCover(vh?.palette))
             }
             if (resetProgress)
                 progress = 0f
         }
-    }
-
-    private fun getColorFromPalette(palette: Palette?): Int {
-        if (palette == null)
-            return Color.TRANSPARENT
-        var color = palette.getVibrantColor(Color.TRANSPARENT)
-        if (color != Color.TRANSPARENT) return color
-        color = palette.getLightMutedColor(Color.TRANSPARENT)
-        if (color != Color.TRANSPARENT) return color
-        color = palette.getDominantColor(Color.TRANSPARENT)
-        return color
     }
 
     private fun onPaletteReady(position: Int) {
@@ -211,10 +201,21 @@ class RouletteFragment : BaseFragment() {
     }
 
     private fun updateBgDrawable(color: Int) {
-        bgGradientColors[0] = MaterialColors.layer(colorBackground, color, BG_TINT_ALPHA)
+        tintColor = color
+        bgGradientColors[0] = MaterialColors.layer(
+            colorBackground,
+            tintColor,
+            PaletteUtils.GAME_COVER_BG_TINT_ALPHA
+        )
         bgDrawable.colors = bgGradientColors
 
-        val fabTint = ColorStateList.valueOf(MaterialColors.layer(colorSurface, color, FAB_TINT_ALPHA))
+        val fabTint = ColorStateList.valueOf(
+            MaterialColors.layer(
+                colorSurface,
+                tintColor,
+                PaletteUtils.CONTROLS_TINT_ALPHA
+            )
+        )
         fabs.forEach {
             it.backgroundTintList = fabTint
         }
@@ -271,7 +272,7 @@ class RouletteFragment : BaseFragment() {
                 })
             }
         }
-        (activity as MainActivity).onGameClick(sharedViews, game)
+        (activity as MainActivity).onGameClick(sharedViews, game, tintColor)
     }
 
     private fun createDefaultExitTransition() = transitionSet {
@@ -297,8 +298,5 @@ class RouletteFragment : BaseFragment() {
         fun newInstance() = RouletteFragment()
         private const val MENU_FRAGMENT_TAG = "MENU_FRAGMENT_TAG"
         private const val FILTER_FRAGMENT_TAG = "FILTER_FRAGMENT_TAG"
-
-        private const val BG_TINT_ALPHA = 0.55f
-        private const val FAB_TINT_ALPHA = 0.2f
     }
 }
