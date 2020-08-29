@@ -46,6 +46,8 @@
     <color name="color_overlay_next">#537F3A</color>
     <color name="color_overlay_hide">#951823</color>
 
-    <color name="platforms_icon_tint">#ffffff</color>
+    <color name="platforms_icon_tint">#a0ffffff</color>
     <color name="color_chip_game_description">#20ffffff</color>
+    <color name="color_screenshot_placeholder">#20ffffff</color>
+    <color name="color_game_details_button">#20ffffff</color>
 </resources>

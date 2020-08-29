@@ -9,7 +9,19 @@ sealed class ContentState {
         val message: String,
         val titleType: TitleType,
         val buttonType: ButtonType
-    ) : ContentState()
+    ) : ContentState() {
+
+        class Builder {
+            var message: String? = null
+            var titleType: TitleType = TitleType.None
+            var buttonType: ButtonType = ButtonType.None
+
+            fun build(): Placeholder {
+                checkNotNull(message) { "You should set non null message before build()" }
+                return Placeholder(message!!, titleType, buttonType)
+            }
+        }
+    }
 
     sealed class TitleType {
         object DefaultError : TitleType()

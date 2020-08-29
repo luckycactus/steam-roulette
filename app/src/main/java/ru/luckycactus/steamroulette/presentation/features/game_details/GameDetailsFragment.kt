@@ -63,16 +63,24 @@ class GameDetailsFragment : BaseFragment() {
             addItemDecoration(SpaceDecoration(margin, 0, 0))
         }
 
+        var insetsApplied = false
         val fabInitialMargin = fabBack.marginBottom
         rvGameDetails.doOnApplyWindowInsets { it, insets, padding ->
             it.updatePadding(
                 top = padding.top + insets.systemWindowInsetTop,
-                bottom = padding.bottom + insets.systemWindowInsetBottom
+                bottom = padding.bottom + insets.systemWindowInsetBottom + fabInitialMargin + fabBack.height
             )
             fabBack.updateLayoutParams<CoordinatorLayout.LayoutParams> {
                 updateMargins(bottom = fabInitialMargin + insets.tappableElementInsets.bottom)
             }
+                    insetsApplied = true
             insets
+        }
+
+        fabBack.doOnLayout {
+            //if insets were applied already but fab isn't laid out yet, then we must set extra padding here
+            if (insetsApplied)
+                rvGameDetails.updatePadding(bottom = rvGameDetails.paddingBottom + fabBack.height)
         }
 
         rvGameDetails.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -83,10 +91,6 @@ class GameDetailsFragment : BaseFragment() {
 
         fabBack.setOnClickListener {
             requireActivity().onBackPressed()
-        }
-
-        fabBack.doOnLayout {
-            rvGameDetails.updatePadding(bottom = it.height + it.marginBottom)
         }
 
         observe(viewModel.gameDetails) {

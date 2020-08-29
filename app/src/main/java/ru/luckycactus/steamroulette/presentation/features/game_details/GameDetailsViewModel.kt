@@ -117,18 +117,24 @@ class GameDetailsViewModel @ViewModelInject constructor(
     }
 
     private fun renderError(fail: GetGameStoreInfoUseCase.Result.Fail) {
-        val errorMessage = with(resourceManager) {
+        val contentState = with(resourceManager) {
             when (fail) {
                 GetGameStoreInfoUseCase.Result.Fail.GameNotFound ->
-                    getString(R.string.fail_steam_store_info)
-
+                    ContentState.Placeholder(
+                        getString(R.string.fail_steam_store_info),
+                        ContentState.TitleType.DefaultError,
+                        ContentState.ButtonType.None
+                    )
                 is GetGameStoreInfoUseCase.Result.Fail.Error -> {
                     fail.cause.printStackTrace()
-                    getCommonErrorDescription(fail.cause)
+                    ContentState.Placeholder(
+                        getCommonErrorDescription(fail.cause),
+                        ContentState.TitleType.DefaultError,
+                        ContentState.ButtonType.Default
+                    )
                 }
             }
         }
-        val contentState = ContentState.errorPlaceholder(errorMessage)
         _gameDetails.value = listOf(
             getInitialHeader(),
             GameDetailsUiModel.DataLoading(contentState)

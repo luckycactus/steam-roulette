@@ -23,11 +23,10 @@ class CardStackTouchHelperCallback(
             ItemTouchHelper.ACTION_STATE_IDLE,
             ItemTouchHelper.LEFT or ItemTouchHelper.UP or
                     ItemTouchHelper.RIGHT or ItemTouchHelper.DOWN
-        ) or
-                makeFlag(
-                    ItemTouchHelper.ACTION_STATE_SWIPE,
-                    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-                )
+        ) or makeFlag(
+            ItemTouchHelper.ACTION_STATE_SWIPE,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        )
     } else {
         makeMovementFlags(0, 0)
     }

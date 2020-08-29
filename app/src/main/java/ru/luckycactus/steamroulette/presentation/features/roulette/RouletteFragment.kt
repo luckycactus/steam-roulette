@@ -6,6 +6,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewGroupCompat
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -107,25 +108,29 @@ class RouletteFragment : BaseFragment() {
             it.setOnLongClickListener(fabLongClickListener)
         }
 
-        itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
-            onSwiped = {
-                updatePaletteHelper(true)
-            },
-            onSwipedRight = {
-                viewModel.onGameSwiped(false)
-            },
-            onSwipedLeft = {
-                viewModel.onGameSwiped(true)
-            },
-            onSwipeProgress = { _progress, _ ->
-                paletteHelper.edit {
-                    progress = abs(_progress)
+        rvRoulette.doOnLayout {
+            val translationFraction =
+                1f + 0.3f + rvRoulette.left / rvRoulette.width.toFloat()
+            itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
+                onSwiped = {
+                    updatePaletteHelper(true)
+                },
+                onSwipedRight = {
+                    viewModel.onGameSwiped(false)
+                },
+                onSwipedLeft = {
+                    viewModel.onGameSwiped(true)
+                },
+                onSwipeProgress = { _progress, _ ->
+                    paletteHelper.edit {
+                        progress = abs(_progress)
+                    }
+                    viewModel.onSwipeProgress(_progress)
                 }
-                viewModel.onSwipeProgress(_progress)
-            }
-        ), 1.5f)
+            ), translationFraction)
+            itemTouchHelper.attachToRecyclerView(rvRoulette)
+        }
         with(rvRoulette) {
-            itemTouchHelper.attachToRecyclerView(this)
             layoutManager = CardStackLayoutManager()
             rouletteAdapter = RouletteAdapter(::onGameClick, ::onPaletteReady)
             adapter = rouletteAdapter
@@ -165,15 +170,13 @@ class RouletteFragment : BaseFragment() {
             val listener = if (it) fabClickListener else null
             fabs.forEach { fab -> fab.setOnClickListener(listener) }
         }
-
-        lifecycleScope
     }
 
     private fun setupTint() {
         tintContext = TintContext(requireContext(), animate = false)
 
         roulette_fragment_root.background =
-            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
+            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TL_BR)
 
         observe(tintContext.fabBackgroundTint) { colorStateList ->
             fabs.forEach {

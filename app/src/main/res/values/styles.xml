@@ -7,6 +7,10 @@
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
+    <style name="GameDetailsButtonTheme" parent="BaseAppTheme">
+        <item name="colorPrimary">@color/color_game_details_button</item>
+    </style>
+
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
         <item name="closeItemLayout">@layout/layout_action_mode_close_item</item>
     </style>

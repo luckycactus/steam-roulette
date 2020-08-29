@@ -11,11 +11,12 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStore"
-        style="?materialButtonOutlinedStyle"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/button_steam_store"
+        android:theme="@style/GameDetailsButtonTheme"
         />
 
     <Space
@@ -25,11 +26,12 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnHub"
-        style="?materialButtonOutlinedStyle"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/button_community_hub"
+        android:theme="@style/GameDetailsButtonTheme"
         />
 
 </LinearLayout>

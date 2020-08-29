@@ -10,6 +10,7 @@ import com.bumptech.glide.request.transition.TransitionFactory;
 /**
  * https://github.com/bumptech/glide/issues/363
  * https://gist.github.com/kevinvanmierlo/c46f66027e3ae37ebea85a8d2e12aaba
+ * todo remove when fixed
  */
 public class CrossFadeFactory implements TransitionFactory<Drawable> {
     @Override

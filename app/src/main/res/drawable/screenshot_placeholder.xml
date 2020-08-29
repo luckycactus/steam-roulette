@@ -7,5 +7,5 @@
         android:width="600px"
         android:height="338px"
         />
-    <solid android:color="?colorSurface"/>
+    <solid android:color="@color/color_screenshot_placeholder"/>
 </shape>

@@ -19,4 +19,5 @@
     <dimen name="game_details_extra_info_block_height">50dp</dimen>
     <dimen name="game_view_roulette_text_size">20sp</dimen>
     <dimen name="game_view_details_text_size">16sp</dimen>
+    <dimen name="max_game_card_height">800dp</dimen>
 </resources>

@@ -8,6 +8,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppCoScope
+import ru.luckycactus.steamroulette.domain.app.ClearImageCacheUseCase
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.RequestState
@@ -33,6 +34,7 @@ class MainViewModel @ViewModelInject constructor(
     private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
     private val logoutUser: LogoutUserUseCase,
     private val migrateApp: MigrateAppUseCase,
+    private val clearImageCache: ClearImageCacheUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router,
     @AppCoScope private val appScope: CoroutineScope
@@ -73,6 +75,7 @@ class MainViewModel @ViewModelInject constructor(
     fun onColdStart() {
         viewModelScope.launch {
             migrateApp()
+            clearImageCache()
             getCurrentUser().let {
                 val screen = if (it != null) Screens.Roulette else Screens.Login
                 router.newRootScreen(screen)
