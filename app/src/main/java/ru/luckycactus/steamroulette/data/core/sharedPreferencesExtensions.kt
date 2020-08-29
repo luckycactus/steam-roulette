@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.distinctUntilChanged
 import java.util.*
 import kotlin.properties.ReadWriteProperty
@@ -137,7 +138,7 @@ fun SharedPreferences.longFlow(key: String, defValue: Long) =
     flow(key, LongPreference(this, key, defValue))
 
 fun SharedPreferences.floatFlow(key: String, defValue: Float) =
-    flow(key, FloatPreference(this, key, defValue))
+    flow(key, FloatPreference(this, key, defValue)).cancellable()
 
 fun SharedPreferences.booleanFlow(key: String, defValue: Boolean) =
     flow(key, BooleanPreference(this, key, defValue))

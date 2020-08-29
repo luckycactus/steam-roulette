@@ -176,7 +176,7 @@ class RouletteFragment : BaseFragment() {
         tintContext = TintContext(requireContext(), animate = false)
 
         roulette_fragment_root.background =
-            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TL_BR)
+            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
 
         observe(tintContext.fabBackgroundTint) { colorStateList ->
             fabs.forEach {
