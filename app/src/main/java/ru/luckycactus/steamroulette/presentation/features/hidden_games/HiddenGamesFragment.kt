@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Fade
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_hidden_games.*
@@ -98,29 +99,18 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         }
     }
 
-    private fun onGameClick(sharedViews: List<View>, game: GameHeader) {
-        reenterTransition = createDefaultExitTransition()
-        if (sharedViews.isNotEmpty()) {
-            exitTransition = transitionSet {
-                //excludeTarget(rvRoulette, true)
-                fade()
-                listener(onTransitionEnd = {
-                    exitTransition = null
-                    //todo comment
-                    sharedViews.forEach {
-                        it.trySetTransitionAlpha(1f)
-                    }
-                })
-                addListener((activity as MainActivity).touchSwitchTransitionListener)
+    private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {
+        reenterTransition = createExitTransition()
+        exitTransition = createExitTransition().apply {
+            doOnEnd {
+                exitTransition = null
             }
-        } else {
-            exitTransition = createDefaultExitTransition()
         }
-        (activity as MainActivity).onGameClick(sharedViews, game)
+        (activity as MainActivity).onGameClick(game, sharedViews, imageIsReady)
     }
 
 
-    private fun createDefaultExitTransition() = transitionSet {
+    private fun createExitTransition() = transitionSet {
         fade {}
         addListener((activity as MainActivity).touchSwitchTransitionListener)
     }

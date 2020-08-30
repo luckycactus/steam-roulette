@@ -31,20 +31,20 @@ class GameHeaderViewHolder(
         tvDeveloper.visibility(!item.developer.isNullOrBlank())
         tvReleaseDate.text = item.releaseDate
         tvReleaseDate.visibility(!item.releaseDate.isNullOrBlank())
+//        ViewCompat.setTransitionName(
+//            gameView.ivGame,
+//            gameView.context.getString(
+//                R.string.image_shared_element_transition,
+//                item.gameHeader.appId
+//            )
+//        )
         ViewCompat.setTransitionName(
-            gameView.ivGame,
+            gameView,
             gameView.context.getString(
-                R.string.image_shared_element_transition,
+                R.string.cardview_shared_element_transition,
                 item.gameHeader.appId
             )
         )
-//        ViewCompat.setTransitionName(
-//            gameView,
-//            gameView.context.getString(
-//                R.string.cardview_shared_element_transition,
-//                item.gameMinimal.appId
-//            )
-//        )
     }
 
     override fun bind(item: GameDetailsUiModel.Header) {

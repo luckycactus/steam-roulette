@@ -17,7 +17,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
 class HiddenGamesAdapter(
-    private val onGameClick: (List<View>, GameHeader) -> Unit
+    private val onGameClick: (GameHeader, List<View>, Boolean) -> Unit
 ) : PagingDataAdapter<GameHeader, HiddenGamesAdapter.HiddenGameViewHolder>(diffCallback) {
     var tracker: SelectionTracker<Long>? = null
 
@@ -46,7 +46,7 @@ class HiddenGamesAdapter(
             gameView.memoryCacheEnabled = true
             itemView.setOnClickListener {
                 if (tracker?.selection?.size() == 0)
-                    onGameClick(gameView.getSharedViews(), game)
+                    onGameClick(game, listOf(gameView), gameView.imageReady)
             }
         }
 

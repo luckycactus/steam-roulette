@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
-import androidx.core.view.ViewGroupCompat
 import androidx.core.view.doOnLayout
+import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Fade
@@ -135,7 +134,6 @@ class RouletteFragment : BaseFragment() {
             rouletteAdapter = RouletteAdapter(::onGameClick, ::onPaletteReady)
             adapter = rouletteAdapter
             itemAnimator = null
-            ViewGroupCompat.setTransitionGroup(this, true)
         }
 
         dataLoadingViewHolder = DataLoadingViewHolder(
@@ -225,48 +223,44 @@ class RouletteFragment : BaseFragment() {
         viewModel.onHiddenChanged(hidden)
     }
 
-    private fun onGameClick(sharedViews: List<View>, game: GameHeader) {
-        reenterTransition = createDefaultExitTransition().apply {
-            listener(onTransitionEnd = {
-                reenterTransition = null
-            })
-        }
-        if (sharedViews.isNotEmpty()) {
-            exitTransition = transitionSet {
-                slide(Gravity.BOTTOM) {
-                    fabs.forEach { addTarget(it) }
+    private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {
+        reenterTransition = createExitTransition().apply {
+            rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.let { topItemView ->
+                fade {
+                    addTarget(topItemView)
                 }
-                slide(Gravity.TOP) {
-                    addTarget(toolbar)
-                }
-                listener(onTransitionEnd = {
-                    exitTransition = null
-                    //todo comment
-                    sharedViews.forEach {
-                        it.trySetTransitionAlpha(1f)
+                fade {
+                    rvRoulette.forEach {
+                        if (it != topItemView)
+                            addTarget(it)
                     }
-                })
-                addListener((activity as MainActivity).touchSwitchTransitionListener)
+                    startDelay = DEFAULT_TRANSITION_DURATION
+                    duration = 0
+                }
             }
-        } else {
-            exitTransition = createDefaultExitTransition().apply {
-                listener(onTransitionEnd = {
-                    exitTransition = null
-                })
+            doOnEnd {
+                reenterTransition = null
             }
         }
-        (activity as MainActivity).onGameClick(sharedViews, game, tintContext.tintColor)
+        exitTransition = createExitTransition().apply {
+            doOnEnd {
+                exitTransition = null
+            }
+        }
+        (activity as MainActivity).onGameClick(
+            game,
+            sharedViews,
+            imageIsReady,
+            tintContext.tintColor
+        )
     }
 
-    private fun createDefaultExitTransition() = transitionSet {
+    private fun createExitTransition() = transitionSet {
         slide(Gravity.BOTTOM) {
             fabs.forEach { addTarget(it) }
         }
         slide(Gravity.TOP) {
             addTarget(toolbar)
-        }
-        fade {
-            addTarget(rvRoulette)
         }
         addListener((activity as MainActivity).touchSwitchTransitionListener)
     }

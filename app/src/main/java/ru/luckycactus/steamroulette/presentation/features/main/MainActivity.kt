@@ -202,8 +202,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onGameClick(sharedViews: List<View>, game: GameHeader, color: Int = Color.TRANSPARENT) {
+    fun onGameClick(game: GameHeader, sharedViews: List<View>, waitForImage: Boolean, color: Int = Color.TRANSPARENT) {
         this.sharedViews = sharedViews
-        viewModel.onGameClick(game, color, sharedViews.isNotEmpty())
+        viewModel.onGameClick(game, color, waitForImage)
     }
 }

@@ -1,9 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.SharedElementCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
@@ -11,7 +15,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.ArcMotion
+import androidx.transition.Fade
+import com.google.android.material.transition.Hold
+import com.google.android.material.transition.MaterialArcMotion
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFade
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_game_details.*
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +42,7 @@ class GameDetailsFragment : BaseFragment() {
 
     lateinit var adapter: GameDetailsAdapter
 
-    private val enableTransition: Boolean by argument(ARG_ENABLE_TRANSITION)
+    private val waitForImage: Boolean by argument(ARG_WAIT_FOR_IMAGE)
     private val initialTintColor: Int by argument(ARG_COLOR)
 
     private lateinit var tintContext: TintContext
@@ -50,7 +58,7 @@ class GameDetailsFragment : BaseFragment() {
         setupTint()
 
         adapter = GameDetailsAdapter(
-            enableTransition && savedInstanceState == null,
+            waitForImage && savedInstanceState == null,
             ::startPostponedEnterTransition,
             ::onCoverChanged,
             viewModel
@@ -73,7 +81,7 @@ class GameDetailsFragment : BaseFragment() {
             fabBack.updateLayoutParams<CoordinatorLayout.LayoutParams> {
                 updateMargins(bottom = fabInitialMargin + insets.tappableElementInsets.bottom)
             }
-                    insetsApplied = true
+            insetsApplied = true
             insets
         }
 
@@ -123,38 +131,25 @@ class GameDetailsFragment : BaseFragment() {
     }
 
     private fun setupTransition() {
-        enterTransition = transitionSet {
-            fade()
-        }
+        enterTransition = Fade()
 
-        if (enableTransition) {
-            returnTransition = transitionSet {
-                excludeTarget(GameView::class.java, true)
-                fade()
-            }
-        }
-
-        sharedElementEnterTransition = transitionSet {
-            //to avoid weird bug when enter animation ends before shared element animation and
-            //shared views don't invalidate for some reason and stuck in intermediate state
-            duration = DEFAULT_TRANSITION_DURATION - 25L
-            changeTransform()
-            changeClipBounds()
-            changeBounds()
-            setPathMotion(ArcMotion())
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            duration = DEFAULT_TRANSITION_DURATION
+            setPathMotion(MaterialArcMotion())
+            scrimColor = Color.TRANSPARENT
         }
     }
 
     companion object {
-        private const val ARG_ENABLE_TRANSITION = "ARG_ENABLE_SHARED_ELEMENT_TRANSITION"
+        private const val ARG_WAIT_FOR_IMAGE = "ARG_WAIT_FOR_IMAGE"
         private const val ARG_COLOR = "ARG_COLOR"
 
-        fun newInstance(game: GameHeader, color: Int, enableSharedElementTransition: Boolean) =
+        fun newInstance(game: GameHeader, color: Int, waitForImage: Boolean) =
             GameDetailsFragment().apply {
                 arguments = bundleOf(
                     GameDetailsViewModel.ARG_GAME to game,
                     ARG_COLOR to color,
-                    ARG_ENABLE_TRANSITION to enableSharedElementTransition
+                    ARG_WAIT_FOR_IMAGE to waitForImage
                 )
             }
 

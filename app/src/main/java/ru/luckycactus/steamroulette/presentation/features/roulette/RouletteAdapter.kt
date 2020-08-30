@@ -19,7 +19,7 @@ import ru.luckycactus.steamroulette.presentation.utils.inflate
 import kotlin.math.absoluteValue
 
 class RouletteAdapter constructor(
-    private val onGameClick: (List<View>, GameHeader) -> Unit,
+    private val onGameClick: (GameHeader, List<View>, Boolean) -> Unit,
     private val paletteChangeListener: (Int) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
     var items: List<GameHeader>? = null
@@ -64,7 +64,7 @@ class RouletteAdapter constructor(
 
         init {
             itemView.setOnClickListener {
-                onGameClick(gameView.getSharedViews(), game)
+                onGameClick(game, listOf(gameView), gameView.imageReady)
             }
         }
 

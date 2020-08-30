@@ -15,14 +15,14 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.RequestListenerAdap
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
 class GameDetailsAdapter constructor(
-    private val waitForHeaderReadyForTransition: Boolean,
+    private val waitForImageReadyForTransition: Boolean,
     private val onHeaderImageReady: () -> Unit,
     private val onHeaderBitmapChanged: (Bitmap?) -> Unit,
     private val gameDetailsViewModel: GameDetailsViewModel
 ) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
     diffCallback
 ) {
-    private var headerWasBound = false
+    private var imageReady = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameDetailsViewHolder<*> {
         val view = parent.inflate(viewType)
@@ -47,11 +47,11 @@ class GameDetailsAdapter constructor(
     override fun onBindViewHolder(holder: GameDetailsViewHolder<*>, position: Int) {
         when (holder) {
             is GameHeaderViewHolder -> {
-                val shouldWaitForHeader = waitForHeaderReadyForTransition && !headerWasBound
+                val shouldWaitForHeader = waitForImageReadyForTransition && !imageReady
 
                 val listener = RequestListenerAdapter<Bitmap> {
-                    if (!headerWasBound) {
-                        headerWasBound = true
+                    if (!imageReady) {
+                        imageReady = true
                         onHeaderImageReady()
                     }
                     onHeaderBitmapChanged(it)
@@ -62,9 +62,9 @@ class GameDetailsAdapter constructor(
                     shouldWaitForHeader,
                     listener
                 )
-                if (!shouldWaitForHeader && !headerWasBound) {
+                if (!shouldWaitForHeader && !imageReady) {
                     onHeaderImageReady()
-                    headerWasBound = true
+                    imageReady = true
                 }
             }
             is GameShortDescriptionViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.ShortDescription)

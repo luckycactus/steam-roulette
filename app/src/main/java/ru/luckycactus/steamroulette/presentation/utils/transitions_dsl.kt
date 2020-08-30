@@ -19,7 +19,10 @@ inline fun TransitionSetBuilder.fade(block: Fade.() -> Unit = {}): Fade =
         it.block()
     }
 
-inline fun TransitionSetBuilder.slide(slideEdge: Int = Gravity.BOTTOM, block: Slide.() -> Unit = {}): Slide =
+inline fun TransitionSetBuilder.slide(
+    slideEdge: Int = Gravity.BOTTOM,
+    block: Slide.() -> Unit = {}
+): Slide =
     Slide(slideEdge).also {
         addTransition(it)
         it.block()
@@ -43,32 +46,34 @@ inline fun TransitionSetBuilder.changeTransform(block: ChangeTransform.() -> Uni
         it.block()
     }
 
-fun Transition.listener(
-    onTransitionEnd: (Transition) -> Unit = {},
-    onTransitionResume: (Transition) -> Unit = {},
-    onTransitionPause: (Transition) -> Unit = {},
-    onTransitionCancel: (Transition) -> Unit = {},
-    onTransitionStart: (Transition) -> Unit = {}
+inline fun Transition.listener(
+    crossinline onEnd: (Transition) -> Unit = {},
+    crossinline onResume: (Transition) -> Unit = {},
+    crossinline onPause: (Transition) -> Unit = {},
+    crossinline onCancel: (Transition) -> Unit = {},
+    crossinline onStart: (Transition) -> Unit = {}
 ): Transition.TransitionListener = object : Transition.TransitionListener {
     override fun onTransitionEnd(transition: Transition) {
-        onTransitionEnd(transition)
+        onEnd(transition)
     }
 
     override fun onTransitionResume(transition: Transition) {
-        onTransitionResume(transition)
+        onResume(transition)
     }
 
     override fun onTransitionPause(transition: Transition) {
-        onTransitionPause(transition)
+        onPause(transition)
     }
 
     override fun onTransitionCancel(transition: Transition) {
-        onTransitionCancel(transition)
+        onCancel(transition)
     }
 
     override fun onTransitionStart(transition: Transition) {
-        onTransitionStart(transition)
+        onStart(transition)
     }
 }.also {
     addListener(it)
 }
+
+inline fun Transition.doOnEnd(crossinline doOnEnd: (Transition) -> Unit) = listener(onEnd = doOnEnd)

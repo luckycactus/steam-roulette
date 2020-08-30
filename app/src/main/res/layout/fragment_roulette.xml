@@ -19,7 +19,7 @@
         android:layout_marginLeft="@dimen/default_activity_margin"
         android:layout_marginRight="@dimen/default_activity_margin"
         android:clipChildren="false"
-        android:transitionGroup="true"
+        android:transitionGroup="false"
         app:layout_constraintBottom_toTopOf="@id/fabHideGame"
         app:layout_constraintDimensionRatio="2:3"
         app:layout_constraintHeight_max="@dimen/max_game_card_height"

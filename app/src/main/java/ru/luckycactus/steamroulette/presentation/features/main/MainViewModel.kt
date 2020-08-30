@@ -83,8 +83,8 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    fun onGameClick(game: GameHeader, color: Int, enableSharedElementTransition: Boolean) {
-        router.navigateTo(Screens.GameDetails(game, color, enableSharedElementTransition))
+    fun onGameClick(game: GameHeader, color: Int, waitForImage: Boolean) {
+        router.navigateTo(Screens.GameDetails(game, color, waitForImage))
     }
 
     override fun logout() {

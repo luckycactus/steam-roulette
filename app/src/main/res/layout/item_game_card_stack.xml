@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:layerType="hardware"
     android:stateListAnimator="@drawable/card_stack_item_state_list_animator"
+    android:transitionGroup="true"
     >
 
     <ru.luckycactus.steamroulette.presentation.ui.widget.GameView

@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.ui.widget
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -52,7 +51,8 @@ class GameView : MaterialCardView {
 
     var memoryCacheEnabled = false
 
-    private var imageReady = false
+    var imageReady = false
+        private set
 
     private var current: GameHeader? = null
     private var userVisibleHint = true
@@ -102,14 +102,14 @@ class GameView : MaterialCardView {
         if (game != null) {
             if (differentAppId)
                 createRequestBuilder(this, game, disableTransition, listener).into(ivGame)
-            ViewCompat.setTransitionName(
-                ivGame,
-                context.getString(R.string.image_shared_element_transition, game.appId)
-            )
 //            ViewCompat.setTransitionName(
-//                this,
-//                context.getString(R.string.cardview_shared_element_transition, game.appId)
+//                ivGame,
+//                context.getString(R.string.image_shared_element_transition, game.appId)
 //            )
+            ViewCompat.setTransitionName(
+                this,
+                context.getString(R.string.cardview_shared_element_transition, game.appId)
+            )
         } else {
             Glide.with(ivGame).clear(ivGame)
             ViewCompat.setTransitionName(ivGame, null)
@@ -118,12 +118,6 @@ class GameView : MaterialCardView {
 
     fun setUserVisibleHint(visible: Boolean) {
         userVisibleHint = visible
-    }
-
-    fun getSharedViews(): List<View> {
-        return if (imageReady)
-            listOf<View>(ivGame)
-        else emptyList()
     }
 
     //todo Грузить hd через wifi, обычную через мобильную сеть
