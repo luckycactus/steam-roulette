@@ -137,14 +137,14 @@ class GameDetailsViewModel @ViewModelInject constructor(
         }
         _gameDetails.value = listOf(
             getInitialHeader(),
-            GameDetailsUiModel.DataLoading(contentState)
+            GameDetailsUiModel.Placeholder(contentState)
         )
     }
 
     private fun renderLoading() {
         _gameDetails.value = listOf(
             getInitialHeader(),
-            GameDetailsUiModel.DataLoading(ContentState.Loading)
+            GameDetailsUiModel.Placeholder(ContentState.Loading)
         )
     }
 

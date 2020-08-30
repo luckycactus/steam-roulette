@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.ViewGroupCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.empty_layout.*
@@ -44,8 +47,6 @@ class RouletteFragment : BaseFragment() {
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
     private lateinit var itemTouchHelper: ItemTouchHelper
-
-    private var colorBackground: Int = 0
 
     override val layoutResId: Int = R.layout.fragment_roulette
 
@@ -109,8 +110,7 @@ class RouletteFragment : BaseFragment() {
         }
 
         rvRoulette.doOnLayout {
-            val translationFraction =
-                1f + 0.3f + rvRoulette.left / rvRoulette.width.toFloat()
+            val translationFraction = 1f + 0.3f + rvRoulette.left / rvRoulette.width.toFloat()
             itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
                 onSwiped = {
                     updatePaletteHelper(true)
@@ -163,6 +163,7 @@ class RouletteFragment : BaseFragment() {
         }
 
         observe(viewModel.contentState) {
+            TransitionManager.beginDelayedTransition(roulette_fragment_root, Fade())
             dataLoadingViewHolder.showContentState(it)
         }
 

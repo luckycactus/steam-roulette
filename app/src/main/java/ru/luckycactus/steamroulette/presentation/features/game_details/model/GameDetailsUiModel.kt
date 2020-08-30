@@ -43,7 +43,7 @@ sealed class GameDetailsUiModel {
         val screenshots: List<Screenshot>
     ) : GameDetailsUiModel()
 
-    data class DataLoading(
+    data class Placeholder(
         val contentState: ContentState
     ) : GameDetailsUiModel()
 }
