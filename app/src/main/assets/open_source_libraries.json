@@ -60,12 +60,6 @@
     "license_type": "Apache2"
   },
   {
-    "name": "AssistedInject",
-    "author": "Square",
-    "source": "https://github.com/square/AssistedInject",
-    "license_type": "Apache2"
-  },
-  {
     "name": "Cicerone",
     "author": "Terrakok",
     "source": "https://github.com/terrakok/Cicerone",
@@ -81,6 +75,12 @@
     "name": "LeakCanary",
     "author": "Square",
     "source": "https://github.com/square/leakcanary",
+    "license_type": "Apache2"
+  },
+  {
+    "name": "kotlinx.coroutines",
+    "author": "JetBrains",
+    "source": "https://github.com/Kotlin/kotlinx.coroutines",
     "license_type": "Apache2"
   }
 ]

@@ -16,7 +16,7 @@ Android app to help you choose a game from your Steam library to play
 
 - Clean Architecture, MVVM (ViewModel, LiveData)
 - Kotlin
-- Kotlin Coroutines
+- Kotlin Coroutines (+Flow)
 - AndroidX
 - Android KTX
 - Material Components
@@ -27,6 +27,7 @@ Android app to help you choose a game from your Steam library to play
 - Moshi
 - Glide
 - Dagger-Hilt
+- Palette
 - Cicerone
 - Stetho
 - Leak Canary
