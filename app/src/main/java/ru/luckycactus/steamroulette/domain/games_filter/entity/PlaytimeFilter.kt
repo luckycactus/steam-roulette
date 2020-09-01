@@ -9,7 +9,7 @@ sealed class PlaytimeFilter(
     object NotPlayed : PlaytimeFilter(
         Type.NotPlayed
     )
-    class Limited(val maxHours: Int) : PlaytimeFilter(
+    data class Limited(val maxHours: Int) : PlaytimeFilter(
         Type.Limited
     )
 
