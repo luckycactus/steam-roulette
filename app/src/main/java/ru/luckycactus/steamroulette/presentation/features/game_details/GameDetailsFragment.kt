@@ -4,10 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.app.SharedElementCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
@@ -16,10 +13,8 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Fade
-import com.google.android.material.transition.Hold
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
-import com.google.android.material.transition.MaterialFade
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_game_details.*
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +25,10 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
-import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.DEFAULT_TRANSITION_DURATION
+import ru.luckycactus.steamroulette.presentation.utils.argument
+import ru.luckycactus.steamroulette.presentation.utils.doOnApplyWindowInsets
+import ru.luckycactus.steamroulette.presentation.utils.observe
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 
@@ -85,7 +82,7 @@ class GameDetailsFragment : BaseFragment() {
             insets
         }
 
-        fabBack.doOnLayout {
+        fabBack.doOnNextLayout {
             //if insets were applied already but fab isn't laid out yet, then we must set extra padding here
             if (insetsApplied)
                 rvGameDetails.updatePadding(bottom = rvGameDetails.paddingBottom + fabBack.height)
@@ -137,6 +134,8 @@ class GameDetailsFragment : BaseFragment() {
             duration = DEFAULT_TRANSITION_DURATION
             setPathMotion(MaterialArcMotion())
             scrimColor = Color.TRANSPARENT
+            // adding listener (even empty) breaks transition for some reason
+//            addListener((activity as MainActivity).touchSwitchTransitionListener)
         }
     }
 

@@ -23,7 +23,6 @@ class GameHeaderViewHolder(
         disableTransition: Boolean,
         listener: RequestListener<Bitmap>?
     ) {
-        gameView.setGame(item.gameHeader, disableTransition, listener)
         tvHeaderGameName.text = item.gameHeader.name
         tvPublisher.text = item.publisher
         tvPublisher.visibility(!item.publisher.isNullOrBlank())
@@ -45,6 +44,7 @@ class GameHeaderViewHolder(
                 item.gameHeader.appId
             )
         )
+        gameView.setGame(item.gameHeader, disableTransition, listener)
     }
 
     override fun bind(item: GameDetailsUiModel.Header) {

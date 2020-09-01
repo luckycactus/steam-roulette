@@ -42,8 +42,6 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     private var sharedViews: List<View>? = null
 
-    var runningTransitions = 0
-
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 
@@ -52,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     val viewModel: MainViewModel by viewModels()
 
+    private var runningTransitions = 0
     val touchSwitchTransitionListener = object : TransitionListenerAdapter() {
         override fun onTransitionEnd(transition: Transition) {
             runningTransitions--

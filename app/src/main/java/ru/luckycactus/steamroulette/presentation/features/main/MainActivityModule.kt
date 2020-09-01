@@ -18,16 +18,5 @@ abstract class MainActivityModule {
         @Provides
         fun provideUserViewModelDelegate(activity: Activity): UserViewModelDelegate =
             (activity as MainActivity).viewModel
-
-        @ActivityScoped
-        @Provides
-        fun provideCicerone(): Cicerone<Router> = Cicerone.create()
-
-        @Provides
-        fun provideNavigatorHolder(cicerone: Cicerone<Router>): NavigatorHolder =
-            cicerone.navigatorHolder
-
-        @Provides
-        fun provideGlobalRouter(cicerone: Cicerone<Router>): Router = cicerone.router
     }
 }

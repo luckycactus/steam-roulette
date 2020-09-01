@@ -5,18 +5,17 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.doOnLayout
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.Fade
-import androidx.transition.TransitionManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_roulette.*
 import kotlinx.android.synthetic.main.fullscreen_progress.*
 import kotlinx.android.synthetic.main.main_toolbar.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
@@ -108,7 +107,7 @@ class RouletteFragment : BaseFragment() {
             it.setOnLongClickListener(fabLongClickListener)
         }
 
-        rvRoulette.doOnLayout {
+        rvRoulette.doOnNextLayout {
             val translationFraction = 1f + 0.3f + rvRoulette.left / rvRoulette.width.toFloat()
             itemTouchHelper = ItemTouchHelper(CardStackTouchHelperCallback(
                 onSwiped = {
@@ -157,11 +156,13 @@ class RouletteFragment : BaseFragment() {
 
         observe(viewModel.games) {
             rouletteAdapter.items = it
-            updatePaletteHelper()
+            lifecycleScope.launch {
+                delay(100)
+                updatePaletteHelper()
+            }
         }
 
         observe(viewModel.contentState) {
-            TransitionManager.beginDelayedTransition(roulette_fragment_root, Fade())
             dataLoadingViewHolder.showContentState(it)
         }
 
@@ -229,13 +230,15 @@ class RouletteFragment : BaseFragment() {
                 fade {
                     addTarget(topItemView)
                 }
-                fade {
-                    rvRoulette.forEach {
-                        if (it != topItemView)
-                            addTarget(it)
+                if (rvRoulette.childCount > 1) {
+                    fade {
+                        rvRoulette.forEach {
+                            if (it != topItemView)
+                                addTarget(it)
+                        }
+                        startDelay = DEFAULT_TRANSITION_DURATION
+                        duration = 0
                     }
-                    startDelay = DEFAULT_TRANSITION_DURATION
-                    duration = 0
                 }
             }
             doOnEnd {

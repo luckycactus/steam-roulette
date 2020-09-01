@@ -1,57 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="?dialogPreferredPadding"
-    android:paddingTop="@dimen/dialog_content_extra_top_padding"
-    android:paddingRight="?dialogPreferredPadding"
     >
 
-    <RadioGroup
-        android:id="@+id/rgPlaytime"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="?dialogPreferredPadding"
+        android:paddingTop="@dimen/dialog_content_extra_top_padding"
+        android:paddingRight="?dialogPreferredPadding"
         >
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rbPlaytimeAll"
-            style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+        <RadioGroup
+            android:id="@+id/rgPlaytime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/playtime_pref_all"
-            />
+            >
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rbPlayTimeNotPlayed"
-            style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbPlaytimeAll"
+                style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/playtime_pref_all"
+                />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbPlayTimeNotPlayed"
+                style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/playtime_pref_not_played"
+                />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbPlaytimeLimit"
+                style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/playtime_pref_max_time"
+                />
+
+        </RadioGroup>
+
+        <ru.luckycactus.steamroulette.presentation.ui.widget.EditTextWithLabel
+            android:id="@+id/etPlaytime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/playtime_pref_not_played"
+            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:enabled="false"
+            android:inputType="number"
+            android:textAppearance="?textAppearanceBody2"
+            tools:text="9 часов"
             />
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rbPlaytimeLimit"
-            style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/playtime_pref_max_time"
-            />
+    </LinearLayout>
 
-    </RadioGroup>
-
-    <ru.luckycactus.steamroulette.presentation.ui.widget.EditTextWithLabel
-        android:id="@+id/etPlaytime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:enabled="false"
-        android:inputType="number"
-        android:textAppearance="?textAppearanceBody2"
-        tools:text="9 часов"
-        />
-
-</LinearLayout>
+</ScrollView>

@@ -31,9 +31,9 @@ class DataLoadingViewHolder(
     }
 
     fun showLoading() {
-        progress.visibility(true)
         content.visibility(false)
         placeholderLayout.visibility(false)
+        progress.visibility(true)
         state = State.LOADING
     }
 
@@ -47,7 +47,6 @@ class DataLoadingViewHolder(
 
 
     fun showPlaceholder(placeholder: ContentState.Placeholder) {
-
         with(placeholderLayout.tvEmptyTitle) {
             text =
                 when (placeholder.titleType) {
@@ -69,9 +68,9 @@ class DataLoadingViewHolder(
         }
 
         placeholderLayout.tvEmptyDescription.text = placeholder.message
-        placeholderLayout.visibility(true)
         content.visibility(false)
         progress.visibility(false)
+        placeholderLayout.visibility(true)
         this.state = State.PLACEHOLDER
     }
 

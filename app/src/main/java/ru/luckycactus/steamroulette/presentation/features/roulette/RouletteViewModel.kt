@@ -17,7 +17,6 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
@@ -30,7 +29,6 @@ class RouletteViewModel @ViewModelInject constructor(
     private val getOwnedGamesPagingList: GetOwnedGamesPagingListUseCase,
     observePlayTimeFilter: ObservePlaytimeFilterUseCase,
     observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
-    observeUserSummary: ObserveUserSummaryUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
@@ -38,7 +36,6 @@ class RouletteViewModel @ViewModelInject constructor(
     @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel() {
 
-    val userSummary = observeUserSummary().asLiveData()
     val games: LiveData<List<GameHeader>?>
     val itemRemoved: Flow<Int>
     val itemsInserted: Flow<Pair<Int, Int>>
@@ -93,14 +90,14 @@ class RouletteViewModel @ViewModelInject constructor(
         games = _gamesPagingList.map { it?.list }
         itemsInserted = _gamesPagingList
             .asFlow()
-            .flatMapLatest { it?.itemsInsertedChannel?.consumeAsFlow() ?: emptyFlow() }
+            .flatMapLatest { it?.itemsInsertedChannel?.receiveAsFlow() ?: emptyFlow() }
             .onEach {
                 updateTopGame()
             }
 
         itemRemoved = _gamesPagingList
             .asFlow()
-            .flatMapLatest { it?.itemRemovedChannel?.consumeAsFlow() ?: emptyFlow() }
+            .flatMapLatest { it?.itemRemovedChannel?.receiveAsFlow() ?: emptyFlow() }
             .onEach {
                 updateTopGame()
             }

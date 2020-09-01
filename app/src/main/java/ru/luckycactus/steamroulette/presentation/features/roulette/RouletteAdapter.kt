@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
@@ -69,8 +70,9 @@ class RouletteAdapter constructor(
         }
 
         fun bind(game: GameHeader) {
+            if (!this::game.isInitialized || this.game != game)
+                this.palette = null
             this.game = game
-            this.palette = null
             setVisibleHint(bindingAdapterPosition == 0)
             gameView.setGame(game, false, imageRequestListener)
         }
