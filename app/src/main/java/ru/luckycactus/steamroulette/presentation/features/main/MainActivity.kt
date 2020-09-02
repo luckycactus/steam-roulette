@@ -4,18 +4,20 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
+import android.view.*
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.MarginLayoutParamsCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_toolbar.*
@@ -175,9 +177,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         observeEvent(viewModel.errorMessage) {
-            container.showSnackbar(it) {
-                anchorView = toolbar
-            }
+            Snackbar.make(container, it, Snackbar.LENGTH_LONG).apply {
+                view.updateLayoutParams<FrameLayout.LayoutParams> {
+                    gravity = Gravity.TOP
+                    topMargin += toolbar.bottom
+                }
+            }.show()
         }
     }
 
@@ -201,7 +206,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onGameClick(game: GameHeader, sharedViews: List<View>, waitForImage: Boolean, color: Int = Color.TRANSPARENT) {
+    fun onGameClick(
+        game: GameHeader,
+        sharedViews: List<View>,
+        waitForImage: Boolean,
+        color: Int = Color.TRANSPARENT
+    ) {
         this.sharedViews = sharedViews
         viewModel.onGameClick(game, color, waitForImage)
     }
