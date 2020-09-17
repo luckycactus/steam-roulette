@@ -26,17 +26,17 @@ class MessageDialogFragment : DialogFragment() {
     private val negative: String? by argument(
         ARG_NEGATIVE
     )
+    private val neutral: String? by argument(
+        ARG_NEUTRAL
+    )
     private val dismissOnClick: Boolean by argument(
         ARG_DISMISS_ON_CLICK
-    )
-    private val _tag: String? by argument(
-        ARG_TAG
     )
     private val cancelable: Boolean by argument(
         ARG_CANCELLABLE
     )
 
-    private val clickListener by lazyNonThreadSafe {
+    private val callbacks by lazyNonThreadSafe {
         getCallbacks<Callbacks>()
     }
 
@@ -50,16 +50,23 @@ class MessageDialogFragment : DialogFragment() {
             setTitle(title)
             setMessage(message)
 
-
             setPositiveButton(positive ?: getString(android.R.string.ok)) { _, _ ->
-                clickListener?.onDialogPositiveClick(this@MessageDialogFragment, _tag)
+                callbacks?.onMessageDialogResult(this@MessageDialogFragment, Result.Positive)
                 if (dismissOnClick)
                     dismiss()
             }
 
             if (negative != null) {
                 setNegativeButton(negative) { _, _ ->
-                    clickListener?.onDialogNegativeClick(this@MessageDialogFragment, _tag)
+                    callbacks?.onMessageDialogResult(this@MessageDialogFragment, Result.Negative)
+                    if (dismissOnClick)
+                        dismiss()
+                }
+            }
+
+            if (neutral != null) {
+                setNeutralButton(neutral) { _, _ ->
+                    callbacks?.onMessageDialogResult(this@MessageDialogFragment, Result.Neutral)
                     if (dismissOnClick)
                         dismiss()
                 }
@@ -72,13 +79,15 @@ class MessageDialogFragment : DialogFragment() {
 
 
     override fun onCancel(dialog: DialogInterface) {
-        clickListener?.onDialogCancel(_tag)
+        callbacks?.onMessageDialogResult(this@MessageDialogFragment, Result.Cancel)
     }
 
     interface Callbacks {
-        fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {}
-        fun onDialogNegativeClick(dialog: MessageDialogFragment, tag: String?) {}
-        fun onDialogCancel(tag: String?) {}
+        fun onMessageDialogResult(dialog: MessageDialogFragment, result: Result) {}
+    }
+
+    enum class Result {
+        Positive, Negative, Neutral, Cancel
     }
 
     companion object {
@@ -86,7 +95,7 @@ class MessageDialogFragment : DialogFragment() {
         private const val ARG_MESSAGE = "ARG_MESSAGE"
         private const val ARG_POSITIVE = "ARG_POSITIVE"
         private const val ARG_NEGATIVE = "ARG_NEGATIVE"
-        private const val ARG_TAG = "ARG_TAG"
+        private const val ARG_NEUTRAL = "ARG_NEUTRAL"
         private const val ARG_DISMISS_ON_CLICK = "ARG_DISMISS_ON_CLICK"
         private const val ARG_CANCELLABLE = "ARG_CANCELLABLE"
 
@@ -100,9 +109,10 @@ class MessageDialogFragment : DialogFragment() {
             @StringRes positiveResId: Int = 0,
             negativeText: String? = null,
             @StringRes negativeResId: Int = 0,
+            neutralText: String? = null,
+            @StringRes neutralResId: Int = 0,
             dismissOnClick: Boolean = true,
             cancelable: Boolean = true,
-            tag: String? = null
         ) = MessageDialogFragment().apply {
             arguments = bundleOf(
                 ARG_TITLE to getString(
@@ -125,7 +135,11 @@ class MessageDialogFragment : DialogFragment() {
                     negativeResId,
                     negativeText
                 ),
-                ARG_TAG to tag,
+                ARG_NEUTRAL to getString(
+                    context,
+                    neutralResId,
+                    neutralText
+                ),
                 ARG_DISMISS_ON_CLICK to dismissOnClick,
                 ARG_CANCELLABLE to cancelable
             )

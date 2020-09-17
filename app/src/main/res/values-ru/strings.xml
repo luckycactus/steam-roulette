@@ -23,7 +23,7 @@
         <item quantity="other">%d игр на аккаунте</item>
     </plurals>
     <string name="games_last_sync">Последняя синхронизация: %1$s</string>
-    <string name="never">никогда</string>
+    <string name="last_sync_never">никогда</string>
     <string name="roulette_options">Опции</string>
     <string name="btn_reset_hidden_games">Очистить</string>
     <string name="hidden_games_count">Скрыто игр</string>
@@ -66,4 +66,9 @@
     <string name="show_app_source_code">Исходный код</string>
     <string name="open_source_libraries">Библиотеки с открытым исходным кодом</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="rate">Оценить</string>
+    <string name="never">Никогда</string>
+    <string name="later">Позже</string>
+    <string name="rate_app_title">Оценить Steam Shuffle</string>
+    <string name="rate_app_dialog_message">Здравствуйте. Похоже, что вам нравится Steam Shuffle. Пожалуйста, уделите время, чтобы оценить приложение. Это не займет больше минуты. Спасибо за поддержку!</string>
 </resources>

@@ -2,25 +2,27 @@ package ru.luckycactus.steamroulette.presentation.features.main
 
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
-import androidx.core.view.MarginLayoutParamsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_toolbar.*
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.common.App
@@ -28,8 +30,9 @@ import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetai
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
+import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.PlayUtils
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
-import ru.luckycactus.steamroulette.presentation.utils.showSnackbar
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -41,7 +44,7 @@ import ru.terrakok.cicerone.commands.Replace
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
     private var sharedViews: List<View>? = null
 
     @Inject
@@ -184,6 +187,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }.show()
         }
+
+        observeEvent(viewModel.reviewRequest) {
+            MessageDialogFragment.create(
+                this,
+                titleResId = R.string.rate_app_title,
+                messageResId = R.string.rate_app_dialog_message,
+                positiveResId = R.string.rate,
+                negativeResId = R.string.later,
+                neutralResId = R.string.never
+            ).show(supportFragmentManager, null)
+        }
     }
 
     override fun onResumeFragments() {
@@ -206,6 +220,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onMessageDialogResult(
+        dialog: MessageDialogFragment,
+        result: MessageDialogFragment.Result
+    ) {
+        when (result) {
+            MessageDialogFragment.Result.Positive -> reviewApp()
+            MessageDialogFragment.Result.Neutral -> viewModel.onAppReviewDisabled()
+            MessageDialogFragment.Result.Negative -> viewModel.onAppReviewDelayed()
+        }
+    }
+
     fun onGameClick(
         game: GameHeader,
         sharedViews: List<View>,
@@ -214,5 +239,12 @@ class MainActivity : AppCompatActivity() {
     ) {
         this.sharedViews = sharedViews
         viewModel.onGameClick(game, color, waitForImage)
+    }
+
+    fun reviewApp() {
+        lifecycleScope.launch {
+            PlayUtils.reviewApp(this@MainActivity)
+            viewModel.onAppReviewed()
+        }
     }
 }

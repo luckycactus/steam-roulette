@@ -33,7 +33,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
                 titleResId = R.string.exit_dialog_title,
                 messageResId = R.string.exit_warning,
                 negativeResId = R.string.cancel
-            ).show(childFragmentManager, null)
+            ).show(childFragmentManager, CONFIRM_EXIT_DIALOG)
         }
 
         btnRefreshProfile.setOnClickListener {
@@ -73,11 +73,20 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
         }
     }
 
-    override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
-        viewModel.logout()
+    override fun onMessageDialogResult(
+        dialog: MessageDialogFragment,
+        result: MessageDialogFragment.Result
+    ) {
+        when (dialog.tag) {
+            CONFIRM_EXIT_DIALOG -> {
+                if (result == MessageDialogFragment.Result.Positive)
+                    viewModel.logout()
+            }
+        }
     }
 
     companion object {
+        private const val CONFIRM_EXIT_DIALOG = "CONFIRM_DIALOG"
         fun newInstance() = MenuFragment()
     }
 }

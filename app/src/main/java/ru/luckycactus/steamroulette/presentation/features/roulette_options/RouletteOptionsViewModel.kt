@@ -4,14 +4,10 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
-import ru.luckycactus.steamroulette.domain.games.ClearHiddenGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
@@ -22,7 +18,6 @@ import ru.terrakok.cicerone.Router
 class RouletteOptionsViewModel @ViewModelInject constructor(
     observePlayTimeFilter: ObservePlaytimeFilterUseCase,
     observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
-    private val clearHiddenGames: ClearHiddenGamesUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
 ) : BaseViewModel() {
@@ -39,20 +34,6 @@ class RouletteOptionsViewModel @ViewModelInject constructor(
             .asLiveData()
 
         hiddenGamesCount = observeHiddenGamesCount().asLiveData()
-    }
-
-    fun onClearHiddenGames() {
-        viewModelScope.launch {
-            clearHiddenGames()
-            closeWithDelay()
-        }
-    }
-
-    private fun closeWithDelay() {
-        viewModelScope.launch {
-            delay(CLOSE_DELAY)
-            close()
-        }
     }
 
     private fun close() {

@@ -42,16 +42,5 @@
             app:type="forward"
             />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnClearHiddenGames"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="@dimen/default_activity_margin"
-            android:gravity="center_vertical|start"
-            android:text="@string/btn_reset_hidden_games"
-            android:visibility="gone"
-            />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

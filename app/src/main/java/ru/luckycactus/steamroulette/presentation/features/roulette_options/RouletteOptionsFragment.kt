@@ -41,21 +41,8 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
         observe(viewModel.hiddenGamesCount) {
             prefViewHiddenGames.value = it.toString()
             val enabled = it > 0
-            btnClearHiddenGames.isEnabled = enabled
             prefViewHiddenGames.isEnabled = enabled
         }
-
-        btnClearHiddenGames.setOnClickListener {
-            MessageDialogFragment.create(
-                context!!,
-                messageResId = R.string.dialog_message_reset_hidden_games,
-                negativeResId = R.string.cancel
-            ).show(childFragmentManager, null)
-        }
-    }
-
-    override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
-        viewModel.onClearHiddenGames()
     }
 
     companion object {

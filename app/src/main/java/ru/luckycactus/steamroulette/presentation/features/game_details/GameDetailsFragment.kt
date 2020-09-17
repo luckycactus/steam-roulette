@@ -119,7 +119,7 @@ class GameDetailsFragment : BaseFragment() {
             lifecycleScope.launch {
                 val palette = bitmap?.let {
                     withContext(Dispatchers.Default) {
-                        Palette.from(it).generate()
+                        PaletteUtils.getGameCoverPalette(it).generate()
                     }
                 }
                 tintContext.updateColor(PaletteUtils.getColorForGameCover(palette))

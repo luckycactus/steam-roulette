@@ -51,7 +51,7 @@ class MenuViewModel @ViewModelInject constructor(
         gamesLastUpdate = observeOwnedGamesSyncsUseCase()
             .map {
                 val ago = if (it <= 0)
-                    resourceManager.getString(R.string.never)
+                    resourceManager.getString(R.string.last_sync_never)
                 else
                     DateUtils.getRelativeTimeSpanString(
                         it,

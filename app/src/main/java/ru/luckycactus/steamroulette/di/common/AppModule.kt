@@ -22,6 +22,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.datastore.*
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
 import ru.luckycactus.steamroulette.data.repositories.login.datastore.RemoteLoginDataStore
+import ru.luckycactus.steamroulette.data.repositories.review.AppReviewRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.UserRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.UserSessionRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
@@ -39,6 +40,7 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
+import ru.luckycactus.steamroulette.domain.review.AppReviewRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import ru.luckycactus.steamroulette.domain.user_settings.UserSettingsRepository
@@ -81,6 +83,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindAboutRepository(aboutRepositoryImpl: AboutRepositoryImpl): AboutRepository
+
+    @Binds
+    abstract fun bindAppReviewRepository(appReviewRepositoryImpl: AppReviewRepositoryImpl): AppReviewRepository
 
     @Binds
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner

@@ -7,7 +7,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Fade
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_hidden_games.*
@@ -80,8 +79,16 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         }
     }
 
-    override fun onDialogPositiveClick(dialog: MessageDialogFragment, tag: String?) {
-        viewModel.clearAll()
+    override fun onMessageDialogResult(
+        dialog: MessageDialogFragment,
+        result: MessageDialogFragment.Result
+    ) {
+        when (dialog.tag) {
+            CONFIRM_CLEAR_DIALOG_TAG ->
+                if (result == MessageDialogFragment.Result.Positive)
+                    viewModel.clearAll()
+        }
+
     }
 
     private fun onMenuItemClick(item: MenuItem): Boolean {
@@ -127,7 +134,7 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             requireContext(),
             messageResId = R.string.dialog_message_reset_hidden_games,
             negativeResId = R.string.cancel
-        ).show(childFragmentManager, null)
+        ).show(childFragmentManager, CONFIRM_CLEAR_DIALOG_TAG)
     }
 
     private fun setSelectionModeEnabled(enable: Boolean) {
@@ -198,6 +205,7 @@ class HiddenGamesFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     companion object {
         private const val SPAN_COUNT = 3
+        private const val CONFIRM_CLEAR_DIALOG_TAG = "CONFIRM_CLEAR_DIALOG"
         fun newInstance() = HiddenGamesFragment()
     }
 }

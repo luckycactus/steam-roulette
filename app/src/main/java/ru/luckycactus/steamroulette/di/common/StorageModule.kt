@@ -40,6 +40,12 @@ class StorageModule {
         fun provideCacheHelperSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("cache-helper", Context.MODE_PRIVATE)
 
+        @Named("app-review")
+        @Singleton
+        @Provides
+        fun provideAppReviewSharedPreferences(@ApplicationContext appContext: Context) =
+            appContext.getSharedPreferences("app-review", Context.MODE_PRIVATE)
+
         @Singleton
         @Provides
         fun provideSteamRouletteDb(@ApplicationContext appContext: Context) =

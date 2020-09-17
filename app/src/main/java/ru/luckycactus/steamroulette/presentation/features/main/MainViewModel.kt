@@ -18,6 +18,7 @@ import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.login.LogoutUserUseCase
+import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import ru.luckycactus.steamroulette.domain.user.FetchUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
@@ -36,6 +37,7 @@ class MainViewModel @ViewModelInject constructor(
     private val migrateApp: MigrateAppUseCase,
     private val clearImageCache: ClearImageCacheUseCase,
     private val resourceManager: ResourceManager,
+    private val appReviewManager: AppReviewManager,
     private val router: Router,
     @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel(), UserViewModelDelegate {
@@ -46,10 +48,13 @@ class MainViewModel @ViewModelInject constructor(
 
     val errorMessage: LiveData<Event<String>>
         get() = _errorMessage
+    val reviewRequest: LiveData<Event<Unit>>
+        get() = _reviewRequest
 
     private val _fetchGamesState = MutableLiveData<RequestState<Unit>>()
     private val _fetchUserSummaryState = MutableLiveData<Boolean>()
     private val _errorMessage = MutableLiveData<Event<String>>()
+    private val _reviewRequest = MutableLiveData<Event<Unit>>()
 
     private var userScope: CoroutineScope? = null
 
@@ -79,12 +84,31 @@ class MainViewModel @ViewModelInject constructor(
             getCurrentUser().let {
                 val screen = if (it != null) Screens.Roulette else Screens.Login
                 router.newRootScreen(screen)
+                if (it != null) {
+                    appReviewManager.incrementLaunchCount()
+                    if (appReviewManager.shouldRequestForReview()) {
+                        delay(2000)
+                        _reviewRequest.value = Event(Unit)
+                    }
+                }
             }
         }
     }
 
     fun onGameClick(game: GameHeader, color: Int, waitForImage: Boolean) {
         router.navigateTo(Screens.GameDetails(game, color, waitForImage))
+    }
+
+    fun onAppReviewed() {
+        appReviewManager.setRated(true)
+    }
+
+    fun onAppReviewDelayed() {
+        appReviewManager.delayReviewRequest()
+    }
+
+    fun onAppReviewDisabled() {
+        appReviewManager.setReviewRequestsEnabled(false)
     }
 
     override fun logout() {
@@ -130,7 +154,6 @@ class MainViewModel @ViewModelInject constructor(
             )
         }
     }
-
 
     private fun handleGamesFetchError(requestState: RequestState<Unit>) {
         if (requestState is RequestState.Error) {

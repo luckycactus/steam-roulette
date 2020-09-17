@@ -1,15 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
 import ru.luckycactus.steamroulette.R
@@ -17,6 +12,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.utils.glide.RequestListenerAdapter
 import ru.luckycactus.steamroulette.presentation.utils.inflate
+import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import kotlin.math.absoluteValue
 
 class RouletteAdapter constructor(
@@ -54,7 +50,7 @@ class RouletteAdapter constructor(
                 paletteChangeListener(bindingAdapterPosition)
             } else {
                 val game = this@RouletteViewHolder.game
-                Palette.from(it).generate { palette ->
+                PaletteUtils.getGameCoverPalette(it).generate { palette ->
                     if (game == this@RouletteViewHolder.game) {
                         this.palette = palette
                         paletteChangeListener(bindingAdapterPosition)
