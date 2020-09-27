@@ -72,6 +72,8 @@ class MainViewModel @ViewModelInject constructor(
                     userScope!!.launch {
                         fetchUserSummary(false)
                     }
+
+                    appReviewManager.notifySessionStarted()
                 }
             }
         }
@@ -85,7 +87,6 @@ class MainViewModel @ViewModelInject constructor(
                 val screen = if (it != null) Screens.Roulette else Screens.Login
                 router.newRootScreen(screen)
                 if (it != null) {
-                    appReviewManager.incrementLaunchCount()
                     if (appReviewManager.shouldRequestForReview()) {
                         delay(2000)
                         _reviewRequest.value = Event(Unit)
@@ -103,11 +104,11 @@ class MainViewModel @ViewModelInject constructor(
         appReviewManager.setRated(true)
     }
 
-    fun onAppReviewDelayed() {
+    fun delayAppReview() {
         appReviewManager.delayReviewRequest()
     }
 
-    fun onAppReviewDisabled() {
+    fun disableAppReview() {
         appReviewManager.setReviewRequestsEnabled(false)
     }
 

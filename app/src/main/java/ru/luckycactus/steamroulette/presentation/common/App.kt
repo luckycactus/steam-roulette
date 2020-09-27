@@ -3,9 +3,10 @@ package ru.luckycactus.steamroulette.presentation.common
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import dagger.hilt.android.HiltAndroidApp
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
 import ru.luckycactus.steamroulette.domain.app.SystemLanguageSynchronizer
+import ru.luckycactus.steamroulette.domain.review.AppReviewExceptionsHandler
+import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import javax.inject.Inject
 
 open class App : Application(), Configuration.Provider {
@@ -17,11 +18,17 @@ open class App : Application(), Configuration.Provider {
     lateinit var gamesPeriodicFetcher: GamesPeriodicFetcher
 
     @Inject
+    lateinit var appReviewManager: AppReviewManager
+
+    @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
         instance = this
+        if (!appReviewManager.isRated()) {
+            Thread.setDefaultUncaughtExceptionHandler(AppReviewExceptionsHandler(appReviewManager))
+        }
 
         systemLanguageSynchronizer.start()
         gamesPeriodicFetcher.start()

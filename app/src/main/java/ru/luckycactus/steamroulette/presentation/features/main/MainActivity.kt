@@ -226,8 +226,8 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
     ) {
         when (result) {
             MessageDialogFragment.Result.Positive -> reviewApp()
-            MessageDialogFragment.Result.Neutral -> viewModel.onAppReviewDisabled()
-            MessageDialogFragment.Result.Negative -> viewModel.onAppReviewDelayed()
+            MessageDialogFragment.Result.Neutral -> viewModel.disableAppReview()
+            MessageDialogFragment.Result.Negative -> viewModel.delayAppReview()
         }
     }
 

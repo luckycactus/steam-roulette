@@ -9,4 +9,5 @@ interface AppReviewRepository {
     var reviewRequestsEnabled: Boolean
 
     fun observeRatedState(): Flow<Boolean>
+    fun resetLaunchesSynchronously()
 }
