@@ -100,6 +100,16 @@
     <include layout="@layout/divider" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvGamesLibrary"
+        style="@style/MenuItemTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_baseline_apps_24"
+        android:drawableEnd="@drawable/ic_chevron_right"
+        android:text="@string/my_steam_library"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvAbout"
         style="@style/MenuItemTextView"
         android:layout_width="match_parent"

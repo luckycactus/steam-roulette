@@ -46,12 +46,32 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("SELECT * FROM owned_game WHERE userSteam64 = :steam64")
     abstract suspend fun getAll(steam64: Long): List<OwnedGameEntity>
 
-    @Query(
-        """SELECT appId, name 
-        FROM owned_game
-        WHERE userSteam64 =:steam64 AND hidden = 1 ORDER BY name ASC"""
-    )
-    abstract fun getHiddenGamesPagingSource(steam64: Long): PagingSource<Int, GameHeader>
+    fun getGamesPagingSource(
+        steam64: Long,
+        shown: Boolean? = null,
+        hidden: Boolean? = null,
+        maxHours: Int? = null
+    ): PagingSource<Int, GameHeader> {
+        val querySb = StringBuilder("SELECT appId, name FROM owned_game WHERE userSteam64 = ?")
+        val args = mutableListOf<Any>(steam64)
+
+        shown?.let {
+            args += it
+            querySb.append(" AND shown = ?")
+        }
+        hidden?.let {
+            args += it
+            querySb.append(" AND hidden = ?")
+        }
+        maxHours?.let {
+            args += it * 60
+            querySb.append(" AND playtimeForever <= ?")
+        }
+
+        querySb.append(" ORDER BY name ASC")
+
+        return _getGamesPagingSource(SimpleSQLiteQuery(querySb.toString(), args.toTypedArray()))
+    }
 
     @Query(
         """SELECT appId, name
@@ -117,4 +137,8 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Transaction
     @RawQuery
     abstract suspend fun _getIds(query: SupportSQLiteQuery): List<Int>
+
+    @Transaction
+    @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
+    abstract fun _getGamesPagingSource(query: SupportSQLiteQuery): PagingSource<Int, GameHeader>
 }

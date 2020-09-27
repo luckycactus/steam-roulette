@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.test.util.fakes
 
-import ru.luckycactus.steamroulette.data.repositories.games.datastore.GamesVerifier
+import ru.luckycactus.steamroulette.data.repositories.games.datasource.GamesVerifier
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 
 class NaiveGamesVerifier : GamesVerifier {

@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datastore
+package ru.luckycactus.steamroulette.data.repositories.games.datasource
 
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -22,17 +22,17 @@ import ru.luckycactus.steamroulette.test.util.getJson
 import ru.luckycactus.steamroulette.test.util.testCommonNetworkExceptions
 
 
-class RemoteGamesDataStoreTest {
+class RemoteGamesDataSourceTest {
 
     private lateinit var steamApiServiceMock: SteamApiService
     private lateinit var steamStoreApiServiceMock: SteamStoreApiService
-    private lateinit var remoteGamesDataStore: RemoteGamesDataStore
+    private lateinit var remoteGamesDataSource: RemoteGamesDataSource
 
     @Before
     fun setup() {
         steamApiServiceMock = mockk()
         steamStoreApiServiceMock = mockk()
-        remoteGamesDataStore = RemoteGamesDataStore(
+        remoteGamesDataSource = RemoteGamesDataSource(
             steamApiServiceMock,
             steamStoreApiServiceMock,
             MoshiModule.provideMoshiForApi(),
@@ -45,7 +45,7 @@ class RemoteGamesDataStoreTest {
         coEvery {
             steamApiServiceMock.getOwnedGames(any(), any(), any())
         } returns getJson("json/games/owned_games_response_success.json").toResponseBody()
-        val dataFlow = remoteGamesDataStore.getOwnedGames(TestData.gabenSteamId)
+        val dataFlow = remoteGamesDataSource.getOwnedGames(TestData.gabenSteamId)
         val actualData = dataFlow.toList()
         assertEquals(TestData.ownedGamesData, actualData)
     }
@@ -56,14 +56,14 @@ class RemoteGamesDataStoreTest {
             coEvery {
                 steamApiServiceMock.getOwnedGames(any(), any(), any())
             } returns getJson("json/games/owned_games_response_empty.json").toResponseBody()
-            remoteGamesDataStore.getOwnedGames(TestData.gabenSteamId).collect()
+            remoteGamesDataSource.getOwnedGames(TestData.gabenSteamId).collect()
         }
 
     @Test
     fun `getOwnedGames() should throw correct common network exceptions`() = runBlockingTest {
         testCommonNetworkExceptions(
             { steamApiServiceMock.getOwnedGames(any(), any(), any()) },
-            { remoteGamesDataStore.getOwnedGames(TestData.gabenSteamId) }
+            { remoteGamesDataSource.getOwnedGames(TestData.gabenSteamId) }
         )
     }
 
@@ -73,7 +73,7 @@ class RemoteGamesDataStoreTest {
             steamApiServiceMock.getOwnedGames(any(), any(), any())
         } returns getJson("json/games/owned_games_response_no_games.json").toResponseBody()
 
-        val data = remoteGamesDataStore.getOwnedGames(TestData.gabenSteamId).toList()
+        val data = remoteGamesDataSource.getOwnedGames(TestData.gabenSteamId).toList()
         assertEquals(emptyList<OwnedGameEntity>(), data)
     }
 
@@ -82,7 +82,7 @@ class RemoteGamesDataStoreTest {
         coEvery {
             steamStoreApiServiceMock.getGamesStoreInfo(listOf(252950), any())
         } returns getJson("json/games/game_store_info_response_success.json").toResponseBody()
-        val data = remoteGamesDataStore.getGameStoreInfo(252950)
+        val data = remoteGamesDataSource.getGameStoreInfo(252950)
     }
 
     @Test(expected = GetGameStoreInfoException::class)
@@ -90,14 +90,14 @@ class RemoteGamesDataStoreTest {
         coEvery {
             steamStoreApiServiceMock.getGamesStoreInfo(listOf(961440), any())
         } returns getJson("json/games/game_store_info_response_error.json").toResponseBody()
-        val data = remoteGamesDataStore.getGameStoreInfo(961440)
+        val data = remoteGamesDataSource.getGameStoreInfo(961440)
     }
 
     @Test
     fun `getGameStoreInfo() should throw correct common network exceptions`() = runBlockingTest {
         testCommonNetworkExceptions(
             { steamStoreApiServiceMock.getGamesStoreInfo(any(), any()) },
-            { remoteGamesDataStore.getGameStoreInfo(1) }
+            { remoteGamesDataSource.getGameStoreInfo(1) }
         )
     }
 }

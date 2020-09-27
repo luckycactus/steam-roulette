@@ -74,4 +74,5 @@
     <string name="later">Later</string>
     <string name="rate_app_title">Rate Steam Shuffle</string>
     <string name="rate_app_dialog_message">Hello. It seems like you are enjoying Steam Shuffle. Please take a moment to rate it. It won\'t take more than a minute. Thanks for your support!</string>
+    <string name="my_steam_library">My Steam Library</string>
 </resources>

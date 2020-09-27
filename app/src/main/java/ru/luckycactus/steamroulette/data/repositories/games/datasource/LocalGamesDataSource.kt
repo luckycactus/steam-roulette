@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datastore
+package ru.luckycactus.steamroulette.data.repositories.games.datasource
 
 import androidx.paging.PagingSource
 import androidx.room.withTransaction
@@ -17,10 +17,10 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import javax.inject.Inject
 
 @Reusable
-class LocalGamesDataStore @Inject constructor(
+class LocalGamesDataSource @Inject constructor(
     private val db: AppDatabase,
     private val gamesVerifierFactory: GamesVerifier.Factory
-) : GamesDataStore.Local {
+) : GamesDataSource.Local {
 
     override fun observeOwnedGamesCount(steamId: SteamId): Flow<Int> =
         db.ownedGamesDao().observeCount(steamId.as64())
@@ -106,8 +106,20 @@ class LocalGamesDataStore @Inject constructor(
         db.ownedGamesDao().clear(steamId.as64())
     }
 
-    override fun getHiddenGamesPagingSource(steamId: SteamId): PagingSource<Int, GameHeader> {
-        return db.ownedGamesDao().getHiddenGamesPagingSource(steamId.as64())
+    override fun getOwnedGamesPagingSource(
+        steamId: SteamId,
+        shown: Boolean?,
+        hidden: Boolean?,
+        filter: PlaytimeFilter?
+    ): PagingSource<Int, GameHeader> {
+        val maxHours = filter?.let {
+            when (filter) {
+                PlaytimeFilter.All -> null
+                PlaytimeFilter.NotPlayed -> 0
+                is PlaytimeFilter.Limited -> filter.maxHours
+            }
+        }
+        return db.ownedGamesDao().getGamesPagingSource(steamId.as64(), shown, hidden, maxHours)
     }
 
     companion object {

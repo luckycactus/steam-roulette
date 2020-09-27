@@ -71,6 +71,11 @@ class MenuViewModel @ViewModelInject constructor(
         close()
     }
 
+    fun onGamesLibraryClick() {
+        router.navigateTo(Screens.Library)
+        close()
+    }
+
     fun logout() {
         userViewModelDelegate.logout()
     }

@@ -44,6 +44,10 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
             viewModel.onAboutClick()
         }
 
+        tvGamesLibrary.setOnClickListener {
+            viewModel.onGamesLibraryClick()
+        }
+
         observe(viewModel.closeAction) {
             dismiss()
         }

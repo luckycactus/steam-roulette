@@ -7,12 +7,12 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 
 class GetGameStoreInfoUseCase @Inject constructor(
-    private val gamesRepository: GamesRepository
+    private val gameDetailsRepository: GameDetailsRepository
 ) : AbstractSuspendUseCase<GetGameStoreInfoUseCase.Params, GetGameStoreInfoUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result {
         return try {
-            val gameStoreInfo = gamesRepository.getGameStoreInfo(
+            val gameStoreInfo = gameDetailsRepository.getGameStoreInfo(
                 params.gameId,
                 params.cachePolicy
             )!!
@@ -27,7 +27,7 @@ class GetGameStoreInfoUseCase @Inject constructor(
     }
 
     suspend fun getFromCache(gameId: Int): GameStoreInfo? {
-        return gamesRepository.getGameStoreInfo(
+        return gameDetailsRepository.getGameStoreInfo(
             gameId,
             CachePolicy.Cache
         )

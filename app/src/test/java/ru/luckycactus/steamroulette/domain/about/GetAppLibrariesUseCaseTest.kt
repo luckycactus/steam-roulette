@@ -10,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.about.data_store.LocalAboutDataStore
+import ru.luckycactus.steamroulette.data.repositories.about.datasource.LocalAboutDataSource
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 
 @RunWith(AndroidJUnit4::class)
@@ -22,8 +22,8 @@ class GetAppLibrariesUseCaseTest {
     fun setUp() {
         val moshi = Moshi.Builder().build()
         val assetManager = ApplicationProvider.getApplicationContext<Application>().assets
-        val aboutDataStore = LocalAboutDataStore(moshi, assetManager)
-        val aboutRepository = AboutRepositoryImpl(aboutDataStore)
+        val aboutDataSource = LocalAboutDataSource(moshi, assetManager)
+        val aboutRepository = AboutRepositoryImpl(aboutDataSource)
         getAppLibrariesUseCase = GetAppLibrariesUseCase(aboutRepository)
     }
 

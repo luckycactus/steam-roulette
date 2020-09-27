@@ -20,4 +20,5 @@
     <dimen name="game_view_roulette_text_size">20sp</dimen>
     <dimen name="game_view_details_text_size">16sp</dimen>
     <dimen name="max_game_card_height">800dp</dimen>
+    <dimen name="spacing_games_library">12dp</dimen>
 </resources>

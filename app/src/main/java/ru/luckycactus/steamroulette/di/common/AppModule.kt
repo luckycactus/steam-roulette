@@ -13,21 +13,22 @@ import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
 import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.about.data_store.AboutDataStore
-import ru.luckycactus.steamroulette.data.repositories.about.data_store.LocalAboutDataStore
+import ru.luckycactus.steamroulette.data.repositories.about.datasource.AboutDataSource
+import ru.luckycactus.steamroulette.data.repositories.about.datasource.LocalAboutDataSource
 import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicFetcherManager
+import ru.luckycactus.steamroulette.data.repositories.games.GameDetailsRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.GamesRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games.datastore.*
+import ru.luckycactus.steamroulette.data.repositories.games.datasource.*
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.login.datastore.LoginDataStore
-import ru.luckycactus.steamroulette.data.repositories.login.datastore.RemoteLoginDataStore
+import ru.luckycactus.steamroulette.data.repositories.login.datasource.LoginDataSource
+import ru.luckycactus.steamroulette.data.repositories.login.datasource.RemoteLoginDataSource
 import ru.luckycactus.steamroulette.data.repositories.review.AppReviewRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.UserRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.user.UserSessionRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.user.datastore.LocalUserDataStore
-import ru.luckycactus.steamroulette.data.repositories.user.datastore.RemoteUserDataStore
-import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
+import ru.luckycactus.steamroulette.data.repositories.user.datasource.LocalUserDataSource
+import ru.luckycactus.steamroulette.data.repositories.user.datasource.RemoteUserDataSource
+import ru.luckycactus.steamroulette.data.repositories.user.datasource.UserDataSource
 import ru.luckycactus.steamroulette.data.repositories.user_settings.UserSettingsRepositoryImpl
 import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.about.AboutRepository
@@ -38,6 +39,7 @@ import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
+import ru.luckycactus.steamroulette.domain.games.GameDetailsRepository
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.review.AppReviewRepository
@@ -76,10 +78,13 @@ abstract class AppModule {
     abstract fun bindLoginRepository(loginRepository: LoginRepositoryImpl): LoginRepository
 
     @Binds
-    abstract fun bindRemoteUserDataStore(dataStore: RemoteUserDataStore): UserDataStore.Remote
+    abstract fun bindRemoteUserDataSource(dataSource: RemoteUserDataSource): UserDataSource.Remote
 
     @Binds
     abstract fun bindGamesRepository(gamesRepository: GamesRepositoryImpl): GamesRepository
+
+    @Binds
+    abstract fun bindGameDetailsRepository(gameDetailsRepositoryImpl: GameDetailsRepositoryImpl): GameDetailsRepository
 
     @Binds
     abstract fun bindAboutRepository(aboutRepositoryImpl: AboutRepositoryImpl): AboutRepository
@@ -91,22 +96,25 @@ abstract class AppModule {
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner
 
     @Binds
-    abstract fun bindRemoteGamesDataStore(remoteGamesDataStore: RemoteGamesDataStore): GamesDataStore.Remote
+    abstract fun bindRemoteGamesDataSource(remoteGamesDataSource: RemoteGamesDataSource): GamesDataSource.Remote
 
     @Binds
-    abstract fun bindLocalGamesDataStore(localGamesDataStore: LocalGamesDataStore): GamesDataStore.Local
+    abstract fun bindLocalGamesDataSource(localGamesDataSource: LocalGamesDataSource): GamesDataSource.Local
 
     @Binds
-    abstract fun bindLocalUserDataStore(localUserDataStore: LocalUserDataStore): UserDataStore.Local
+    abstract fun bindLocalUserDataSource(localUserDataSource: LocalUserDataSource): UserDataSource.Local
 
     @Binds
-    abstract fun bindLoginDataStore(loginDataStore: RemoteLoginDataStore): LoginDataStore
+    abstract fun bindLoginDataSource(loginDataSource: RemoteLoginDataSource): LoginDataSource
 
     @Binds
     abstract fun bindLanguageProvider(languageProviderImpl: LanguageProviderImpl): LanguageProvider
 
     @Binds
-    abstract fun bindAboutDataStore(localAboutDataStore: LocalAboutDataStore): AboutDataStore
+    abstract fun bindAboutDataSource(localAboutDataSource: LocalAboutDataSource): AboutDataSource
+
+    @Binds
+    abstract fun bindRemoteGameDetailsDataSource(remoteGameDetailsDataSource: RemoteGameDetailsDataSource): GameDetailsDataSource.Remote
 
     companion object {
 

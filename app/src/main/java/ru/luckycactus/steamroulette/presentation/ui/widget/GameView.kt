@@ -135,6 +135,8 @@ class GameView : MaterialCardView {
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {
+                    if (game != current)
+                        return
                     placeholder.visibility = View.INVISIBLE
                     imageReady = true
                 }

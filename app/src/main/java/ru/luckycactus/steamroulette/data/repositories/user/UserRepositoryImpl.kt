@@ -4,7 +4,7 @@ import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
-import ru.luckycactus.steamroulette.data.repositories.user.datastore.UserDataStore
+import ru.luckycactus.steamroulette.data.repositories.user.datasource.UserDataSource
 import ru.luckycactus.steamroulette.data.repositories.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -18,8 +18,8 @@ import kotlin.time.days
 @Reusable
 class UserRepositoryImpl @Inject constructor(
     private val userSession: UserSession,
-    private val localUserDataStore: UserDataStore.Local,
-    private val remoteUserDataStore: UserDataStore.Remote,
+    private val localUserDataSource: UserDataSource.Local,
+    private val remoteUserDataSource: UserDataSource.Remote,
     private val mapper: UserSummaryMapper
 ) : UserRepository {
 
@@ -35,7 +35,7 @@ class UserRepositoryImpl @Inject constructor(
     ): UserSummary? = createUserSummaryResource(steamId).get(cachePolicy)
 
     override fun observeUserSummary(): Flow<UserSummary> =
-        localUserDataStore.observeUserSummary(currentUser)
+        localUserDataSource.observeUserSummary(currentUser)
             .map { mapper.mapFrom(it) }
 
     override suspend fun fetchUserSummary(cachePolicy: CachePolicy) {
@@ -43,7 +43,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearUser(steamId: SteamId) {
-        localUserDataStore.removeUserSummary(steamId)
+        localUserDataSource.removeUserSummary(steamId)
         createUserSummaryResource(steamId).invalidateCache()
     }
 
@@ -59,16 +59,16 @@ class UserRepositoryImpl @Inject constructor(
             private var result: UserSummary? = null
 
             override suspend fun getFromNetwork(): UserSummaryEntity {
-                return remoteUserDataStore.getUserSummary(steamId)
+                return remoteUserDataSource.getUserSummary(steamId)
             }
 
             override suspend fun saveToCache(data: UserSummaryEntity) {
-                localUserDataStore.saveUserSummary(data)
+                localUserDataSource.saveUserSummary(data)
                 result = mapper.mapFrom(data)
             }
 
             override suspend fun getFromCache(): UserSummary {
-                return result ?: mapper.mapFrom(localUserDataStore.getUserSummary(steamId))
+                return result ?: mapper.mapFrom(localUserDataSource.getUserSummary(steamId))
             }
         }
     }

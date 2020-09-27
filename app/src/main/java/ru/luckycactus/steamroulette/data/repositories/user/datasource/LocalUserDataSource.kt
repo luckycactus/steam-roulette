@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.user.datastore
+package ru.luckycactus.steamroulette.data.repositories.user.datasource
 
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
@@ -10,9 +10,9 @@ import ru.luckycactus.steamroulette.domain.common.SteamId
 import javax.inject.Inject
 
 @Reusable
-class LocalUserDataStore @Inject constructor(
+class LocalUserDataSource @Inject constructor(
     private val db: AppDatabase
-) : UserDataStore.Local {
+) : UserDataSource.Local {
 
     override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity =
         db.userSummaryDao().get(steamId.as64())

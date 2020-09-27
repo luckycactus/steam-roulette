@@ -1,6 +1,5 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datastore
+package ru.luckycactus.steamroulette.data.repositories.games.datasource
 
-import androidx.collection.arrayMapOf
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import dagger.Reusable
@@ -10,29 +9,20 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.data.net.services.SteamApiService
-import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
-import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
-import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoResult
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPrivacyException
 import javax.inject.Inject
 import javax.inject.Named
 
 @Reusable
-class RemoteGamesDataStore @Inject constructor(
+class RemoteGamesDataSource @Inject constructor(
     private val steamApiService: SteamApiService,
-    private val steamStoreApiService: SteamStoreApiService,
-    @Named("api") private val moshi: Moshi,
-    private val languageProvider: LanguageProvider
-) : GamesDataStore.Remote {
+    @Named("api") private val moshi: Moshi
+) : GamesDataSource.Remote {
 
     private val ownedGameAdapter =
         moshi.adapter(OwnedGameEntity::class.java)
-    private val gameStoreInfoResultAdapter =
-        moshi.adapter(GameStoreInfoResult::class.java)
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity> {
@@ -79,35 +69,5 @@ class RemoteGamesDataStore @Inject constructor(
 
             if (noGames) throw GetOwnedGamesPrivacyException()
         }.flowOn(Dispatchers.IO)
-    }
-
-    //todo document
-    @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun getGameStoreInfo(appId: Int): GameStoreInfoEntity {
-        val response = wrapCommonNetworkExceptions {
-            steamStoreApiService.getGamesStoreInfo(
-                listOf(appId),
-                languageProvider.getLanguageForStoreApi()
-            )
-        }
-
-        val reader = JsonReader.of(response.source())
-        val results = arrayMapOf<String, GameStoreInfoResult>()
-        try {
-            reader.beginObject()
-            while (reader.hasNext()) {
-                val name = reader.nextName()
-                val obj = gameStoreInfoResultAdapter.fromJson(reader)!!
-                results[name] = obj
-            }
-        } finally {
-            reader.close()
-            response.close()
-        }
-
-        val result = results[appId.toString()] ?: throw GetGameStoreInfoException()
-        if (!result.success || result.gameStoreInfo == null)
-            throw GetGameStoreInfoException()
-        return result.gameStoreInfo
     }
 }

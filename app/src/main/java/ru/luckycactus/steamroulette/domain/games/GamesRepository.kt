@@ -1,7 +1,5 @@
 package ru.luckycactus.steamroulette.domain.games
 
-import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
 import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -37,20 +35,20 @@ interface GamesRepository {
 
     fun observeHiddenGamesCount(): Flow<Int>
 
-    //todo flow
-    fun getHiddenGamesPagingSource(): PagingSource<Int, GameHeader>
-
     suspend fun resetHiddenGames()
 
     fun observeGamesUpdates(): Flow<Long>
 
     suspend fun clearUser(steamId: SteamId)
 
-    @Throws(GetGameStoreInfoException::class)
-    suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo?
+    fun getOwnedGamesPagingSource(
+        shown: Boolean? = null,
+        hidden: Boolean? = null,
+        playtimeFilter: PlaytimeFilter? = null
+    ): PagingSource<Int, GameHeader>
 }
 
-class GetOwnedGamesPrivacyException: Exception()
+class GetOwnedGamesPrivacyException : Exception()
 
-class GetGameStoreInfoException: Exception()
+class GetGameStoreInfoException : Exception()
 

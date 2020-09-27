@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.about.data_store
+package ru.luckycactus.steamroulette.data.repositories.about.datasource
 
 import android.content.res.AssetManager
 import com.squareup.moshi.Moshi
@@ -8,10 +8,10 @@ import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import javax.inject.Inject
 
-class LocalAboutDataStore @Inject constructor(
+class LocalAboutDataSource @Inject constructor(
     private val moshi: Moshi,
     private val assets: AssetManager
-) : AboutDataStore {
+) : AboutDataSource {
     override suspend fun getAppLibraries(): List<AppLibrary> {
         val type = Types.newParameterizedType(List::class.java, AppLibrary::class.java)
         return withContext(Dispatchers.IO) {

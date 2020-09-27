@@ -1,18 +1,15 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datastore
+package ru.luckycactus.steamroulette.data.repositories.games.datasource
 
-import androidx.paging.DataSource
 import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
 import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
-interface GamesDataStore {
+interface GamesDataSource {
 
-    interface Local : GamesDataStore {
+    interface Local : GamesDataSource {
         suspend fun updateOwnedGames(steamId: SteamId, gamesFlow: Flow<OwnedGameEntity>)
 
         suspend fun getOwnedGames(steamId: SteamId): List<OwnedGameEntity>
@@ -46,13 +43,15 @@ interface GamesDataStore {
 
         suspend fun clearOwnedGames(steamId: SteamId)
 
-        fun getHiddenGamesPagingSource(steamId: SteamId): PagingSource<Int, GameHeader>
+        fun getOwnedGamesPagingSource(
+            steamId: SteamId,
+            shown: Boolean?,
+            hidden: Boolean?,
+            filter: PlaytimeFilter?
+        ): PagingSource<Int, GameHeader>
     }
 
-    interface Remote : GamesDataStore {
+    interface Remote : GamesDataSource {
         suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity>
-
-        @Throws(GetGameStoreInfoException::class)
-        suspend fun getGameStoreInfo(appId: Int): GameStoreInfoEntity
     }
 }

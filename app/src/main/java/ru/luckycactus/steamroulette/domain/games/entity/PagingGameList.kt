@@ -10,6 +10,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
+//todo rename
 interface PagingGameList {
     val list: List<GameHeader>
     val gameIds: List<Int>

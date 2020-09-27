@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datastore
+package ru.luckycactus.steamroulette.data.repositories.games.datasource
 
 import androidx.room.withTransaction
 import io.mockk.*
@@ -14,15 +14,15 @@ import ru.luckycactus.steamroulette.test.util.TestData
 import ru.luckycactus.steamroulette.test.util.TestData.gabenSteamId
 import ru.luckycactus.steamroulette.test.util.fakes.NaiveGamesVerifier
 
-class LocalGamesDataStoreInsertBufferTest {
+class LocalGamesDataSourceInsertBufferTest {
 
     private lateinit var dbMock: AppDatabase
-    private lateinit var localGamesDataStore: LocalGamesDataStore
+    private lateinit var localGamesDataSource: LocalGamesDataSource
 
     @Before
     fun setup() {
         dbMock = mockk(relaxed = true)
-        localGamesDataStore = LocalGamesDataStore(dbMock, NaiveGamesVerifier.Factory())
+        localGamesDataSource = LocalGamesDataSource(dbMock, NaiveGamesVerifier.Factory())
 
         mockkStatic(
             "androidx.room.RoomDatabaseKt"
@@ -61,7 +61,7 @@ class LocalGamesDataStoreInsertBufferTest {
             lambda<suspend () -> Any>().captured.invoke()
         }
 
-        localGamesDataStore.updateOwnedGames(gabenSteamId, manyGamesFlow)
+        localGamesDataSource.updateOwnedGames(gabenSteamId, manyGamesFlow)
 
         assertEquals(totalGames, gamesInserted)
         coVerify(atLeast = 2, atMost = 10) {

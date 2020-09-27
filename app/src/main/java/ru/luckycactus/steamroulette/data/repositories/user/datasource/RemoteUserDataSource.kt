@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.user.datastore
+package ru.luckycactus.steamroulette.data.repositories.user.datasource
 
 import dagger.Reusable
 import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
@@ -9,9 +9,9 @@ import ru.luckycactus.steamroulette.domain.user.SteamIdNotFoundException
 import javax.inject.Inject
 
 @Reusable
-class RemoteUserDataStore @Inject constructor(
+class RemoteUserDataSource @Inject constructor(
     private val steamApiService: SteamApiService
-) : UserDataStore.Remote {
+) : UserDataSource.Remote {
 
     @Throws(SteamIdNotFoundException::class)
     override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity {

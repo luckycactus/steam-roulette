@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datastore
+package ru.luckycactus.steamroulette.data.repositories.games.datasource
 
 import org.intellij.lang.annotations.Language
 import ru.luckycactus.steamroulette.BuildConfig
