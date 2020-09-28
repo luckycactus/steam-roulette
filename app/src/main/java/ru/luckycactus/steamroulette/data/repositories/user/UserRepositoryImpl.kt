@@ -32,42 +32,42 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserSummary(
         steamId: SteamId,
         cachePolicy: CachePolicy
-    ): UserSummary? = createUserSummaryResource(steamId).get(cachePolicy)
+    ): UserSummary? = createUserSummaryNBR(steamId).get(cachePolicy)
 
     override fun observeUserSummary(): Flow<UserSummary> =
         localUserDataSource.observeUserSummary(currentUser)
             .map { mapper.mapFrom(it) }
 
     override suspend fun fetchUserSummary(cachePolicy: CachePolicy) {
-        createUserSummaryResource(currentUser).updateIfNeed(cachePolicy)
+        createUserSummaryNBR(currentUser).updateIfNeed(cachePolicy)
     }
 
     override suspend fun clearUser(steamId: SteamId) {
         localUserDataSource.removeUserSummary(steamId)
-        createUserSummaryResource(steamId).invalidateCache()
+        createUserSummaryNBR(steamId).invalidateCache()
     }
 
-    private fun createUserSummaryResource(
+    private fun createUserSummaryNBR(
         steamId: SteamId
-    ): NetworkBoundResource<UserSummaryEntity, UserSummary> {
+    ): NetworkBoundResource.FullCache<UserSummaryEntity, UserSummary> {
         val cacheKey = "user_summary_${steamId.as64()}"
-        return object : NetworkBoundResource<UserSummaryEntity, UserSummary>(
+        return object : NetworkBoundResource.FullCache<UserSummaryEntity, UserSummary>(
             cacheKey,
             cacheKey,
             SUMMARY_CACHE_WINDOW
         ) {
             private var result: UserSummary? = null
 
-            override suspend fun getFromNetwork(): UserSummaryEntity {
+            override suspend fun fetch(): UserSummaryEntity {
                 return remoteUserDataSource.getUserSummary(steamId)
             }
 
-            override suspend fun saveToCache(data: UserSummaryEntity) {
+            override suspend fun saveToStorage(data: UserSummaryEntity) {
                 localUserDataSource.saveUserSummary(data)
                 result = mapper.mapFrom(data)
             }
 
-            override suspend fun getFromCache(): UserSummary {
+            override suspend fun getFromStorage(): UserSummary {
                 return result ?: mapper.mapFrom(localUserDataSource.getUserSummary(steamId))
             }
         }

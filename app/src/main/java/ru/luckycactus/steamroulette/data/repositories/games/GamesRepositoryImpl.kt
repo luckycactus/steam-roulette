@@ -26,7 +26,7 @@ class GamesRepositoryImpl @Inject constructor(
         get() = userSession.requireCurrentUser()
 
     override suspend fun fetchOwnedGames(cachePolicy: CachePolicy) {
-        createOwnedGamesResource(currentUser).updateIfNeed(cachePolicy)
+        createOwnedGamesNBR(currentUser).updateIfNeed(cachePolicy)
     }
 
     override fun observeGamesCount(): Flow<Int> =
@@ -40,11 +40,11 @@ class GamesRepositoryImpl @Inject constructor(
     }
 
     override fun observeGamesUpdates(): Flow<Long> =
-        createOwnedGamesResource(currentUser).observeCacheUpdates()
+        createOwnedGamesNBR(currentUser).observeCacheUpdates()
 
     override suspend fun clearUser(steamId: SteamId) {
         localGamesDataSource.clearOwnedGames(steamId)
-        createOwnedGamesResource(steamId).invalidateCache()
+        createOwnedGamesNBR(steamId).invalidateCache()
     }
 
     override suspend fun isUserHasGames(): Boolean =
@@ -84,22 +84,22 @@ class GamesRepositoryImpl @Inject constructor(
         localGamesDataSource.setAllOwnedGamesShown(currentUser, shown)
     }
 
-    private fun createOwnedGamesResource(
+    private fun createOwnedGamesNBR(
         steamId: SteamId
-    ): NetworkBoundResource<Flow<OwnedGameEntity>, Unit> {
+    ): NetworkBoundResource.FullCache<Flow<OwnedGameEntity>, Unit> {
         val cacheKey = "owned_games_${steamId.as64()}"
-        return object : NetworkBoundResource<Flow<OwnedGameEntity>, Unit>(
+        return object : NetworkBoundResource.FullCache<Flow<OwnedGameEntity>, Unit>(
             cacheKey,
             cacheKey,
             OWNED_GAMES_CACHE_WINDOW
         ) {
-            override suspend fun getFromNetwork(): Flow<OwnedGameEntity> =
+            override suspend fun fetch(): Flow<OwnedGameEntity> =
                 remoteGamesDataSource.getOwnedGames(steamId)
 
-            override suspend fun saveToCache(data: Flow<OwnedGameEntity>) =
+            override suspend fun saveToStorage(data: Flow<OwnedGameEntity>) =
                 localGamesDataSource.updateOwnedGames(steamId, data)
 
-            override suspend fun getFromCache() {
+            override suspend fun getFromStorage() {
                 throw UnsupportedOperationException()
             }
         }

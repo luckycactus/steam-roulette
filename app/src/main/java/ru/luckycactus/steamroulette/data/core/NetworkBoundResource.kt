@@ -10,94 +10,115 @@ import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.presentation.common.App
 import kotlin.time.Duration
 
-abstract class NetworkBoundResource<RequestType, ResultType>(
-    private val key: String,
-    private val memoryKey: String?,
-    private val window: Duration
-) {
-    abstract suspend fun getFromNetwork(): RequestType
-    abstract suspend fun saveToCache(data: RequestType)
-    abstract suspend fun getFromCache(): ResultType
+private val memoryCache = LruCache<String, Any>(50)
+
+abstract class NetworkBoundResource<RequestType, ResultType> {
+    abstract suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean
+    abstract suspend fun fetch(): RequestType
+    protected abstract suspend fun saveResult(data: RequestType)
+    protected abstract suspend fun loadResult(): ResultType? //todo nbr
+    abstract fun observeCacheUpdates(): Flow<Long>
 
     suspend fun updateIfNeed(cachePolicy: CachePolicy) {
-        if (shouldUpdate(cachePolicy)) {
-            val data = wrapCommonNetworkExceptions { getFromNetwork() }
-            saveToCache(data)
-            cacheHelper.setCachedNow(key)
-            memoryCache.remove(memoryKey)
+        if (shouldFetch(cachePolicy)) {
+            val data = wrapCommonNetworkExceptions { fetch() }
+            saveResult(data)
         }
     }
 
     /**
      * returns null if cachePolicy == CachePolicy.Cache and there is no data
      */
+    //todo nbr
     suspend fun get(cachePolicy: CachePolicy): ResultType? {
         updateIfNeed(cachePolicy)
-        return getCachedData()
+        return loadResult()
     }
 
-    fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
+    abstract fun invalidateCache()
 
-    fun invalidateCache() {
-        cacheHelper.remove(key)
-        memoryCache.remove(memoryKey)
-    }
+    abstract class FullCache<RequestType, ResultType>(
+        private val key: String,
+        private val memoryKey: String?,
+        private val window: Duration
+    ) : NetworkBoundResource<RequestType, ResultType>() {
 
-    private suspend fun getCachedData(): ResultType? {
-        var data: ResultType? = null
+        protected abstract suspend fun saveToStorage(data: RequestType)
+        protected abstract suspend fun getFromStorage(): ResultType?
 
-        if (memoryKey != null) {
-            data = memoryCache[memoryKey] as ResultType?
+        final override suspend fun saveResult(data: RequestType) {
+            saveToStorage(data)
+            cacheHelper.setCachedNow(key)
+            memoryCache.remove(memoryKey)
         }
-        if (data == null) {
-            data = getFromCache()?.also {
-                if (memoryKey != null) {
-                    memoryCache.put(memoryKey, it)
-                }
+
+        final override suspend fun loadResult(): ResultType? {
+            var data: ResultType? = null
+
+            if (memoryKey != null) {
+                data = memoryCache[memoryKey] as ResultType?
             }
-        }
-        return data
-    }
-
-    private fun shouldUpdate(cachePolicy: CachePolicy): Boolean {
-        return cacheHelper.shouldUpdate(cachePolicy, key, window)
-    }
-
-    companion object {
-        @EntryPoint
-        @InstallIn(ApplicationComponent::class)
-        interface NetworkBoundResourceCompanionEntryPoint {
-            fun cacheHelper(): CacheHelper
-        }
-
-        private val memoryCache = LruCache<String, Any>(50)
-
-        private val cacheHelper: CacheHelper
-
-        init {
-            val entryPoint = EntryPointAccessors.fromApplication(
-                App.getInstance(),
-                NetworkBoundResourceCompanionEntryPoint::class.java
-            )
-            cacheHelper = entryPoint.cacheHelper()
-        }
-
-        suspend fun <RequestType> withMemoryCache(
-            memoryKey: String,
-            cachePolicy: CachePolicy,
-            getFromNetwork: suspend () -> RequestType
-        ): RequestType? {
-            var data: RequestType? = null
-            if (cachePolicy == CachePolicy.Remote)
-                memoryCache.remove(memoryKey)
-            else data = memoryCache[memoryKey] as RequestType?
-            if (data == null && cachePolicy != CachePolicy.Cache) {
-                data = wrapCommonNetworkExceptions { getFromNetwork() }
-                data?.let {
-                    memoryCache.put(memoryKey, data)
+            if (data == null) {
+                data = getFromStorage()?.also {
+                    if (memoryKey != null) {
+                        memoryCache.put(memoryKey, it)
+                    }
                 }
             }
             return data
+        }
+
+        final override fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
+
+        final override fun invalidateCache() {
+            cacheHelper.remove(key)
+            memoryCache.remove(memoryKey)
+        }
+
+        final override suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean {
+            return cacheHelper.shouldUpdate(cachePolicy, key, window)
+        }
+
+        companion object {
+            @EntryPoint
+            @InstallIn(ApplicationComponent::class)
+            interface FullCacheNBRCompanionEntryPoint {
+                fun cacheHelper(): CacheHelper
+            }
+
+            private val cacheHelper: CacheHelper
+
+            init {
+                val entryPoint = EntryPointAccessors.fromApplication(
+                    App.getInstance(),
+                    FullCacheNBRCompanionEntryPoint::class.java
+                )
+                cacheHelper = entryPoint.cacheHelper()
+            }
+        }
+    }
+
+    abstract class MemoryCache<RequestType, ResultType>(
+        private val memoryKey: String,
+    ) : NetworkBoundResource<RequestType, ResultType>() {
+
+        override suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean =
+            cachePolicy == CachePolicy.Remote || (cachePolicy == CachePolicy.CacheOrRemote && memoryCache[memoryKey] == null)
+
+        override suspend fun saveResult(data: RequestType) {
+            memoryCache.put(memoryKey, data)
+        }
+
+        override suspend fun loadResult(): ResultType? {
+            return memoryCache[memoryKey] as ResultType?
+        }
+
+        override fun observeCacheUpdates(): Flow<Long> {
+            throw UnsupportedOperationException()
+        }
+
+        override fun invalidateCache() {
+            memoryCache.remove(memoryKey)
         }
     }
 }

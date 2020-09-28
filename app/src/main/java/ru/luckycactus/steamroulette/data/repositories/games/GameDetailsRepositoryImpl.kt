@@ -16,8 +16,13 @@ class GameDetailsRepositoryImpl @Inject constructor(
 ) : GameDetailsRepository {
 
     override suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo? {
-        return NetworkBoundResource.withMemoryCache("game_store_info_$gameId", cachePolicy) {
-            gameStoreInfoEntityMapper.mapFrom(remoteGameDetailsDataSource.getGameStoreInfo(gameId))
-        }
+        return object : NetworkBoundResource.MemoryCache<GameStoreInfo, GameStoreInfo>(
+            "game_store_info_$gameId"
+        ) {
+            override suspend fun fetch(): GameStoreInfo =
+                gameStoreInfoEntityMapper.mapFrom(
+                    remoteGameDetailsDataSource.getGameStoreInfo(gameId)
+                )
+        }.get(cachePolicy)
     }
 }
