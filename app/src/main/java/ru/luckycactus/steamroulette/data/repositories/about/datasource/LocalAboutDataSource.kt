@@ -12,6 +12,7 @@ class LocalAboutDataSource @Inject constructor(
     private val moshi: Moshi,
     private val assets: AssetManager
 ) : AboutDataSource {
+    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun getAppLibraries(): List<AppLibrary> {
         val type = Types.newParameterizedType(List::class.java, AppLibrary::class.java)
         return withContext(Dispatchers.IO) {

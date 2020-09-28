@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datasource
+package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
-import ru.luckycactus.steamroulette.data.net.services.SteamApiService
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.net.api.SteamApiService
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPrivacyException
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class RemoteGamesDataSource @Inject constructor(
         moshi.adapter(OwnedGameEntity::class.java)
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun getOwnedGames(steamId: SteamId): Flow<OwnedGameEntity> {
+    override suspend fun getAll(steamId: SteamId): Flow<OwnedGameEntity> {
         val response = wrapCommonNetworkExceptions {
             steamApiService.getOwnedGames(
                 steamId.as64(),

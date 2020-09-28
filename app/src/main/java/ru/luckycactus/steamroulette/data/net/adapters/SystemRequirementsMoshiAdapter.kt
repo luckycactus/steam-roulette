@@ -4,7 +4,7 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.ToJson
-import ru.luckycactus.steamroulette.data.repositories.games.models.SystemRequirementsEntity
+import ru.luckycactus.steamroulette.data.repositories.games.details.models.SystemRequirementsEntity
 import javax.inject.Inject
 
 class SystemRequirementsMoshiAdapter @Inject constructor() {

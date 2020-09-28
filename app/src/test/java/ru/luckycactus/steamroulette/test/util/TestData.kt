@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.test.util
 
 import okhttp3.MediaType.Companion.toMediaType
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
 

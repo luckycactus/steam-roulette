@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.domain.games
 import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
@@ -12,7 +12,7 @@ import javax.inject.Inject
 @Reusable
 class GetOwnedGamesPagingListUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
-) : AbstractSuspendUseCase<GetOwnedGamesPagingListUseCase.Params, GetOwnedGamesPagingListUseCase.Result>() {
+) : SuspendUseCase<GetOwnedGamesPagingListUseCase.Params, GetOwnedGamesPagingListUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result {
         try {

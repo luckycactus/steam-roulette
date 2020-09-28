@@ -19,7 +19,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
     protected abstract suspend fun loadResult(): ResultType? //todo nbr
     abstract fun observeCacheUpdates(): Flow<Long>
 
-    suspend fun updateIfNeed(cachePolicy: CachePolicy) {
+    suspend fun fetchIfNeed(cachePolicy: CachePolicy) {
         if (shouldFetch(cachePolicy)) {
             val data = wrapCommonNetworkExceptions { fetch() }
             saveResult(data)
@@ -27,12 +27,17 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
     }
 
     /**
-     * returns null if cachePolicy == CachePolicy.Cache and there is no data
+     * throws exceptions if they were thrown during fetching or saving result
+     * returns null if fetching weren't needed or finished without exceptions and there is still no cached data
+     * (for example it is normal if cachePolicy == CachePolicy.Cache and there is no data)
      */
-    //todo nbr
     suspend fun get(cachePolicy: CachePolicy): ResultType? {
-        updateIfNeed(cachePolicy)
+        fetchIfNeed(cachePolicy)
         return loadResult()
+    }
+
+    suspend fun getOrThrow(cachePolicy: CachePolicy): ResultType {
+        return get(cachePolicy)!!
     }
 
     abstract fun invalidateCache()

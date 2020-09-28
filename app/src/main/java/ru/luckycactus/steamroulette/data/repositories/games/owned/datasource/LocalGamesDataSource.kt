@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datasource
+package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 
 import androidx.paging.PagingSource
 import androidx.room.withTransaction
@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
-import ru.luckycactus.steamroulette.data.repositories.games.mapper.OwnedGameRoomEntityMapper
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.mapper.OwnedGameRoomEntityMapper
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
@@ -22,21 +22,21 @@ class LocalGamesDataSource @Inject constructor(
     private val gamesVerifierFactory: GamesVerifier.Factory
 ) : GamesDataSource.Local {
 
-    override fun observeOwnedGamesCount(steamId: SteamId): Flow<Int> =
+    override fun observeCount(steamId: SteamId): Flow<Int> =
         db.ownedGamesDao().observeCount(steamId.as64())
 
-    override fun observeHiddenOwnedGamesCount(steamId: SteamId): Flow<Int> =
+    override fun observeHiddenCount(steamId: SteamId): Flow<Int> =
         db.ownedGamesDao().observeHiddenCount(steamId.as64())
 
-    override suspend fun updateOwnedGames(
+    override suspend fun update(
         steamId: SteamId,
         gamesFlow: Flow<OwnedGameEntity>
     ) {
         val steam64 = steamId.as64()
         db.withTransaction {
-            val appData = db.ownedGamesDao().getAllAppData(steam64).associateBy { it.appId }
-            val mapper = OwnedGameRoomEntityMapper(steam64, appData)
-            val gamesVerifier = gamesVerifierFactory.create(appData.keys)
+            val metaData = db.ownedGamesDao().getAllMetaData(steam64).associateBy { it.appId }
+            val mapper = OwnedGameRoomEntityMapper(steam64, metaData)
+            val gamesVerifier = gamesVerifierFactory.create(metaData.keys)
 
             db.ownedGamesDao().clear(steam64)
 
@@ -51,11 +51,11 @@ class LocalGamesDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getOwnedGames(steamId: SteamId): List<OwnedGameEntity> {
+    override suspend fun getAll(steamId: SteamId): List<OwnedGameEntity> {
         return db.ownedGamesDao().getAll(steamId.as64())
     }
 
-    override suspend fun getOwnedGamesIds(
+    override suspend fun getIds(
         steamId: SteamId,
         shown: Boolean?,
         hidden: Boolean?,
@@ -71,42 +71,42 @@ class LocalGamesDataSource @Inject constructor(
         return db.ownedGamesDao().getIds(steamId.as64(), shown, hidden, maxHours)
     }
 
-    override suspend fun resetHiddenOwnedGames(steamId: SteamId) {
-        db.ownedGamesDao().resetHidden(steamId.as64())
+    override suspend fun resetAllHidden(steamId: SteamId) {
+        db.ownedGamesDao().resetAllHidden(steamId.as64())
     }
 
-    override suspend fun getOwnedGameHeader(steamId: SteamId, gameId: Int): GameHeader =
+    override suspend fun getHeader(steamId: SteamId, gameId: Int): GameHeader =
         db.ownedGamesDao().getHeader(steamId.as64(), gameId)
 
-    override suspend fun getOwnedGameHeaders(
+    override suspend fun getHeaders(
         steamId: SteamId,
         gameIds: List<Int>
     ): List<GameHeader> = db.ownedGamesDao().getHeaders(steamId.as64(), gameIds)
 
-    override suspend fun setOwnedGamesHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean) {
+    override suspend fun setHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean) {
         db.ownedGamesDao().setHidden(steamId.as64(), gameIds, hide)
     }
 
-    override suspend fun setAllOwnedGamesHidden(steamId: SteamId, hide: Boolean) {
+    override suspend fun setAllHidden(steamId: SteamId, hide: Boolean) {
         db.ownedGamesDao().setAllHidden(steamId.as64(), hide)
     }
 
-    override suspend fun setOwnedGamesShown(steamId: SteamId, gameIds: List<Int>, shown: Boolean) {
+    override suspend fun setShown(steamId: SteamId, gameIds: List<Int>, shown: Boolean) {
         db.ownedGamesDao().setShown(steamId.as64(), gameIds, shown)
     }
 
-    override suspend fun setAllOwnedGamesShown(steamId: SteamId, shown: Boolean) {
+    override suspend fun setAllShown(steamId: SteamId, shown: Boolean) {
         db.ownedGamesDao().setAllShown(steamId.as64(), shown)
     }
 
     override suspend fun isUserHasGames(steamId: SteamId): Boolean =
         db.ownedGamesDao().isUserHasGames(steamId.as64())
 
-    override suspend fun clearOwnedGames(steamId: SteamId) {
+    override suspend fun clear(steamId: SteamId) {
         db.ownedGamesDao().clear(steamId.as64())
     }
 
-    override fun getOwnedGamesPagingSource(
+    override fun getPagingSource(
         steamId: SteamId,
         shown: Boolean?,
         hidden: Boolean?,
@@ -119,7 +119,7 @@ class LocalGamesDataSource @Inject constructor(
                 is PlaytimeFilter.Limited -> filter.maxHours
             }
         }
-        return db.ownedGamesDao().getGamesPagingSource(steamId.as64(), shown, hidden, maxHours)
+        return db.ownedGamesDao().getPagingSource(steamId.as64(), shown, hidden, maxHours)
     }
 
     companion object {

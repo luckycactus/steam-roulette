@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datasource
+package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 
 import androidx.room.withTransaction
 import io.mockk.*
@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.test.util.TestData
 import ru.luckycactus.steamroulette.test.util.TestData.gabenSteamId
 import ru.luckycactus.steamroulette.test.util.fakes.NaiveGamesVerifier
@@ -61,7 +61,7 @@ class LocalGamesDataSourceInsertBufferTest {
             lambda<suspend () -> Any>().captured.invoke()
         }
 
-        localGamesDataSource.updateOwnedGames(gabenSteamId, manyGamesFlow)
+        localGamesDataSource.update(gabenSteamId, manyGamesFlow)
 
         assertEquals(totalGames, gamesInserted)
         coVerify(atLeast = 2, atMost = 10) {

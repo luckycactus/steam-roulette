@@ -1,31 +1,31 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datasource
+package ru.luckycactus.steamroulette.data.repositories.games.details.datasource
 
 import androidx.collection.arrayMapOf
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import dagger.Reusable
 import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
-import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
-import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
-import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoResult
+import ru.luckycactus.steamroulette.data.net.api.SteamStoreApiService
+import ru.luckycactus.steamroulette.data.repositories.games.details.models.GameStoreInfoEntity
+import ru.luckycactus.steamroulette.data.repositories.games.details.models.GameStoreInfoResult
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import javax.inject.Inject
 import javax.inject.Named
 
 @Reusable
-class RemoteGameDetailsDataSource @Inject constructor(
+class RemoteGameStoreDataSource @Inject constructor(
     private val steamStoreApiService: SteamStoreApiService,
     private val languageProvider: LanguageProvider,
     @Named("api") private val moshi: Moshi
-) : GameDetailsDataSource.Remote {
+) : GameStoreDataSource.Remote {
 
     private val gameStoreInfoResultAdapter =
         moshi.adapter(GameStoreInfoResult::class.java)
 
     //todo document
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun getGameStoreInfo(appId: Int): GameStoreInfoEntity {
+    override suspend fun get(appId: Int): GameStoreInfoEntity {
         val response = wrapCommonNetworkExceptions {
             steamStoreApiService.getGamesStoreInfo(
                 listOf(appId),

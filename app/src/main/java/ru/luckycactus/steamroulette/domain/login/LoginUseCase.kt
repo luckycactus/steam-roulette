@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.domain.login
 import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
@@ -14,7 +14,7 @@ class LoginUseCase @Inject constructor(
     private val getUserSummaryUseCase: GetUserSummaryUseCase,
     private val userSessionRepository: UserSessionRepository,
     private val loginRepository: LoginRepository
-) : AbstractSuspendUseCase<String, LoginUseCase.Result>() {
+) : SuspendUseCase<String, LoginUseCase.Result>() {
 
     override suspend fun execute(params: String): Result {
         try {

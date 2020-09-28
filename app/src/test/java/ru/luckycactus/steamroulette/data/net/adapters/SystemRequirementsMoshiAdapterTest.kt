@@ -1,14 +1,11 @@
 package ru.luckycactus.steamroulette.data.net.adapters
 
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
-import ru.luckycactus.steamroulette.data.repositories.games.models.SystemRequirementsEntity
-import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
+import ru.luckycactus.steamroulette.data.repositories.games.details.models.SystemRequirementsEntity
 
 
 class SystemRequirementsMoshiAdapterTest {

@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
 
 @Database(

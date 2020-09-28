@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import okhttp3.Interceptor
-import ru.luckycactus.steamroulette.di.NetworkInterceptorSet
+import ru.luckycactus.steamroulette.di.NetworkInterceptors
 
 @Module
 @InstallIn(ApplicationComponent::class)
@@ -16,7 +16,7 @@ abstract class DebugModule {
     companion object {
         @Provides
         @IntoSet
-        @NetworkInterceptorSet
+        @NetworkInterceptors
         fun provideStethoInterceptor(): Interceptor = StethoInterceptor()
     }
 }

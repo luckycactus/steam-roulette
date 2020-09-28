@@ -1,8 +1,8 @@
-package ru.luckycactus.steamroulette.data.repositories.games.mapper
+package ru.luckycactus.steamroulette.data.repositories.games.details.mapper
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.data.repositories.games.models.GameStoreInfoEntity
-import ru.luckycactus.steamroulette.data.repositories.games.models.SystemRequirementsEntity
+import ru.luckycactus.steamroulette.data.repositories.games.details.models.GameStoreInfoEntity
+import ru.luckycactus.steamroulette.data.repositories.games.details.models.SystemRequirementsEntity
 import ru.luckycactus.steamroulette.domain.core.Mapper
 import ru.luckycactus.steamroulette.domain.games.entity.*
 import javax.inject.Inject

@@ -4,7 +4,7 @@ import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
-import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import javax.inject.Inject
@@ -13,16 +13,16 @@ import javax.inject.Inject
 class GetUserSummaryUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val userSession: UserSession
-) : AbstractSuspendUseCase<GetUserSummaryUseCase.Params, GetUserSummaryUseCase.Result>() {
+) : SuspendUseCase<GetUserSummaryUseCase.Params, GetUserSummaryUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result =
         try {
             val user = params.steamId ?: userSession.requireCurrentUser()
             Result.Success(
-                userRepository.getUserSummary(
+                userRepository.getUserSummaryOrThrow(
                     user,
                     if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
-                )!!
+                )
             )
         } catch (e: CancellationException) {
             throw e

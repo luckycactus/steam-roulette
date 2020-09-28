@@ -4,7 +4,7 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.ToJson
 import org.json.JSONException
-import ru.luckycactus.steamroulette.data.repositories.games.models.RequiredAgeEntity
+import ru.luckycactus.steamroulette.data.repositories.games.details.models.RequiredAgeEntity
 import javax.inject.Inject
 
 /**

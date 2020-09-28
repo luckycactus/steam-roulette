@@ -4,7 +4,7 @@ import dagger.Reusable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
-import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
@@ -18,7 +18,7 @@ class LogoutUserUseCase @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val settingsRepository: UserSettingsRepository,
     private val imageCacheCleaner: ImageCacheCleaner
-) : AbstractSuspendUseCase<Unit, Unit>() {
+) : SuspendUseCase<Unit, Unit>() {
 
     override suspend fun execute(params: Unit) {
         userSessionRepository.currentUser?.let {

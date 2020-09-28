@@ -1,18 +1,11 @@
 package ru.luckycactus.steamroulette.domain.core.usecase
 
-import kotlinx.coroutines.CancellationException
+abstract class SuspendUseCase<in Params, Result> {
 
-abstract class SuspendUseCase<P, R> : AbstractSuspendUseCase<P, Result<R>>() {
+    protected abstract suspend fun execute(params: Params): Result
 
-    override suspend fun execute(params: P): Result<R> {
-        return try {
-            getResult(params).let { Result.Success(it) }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    abstract suspend fun getResult(params: P): R
+    suspend operator fun invoke(params: Params) = execute(params)
 }
+
+suspend operator fun <Result> SuspendUseCase<Unit, Result>.invoke(): Result =
+    invoke(Unit)

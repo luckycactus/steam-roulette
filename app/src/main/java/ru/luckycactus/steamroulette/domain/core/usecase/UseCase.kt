@@ -1,14 +1,11 @@
 package ru.luckycactus.steamroulette.domain.core.usecase
 
-abstract class UseCase<P, R> : AbstractUseCase<P, Result<R>>() {
+abstract class UseCase<in Params, Result> {
 
-    override fun execute(params: P): Result<R> {
-        return try {
-            getResult(params).let { Result.Success(it) }
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
+    internal abstract fun execute(params: Params): Result
 
-    abstract fun getResult(params: P): R
+    open operator fun invoke(params: Params) = execute(params)
 }
+
+operator fun <Result> UseCase<Unit, Result>.invoke(): Result =
+    invoke(Unit)

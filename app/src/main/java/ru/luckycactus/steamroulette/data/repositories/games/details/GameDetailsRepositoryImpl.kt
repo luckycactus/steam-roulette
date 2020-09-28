@@ -1,9 +1,9 @@
-package ru.luckycactus.steamroulette.data.repositories.games
+package ru.luckycactus.steamroulette.data.repositories.games.details
 
 import dagger.Reusable
 import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
-import ru.luckycactus.steamroulette.data.repositories.games.datasource.GameDetailsDataSource
-import ru.luckycactus.steamroulette.data.repositories.games.mapper.GameStoreInfoEntityMapper
+import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.GameStoreDataSource
+import ru.luckycactus.steamroulette.data.repositories.games.details.mapper.GameStoreInfoEntityMapper
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GameDetailsRepository
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @Reusable
 class GameDetailsRepositoryImpl @Inject constructor(
-    private val remoteGameDetailsDataSource: GameDetailsDataSource.Remote,
+    private val remoteGameStoreDataSource: GameStoreDataSource.Remote,
     private val gameStoreInfoEntityMapper: GameStoreInfoEntityMapper
 ) : GameDetailsRepository {
 
@@ -21,7 +21,7 @@ class GameDetailsRepositoryImpl @Inject constructor(
         ) {
             override suspend fun fetch(): GameStoreInfo =
                 gameStoreInfoEntityMapper.mapFrom(
-                    remoteGameDetailsDataSource.getGameStoreInfo(gameId)
+                    remoteGameStoreDataSource.get(gameId)
                 )
         }.get(cachePolicy)
     }

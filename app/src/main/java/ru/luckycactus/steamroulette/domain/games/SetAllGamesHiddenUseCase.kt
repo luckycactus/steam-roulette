@@ -1,13 +1,13 @@
 package ru.luckycactus.steamroulette.domain.games
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import javax.inject.Inject
 
 @Reusable
 class SetAllGamesHiddenUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
-) : AbstractSuspendUseCase<SetAllGamesHiddenUseCase.Params, Unit>() {
+) : SuspendUseCase<SetAllGamesHiddenUseCase.Params, Unit>() {
     override suspend fun execute(params: Params) {
         gamesRepository.setAllLocalOwnedGamesHidden(params.hide)
     }

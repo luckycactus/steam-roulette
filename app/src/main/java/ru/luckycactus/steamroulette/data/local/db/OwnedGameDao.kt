@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.data.local.db
 
-import androidx.paging.DataSource
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
@@ -9,9 +8,9 @@ import androidx.room.Transaction
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameAppData
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameRoomEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameMetaData
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
 @Dao
@@ -46,7 +45,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("SELECT * FROM owned_game WHERE userSteam64 = :steam64")
     abstract suspend fun getAll(steam64: Long): List<OwnedGameEntity>
 
-    fun getGamesPagingSource(
+    fun getPagingSource(
         steam64: Long,
         shown: Boolean? = null,
         hidden: Boolean? = null,
@@ -92,7 +91,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         FROM owned_game 
         WHERE userSteam64 = :steam64"""
     )
-    abstract suspend fun getAllAppData(steam64: Long): List<OwnedGameAppData>
+    abstract suspend fun getAllMetaData(steam64: Long): List<OwnedGameMetaData>
 
     @Query("DELETE FROM owned_game WHERE userSteam64 = :steam64")
     abstract suspend fun clear(steam64: Long)
@@ -121,7 +120,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     abstract fun observeHiddenCount(steam64: Long): Flow<Int>
 
     @Query("UPDATE owned_game set hidden = 0 WHERE userSteam64 =:steam64 AND hidden = 1")
-    abstract suspend fun resetHidden(steam64: Long)
+    abstract suspend fun resetAllHidden(steam64: Long)
 
     @Query(
         """SELECT COUNT(*) 

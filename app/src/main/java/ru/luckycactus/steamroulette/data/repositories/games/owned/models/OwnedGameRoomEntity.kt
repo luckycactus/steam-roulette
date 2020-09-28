@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.models
+package ru.luckycactus.steamroulette.data.repositories.games.owned.models
 
 import androidx.room.Embedded
 import androidx.room.Entity

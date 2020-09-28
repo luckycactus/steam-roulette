@@ -26,24 +26,24 @@ class UserRepositoryImpl @Inject constructor(
     private val currentUser
         get() = userSession.requireCurrentUser()
 
-    override suspend fun getUserSummary(cachePolicy: CachePolicy): UserSummary? =
-        getUserSummary(currentUser, cachePolicy)
+    override suspend fun getUserSummaryOrThrow(cachePolicy: CachePolicy): UserSummary =
+        getUserSummaryOrThrow(currentUser, cachePolicy)
 
-    override suspend fun getUserSummary(
+    override suspend fun getUserSummaryOrThrow(
         steamId: SteamId,
         cachePolicy: CachePolicy
-    ): UserSummary? = createUserSummaryNBR(steamId).get(cachePolicy)
+    ): UserSummary = createUserSummaryNBR(steamId).getOrThrow(cachePolicy)
 
     override fun observeUserSummary(): Flow<UserSummary> =
-        localUserDataSource.observeUserSummary(currentUser)
+        localUserDataSource.observeSummary(currentUser)
             .map { mapper.mapFrom(it) }
 
     override suspend fun fetchUserSummary(cachePolicy: CachePolicy) {
-        createUserSummaryNBR(currentUser).updateIfNeed(cachePolicy)
+        createUserSummaryNBR(currentUser).fetchIfNeed(cachePolicy)
     }
 
     override suspend fun clearUser(steamId: SteamId) {
-        localUserDataSource.removeUserSummary(steamId)
+        localUserDataSource.removeSummary(steamId)
         createUserSummaryNBR(steamId).invalidateCache()
     }
 
@@ -59,16 +59,16 @@ class UserRepositoryImpl @Inject constructor(
             private var result: UserSummary? = null
 
             override suspend fun fetch(): UserSummaryEntity {
-                return remoteUserDataSource.getUserSummary(steamId)
+                return remoteUserDataSource.getSummary(steamId)
             }
 
             override suspend fun saveToStorage(data: UserSummaryEntity) {
-                localUserDataSource.saveUserSummary(data)
+                localUserDataSource.saveSummary(data)
                 result = mapper.mapFrom(data)
             }
 
             override suspend fun getFromStorage(): UserSummary {
-                return result ?: mapper.mapFrom(localUserDataSource.getUserSummary(steamId))
+                return result ?: mapper.mapFrom(localUserDataSource.getSummary(steamId))
             }
         }
     }

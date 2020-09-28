@@ -2,15 +2,14 @@ package ru.luckycactus.steamroulette.domain.games
 
 import dagger.Reusable
 import kotlinx.coroutines.CancellationException
-import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
-import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import javax.inject.Inject
 
 @Reusable
 class FetchUserOwnedGamesUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
-) : AbstractSuspendUseCase<FetchUserOwnedGamesUseCase.Params, FetchUserOwnedGamesUseCase.Result>() {
+) : SuspendUseCase<FetchUserOwnedGamesUseCase.Params, FetchUserOwnedGamesUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result {
         return try {

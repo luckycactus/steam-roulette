@@ -2,13 +2,13 @@ package ru.luckycactus.steamroulette.domain.games
 
 import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
-import ru.luckycactus.steamroulette.domain.core.usecase.AbstractSuspendUseCase
+import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 
 class GetGameStoreInfoUseCase @Inject constructor(
     private val gameDetailsRepository: GameDetailsRepository
-) : AbstractSuspendUseCase<GetGameStoreInfoUseCase.Params, GetGameStoreInfoUseCase.Result>() {
+) : SuspendUseCase<GetGameStoreInfoUseCase.Params, GetGameStoreInfoUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result {
         return try {
@@ -26,6 +26,7 @@ class GetGameStoreInfoUseCase @Inject constructor(
         }
     }
 
+    //todo
     suspend fun getFromCache(gameId: Int): GameStoreInfo? {
         return gameDetailsRepository.getGameStoreInfo(
             gameId,

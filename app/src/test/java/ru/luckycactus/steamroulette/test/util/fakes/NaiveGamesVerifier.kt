@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.test.util.fakes
 
-import ru.luckycactus.steamroulette.data.repositories.games.datasource.GamesVerifier
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesVerifier
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 
 class NaiveGamesVerifier : GamesVerifier {
     override fun verify(game: OwnedGameEntity): Boolean {

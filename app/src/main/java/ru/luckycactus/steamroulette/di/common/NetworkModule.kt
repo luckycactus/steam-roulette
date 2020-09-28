@@ -15,11 +15,11 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.net.interceptors.AuthInterceptor
 import ru.luckycactus.steamroulette.data.net.interceptors.MyHttpLoggingInterceptor
-import ru.luckycactus.steamroulette.data.net.services.SteamApiService
-import ru.luckycactus.steamroulette.data.net.services.SteamStoreApiService
+import ru.luckycactus.steamroulette.data.net.api.SteamApiService
+import ru.luckycactus.steamroulette.data.net.api.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.utils.enableTls12OnOldApis
-import ru.luckycactus.steamroulette.di.InterceptorSet
-import ru.luckycactus.steamroulette.di.NetworkInterceptorSet
+import ru.luckycactus.steamroulette.di.Interceptors
+import ru.luckycactus.steamroulette.di.NetworkInterceptors
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -30,11 +30,11 @@ import javax.inject.Singleton
 abstract class NetworkModule {
 
     @Multibinds
-    @NetworkInterceptorSet
+    @NetworkInterceptors
     abstract fun networkInterceptorSet(): Set<Interceptor>
 
     @IntoSet
-    @InterceptorSet
+    @Interceptors
     @Binds
     abstract fun provideAuthInterceptor(authInterceptor: AuthInterceptor): Interceptor
 
@@ -80,8 +80,8 @@ abstract class NetworkModule {
         @Provides
         @Singleton
         fun provideOkHttpClient(
-            @InterceptorSet interceptors: Set<@JvmSuppressWildcards Interceptor>,
-            @NetworkInterceptorSet networkInterceptors: Set<@JvmSuppressWildcards Interceptor>
+            @Interceptors interceptors: Set<@JvmSuppressWildcards Interceptor>,
+            @NetworkInterceptors networkInterceptors: Set<@JvmSuppressWildcards Interceptor>
         ): OkHttpClient {
             return OkHttpClient.Builder().apply {
                 readTimeout(60, TimeUnit.SECONDS)
@@ -94,7 +94,7 @@ abstract class NetworkModule {
 
         @JvmStatic
         @IntoSet
-        @InterceptorSet
+        @Interceptors
         @Provides
         fun provideLogInterceptor(): Interceptor =
             MyHttpLoggingInterceptor(

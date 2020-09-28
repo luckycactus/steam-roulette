@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.data.repositories.games.models
+package ru.luckycactus.steamroulette.data.repositories.games.owned.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

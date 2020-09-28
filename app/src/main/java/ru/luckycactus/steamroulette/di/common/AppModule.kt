@@ -17,9 +17,11 @@ import ru.luckycactus.steamroulette.data.repositories.about.datasource.AboutData
 import ru.luckycactus.steamroulette.data.repositories.about.datasource.LocalAboutDataSource
 import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicFetcherManager
-import ru.luckycactus.steamroulette.data.repositories.games.GameDetailsRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games.GamesRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games.datasource.*
+import ru.luckycactus.steamroulette.data.repositories.games.details.GameDetailsRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.games.owned.GamesRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.*
+import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.GameStoreDataSource
+import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.RemoteGameStoreDataSource
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datasource.LoginDataSource
 import ru.luckycactus.steamroulette.data.repositories.login.datasource.RemoteLoginDataSource
@@ -114,7 +116,7 @@ abstract class AppModule {
     abstract fun bindAboutDataSource(localAboutDataSource: LocalAboutDataSource): AboutDataSource
 
     @Binds
-    abstract fun bindRemoteGameDetailsDataSource(remoteGameDetailsDataSource: RemoteGameDetailsDataSource): GameDetailsDataSource.Remote
+    abstract fun bindRemoteGameDetailsDataSource(remoteGameDetailsDataSource: RemoteGameStoreDataSource): GameStoreDataSource.Remote
 
     companion object {
 

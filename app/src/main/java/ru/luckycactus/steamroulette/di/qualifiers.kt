@@ -3,13 +3,13 @@ package ru.luckycactus.steamroulette.di
 import javax.inject.Qualifier
 
 @Qualifier
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 annotation class AppCoScope
 
 @Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class InterceptorSet
+@Retention(AnnotationRetention.SOURCE)
+annotation class Interceptors
 
 @Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class NetworkInterceptorSet
+@Retention(AnnotationRetention.SOURCE)
+annotation class NetworkInterceptors

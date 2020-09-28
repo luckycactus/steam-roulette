@@ -7,20 +7,20 @@ import ru.luckycactus.steamroulette.domain.user.SteamIdNotFoundException
 
 interface UserDataSource {
 
-    suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity
+    suspend fun getSummary(steamId: SteamId): UserSummaryEntity
 
     interface Local : UserDataSource {
-        suspend fun saveUserSummary(userSummary: UserSummaryEntity)
+        suspend fun saveSummary(userSummary: UserSummaryEntity)
 
-        fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity>
+        fun observeSummary(steamId: SteamId): Flow<UserSummaryEntity>
 
-        suspend fun removeUserSummary(steamId: SteamId)
+        suspend fun removeSummary(steamId: SteamId)
     }
 
     interface Remote : UserDataSource {
 
         @Throws(SteamIdNotFoundException::class)
-        override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity
+        override suspend fun getSummary(steamId: SteamId): UserSummaryEntity
     }
 }
 

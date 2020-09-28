@@ -14,18 +14,18 @@ class LocalUserDataSource @Inject constructor(
     private val db: AppDatabase
 ) : UserDataSource.Local {
 
-    override suspend fun getUserSummary(steamId: SteamId): UserSummaryEntity =
+    override suspend fun getSummary(steamId: SteamId): UserSummaryEntity =
         db.userSummaryDao().get(steamId.as64())
 
-    override suspend fun saveUserSummary(userSummary: UserSummaryEntity) {
+    override suspend fun saveSummary(userSummary: UserSummaryEntity) {
         db.userSummaryDao().upsert(userSummary)
     }
 
-    override suspend fun removeUserSummary(steamId: SteamId) {
+    override suspend fun removeSummary(steamId: SteamId) {
         db.userSummaryDao().delete(steamId.as64())
     }
 
-    override fun observeUserSummary(steamId: SteamId): Flow<UserSummaryEntity> =
+    override fun observeSummary(steamId: SteamId): Flow<UserSummaryEntity> =
         db.userSummaryDao().observe(steamId.as64()).distinctUntilChanged().filterNotNull()
 
     companion object {

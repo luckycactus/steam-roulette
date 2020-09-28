@@ -1,8 +1,8 @@
-package ru.luckycactus.steamroulette.data.repositories.games.datasource
+package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 
 import org.intellij.lang.annotations.Language
 import ru.luckycactus.steamroulette.BuildConfig
-import ru.luckycactus.steamroulette.data.repositories.games.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.presentation.utils.longLog
 import ru.luckycactus.steamroulette.presentation.utils.onDebug
 
