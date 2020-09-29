@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.data.local.db
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
@@ -8,13 +9,15 @@ import androidx.room.Transaction
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameMetaData
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameMetaData
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 
 @Dao
 abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
+
+    private val nonAlphanumericRegex = "[^\\w]".toRegex()
 
     suspend fun getIds(
         steam64: Long,
@@ -49,7 +52,8 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         steam64: Long,
         shown: Boolean? = null,
         hidden: Boolean? = null,
-        maxHours: Int? = null
+        maxHours: Int? = null,
+        nameSearchQuery: String? = null
     ): PagingSource<Int, GameHeader> {
         val querySb = StringBuilder("SELECT appId, name FROM owned_game WHERE userSteam64 = ?")
         val args = mutableListOf<Any>(steam64)
@@ -65,6 +69,12 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         maxHours?.let {
             args += it * 60
             querySb.append(" AND playtimeForever <= ?")
+        }
+        if (!nameSearchQuery.isNullOrBlank()) {
+            for (word in nameSearchQuery.split(nonAlphanumericRegex)) {
+                querySb.append(" AND name LIKE ?")
+                args += "%${word}%"
+            }
         }
 
         querySb.append(" ORDER BY name ASC")

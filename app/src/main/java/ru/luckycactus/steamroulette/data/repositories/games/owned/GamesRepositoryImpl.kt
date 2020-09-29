@@ -108,9 +108,10 @@ class GamesRepositoryImpl @Inject constructor(
     override fun getOwnedGamesPagingSource(
         shown: Boolean?,
         hidden: Boolean?,
-        playtimeFilter: PlaytimeFilter?
+        playtimeFilter: PlaytimeFilter?,
+        nameSearchQuery: String?
     ): PagingSource<Int, GameHeader> =
-        localGamesDataSource.getPagingSource(currentUser, shown, hidden, playtimeFilter)
+        localGamesDataSource.getPagingSource(currentUser, shown, hidden, playtimeFilter, nameSearchQuery)
 
     companion object {
         val OWNED_GAMES_CACHE_WINDOW = 7.days

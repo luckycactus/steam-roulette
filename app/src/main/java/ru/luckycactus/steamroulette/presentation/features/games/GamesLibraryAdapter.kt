@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.features.games.base
+package ru.luckycactus.steamroulette.presentation.features.games
 
 import android.view.MotionEvent
 import android.view.View

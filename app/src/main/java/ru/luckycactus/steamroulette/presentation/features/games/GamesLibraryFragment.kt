@@ -1,26 +1,31 @@
-package ru.luckycactus.steamroulette.presentation.features.games.base
+package ru.luckycactus.steamroulette.presentation.features.games
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
+import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.color.MaterialColors
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_games.*
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.GridSpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.addSystemTopPadding
-import ru.luckycactus.steamroulette.presentation.utils.doOnEnd
-import ru.luckycactus.steamroulette.presentation.utils.fade
-import ru.luckycactus.steamroulette.presentation.utils.transitionSet
+import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.*
 
-abstract class BaseGamesLibraryFragment : BaseFragment() {
+@AndroidEntryPoint
+class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     override val layoutResId = R.layout.fragment_games
 
@@ -30,45 +35,110 @@ abstract class BaseGamesLibraryFragment : BaseFragment() {
     private lateinit var selectionTracker: SelectionTracker<Long>
     private var inSelectionMode = false
 
-    abstract val viewModel: BaseGamesLibraryViewModel
+    private val viewModel: GamesLibraryViewModel by viewModels()
+
+    private lateinit var searchView: SearchView
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        toolbar.addSystemTopPadding()
-        toolbar.setNavigationOnClickListener(::onNavigationIconClick)
+        toolbar.run {
+            addSystemTopPadding()
+            setNavigationOnClickListener(::onNavigationIconClick)
+            setTitle(R.string.my_steam_library)
+            inflateMenu(R.menu.menu_games_library)
+            setOnMenuItemClickListener(::onMenuItemClick)
+            searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        }
+
+        searchView.run {
+            findViewById<EditText>(androidx.appcompat.R.id.search_src_text).filters += AlphaNumSpaceInputFilter()
+
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    clearFocus()
+                    return onQueryTextChange(query)
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.onSearchQueryChanged(newText)
+                    return true
+                }
+            })
+        }
+
+        fab.run {
+            setImageResource(R.drawable.ic_filter_list_24dp)
+            backgroundTintList =
+                ColorStateList.valueOf(MaterialColors.getColor(fab, R.attr.colorPrimary))
+            setOnClickListener {
+
+            }
+        }
 
         rvGames.adapter = adapter
         rvGames.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         rvGames.addItemDecoration(
-            GridSpaceDecoration(SPAN_COUNT, resources.getDimensionPixelSize(R.dimen.spacing_games_library))
+            GridSpaceDecoration(
+                SPAN_COUNT,
+                resources.getDimensionPixelSize(R.dimen.spacing_games_library)
+            )
         )
-        if (isSelectionEnabled()) {
-            selectionTracker = SelectionTracker.Builder(
-                "games",
-                rvGames,
-                GamesLibraryItemKeyProvider(rvGames),
-                GamesLibraryDetailsLookup(rvGames),
-                StorageStrategy.createLongStorage()
-            ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
-                .build()
+        selectionTracker = SelectionTracker.Builder(
+            "games",
+            rvGames,
+            GamesLibraryItemKeyProvider(rvGames),
+            GamesLibraryDetailsLookup(rvGames),
+            StorageStrategy.createLongStorage()
+        ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
+            .build()
 
-            selectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
-                override fun onSelectionChanged() {
-                    val selectionSize = selectionTracker.selection.size()
-                    setSelectionModeEnabled(selectionSize > 0)
-                    actionMode?.title = selectionSize.toString()
-                }
-            })
+        selectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
+            override fun onSelectionChanged() {
+                val selectionSize = selectionTracker.selection.size()
+                setSelectionModeEnabled(selectionSize > 0)
+                actionMode?.title = selectionSize.toString()
+            }
+        })
 
-            adapter.tracker = selectionTracker
-        }
+        adapter.tracker = selectionTracker
+
 
         lifecycleScope.launch {
-            viewModel.games.collect {
+            viewModel.games.collectLatest {
                 adapter.submitData(it)
             }
         }
+    }
+
+    override fun onMessageDialogResult(
+        dialog: MessageDialogFragment,
+        result: MessageDialogFragment.Result
+    ) {
+        when (dialog.tag) {
+            CONFIRM_CLEAR_DIALOG_TAG ->
+                if (result == MessageDialogFragment.Result.Positive)
+                    viewModel.clearAll()
+        }
+
+    }
+
+    private fun onMenuItemClick(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_clear_all -> {
+                showClearAllConfirmation()
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun showClearAllConfirmation() {
+        MessageDialogFragment.create(
+            requireContext(),
+            messageResId = R.string.dialog_message_reset_hidden_games,
+            negativeResId = R.string.cancel
+        ).show(childFragmentManager, CONFIRM_CLEAR_DIALOG_TAG)
     }
 
     private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {
@@ -113,28 +183,20 @@ abstract class BaseGamesLibraryFragment : BaseFragment() {
         }
 
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-            return this@BaseGamesLibraryFragment.onCreateSelectionActionMode(mode, menu)
+            mode.menuInflater.inflate(R.menu.menu_hidden_games_action_mode, menu)
+            return true
         }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-            return this@BaseGamesLibraryFragment.onSelectionActionItemClicked(mode, item, selectionTracker)
+            return when (item.itemId) {
+                R.id.action_unhide -> {
+                    viewModel.unhide(selectionTracker.selection.map { it.toInt() })
+                    selectionTracker.clearSelection()
+                    true
+                }
+                else -> false
+            }
         }
-    }
-
-    protected open fun isSelectionEnabled(): Boolean {
-        return false
-    }
-
-    protected open fun onCreateSelectionActionMode(mode: ActionMode, menu: Menu): Boolean {
-        return false
-    }
-
-    protected open fun onSelectionActionItemClicked(
-        mode: ActionMode,
-        item: MenuItem,
-        selectionTracker: SelectionTracker<Long>
-    ): Boolean {
-        return false
     }
 
     private fun createExitTransition() = transitionSet {
@@ -175,5 +237,7 @@ abstract class BaseGamesLibraryFragment : BaseFragment() {
 
     companion object {
         private const val SPAN_COUNT = 3
+        private const val CONFIRM_CLEAR_DIALOG_TAG = "CONFIRM_CLEAR_DIALOG"
+        fun newInstance() = GamesLibraryFragment()
     }
 }

@@ -110,7 +110,8 @@ class LocalGamesDataSource @Inject constructor(
         steamId: SteamId,
         shown: Boolean?,
         hidden: Boolean?,
-        filter: PlaytimeFilter?
+        filter: PlaytimeFilter?,
+        nameSearchQuery: String?
     ): PagingSource<Int, GameHeader> {
         val maxHours = filter?.let {
             when (filter) {
@@ -119,7 +120,7 @@ class LocalGamesDataSource @Inject constructor(
                 is PlaytimeFilter.Limited -> filter.maxHours
             }
         }
-        return db.ownedGamesDao().getPagingSource(steamId.as64(), shown, hidden, maxHours)
+        return db.ownedGamesDao().getPagingSource(steamId.as64(), shown, hidden, maxHours, nameSearchQuery)
     }
 
     companion object {

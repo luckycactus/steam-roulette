@@ -47,7 +47,8 @@ interface GamesDataSource {
             steamId: SteamId,
             shown: Boolean?,
             hidden: Boolean?,
-            filter: PlaytimeFilter?
+            filter: PlaytimeFilter?,
+            nameSearchQuery: String?
         ): PagingSource<Int, GameHeader>
     }
 

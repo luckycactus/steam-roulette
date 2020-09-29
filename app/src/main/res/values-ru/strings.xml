@@ -71,4 +71,6 @@
     <string name="later">Позже</string>
     <string name="rate_app_title">Оценить Steam Shuffle</string>
     <string name="rate_app_dialog_message">Здравствуйте. Похоже, что вам нравится Steam Shuffle. Пожалуйста, уделите время, чтобы оценить приложение. Это не займет больше минуты. Спасибо за поддержку!</string>
+    <string name="my_steam_library">Мои игры</string>
+    <string name="action_search">Поиск</string>
 </resources>

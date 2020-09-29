@@ -12,15 +12,13 @@ import ru.luckycactus.steamroulette.presentation.features.about.AboutFragment
 import ru.luckycactus.steamroulette.presentation.features.about.AppLibrariesFragment
 import ru.luckycactus.steamroulette.presentation.features.detailed_description.DetailedDescriptionFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
-import ru.luckycactus.steamroulette.presentation.features.games.hidden.HiddenGamesFragment
-import ru.luckycactus.steamroulette.presentation.features.games.library.GamesLibraryFragment
+import ru.luckycactus.steamroulette.presentation.features.games.GamesLibraryFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqsFragment
 import ru.luckycactus.steamroulette.presentation.utils.customtabs.CustomTabsHelper
 import ru.luckycactus.steamroulette.presentation.utils.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
-import ru.terrakok.cicerone.Screen
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 
 sealed class Screens : SupportAppScreen() {
@@ -58,7 +56,7 @@ sealed class Screens : SupportAppScreen() {
     }
 
     object HiddenGames : Screens() {
-        override fun getFragment(): Fragment = HiddenGamesFragment.newInstance()
+        override fun getFragment(): Fragment = GamesLibraryFragment.newInstance()
     }
 
     object About : Screens() {

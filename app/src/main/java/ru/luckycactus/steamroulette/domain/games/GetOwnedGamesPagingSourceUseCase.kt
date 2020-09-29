@@ -16,13 +16,15 @@ class GetOwnedGamesPagingSourceUseCase @Inject constructor(
         return gamesRepository.getOwnedGamesPagingSource(
             params.shown,
             params.hidden,
-            params.playtimeFilter
+            params.playtimeFilter,
+            params.searchQuery
         )
     }
 
     class Params(
         val shown: Boolean? = null,
         val hidden: Boolean? = null,
-        val playtimeFilter: PlaytimeFilter? = null
+        val playtimeFilter: PlaytimeFilter? = null,
+        val searchQuery: String? = null
     )
 }
