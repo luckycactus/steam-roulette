@@ -13,6 +13,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import javax.inject.Inject
 
@@ -22,8 +23,8 @@ class LocalGamesDataSource @Inject constructor(
     private val gamesVerifierFactory: GamesVerifier.Factory
 ) : GamesDataSource.Local {
 
-    override fun observeCount(steamId: SteamId): Flow<Int> =
-        db.ownedGamesDao().observeCount(steamId.as64())
+    override fun observeCount(steamId: SteamId, filter: GamesFilter): Flow<Int> =
+        db.ownedGamesDao().observeCount(steamId.as64(), filter)
 
     override fun observeHiddenCount(steamId: SteamId): Flow<Int> =
         db.ownedGamesDao().observeHiddenCount(steamId.as64())
@@ -57,18 +58,15 @@ class LocalGamesDataSource @Inject constructor(
 
     override suspend fun getIds(
         steamId: SteamId,
-        shown: Boolean?,
-        hidden: Boolean?,
-        filter: PlaytimeFilter?
+        filter: GamesFilter
     ): List<Int> {
-        val maxHours = filter?.let {
-            when (filter) {
-                PlaytimeFilter.All -> null
-                PlaytimeFilter.NotPlayed -> 0
-                is PlaytimeFilter.Limited -> filter.maxHours
-            }
+        val maxHours = when (filter.playtime) {
+            PlaytimeFilter.All -> null
+            PlaytimeFilter.NotPlayed -> 0
+            is PlaytimeFilter.Limited -> filter.playtime.maxHours
         }
-        return db.ownedGamesDao().getIds(steamId.as64(), shown, hidden, maxHours)
+
+        return db.ownedGamesDao().getIds(steamId.as64(), filter)
     }
 
     override suspend fun resetAllHidden(steamId: SteamId) {
@@ -108,19 +106,20 @@ class LocalGamesDataSource @Inject constructor(
 
     override fun getPagingSource(
         steamId: SteamId,
-        shown: Boolean?,
-        hidden: Boolean?,
-        filter: PlaytimeFilter?,
+        filter: GamesFilter,
         nameSearchQuery: String?
     ): PagingSource<Int, GameHeader> {
-        val maxHours = filter?.let {
-            when (filter) {
-                PlaytimeFilter.All -> null
-                PlaytimeFilter.NotPlayed -> 0
-                is PlaytimeFilter.Limited -> filter.maxHours
-            }
+        val maxHours = when (filter.playtime) {
+            PlaytimeFilter.All -> null
+            PlaytimeFilter.NotPlayed -> 0
+            is PlaytimeFilter.Limited -> filter.playtime.maxHours
         }
-        return db.ownedGamesDao().getPagingSource(steamId.as64(), shown, hidden, maxHours, nameSearchQuery)
+
+        return db.ownedGamesDao().getPagingSource(
+            steamId.as64(),
+            filter,
+            nameSearchQuery
+        )
     }
 
     companion object {

@@ -10,7 +10,7 @@ import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import javax.inject.Inject
 import kotlin.time.days
@@ -29,8 +29,8 @@ class GamesRepositoryImpl @Inject constructor(
         createOwnedGamesNBR(currentUser).fetchIfNeed(cachePolicy)
     }
 
-    override fun observeGamesCount(): Flow<Int> =
-        localGamesDataSource.observeCount(currentUser)
+    override fun observeGamesCount(filter: GamesFilter): Flow<Int> =
+        localGamesDataSource.observeCount(currentUser, filter)
 
     override fun observeHiddenGamesCount(): Flow<Int> =
         localGamesDataSource.observeHiddenCount(currentUser)
@@ -51,11 +51,9 @@ class GamesRepositoryImpl @Inject constructor(
         localGamesDataSource.isUserHasGames(currentUser)
 
     override suspend fun getOwnedGamesIds(
-        shown: Boolean?,
-        hidden: Boolean?,
-        playtimeFilter: PlaytimeFilter?
+        gamesFilter: GamesFilter
     ) =
-        localGamesDataSource.getIds(currentUser, shown, hidden, playtimeFilter)
+        localGamesDataSource.getIds(currentUser, gamesFilter)
 
     override suspend fun getLocalOwnedGameHeaders(
         gameIds: List<Int>
@@ -106,12 +104,10 @@ class GamesRepositoryImpl @Inject constructor(
     }
 
     override fun getOwnedGamesPagingSource(
-        shown: Boolean?,
-        hidden: Boolean?,
-        playtimeFilter: PlaytimeFilter?,
+        filter: GamesFilter,
         nameSearchQuery: String?
     ): PagingSource<Int, GameHeader> =
-        localGamesDataSource.getPagingSource(currentUser, shown, hidden, playtimeFilter, nameSearchQuery)
+        localGamesDataSource.getPagingSource(currentUser, filter, nameSearchQuery)
 
     companion object {
         val OWNED_GAMES_CACHE_WINDOW = 7.days

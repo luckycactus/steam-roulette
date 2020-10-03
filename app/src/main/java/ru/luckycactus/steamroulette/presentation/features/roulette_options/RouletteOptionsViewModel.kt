@@ -9,14 +9,14 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
-import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
 
 class RouletteOptionsViewModel @ViewModelInject constructor(
-    observePlayTimeFilter: ObservePlaytimeFilterUseCase,
+    observeRouletteFilter: ObserveRouletteFilterUseCase,
     observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
@@ -29,7 +29,7 @@ class RouletteOptionsViewModel @ViewModelInject constructor(
     private val _closeAction = MutableLiveData<Unit>()
 
     init {
-        playTimePrefValue = observePlayTimeFilter()
+        playTimePrefValue = observeRouletteFilter()
             .map { getPlayTimeFilterText(it) }
             .asLiveData()
 

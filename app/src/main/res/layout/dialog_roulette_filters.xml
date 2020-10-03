@@ -16,7 +16,7 @@
         >
 
         <RadioGroup
-            android:id="@+id/rgPlaytime"
+            android:id="@+id/rgLibraryFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >

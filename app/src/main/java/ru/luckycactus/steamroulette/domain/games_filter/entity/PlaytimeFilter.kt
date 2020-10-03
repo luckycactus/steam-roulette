@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.domain.games_filter.entity
 sealed class PlaytimeFilter(
     val type: Type
 ) {
+    //todo library rename?
     object All : PlaytimeFilter(
         Type.All
     )

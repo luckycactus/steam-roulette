@@ -15,7 +15,7 @@ import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
-import ru.luckycactus.steamroulette.domain.games_filter.ObservePlaytimeFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
@@ -27,7 +27,7 @@ import ru.luckycactus.steamroulette.presentation.utils.startWith
 class RouletteViewModel @ViewModelInject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingListUseCase,
-    observePlayTimeFilter: ObservePlaytimeFilterUseCase,
+    observeRouletteFilter: ObserveRouletteFilterUseCase,
     observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val setGamesShown: SetGamesShownUseCase,
@@ -62,7 +62,7 @@ class RouletteViewModel @ViewModelInject constructor(
     private var firstPreviouslyShownGameId: Int? = null
 
     init {
-        currentUserPlayTimeFilter = observePlayTimeFilter()
+        currentUserPlayTimeFilter = observeRouletteFilter()
             .asLiveData()
             .distinctUntilChanged()
 

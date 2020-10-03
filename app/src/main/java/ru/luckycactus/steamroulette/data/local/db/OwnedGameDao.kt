@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.data.local.db
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
@@ -13,6 +12,8 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameMetaData
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 @Dao
 abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
@@ -21,25 +22,12 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     suspend fun getIds(
         steam64: Long,
-        shown: Boolean? = null,
-        hidden: Boolean? = null,
-        maxHours: Int? = null
+        filter: GamesFilter
     ): List<Int> {
         val querySb = StringBuilder("SELECT appId FROM owned_game WHERE userSteam64 = ?")
         val args = mutableListOf<Any>(steam64)
 
-        shown?.let {
-            args += it
-            querySb.append(" AND shown = ?")
-        }
-        hidden?.let {
-            args += it
-            querySb.append(" AND hidden = ?")
-        }
-        maxHours?.let {
-            args += it * 60
-            querySb.append(" AND playtimeForever <= ?")
-        }
+        foo(args, querySb, filter)
 
         return _getIds(SimpleSQLiteQuery(querySb.toString(), args.toTypedArray()))
     }
@@ -50,26 +38,14 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     fun getPagingSource(
         steam64: Long,
-        shown: Boolean? = null,
-        hidden: Boolean? = null,
-        maxHours: Int? = null,
+        filter: GamesFilter,
         nameSearchQuery: String? = null
     ): PagingSource<Int, GameHeader> {
         val querySb = StringBuilder("SELECT appId, name FROM owned_game WHERE userSteam64 = ?")
         val args = mutableListOf<Any>(steam64)
 
-        shown?.let {
-            args += it
-            querySb.append(" AND shown = ?")
-        }
-        hidden?.let {
-            args += it
-            querySb.append(" AND hidden = ?")
-        }
-        maxHours?.let {
-            args += it * 60
-            querySb.append(" AND playtimeForever <= ?")
-        }
+        foo(args, querySb, filter)
+
         if (!nameSearchQuery.isNullOrBlank()) {
             for (word in nameSearchQuery.split(nonAlphanumericRegex)) {
                 querySb.append(" AND name LIKE ?")
@@ -123,9 +99,19 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     suspend fun isUserHasGames(steam64: Long) = _isUserHasGames(steam64) == 1
 
-    @Query("SELECT COUNT(*) FROM owned_game  WHERE userSteam64 = :steam64")
-    abstract fun observeCount(steam64: Long): Flow<Int>
+    fun observeCount(
+        steam64: Long,
+        filter: GamesFilter
+    ): Flow<Int> {
+        val querySb = StringBuilder("SELECT COUNT(*) FROM owned_game WHERE userSteam64 = ?")
+        val args = mutableListOf<Any>(steam64)
 
+        foo(args, querySb, filter)
+
+        return _observeCount(SimpleSQLiteQuery(querySb.toString(), args.toTypedArray()))
+    }
+
+    //todo library unify
     @Query("SELECT COUNT(*) FROM owned_game  WHERE userSteam64 = :steam64 AND hidden = 1")
     abstract fun observeHiddenCount(steam64: Long): Flow<Int>
 
@@ -149,5 +135,37 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     @Transaction
     @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
+    abstract fun _observeCount(query: SupportSQLiteQuery): Flow<Int>
+
+    @Transaction
+    @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
     abstract fun _getGamesPagingSource(query: SupportSQLiteQuery): PagingSource<Int, GameHeader>
+
+    //todo library name
+    private fun foo(
+        args: MutableList<Any>,
+        querySb: StringBuilder,
+        filter: GamesFilter
+    ) {
+        filter.shown?.let {
+            args += it
+            querySb.append(" AND shown = ?")
+        }
+
+        filter.hidden?.let {
+            args += it
+            querySb.append(" AND hidden = ?")
+        }
+
+        val maxHours = when (filter.playtime) {
+            PlaytimeFilter.All -> null
+            PlaytimeFilter.NotPlayed -> 0
+            is PlaytimeFilter.Limited -> filter.playtime.maxHours
+        }
+
+        maxHours?.let {
+            args += it * 60
+            querySb.append(" AND playtimeForever <= ?")
+        }
+    }
 }

@@ -4,6 +4,7 @@ import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
@@ -21,15 +22,19 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
             }
 
             val notShownIds = gamesRepository.getOwnedGamesIds(
-                hidden = false,
-                shown = false,
-                playtimeFilter = params.filter
+                GamesFilter(
+                    hidden = false,
+                    shown = false,
+                    playtime = params.filter
+                )
             ).shuffled()
 
             val shownIds = gamesRepository.getOwnedGamesIds(
-                hidden = false,
-                shown = true,
-                playtimeFilter = params.filter
+                GamesFilter(
+                    hidden = false,
+                    shown = true,
+                    playtime = params.filter
+                )
             ).shuffled()
 
             val firstShownGame = shownIds.firstOrNull()

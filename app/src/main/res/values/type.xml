@@ -77,4 +77,8 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="TextAppearance.MyTheme.BottomSheet.Title" parent="TextAppearance.MaterialComponents.Headline6">
+
+    </style>
+
 </resources>

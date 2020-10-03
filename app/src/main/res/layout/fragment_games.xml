@@ -45,4 +45,21 @@
         tools:src="@drawable/ic_filter_list_24dp"
         />
 
+    <View
+        android:id="@+id/scrimView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?scrimBackground"
+        android:elevation="4dp"
+        android:visibility="gone"
+        />
+
+    <fragment
+        android:id="@+id/filterSheet"
+        android:name="ru.luckycactus.steamroulette.presentation.features.games.GamesLibraryFilterFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

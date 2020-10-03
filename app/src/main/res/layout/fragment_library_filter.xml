@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/filterSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/color_surface"
+    android:elevation="10dp"
+    tools:background="@color/color_surface"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/headerGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/filter_sheet_header_height"
+        />
+
+
+    <HorizontalScrollView
+        android:id="@+id/viewSelectedFilters"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/default_activity_margin"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:requiresFadingEdge="horizontal"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/headerGuideline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/btnResetShortcut"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSelectedFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/default_activity_margin"
+            android:paddingRight="@dimen/default_activity_margin"
+            android:requiresFadingEdge="horizontal"
+            app:chipBackgroundColor="?colorPrimary"
+            app:layout_constraintBottom_toTopOf="@id/headerGuideline"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/btnResetShortcut"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Hidden games"
+            />
+    </HorizontalScrollView>
+
+    <View
+        android:id="@+id/expand"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/headerGuideline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/btnResetShortcut"
+        android:layout_width="@dimen/touchable_view_default_size"
+        android:layout_height="@dimen/touchable_view_default_size"
+        android:layout_marginEnd="4dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:scaleType="center"
+        app:layout_constraintBottom_toTopOf="@id/headerGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_cancel_24"
+        />
+
+
+    <Button
+        android:id="@+id/btnReset"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_activity_margin"
+        android:text="@string/clear_filters"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@id/headerGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MyTheme.BottomSheet.Title"
+        app:layout_constraintBottom_toTopOf="@id/headerGuideline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="30 games"
+        />
+
+    <ImageView
+        android:id="@+id/btnCollapse"
+        android:layout_width="@dimen/touchable_view_default_size"
+        android:layout_height="@dimen/touchable_view_default_size"
+        android:layout_marginEnd="@dimen/default_activity_margin"
+        android:background="?selectableItemBackgroundBorderless"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@id/headerGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/default_activity_margin"
+        android:paddingRight="@dimen/default_activity_margin"
+        android:paddingBottom="@dimen/default_activity_margin"
+        android:scrollbarStyle="outsideOverlay"
+        app:layout_constraintTop_toBottomOf="@id/headerGuideline"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <RadioGroup
+                android:id="@+id/rgLibraryFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/headerGuideline"
+                >
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbAll"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/playtime_pref_all"
+                    />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbHidden"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/only_hidden"
+                    />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbNotPlayed"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/playtime_pref_not_played"
+                    />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbLimit"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/playtime_pref_max_time"
+                    />
+
+            </RadioGroup>
+
+            <ru.luckycactus.steamroulette.presentation.ui.widget.EditTextWithLabel
+                android:id="@+id/etPlaytime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginLeft="28dp"
+                android:enabled="false"
+                android:inputType="number"
+                android:textAppearance="?textAppearanceBody2"
+                app:layout_constraintTop_toBottomOf="@+id/rgLibraryFilter"
+                tools:text="9 часов"
+                />
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

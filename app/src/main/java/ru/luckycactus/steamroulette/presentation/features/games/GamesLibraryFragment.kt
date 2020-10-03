@@ -5,15 +5,20 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.widget.SearchView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_games.*
+import kotlinx.android.synthetic.main.fragment_library_filter.*
+import kotlinx.android.synthetic.main.fragment_library_filter.filterSheet
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
@@ -35,12 +40,38 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     private lateinit var selectionTracker: SelectionTracker<Long>
     private var inSelectionMode = false
 
-    private val viewModel: GamesLibraryViewModel by viewModels()
-
     private lateinit var searchView: SearchView
+    private lateinit var filtersBehavior: BottomSheetBehavior<*>
+
+    private val viewModel: GamesLibraryViewModel by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        var insetsApplied = false
+        val fabInitialMargin = fab.marginBottom
+        rvGames.doOnApplyWindowInsets { it, insets, padding ->
+            it.updatePadding(
+                bottom = padding.bottom + insets.systemWindowInsetBottom + fabInitialMargin + fab.height
+            )
+            fab.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                updateMargins(bottom = fabInitialMargin + insets.tappableElementInsets.bottom)
+            }
+            insetsApplied = true
+            insets
+        }
+        filterSheet.doOnApplyWindowInsets { view, insets, initialPadding ->
+            view.updatePadding(bottom = insets.systemWindowInsetBottom + initialPadding.bottom)
+            filtersBehavior.peekHeight =
+                insets.systemWindowInsetBottom + resources.getDimensionPixelSize(R.dimen.filter_sheet_header_height)
+            insets
+        }
+
+        fab.doOnNextLayout {
+            //if insets were applied already but fab isn't laid out yet, then we must set extra padding here
+            if (insetsApplied)
+                rvGames.updatePadding(bottom = rvGames.paddingBottom + fab.height)
+        }
 
         toolbar.run {
             addSystemTopPadding()
@@ -72,7 +103,7 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             backgroundTintList =
                 ColorStateList.valueOf(MaterialColors.getColor(fab, R.attr.colorPrimary))
             setOnClickListener {
-
+                filtersBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
 
@@ -103,11 +134,35 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
         adapter.tracker = selectionTracker
 
+        filtersBehavior = BottomSheetBehavior.from(filterSheet)
+        filtersBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                scrimView.alpha = slideOffset.coerceAtLeast(0f)
+                scrimView.visibility(slideOffset > 0f)
+            }
+        })
+
+        filterSheet.setOnClickListener {
+            //nothing
+        }
+
+        scrimView.setOnClickListener {
+            filtersBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         lifecycleScope.launch {
             viewModel.games.collectLatest {
                 adapter.submitData(it)
             }
+        }
+
+        observe(viewModel.currentFilterText) {
+            chipSelectedFilter.text = it
+            filtersBehavior.skipCollapsed = it.isNullOrEmpty()
+            filtersBehavior.isHideable = it.isNullOrEmpty()
         }
     }
 

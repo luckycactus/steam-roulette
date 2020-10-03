@@ -22,11 +22,17 @@ class StorageModule {
         fun provideAppSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
-        @Named("user-settings")
+        @Named("roulette-filters")
         @Singleton
         @Provides
-        fun provideUserSettingsSharedPreferences(@ApplicationContext appContext: Context) =
+        fun provideRoulettePlayTimeSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("user-settings", Context.MODE_PRIVATE)
+
+        @Named("library-filters")
+        @Singleton
+        @Provides
+        fun provideLibraryPlayTimeSharedPreferences(@ApplicationContext appContext: Context) =
+            appContext.getSharedPreferences("library-filters", Context.MODE_PRIVATE)
 
         @Named("user-cache")
         @Singleton

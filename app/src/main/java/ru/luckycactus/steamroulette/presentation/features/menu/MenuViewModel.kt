@@ -16,6 +16,7 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
@@ -34,7 +35,7 @@ class MenuViewModel @ViewModelInject constructor(
 ) : BaseViewModel() {
 
     val userSummary = observeUserSummary().asLiveData()
-    val gameCount: LiveData<Int> = observeOwnedGamesCount().asLiveData()
+    val gameCount: LiveData<Int> = observeOwnedGamesCount(GamesFilter.empty()).asLiveData()
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
     val closeAction: LiveData<Unit>

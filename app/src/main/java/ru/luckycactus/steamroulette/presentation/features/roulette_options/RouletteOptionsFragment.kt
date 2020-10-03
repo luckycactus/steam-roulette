@@ -22,7 +22,7 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFr
         prefViewMaxPlaytime.setOnClickListener {
             dismiss()
             parentFragmentManager.showIfNotExist(PLAYTIME_DIALOG_TAG) {
-                PlaytimePrefDialog.newInstance()
+                RouletteFiltersDialog.newInstance()
             }
         }
 

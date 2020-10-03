@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 
 interface GamesRepository {
 
@@ -13,9 +13,7 @@ interface GamesRepository {
     suspend fun fetchOwnedGames(cachePolicy: CachePolicy)
 
     suspend fun getOwnedGamesIds(
-        shown: Boolean? = null,
-        hidden: Boolean? = null,
-        playtimeFilter: PlaytimeFilter? = null
+        gamesFilter: GamesFilter
     ): List<Int>
 
     suspend fun getLocalOwnedGameHeaders(gameIds: List<Int>): List<GameHeader>
@@ -30,7 +28,7 @@ interface GamesRepository {
 
     suspend fun isUserHasGames(): Boolean
 
-    fun observeGamesCount(): Flow<Int>
+    fun observeGamesCount(filter: GamesFilter): Flow<Int>
 
     fun observeHiddenGamesCount(): Flow<Int>
 
@@ -41,9 +39,7 @@ interface GamesRepository {
     suspend fun clearUser(steamId: SteamId)
 
     fun getOwnedGamesPagingSource(
-        shown: Boolean? = null,
-        hidden: Boolean? = null,
-        playtimeFilter: PlaytimeFilter? = null,
+        gamesFilter: GamesFilter,
         nameSearchQuery: String?
     ): PagingSource<Int, GameHeader>
 }

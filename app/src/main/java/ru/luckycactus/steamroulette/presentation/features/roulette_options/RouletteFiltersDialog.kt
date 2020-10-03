@@ -13,23 +13,23 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.dialog_pref_playtime.*
+import kotlinx.android.synthetic.main.dialog_roulette_filters.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 @AndroidEntryPoint
-class PlaytimePrefDialog : DialogFragment() {
+class RouletteFiltersDialog : DialogFragment() {
 
     private var layoutContainer: DialogLayoutContainer? = null
 
-    private val viewModel: PlaytimeViewModel by viewModels()
+    private val viewModel: RouletteFiltersViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return with(MaterialAlertDialogBuilder(requireContext())) {
             setTitle(getString(R.string.playtime))
 
-            with(LayoutInflater.from(context).inflate(R.layout.dialog_pref_playtime, null)) {
+            with(LayoutInflater.from(context).inflate(R.layout.dialog_roulette_filters, null)) {
                 setView(this)
                 layoutContainer = DialogLayoutContainer(this, savedInstanceState)
             }
@@ -120,7 +120,7 @@ class PlaytimePrefDialog : DialogFragment() {
     }
 
     companion object {
-        fun newInstance() = PlaytimePrefDialog()
+        fun newInstance() = RouletteFiltersDialog()
     }
 
 }

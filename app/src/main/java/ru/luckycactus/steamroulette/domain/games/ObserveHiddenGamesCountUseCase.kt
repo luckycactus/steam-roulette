@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
 import javax.inject.Inject
 
+//todo library maybe remove
 @Reusable
 class ObserveHiddenGamesCountUseCase @Inject constructor(
     private val gamesRepository: GamesRepository

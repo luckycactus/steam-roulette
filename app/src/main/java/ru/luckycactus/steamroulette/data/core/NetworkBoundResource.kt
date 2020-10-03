@@ -17,7 +17,6 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
     abstract suspend fun fetch(): RequestType
     protected abstract suspend fun saveResult(data: RequestType)
     protected abstract suspend fun loadResult(): ResultType? //todo nbr
-    abstract fun observeCacheUpdates(): Flow<Long>
 
     suspend fun fetchIfNeed(cachePolicy: CachePolicy) {
         if (shouldFetch(cachePolicy)) {
@@ -73,7 +72,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
             return data
         }
 
-        final override fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
+        fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
 
         final override fun invalidateCache() {
             cacheHelper.remove(key)
@@ -116,10 +115,6 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
 
         override suspend fun loadResult(): ResultType? {
             return memoryCache[memoryKey] as ResultType?
-        }
-
-        override fun observeCacheUpdates(): Flow<Long> {
-            throw UnsupportedOperationException()
         }
 
         override fun invalidateCache() {
