@@ -26,9 +26,6 @@ class LocalGamesDataSource @Inject constructor(
     override fun observeCount(steamId: SteamId, filter: GamesFilter): Flow<Int> =
         db.ownedGamesDao().observeCount(steamId.as64(), filter)
 
-    override fun observeHiddenCount(steamId: SteamId): Flow<Int> =
-        db.ownedGamesDao().observeHiddenCount(steamId.as64())
-
     override suspend fun update(
         steamId: SteamId,
         gamesFlow: Flow<OwnedGameEntity>
@@ -59,15 +56,7 @@ class LocalGamesDataSource @Inject constructor(
     override suspend fun getIds(
         steamId: SteamId,
         filter: GamesFilter
-    ): List<Int> {
-        val maxHours = when (filter.playtime) {
-            PlaytimeFilter.All -> null
-            PlaytimeFilter.NotPlayed -> 0
-            is PlaytimeFilter.Limited -> filter.playtime.maxHours
-        }
-
-        return db.ownedGamesDao().getIds(steamId.as64(), filter)
-    }
+    ): List<Int> = db.ownedGamesDao().getIds(steamId.as64(), filter)
 
     override suspend fun resetAllHidden(steamId: SteamId) {
         db.ownedGamesDao().resetAllHidden(steamId.as64())
@@ -108,19 +97,11 @@ class LocalGamesDataSource @Inject constructor(
         steamId: SteamId,
         filter: GamesFilter,
         nameSearchQuery: String?
-    ): PagingSource<Int, GameHeader> {
-        val maxHours = when (filter.playtime) {
-            PlaytimeFilter.All -> null
-            PlaytimeFilter.NotPlayed -> 0
-            is PlaytimeFilter.Limited -> filter.playtime.maxHours
-        }
-
-        return db.ownedGamesDao().getPagingSource(
-            steamId.as64(),
-            filter,
-            nameSearchQuery
-        )
-    }
+    ): PagingSource<Int, GameHeader> = db.ownedGamesDao().getPagingSource(
+        steamId.as64(),
+        filter,
+        nameSearchQuery
+    )
 
     companion object {
         private const val GAMES_BUFFER_SIZE = 500

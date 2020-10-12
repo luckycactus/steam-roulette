@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import java.lang.reflect.Method
 
@@ -165,6 +166,17 @@ private fun View.requestApplyInsetsWhenAttached() {
 
             override fun onViewDetachedFromWindow(v: View) = Unit
         })
+    }
+}
+
+fun FloatingActionButton.show(show: Boolean) {
+    if (show) show() else hide()
+}
+
+inline fun View.changeThroughFade(duration: Long = 200, crossinline block: View.() -> Unit) {
+    animate().alpha(0f).setDuration(duration / 2).withEndAction {
+        this.block()
+        animate().alpha(1f).setDuration(duration / 2)
     }
 }
 

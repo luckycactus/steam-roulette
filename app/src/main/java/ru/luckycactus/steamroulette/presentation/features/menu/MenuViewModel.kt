@@ -72,7 +72,7 @@ class MenuViewModel @ViewModelInject constructor(
         close()
     }
 
-    fun onGamesLibraryClick() {
+    fun onLibraryClick() {
         router.navigateTo(Screens.Library)
         close()
     }

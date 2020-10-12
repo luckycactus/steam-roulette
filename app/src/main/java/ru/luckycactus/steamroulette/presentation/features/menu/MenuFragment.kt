@@ -44,8 +44,8 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
             viewModel.onAboutClick()
         }
 
-        tvGamesLibrary.setOnClickListener {
-            viewModel.onGamesLibraryClick()
+        tvLibrary.setOnClickListener {
+            viewModel.onLibraryClick()
         }
 
         observe(viewModel.closeAction) {
@@ -69,7 +69,10 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
 
         observe(viewModel.gameCount) {
             tvGamesCount.text =
-                resources.getQuantityString(R.plurals.account_games_count_plurals, it, it)
+                resources.getString(
+                    R.string.you_have_n_games,
+                    resources.getQuantityString(R.plurals.games_count_plurals, it, it)
+                )
         }
 
         observe(viewModel.gamesLastUpdate) {

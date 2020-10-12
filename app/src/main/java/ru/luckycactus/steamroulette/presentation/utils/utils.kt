@@ -66,3 +66,13 @@ fun longLog(tag: String, message: String) {
     }
 }
 
+/**
+ * @param offset current offset of bottomsheet in range [-1, 1]
+ * @param min value of offset when alpha should be 0
+ * @param max value of offset when alpha should be 1
+ * @return value of alpha for current offset in range [0, 1]
+ */
+fun bsOffsetToAlpha(offset: Float, min: Float, max: Float): Float {
+    return ((offset - min) / (max - min)).coerceIn(0f, 1f)
+}
+

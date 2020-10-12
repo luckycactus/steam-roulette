@@ -12,7 +12,6 @@ import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.utils.startWith
 import ru.terrakok.cicerone.Router
 
 class LoginViewModel @ViewModelInject constructor(
@@ -30,8 +29,8 @@ class LoginViewModel @ViewModelInject constructor(
     val errorState: LiveData<String>
         get() = _errorState
 
-    private val _progressState = MutableLiveData<Boolean>().startWith(false)
-    private val _loginButtonAvailableState = MutableLiveData<Boolean>().startWith(false)
+    private val _progressState = MutableLiveData(false)
+    private val _loginButtonAvailableState = MutableLiveData(false)
     private val _errorState = MutableLiveData<String>()
 
     fun onSteamIdConfirmed(id: String) {

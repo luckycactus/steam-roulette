@@ -16,11 +16,11 @@
     <string name="error_zero_games">У Вас ещё нет игр</string>
     <string name="error_user_update">Не удалось обновить информацию о пользователе</string>
     <string name="account_games_count">%d игр на аккаунте</string>
-    <plurals name="account_games_count_plurals">
-        <item quantity="one">%d игра на аккаунте</item>
-        <item quantity="few">%d игры на аккаунте</item>
-        <item quantity="many">%d игр на аккаунте</item>
-        <item quantity="other">%d игр на аккаунте</item>
+    <plurals name="games_count_plurals">
+        <item quantity="one">%d игра</item>
+        <item quantity="few">%d игры</item>
+        <item quantity="many">%d игр</item>
+        <item quantity="other">%d игр</item>
     </plurals>
     <string name="games_last_sync">Последняя синхронизация: %1$s</string>
     <string name="last_sync_never">никогда</string>
@@ -71,6 +71,9 @@
     <string name="later">Позже</string>
     <string name="rate_app_title">Оценить Steam Shuffle</string>
     <string name="rate_app_dialog_message">Здравствуйте. Похоже, что вам нравится Steam Shuffle. Пожалуйста, уделите время, чтобы оценить приложение. Это не займет больше минуты. Спасибо за поддержку!</string>
-    <string name="my_steam_library">Мои игры</string>
+    <string name="my_steam_library">Библиотека</string>
     <string name="action_search">Поиск</string>
+    <string name="you_have_n_games">У вас %1$s на аккаунте</string>
+    <string name="clear_filters">Очистить</string>
+    <string name="only_hidden">Скрытые игры</string>
 </resources>

@@ -5,14 +5,15 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import javax.inject.Inject
+import javax.inject.Named
 
 @Reusable
 class ObserveLibraryFilterUseCase @Inject constructor(
-    private val libraryFiltersRepository: LibraryFiltersRepository
+    @Named("library") private val gamesFilterRepository: GamesFilterRepository
 ): UseCase<Unit, Flow<GamesFilter>>() {
 
     override fun execute(params: Unit): Flow<GamesFilter> {
-        return libraryFiltersRepository.observeFilter(GamesFilter.empty())
+        return gamesFilterRepository.observeFilter(GamesFilter.empty())
     }
 
 }

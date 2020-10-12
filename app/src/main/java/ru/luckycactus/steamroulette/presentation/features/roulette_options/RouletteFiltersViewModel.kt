@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
-import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteMaxHoursUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteMaxHoursUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SaveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
@@ -19,21 +19,15 @@ class RouletteFiltersViewModel @ViewModelInject constructor(
     private val saveRouletteFilter: SaveRouletteFilterUseCase,
 ) : BaseViewModel() {
 
-    suspend fun getCurrentPlaytimeFilterType() =
-        observeRouletteFilter().map { it.type }.first()
+    suspend fun getCurrentPlaytimeFilter() =
+        observeRouletteFilter().first().playtime
 
     suspend fun getCurrentMaxPlaytimeSetting() =
         observeRouletteMaxHours().first()
 
-    fun onOkClick(newFilterType: PlaytimeFilter.Type, newMaxPlaytime: Int) {
-        val newPlaytime = when (newFilterType) {
-            PlaytimeFilter.Type.All -> PlaytimeFilter.All
-            PlaytimeFilter.Type.NotPlayed -> PlaytimeFilter.NotPlayed
-            PlaytimeFilter.Type.Limited -> PlaytimeFilter.Limited(newMaxPlaytime)
-        }
-        val newFilter = GamesFilter(playtime = newPlaytime)
+    fun onOkClick(playtimeFilter: PlaytimeFilter) {
         viewModelScope.launch {
-            saveRouletteFilter(newFilter)
+            saveRouletteFilter(GamesFilter(playtime = playtimeFilter))
         }
     }
 }

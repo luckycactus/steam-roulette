@@ -12,7 +12,7 @@ import ru.luckycactus.steamroulette.presentation.features.about.AboutFragment
 import ru.luckycactus.steamroulette.presentation.features.about.AppLibrariesFragment
 import ru.luckycactus.steamroulette.presentation.features.detailed_description.DetailedDescriptionFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
-import ru.luckycactus.steamroulette.presentation.features.games.GamesLibraryFragment
+import ru.luckycactus.steamroulette.presentation.features.games.LibraryFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqsFragment
@@ -56,7 +56,7 @@ sealed class Screens : SupportAppScreen() {
     }
 
     object HiddenGames : Screens() {
-        override fun getFragment(): Fragment = GamesLibraryFragment.newInstance()
+        override fun getFragment(): Fragment = LibraryFragment.newInstance()
     }
 
     object About : Screens() {
@@ -68,7 +68,7 @@ sealed class Screens : SupportAppScreen() {
     }
 
     object Library : Screens() {
-        override fun getFragment(): Fragment? = GamesLibraryFragment.newInstance()
+        override fun getFragment(): Fragment? = LibraryFragment.newInstance()
     }
 
     data class ExternalBrowserFlow(

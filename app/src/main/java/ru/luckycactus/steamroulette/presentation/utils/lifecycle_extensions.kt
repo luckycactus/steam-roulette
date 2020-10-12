@@ -1,17 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
-import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import ru.luckycactus.steamroulette.domain.core.Event
-
-fun <T> MutableLiveData<T>.startWith(item: T): MutableLiveData<T> {
-    value = item
-    return this
-}
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit) {
     liveData.observe(this, Observer { body(it) })

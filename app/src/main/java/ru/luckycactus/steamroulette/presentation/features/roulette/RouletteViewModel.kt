@@ -14,21 +14,20 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
-import ru.luckycactus.steamroulette.presentation.utils.startWith
 
 class RouletteViewModel @ViewModelInject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingListUseCase,
     observeRouletteFilter: ObserveRouletteFilterUseCase,
-    observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
+    observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
@@ -46,8 +45,8 @@ class RouletteViewModel @ViewModelInject constructor(
 
     private val _gamesPagingList = MutableLiveData<PagingGameList?>()
     private val _contentState = MediatorLiveData<ContentState>()
-    private val _controlsAvailable = MutableLiveData<Boolean>().startWith(true)
-    private val currentUserPlayTimeFilter: LiveData<PlaytimeFilter>
+    private val _controlsAvailable = MutableLiveData(true)
+    private val gamesFilter: LiveData<GamesFilter>
     private val topGame = MediatorLiveData<GameHeader?>()
 
     private var getPagingListJob: Job? = null
@@ -62,7 +61,7 @@ class RouletteViewModel @ViewModelInject constructor(
     private var firstPreviouslyShownGameId: Int? = null
 
     init {
-        currentUserPlayTimeFilter = observeRouletteFilter()
+        gamesFilter = observeRouletteFilter()
             .asLiveData()
             .distinctUntilChanged()
 
@@ -71,12 +70,12 @@ class RouletteViewModel @ViewModelInject constructor(
             syncRouletteState()
         }
 
-        _contentState.addSource(currentUserPlayTimeFilter) {
+        _contentState.addSource(gamesFilter) {
             rouletteStateInvalidated = true
             syncRouletteState()
         }
 
-        val hiddenGamesCountLiveData = observeHiddenGamesCount()
+        val hiddenGamesCountLiveData = observeOwnedGamesCount(GamesFilter.onlyHidden())
             .asLiveData()
             .distinctUntilChanged()
 
@@ -184,7 +183,7 @@ class RouletteViewModel @ViewModelInject constructor(
             return
 
         val fetchGamesState = userViewModelDelegate.fetchGamesState.value
-        val filter = currentUserPlayTimeFilter.value
+        val filter = gamesFilter.value
 
         getPagingListJob?.cancel()
         _gamesPagingList.value?.close()

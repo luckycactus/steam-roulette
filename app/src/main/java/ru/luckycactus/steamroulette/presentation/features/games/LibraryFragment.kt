@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.*
@@ -13,11 +14,13 @@ import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_games.*
-import kotlinx.android.synthetic.main.fragment_library_filter.*
+import kotlinx.android.synthetic.main.fragment_library.*
 import kotlinx.android.synthetic.main.fragment_library_filter.filterSheet
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,20 +33,33 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 
 @AndroidEntryPoint
-class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
+class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
-    override val layoutResId = R.layout.fragment_games
+    override val layoutResId = R.layout.fragment_library
 
-    protected val adapter = GamesLibraryAdapter(::onGameClick)
+    private val adapter = LibraryAdapter(::onGameClick)
 
     private var actionMode: ActionMode? = null
     private lateinit var selectionTracker: SelectionTracker<Long>
     private var inSelectionMode = false
 
-    private lateinit var searchView: SearchView
+    private lateinit var searchMenuItem: MenuItem
     private lateinit var filtersBehavior: BottomSheetBehavior<*>
+    private lateinit var filtersFragment: LibraryFilterFragment
 
-    private val viewModel: GamesLibraryViewModel by viewModels()
+    private val viewModel: LibraryViewModel by viewModels()
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            onBackPressed()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -79,23 +95,36 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             setTitle(R.string.my_steam_library)
             inflateMenu(R.menu.menu_games_library)
             setOnMenuItemClickListener(::onMenuItemClick)
-            searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        }
+            searchMenuItem = menu.findItem(R.id.action_search).apply {
+                setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                    override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                        // searchMenuItem.isActionViewExpanded changes after callback, so we postpone method call
+                        post { updateOnBackPressedCallbackEnabled() }
+                        return true
+                    }
 
-        searchView.run {
-            findViewById<EditText>(androidx.appcompat.R.id.search_src_text).filters += AlphaNumSpaceInputFilter()
+                    override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                        post { updateOnBackPressedCallbackEnabled() }
+                        return true
+                    }
+                })
+            }
+            (searchMenuItem.actionView as SearchView).run {
+                findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+                    .filters += AlphaNumSpaceInputFilter()
 
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    clearFocus()
-                    return onQueryTextChange(query)
-                }
+                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        clearFocus()
+                        return onQueryTextChange(query)
+                    }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    viewModel.onSearchQueryChanged(newText)
-                    return true
-                }
-            })
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        viewModel.onSearchQueryChanged(newText)
+                        return true
+                    }
+                })
+            }
         }
 
         fab.run {
@@ -103,7 +132,7 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             backgroundTintList =
                 ColorStateList.valueOf(MaterialColors.getColor(fab, R.attr.colorPrimary))
             setOnClickListener {
-                filtersBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                filtersFragment.open()
             }
         }
 
@@ -115,55 +144,76 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
                 resources.getDimensionPixelSize(R.dimen.spacing_games_library)
             )
         )
+        val itemKeyProvider = LibraryItemKeyProvider(rvGames)
         selectionTracker = SelectionTracker.Builder(
             "games",
             rvGames,
-            GamesLibraryItemKeyProvider(rvGames),
-            GamesLibraryDetailsLookup(rvGames),
+            itemKeyProvider,
+            LibraryDetailsLookup(rvGames),
             StorageStrategy.createLongStorage()
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
             .build()
 
-        selectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
-            override fun onSelectionChanged() {
-                val selectionSize = selectionTracker.selection.size()
-                setSelectionModeEnabled(selectionSize > 0)
-                actionMode?.title = selectionSize.toString()
-            }
-        })
+        selectionTracker.addObserver(selectionObserver)
 
         adapter.tracker = selectionTracker
+        selectionTracker.onRestoreInstanceState(savedInstanceState)
+        updateSelectionMode()
 
-        filtersBehavior = BottomSheetBehavior.from(filterSheet)
-        filtersBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
+        filtersFragment =
+            childFragmentManager.findFragmentById(R.id.filterSheet) as LibraryFilterFragment
+        filtersBehavior = from(filterSheet)
+        filtersBehavior.addBottomSheetCallback(bottomSheetCallback)
+        filterSheet.doOnLayout {
+            val slideOffset = when (filtersBehavior.state) {
+                STATE_EXPANDED -> 1f
+                STATE_COLLAPSED -> 0f
+                else -> -1f
             }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                scrimView.alpha = slideOffset.coerceAtLeast(0f)
-                scrimView.visibility(slideOffset > 0f)
-            }
-        })
-
-        filterSheet.setOnClickListener {
-            //nothing
+            updateFiltersScrim(slideOffset)
         }
 
+        filterSheet.setOnClickListener { /* nothing */ }
+
         scrimView.setOnClickListener {
-            filtersBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            filtersFragment.close()
         }
 
         lifecycleScope.launch {
             viewModel.games.collectLatest {
+//                if (inSelectionMode) { //todo library
+//                    selectionTracker.clearSelection()
+//                    setSelectionModeEnabled(false)
+//                }
                 adapter.submitData(it)
             }
         }
 
-        observe(viewModel.currentFilterText) {
-            chipSelectedFilter.text = it
-            filtersBehavior.skipCollapsed = it.isNullOrEmpty()
-            filtersBehavior.isHideable = it.isNullOrEmpty()
+        observe(viewModel.hasAnyFilters, ::updateFiltersUi)
+    }
+
+    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            updateOnBackPressedCallbackEnabled()
         }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            updateFiltersScrim(slideOffset)
+        }
+    }
+
+    private val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {
+        override fun onSelectionChanged() {
+            updateSelectionMode()
+        }
+
+        override fun onItemStateChanged(key: Long, selected: Boolean) {
+            super.onItemStateChanged(key, selected)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        selectionTracker.onSaveInstanceState(outState)
     }
 
     override fun onMessageDialogResult(
@@ -176,6 +226,45 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
                     viewModel.clearAll()
         }
 
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        updateOnBackPressedCallbackEnabled()
+    }
+
+    private fun updateFiltersUi(hasAnyFilters: Boolean) {
+        fab.show(!hasAnyFilters)
+
+        filtersBehavior.skipCollapsed = !hasAnyFilters
+        filtersBehavior.isHideable = !hasAnyFilters
+        if (!hasAnyFilters && filtersBehavior.state == STATE_COLLAPSED)
+            filtersBehavior.state = STATE_HIDDEN
+    }
+
+    private fun updateOnBackPressedCallbackEnabled() {
+        onBackPressedCallback.isEnabled = when {
+            isHidden -> false
+            searchMenuItem.isActionViewExpanded -> true
+            else -> when (filtersBehavior.state) {
+                STATE_DRAGGING, STATE_EXPANDED, STATE_HALF_EXPANDED -> true
+                else -> false
+            }
+        }
+    }
+
+    private fun onBackPressed() {
+        if (::filtersBehavior.isInitialized && filtersBehavior.state == STATE_EXPANDED) {
+            filtersFragment.close()
+            return
+        }
+
+        if (searchMenuItem.isActionViewExpanded)
+            searchMenuItem.collapseActionView()
+    }
+
+    private fun updateFiltersScrim(slideOffset: Float) {
+        scrimView.alpha = slideOffset.coerceAtLeast(0f)
+        scrimView.visibility(slideOffset > 0f)
     }
 
     private fun onMenuItemClick(item: MenuItem): Boolean {
@@ -213,20 +302,31 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             requireActivity().onBackPressed()
     }
 
-    private fun setSelectionModeEnabled(enable: Boolean) {
+    private fun updateSelectionMode() {
+        val selectionSize = selectionTracker.selection.size()
+        val enable = selectionSize > 0
+
         if (inSelectionMode != enable) {
             inSelectionMode = enable
+
             if (enable)
                 actionMode = toolbar.startActionMode(actionModeCallback)
             else
                 actionMode?.finish()
-            val toolbarParams = toolbar.layoutParams as AppBarLayout.LayoutParams
-            toolbarParams.scrollFlags = if (enable)
-                AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-            else
-                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-            toolbar.layoutParams = toolbarParams
+            toolbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
+                scrollFlags = if (enable)
+                    SCROLL_FLAG_ENTER_ALWAYS
+                else
+                    SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS
+            }
         }
+
+        actionMode?.title = selectionSize.toString()
+    }
+
+    override fun onDestroy() {
+        actionMode?.finish()
+        super.onDestroy()
     }
 
     private val actionModeCallback = object : ActionMode.Callback {
@@ -259,30 +359,33 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         addListener((activity as MainActivity).touchSwitchTransitionListener)
     }
 
-    private class GamesLibraryDetailsLookup(
+    private class LibraryDetailsLookup(
         private val recyclerView: RecyclerView
     ) : ItemDetailsLookup<Long>() {
         override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
             val view = recyclerView.findChildViewUnder(event.x, event.y)
             return if (view != null)
-                (recyclerView.getChildViewHolder(view) as GamesLibraryAdapter.GameViewHolder)
+                (recyclerView.getChildViewHolder(view) as LibraryAdapter.GameViewHolder)
                     .getItemDetails()
             else null
         }
     }
 
-    private class GamesLibraryItemKeyProvider(
+    private class LibraryItemKeyProvider(
         recyclerView: RecyclerView
     ) : ItemKeyProvider<Long>(SCOPE_MAPPED) {
-        private val adapter: GamesLibraryAdapter = (recyclerView.adapter as? GamesLibraryAdapter)
-            ?: throw IllegalStateException("RecyclerView must have GamesLibraryAdapter set")
+        private val adapter: LibraryAdapter = (recyclerView.adapter as? LibraryAdapter)
+            ?: throw IllegalStateException("RecyclerView must have LibraryAdapter set")
         private val lm = (recyclerView.layoutManager as? GridLayoutManager)
             ?: throw IllegalStateException("RecyclerView must have GridLayoutManager set")
 
         override fun getKey(position: Int): Long? = adapter.getSelectionKeyForPosition(position)
 
         override fun getPosition(key: Long): Int {
-            for (i in lm.findFirstVisibleItemPosition()..lm.findLastVisibleItemPosition()) {
+            val last = lm.findLastVisibleItemPosition()
+            if (last < 0)
+                return RecyclerView.NO_POSITION
+            for (i in lm.findFirstVisibleItemPosition()..last) {
                 if (key == adapter.getSelectionKeyForPosition(i))
                     return i
             }
@@ -293,6 +396,6 @@ class GamesLibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     companion object {
         private const val SPAN_COUNT = 3
         private const val CONFIRM_CLEAR_DIALOG_TAG = "CONFIRM_CLEAR_DIALOG"
-        fun newInstance() = GamesLibraryFragment()
+        fun newInstance() = LibraryFragment()
     }
 }

@@ -100,7 +100,7 @@
     <include layout="@layout/divider" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvGamesLibrary"
+        android:id="@+id/tvLibrary"
         style="@style/MenuItemTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

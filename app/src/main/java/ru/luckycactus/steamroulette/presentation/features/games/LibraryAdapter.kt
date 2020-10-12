@@ -14,9 +14,9 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
-class GamesLibraryAdapter(
+class LibraryAdapter(
     private val onGameClick: (GameHeader, List<View>, Boolean) -> Unit
-) : PagingDataAdapter<GameHeader, GamesLibraryAdapter.GameViewHolder>(diffCallback) {
+) : PagingDataAdapter<GameHeader, LibraryAdapter.GameViewHolder>(diffCallback) {
     var tracker: SelectionTracker<Long>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder =

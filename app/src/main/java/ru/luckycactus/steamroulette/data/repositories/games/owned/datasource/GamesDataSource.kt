@@ -14,10 +14,7 @@ interface GamesDataSource {
 
         suspend fun getAll(steamId: SteamId): List<OwnedGameEntity>
 
-        suspend fun getIds(
-            steamId: SteamId,
-            gamesFilter: GamesFilter
-        ): List<Int>
+        suspend fun getIds(steamId: SteamId, filter: GamesFilter): List<Int>
 
         suspend fun setHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
 
@@ -35,15 +32,13 @@ interface GamesDataSource {
 
         fun observeCount(steamId: SteamId, filter: GamesFilter): Flow<Int>
 
-        fun observeHiddenCount(steamId: SteamId): Flow<Int>
-
         suspend fun resetAllHidden(steamId: SteamId)
 
         suspend fun clear(steamId: SteamId)
 
         fun getPagingSource(
             steamId: SteamId,
-            gamesFilter: GamesFilter,
+            filter: GamesFilter,
             nameSearchQuery: String?
         ): PagingSource<Int, GameHeader>
     }

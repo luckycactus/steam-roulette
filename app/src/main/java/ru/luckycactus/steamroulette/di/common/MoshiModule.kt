@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import ru.luckycactus.steamroulette.data.net.adapters.PlaytimeFilterAdapter
 import ru.luckycactus.steamroulette.data.net.adapters.RequiredAgeMoshiAdapter
 import ru.luckycactus.steamroulette.data.net.adapters.SystemRequirementsMoshiAdapter
 import javax.inject.Named
@@ -25,6 +26,8 @@ abstract class MoshiModule {
 
         @Reusable
         @Provides
-        fun provideMoshi(): Moshi = Moshi.Builder().build()
+        fun provideMoshi(): Moshi = Moshi.Builder()
+            .add(PlaytimeFilterAdapter())
+            .build()
     }
 }

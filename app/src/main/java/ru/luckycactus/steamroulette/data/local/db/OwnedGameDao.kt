@@ -20,17 +20,9 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     private val nonAlphanumericRegex = "[^\\w]".toRegex()
 
-    suspend fun getIds(
-        steam64: Long,
-        filter: GamesFilter
-    ): List<Int> {
-        val querySb = StringBuilder("SELECT appId FROM owned_game WHERE userSteam64 = ?")
-        val args = mutableListOf<Any>(steam64)
-
-        foo(args, querySb, filter)
-
-        return _getIds(SimpleSQLiteQuery(querySb.toString(), args.toTypedArray()))
-    }
+    suspend fun getIds(steam64: Long, filter: GamesFilter): List<Int> = _getIds(
+        makeGamesRawQuery("SELECT appId FROM owned_game", steam64, filter)
+    )
 
     @Transaction
     @Query("SELECT * FROM owned_game WHERE userSteam64 = :steam64")
@@ -41,21 +33,22 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         filter: GamesFilter,
         nameSearchQuery: String? = null
     ): PagingSource<Int, GameHeader> {
-        val querySb = StringBuilder("SELECT appId, name FROM owned_game WHERE userSteam64 = ?")
-        val args = mutableListOf<Any>(steam64)
-
-        foo(args, querySb, filter)
+        val (sb, args) = prepareGamesRawQuery(
+            "SELECT appId, name FROM owned_game",
+            steam64,
+            filter
+        )
 
         if (!nameSearchQuery.isNullOrBlank()) {
             for (word in nameSearchQuery.split(nonAlphanumericRegex)) {
-                querySb.append(" AND name LIKE ?")
+                sb.append(" AND name LIKE ?")
                 args += "%${word}%"
             }
         }
 
-        querySb.append(" ORDER BY name ASC")
+        sb.append(" ORDER BY name ASC")
 
-        return _getGamesPagingSource(SimpleSQLiteQuery(querySb.toString(), args.toTypedArray()))
+        return _getGamesPagingSource(SimpleSQLiteQuery(sb.toString(), args.toTypedArray()))
     }
 
     @Query(
@@ -99,21 +92,15 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     suspend fun isUserHasGames(steam64: Long) = _isUserHasGames(steam64) == 1
 
-    fun observeCount(
-        steam64: Long,
-        filter: GamesFilter
-    ): Flow<Int> {
-        val querySb = StringBuilder("SELECT COUNT(*) FROM owned_game WHERE userSteam64 = ?")
-        val args = mutableListOf<Any>(steam64)
-
-        foo(args, querySb, filter)
-
-        return _observeCount(SimpleSQLiteQuery(querySb.toString(), args.toTypedArray()))
+    fun observeCount(steam64: Long, filter: GamesFilter): Flow<Int> {
+        return _observeCount(
+            makeGamesRawQuery(
+                "SELECT COUNT(*) FROM owned_game",
+                steam64,
+                filter
+            )
+        )
     }
-
-    //todo library unify
-    @Query("SELECT COUNT(*) FROM owned_game  WHERE userSteam64 = :steam64 AND hidden = 1")
-    abstract fun observeHiddenCount(steam64: Long): Flow<Int>
 
     @Query("UPDATE owned_game set hidden = 0 WHERE userSteam64 =:steam64 AND hidden = 1")
     abstract suspend fun resetAllHidden(steam64: Long)
@@ -141,12 +128,20 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
     abstract fun _getGamesPagingSource(query: SupportSQLiteQuery): PagingSource<Int, GameHeader>
 
-    //todo library name
-    private fun foo(
-        args: MutableList<Any>,
-        querySb: StringBuilder,
-        filter: GamesFilter
-    ) {
+    /******************/
+
+    private fun prepareGamesRawQuery(
+        query: String,
+        steam64: Long,
+        filter: GamesFilter,
+        args: MutableList<Any> = mutableListOf(),
+        querySb: StringBuilder = StringBuilder()
+    ): Pair<StringBuilder, MutableList<Any>> {
+        querySb.append(query)
+
+        querySb.append(" WHERE userSteam64 = ?")
+        args += steam64
+
         filter.shown?.let {
             args += it
             querySb.append(" AND shown = ?")
@@ -167,5 +162,18 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
             args += it * 60
             querySb.append(" AND playtimeForever <= ?")
         }
+
+        return querySb to args
+    }
+
+    private fun makeGamesRawQuery(
+        query: String,
+        steam64: Long,
+        filter: GamesFilter,
+        args: MutableList<Any> = mutableListOf(),
+        querySb: StringBuilder = StringBuilder()
+    ): SimpleSQLiteQuery {
+        val (sb, args) = prepareGamesRawQuery(query, steam64, filter, args, querySb)
+        return SimpleSQLiteQuery(sb.toString(), args.toTypedArray())
     }
 }

@@ -5,22 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.map
-import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
-import ru.luckycactus.steamroulette.domain.games.ObserveHiddenGamesCountUseCase
+import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
+import ru.luckycactus.steamroulette.presentation.utils.getPlaytimeFilterDescription
 import ru.terrakok.cicerone.Router
 
 class RouletteOptionsViewModel @ViewModelInject constructor(
     observeRouletteFilter: ObserveRouletteFilterUseCase,
-    observeHiddenGamesCount: ObserveHiddenGamesCountUseCase,
+    observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
 ) : BaseViewModel() {
+
     val playTimePrefValue: LiveData<String>
     val hiddenGamesCount: LiveData<Int>
     val closeAction: LiveData<Unit>
@@ -30,26 +31,15 @@ class RouletteOptionsViewModel @ViewModelInject constructor(
 
     init {
         playTimePrefValue = observeRouletteFilter()
-            .map { getPlayTimeFilterText(it) }
+            .map { resourceManager.getPlaytimeFilterDescription(it.playtime) }
             .asLiveData()
 
-        hiddenGamesCount = observeHiddenGamesCount().asLiveData()
+        hiddenGamesCount = observeOwnedGamesCount(GamesFilter.onlyHidden()).asLiveData()
     }
 
     private fun close() {
         _closeAction.value = Unit
     }
-
-    private fun getPlayTimeFilterText(playTimeFilter: PlaytimeFilter) =
-        when (playTimeFilter) {
-            PlaytimeFilter.All -> resourceManager.getString(R.string.playtime_pref_all)
-            PlaytimeFilter.NotPlayed -> resourceManager.getString(R.string.playtime_pref_not_played)
-            is PlaytimeFilter.Limited -> resourceManager.getQuantityString(
-                R.plurals.playtime_pref_max_time_full_plurals,
-                playTimeFilter.maxHours,
-                playTimeFilter.maxHours
-            )
-        }
 
     fun onHiddenGamesClick() {
         router.navigateTo(Screens.HiddenGames)

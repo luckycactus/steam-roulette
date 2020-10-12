@@ -12,9 +12,7 @@ interface GamesRepository {
     @Throws(GetOwnedGamesPrivacyException::class)
     suspend fun fetchOwnedGames(cachePolicy: CachePolicy)
 
-    suspend fun getOwnedGamesIds(
-        gamesFilter: GamesFilter
-    ): List<Int>
+    suspend fun getOwnedGamesIds(gamesFilter: GamesFilter): List<Int>
 
     suspend fun getLocalOwnedGameHeaders(gameIds: List<Int>): List<GameHeader>
 
@@ -30,8 +28,6 @@ interface GamesRepository {
 
     fun observeGamesCount(filter: GamesFilter): Flow<Int>
 
-    fun observeHiddenGamesCount(): Flow<Int>
-
     suspend fun resetHiddenGames()
 
     fun observeGamesUpdates(): Flow<Long>
@@ -39,7 +35,7 @@ interface GamesRepository {
     suspend fun clearUser(steamId: SteamId)
 
     fun getOwnedGamesPagingSource(
-        gamesFilter: GamesFilter,
+        filter: GamesFilter,
         nameSearchQuery: String?
     ): PagingSource<Int, GameHeader>
 }

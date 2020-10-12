@@ -2,16 +2,16 @@ package ru.luckycactus.steamroulette.domain.games_filter
 
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import javax.inject.Inject
+import javax.inject.Named
 
 @Reusable
 class ObserveRouletteFilterUseCase @Inject constructor(
-    private val rouletteFiltersRepository: RouletteFiltersRepository
-) : UseCase<Unit, Flow<PlaytimeFilter>>() {
+    @Named("roulette") private val rouletteFiltersRepository: GamesFilterRepository
+) : UseCase<Unit, Flow<GamesFilter>>() {
 
-    override fun execute(params: Unit): Flow<PlaytimeFilter> =
-        rouletteFiltersRepository.observePlaytimeFilter(PlaytimeFilter.Type.All, 2)
+    override fun execute(params: Unit): Flow<GamesFilter> =
+        rouletteFiltersRepository.observeFilter(GamesFilter.empty())
 }

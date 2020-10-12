@@ -32,9 +32,6 @@ class GamesRepositoryImpl @Inject constructor(
     override fun observeGamesCount(filter: GamesFilter): Flow<Int> =
         localGamesDataSource.observeCount(currentUser, filter)
 
-    override fun observeHiddenGamesCount(): Flow<Int> =
-        localGamesDataSource.observeHiddenCount(currentUser)
-
     override suspend fun resetHiddenGames() {
         localGamesDataSource.resetAllHidden(currentUser)
     }
@@ -50,14 +47,10 @@ class GamesRepositoryImpl @Inject constructor(
     override suspend fun isUserHasGames(): Boolean =
         localGamesDataSource.isUserHasGames(currentUser)
 
-    override suspend fun getOwnedGamesIds(
-        gamesFilter: GamesFilter
-    ) =
+    override suspend fun getOwnedGamesIds(gamesFilter: GamesFilter) =
         localGamesDataSource.getIds(currentUser, gamesFilter)
 
-    override suspend fun getLocalOwnedGameHeaders(
-        gameIds: List<Int>
-    ): List<GameHeader> =
+    override suspend fun getLocalOwnedGameHeaders(gameIds: List<Int>): List<GameHeader> =
         localGamesDataSource.getHeaders(currentUser, gameIds)
 
     override suspend fun setLocalOwnedGamesHidden(

@@ -15,13 +15,13 @@
     <string name="error_zero_games">You have no games yet</string>
     <string name="error_user_update">Failed to update user information</string>
     <string name="account_games_count">You have %d games</string>
-    <plurals name="account_games_count_plurals">
-        <item quantity="zero">You have %d games</item>
-        <item quantity="one">You have %d game</item>
-        <item quantity="two">You have %d games</item>
-        <item quantity="few">You have %d games</item>
-        <item quantity="many">You have %d games</item>
-        <item quantity="other">You have %d games</item>
+    <plurals name="games_count_plurals">
+        <item quantity="zero">%d games</item>
+        <item quantity="one">%d game</item>
+        <item quantity="two">%d games</item>
+        <item quantity="few">%d games</item>
+        <item quantity="many">%d games</item>
+        <item quantity="other">%d games</item>
     </plurals>
     <string name="games_last_sync">Last sync: %1$s</string>
     <string name="last_sync_never">never</string>
@@ -74,8 +74,9 @@
     <string name="later">Later</string>
     <string name="rate_app_title">Rate Steam Shuffle</string>
     <string name="rate_app_dialog_message">Hello. It seems like you are enjoying Steam Shuffle. Please take a moment to rate it. It won\'t take more than a minute. Thanks for your support!</string>
-    <string name="my_steam_library">My games</string>
+    <string name="my_steam_library">Library</string>
     <string name="action_search">Search</string>
     <string name="clear_filters">Reset</string>
     <string name="only_hidden">Hidden games</string>
+    <string name="you_have_n_games">You have %1$s</string>
 </resources>

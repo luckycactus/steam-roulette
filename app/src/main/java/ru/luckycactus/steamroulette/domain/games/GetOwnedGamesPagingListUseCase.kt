@@ -7,10 +7,12 @@ import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import javax.inject.Inject
 
 @Reusable
+/**
+ * ignores hidden and shown fields of GamesFilter
+ */
 class GetOwnedGamesPagingListUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
 ) : SuspendUseCase<GetOwnedGamesPagingListUseCase.Params, GetOwnedGamesPagingListUseCase.Result>() {
@@ -25,7 +27,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                 GamesFilter(
                     hidden = false,
                     shown = false,
-                    playtime = params.filter
+                    playtime = params.filter.playtime
                 )
             ).shuffled()
 
@@ -33,7 +35,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                 GamesFilter(
                     hidden = false,
                     shown = true,
-                    playtime = params.filter
+                    playtime = params.filter.playtime
                 )
             ).shuffled()
 
@@ -56,7 +58,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
     }
 
     data class Params(
-        val filter: PlaytimeFilter,
+        val filter: GamesFilter,
         val pagingCoroutineScope: CoroutineScope
     )
 

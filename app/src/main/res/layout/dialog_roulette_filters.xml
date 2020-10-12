@@ -22,7 +22,7 @@
             >
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/rbPlaytimeAll"
+                android:id="@+id/rbAll"
                 style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
                 />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/rbPlayTimeNotPlayed"
+                android:id="@+id/rbNotPlayed"
                 style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                 />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/rbPlaytimeLimit"
+                android:id="@+id/rbLimit"
                 style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

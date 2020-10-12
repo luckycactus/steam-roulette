@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.di.common
 
-import android.content.SharedPreferences
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,12 +22,8 @@ import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.G
 import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.RemoteGameStoreDataSource
 import ru.luckycactus.steamroulette.data.repositories.games.owned.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.*
-import ru.luckycactus.steamroulette.data.repositories.games_filter.LibraryFiltersRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games_filter.RouletteFiltersRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games_filter.datasource.GamesFilterDataSource
-import ru.luckycactus.steamroulette.data.repositories.games_filter.datasource.LibraryGamesFilterDataSource
-import ru.luckycactus.steamroulette.data.repositories.games_filter.datasource.LocalPlaytimeFilterDataSource
-import ru.luckycactus.steamroulette.data.repositories.games_filter.datasource.PlaytimeFilterDataSource
+import ru.luckycactus.steamroulette.data.repositories.games_filter.LibraryFilterRepository
+import ru.luckycactus.steamroulette.data.repositories.games_filter.RouletteFilterRepository
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datasource.LoginDataSource
 import ru.luckycactus.steamroulette.data.repositories.login.datasource.RemoteLoginDataSource
@@ -49,8 +44,7 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
 import ru.luckycactus.steamroulette.domain.games.GameDetailsRepository
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
-import ru.luckycactus.steamroulette.domain.games_filter.LibraryFiltersRepository
-import ru.luckycactus.steamroulette.domain.games_filter.RouletteFiltersRepository
+import ru.luckycactus.steamroulette.domain.games_filter.GamesFilterRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.review.AppReviewRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
@@ -82,10 +76,15 @@ abstract class AppModule {
     abstract fun bindUserSessionRepository(userSessionRepository: UserSessionRepositoryImpl): UserSessionRepository
 
     @Binds
-    abstract fun bindUserSettingsRepository(userSettingsRepository: RouletteFiltersRepositoryImpl): RouletteFiltersRepository
+    abstract fun bindLoginRepository(loginRepository: LoginRepositoryImpl): LoginRepository
 
     @Binds
-    abstract fun bindLoginRepository(loginRepository: LoginRepositoryImpl): LoginRepository
+    @Named("library")
+    abstract fun provideLibraryFiltersRepository(repo: LibraryFilterRepository): GamesFilterRepository
+
+    @Binds
+    @Named("roulette")
+    abstract fun provideRouletteFiltersRepository(repo: RouletteFilterRepository): GamesFilterRepository
 
     @Binds
     abstract fun bindRemoteUserDataSource(dataSource: RemoteUserDataSource): UserDataSource.Remote
@@ -101,9 +100,6 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindAppReviewRepository(appReviewRepositoryImpl: AppReviewRepositoryImpl): AppReviewRepository
-
-    @Binds
-    abstract fun bindLibraryFiltersRepository(libraryFiltersRepositoryImpl: LibraryFiltersRepositoryImpl): LibraryFiltersRepository
 
     @Binds
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner
@@ -129,9 +125,6 @@ abstract class AppModule {
     @Binds
     abstract fun bindRemoteGameDetailsDataSource(remoteGameDetailsDataSource: RemoteGameStoreDataSource): GameStoreDataSource.Remote
 
-    @Binds
-    abstract fun bindGamesFilterDataSource(dataSource: LibraryGamesFilterDataSource): GamesFilterDataSource
-
     companion object {
 
         @Singleton
@@ -145,19 +138,5 @@ abstract class AppModule {
         fun provideGamesVerifier(): GamesVerifier.Factory {
             return GamesVerifierImpl.Factory(BuildConfig.DEBUG)
         }
-
-        @Provides
-        @Reusable
-        @Named("roulette")
-        fun provideRoulettePlaytimeFilterDataSource(
-            @Named("roulette-filters") prefs: SharedPreferences
-        ): PlaytimeFilterDataSource = LocalPlaytimeFilterDataSource(prefs)
-
-        @Provides
-        @Reusable
-        @Named("library")
-        fun provideLibraryPlaytimeFilterDataSource(
-            @Named("library-filters") prefs: SharedPreferences
-        ): PlaytimeFilterDataSource = LocalPlaytimeFilterDataSource(prefs)
     }
 }

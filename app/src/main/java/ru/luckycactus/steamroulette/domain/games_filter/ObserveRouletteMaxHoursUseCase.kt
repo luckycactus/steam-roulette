@@ -2,15 +2,16 @@ package ru.luckycactus.steamroulette.domain.games_filter
 
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
+import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
 import javax.inject.Inject
+import javax.inject.Named
 
 @Reusable
 class ObserveRouletteMaxHoursUseCase @Inject constructor(
-    private val rouletteFiltersRepository: RouletteFiltersRepository
+    @Named("roulette") private val rouletteFiltersRepository: GamesFilterRepository
 ) : UseCase<Unit, Flow<Int>>() {
 
-    // todo library move 2 to consts
     override fun execute(params: Unit): Flow<Int> =
-        rouletteFiltersRepository.observeMaxPlaytime(2)
+        rouletteFiltersRepository.observeMaxHours(Consts.DEFAULT_MAX_HOURS)
 }

@@ -16,6 +16,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.dialog_roulette_filters.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 @AndroidEntryPoint
@@ -37,18 +38,21 @@ class RouletteFiltersDialog : DialogFragment() {
             setNegativeButton(R.string.cancel, null)
             setPositiveButton(android.R.string.ok) { _, _ ->
                 with(layoutContainer!!) {
-                    val newFilterType = when {
-                        rbPlaytimeAll.isChecked -> PlaytimeFilter.Type.All
-                        rbPlayTimeNotPlayed.isChecked -> PlaytimeFilter.Type.NotPlayed
-                        rbPlaytimeLimit.isChecked -> PlaytimeFilter.Type.Limited
+                    val filter = when {
+                        rbAll.isChecked -> PlaytimeFilter.All
+                        rbNotPlayed.isChecked -> PlaytimeFilter.NotPlayed
+                        rbLimit.isChecked -> {
+                            val maxHours = try {
+                                Integer.parseInt(etPlaytime.textWithoutLabel.toString())
+                            } catch (nfe: NumberFormatException) {
+                                1
+                            }
+                            PlaytimeFilter.Limited(maxHours)
+                        }
                         else -> throw IllegalStateException()
                     }
-                    val newMaxPlaytime = try {
-                        Integer.parseInt(etPlaytime.textWithoutLabel.toString())
-                    } catch (nfe: NumberFormatException) {
-                        1
-                    }
-                    viewModel.onOkClick(newFilterType, newMaxPlaytime)
+
+                    viewModel.onOkClick(filter)
                 }
             }
 
@@ -67,19 +71,22 @@ class RouletteFiltersDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ) : LayoutContainer {
         init {
-            rbPlaytimeLimit.setOnCheckedChangeListener { _, isChecked ->
+            rbLimit.setOnCheckedChangeListener { _, isChecked ->
                 etPlaytime.isEnabled = isChecked
             }
 
-            etPlaytime.filters = arrayOf(MinMaxInputFilter(1, 1000))
+            etPlaytime.filters += MinMaxInputFilter(
+                Consts.FILTER_MIN_HOURS,
+                Consts.FILTER_MAX_HOURS
+            )
             etPlaytime.label = getString(R.string.playtime_hours_label)
 
             if (savedInstanceState == null) {
                 lifecycleScope.launch {
-                    when (viewModel.getCurrentPlaytimeFilterType()) {
-                        PlaytimeFilter.Type.All -> rbPlaytimeAll
-                        PlaytimeFilter.Type.NotPlayed -> rbPlayTimeNotPlayed
-                        PlaytimeFilter.Type.Limited -> rbPlaytimeLimit
+                    when (viewModel.getCurrentPlaytimeFilter()) {
+                        PlaytimeFilter.All -> rbAll
+                        PlaytimeFilter.NotPlayed -> rbNotPlayed
+                        is PlaytimeFilter.Limited -> rbLimit
                     }.isChecked = true
                 }
 
