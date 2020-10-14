@@ -20,6 +20,7 @@ import ru.luckycactus.steamroulette.presentation.utils.inflate
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class LibraryAdapter(
+    private val onlyHidden: Boolean,
     private val onGameClick: (LibraryGame, List<View>, Boolean) -> Unit
 ) : PagingDataAdapter<LibraryGame, LibraryAdapter.GameViewHolder>(diffCallback) {
 
@@ -71,8 +72,8 @@ class LibraryAdapter(
             gameView.isSelected = selected
             cardViewBottom.isSelected = selected
             checkbox.isSelected = selected
-            hidden.visibility(game.hidden)
-            gameView.colorFilter = if (game.hidden) hiddenColorFilter else null
+            hidden.visibility(game.hidden && !onlyHidden)
+            gameView.colorFilter = if (game.hidden && !onlyHidden) hiddenColorFilter else null
         }
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> {

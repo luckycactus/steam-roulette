@@ -55,10 +55,6 @@ sealed class Screens : SupportAppScreen() {
             DetailedDescriptionFragment.newInstance(appName, detailedDescription)
     }
 
-    object HiddenGames : Screens() {
-        override fun getFragment(): Fragment = LibraryFragment.newInstance()
-    }
-
     object About : Screens() {
         override fun getFragment(): Fragment = AboutFragment.newInstance()
     }
@@ -69,6 +65,10 @@ sealed class Screens : SupportAppScreen() {
 
     object Library : Screens() {
         override fun getFragment(): Fragment? = LibraryFragment.newInstance()
+    }
+
+    object HiddenGames : Screens() {
+        override fun getFragment(): Fragment = LibraryFragment.newInstance(true)
     }
 
     data class ExternalBrowserFlow(

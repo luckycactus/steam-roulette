@@ -10,16 +10,14 @@ import kotlin.reflect.KProperty
 inline fun <reified T> argument(
     key: String,
     defValue: T? = null
-): ReadOnlyProperty<Fragment, T> = object :
-    ReadOnlyProperty<Fragment, T> {
-    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
+): ReadOnlyProperty<Fragment, T> =
+    ReadOnlyProperty { thisRef, _ ->
         val result = thisRef.arguments?.get(key) ?: defValue
         if (result != null && result !is T) {
             throw ClassCastException("Property $key has different class type")
         }
-        return result as T
+        result as T
     }
-}
 
 inline fun <reified T> Fragment.getCallbacksOrThrow(): T {
     return getCallbacks() ?: throw ClassCastException("${T::class.java} not implemented")
@@ -36,7 +34,8 @@ inline fun <reified T> Fragment.getCallbacks(): T? {
 fun Activity.hideKeyboard() {
     currentFocus?.apply {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(windowToken,
+        inputManager.hideSoftInputFromWindow(
+            windowToken,
             InputMethodManager.HIDE_NOT_ALWAYS
         )
     }

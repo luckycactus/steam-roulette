@@ -9,6 +9,7 @@ import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -40,7 +41,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     override val layoutResId = R.layout.fragment_library
 
-    private val adapter = LibraryAdapter(::onGameClick)
+    private lateinit var adapter: LibraryAdapter
 
     private var actionMode: ActionMode? = null
     private lateinit var selectionTracker: SelectionTracker<Long>
@@ -140,6 +141,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             }
         }
 
+        adapter = LibraryAdapter(viewModel.onlyHidden, ::onGameClick)
         rvGames.adapter = adapter
         rvGames.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         rvGames.addItemDecoration(
@@ -212,6 +214,12 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
         observe(viewModel.clearAllHiddenVisibility) {
             clearHiddenMenuItem.isVisible = it
+        }
+
+        if (viewModel.onlyHidden) {
+            observe(viewModel.filteredGamesCount) {
+                toolbar.title = "${getString(R.string.hidden_games)} ($it)"
+            }
         }
     }
 
@@ -296,12 +304,17 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     private fun updateFiltersUi(hasAnyFilters: Boolean) {
-        fab.show(!hasAnyFilters)
+        fab.show(!hasAnyFilters && !viewModel.onlyHidden)
 
-        filtersBehavior.skipCollapsed = !hasAnyFilters
-        filtersBehavior.isHideable = !hasAnyFilters
-        if (!hasAnyFilters && filtersBehavior.state == STATE_COLLAPSED)
+        if (viewModel.onlyHidden) {
+            filtersBehavior.isHideable = true
             filtersBehavior.state = STATE_HIDDEN
+        } else {
+            filtersBehavior.skipCollapsed = !hasAnyFilters
+            filtersBehavior.isHideable = !hasAnyFilters
+            if (!hasAnyFilters && filtersBehavior.state == STATE_COLLAPSED)
+                filtersBehavior.state = STATE_HIDDEN
+        }
     }
 
     private fun updateOnBackPressedCallbackEnabled() {
@@ -427,6 +440,8 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     companion object {
         private const val SPAN_COUNT = 4
         private const val CONFIRM_CLEAR_DIALOG_TAG = "CONFIRM_CLEAR_DIALOG"
-        fun newInstance() = LibraryFragment()
+        fun newInstance(onlyHidden: Boolean = false) = LibraryFragment().apply {
+            arguments = bundleOf(LibraryViewModel.ARG_ONLY_HIDDEN to onlyHidden)
+        }
     }
 }

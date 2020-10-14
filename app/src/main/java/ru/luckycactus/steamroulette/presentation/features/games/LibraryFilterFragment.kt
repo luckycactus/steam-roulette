@@ -41,6 +41,8 @@ class LibraryFilterFragment : BaseFragment() {
         behavior = from(filterSheet)
         val bottomSheetCallback = object : AdvancedBottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int, previousState: Int) {
+//                if (viewModel.onlyHidden && newState == STATE_DRAGGING)
+//                    behavior.state = STATE_COLLAPSED
                 if (previousState == STATE_EXPANDED) {
                     viewModel.onFilterSheetClosingStarted()
                 }
@@ -62,8 +64,12 @@ class LibraryFilterFragment : BaseFragment() {
             updateHeadersAlpha(slideOffset)
         }
 
-        expand.setOnClickListener {
-            behavior.state = STATE_EXPANDED
+        if (viewModel.onlyHidden) {
+            expand.setOnClickListener { /* nothing */ }
+        } else {
+            expand.setOnClickListener {
+                behavior.state = STATE_EXPANDED
+            }
         }
 
         btnCollapse.setOnClickListener {
@@ -135,7 +141,7 @@ class LibraryFilterFragment : BaseFragment() {
         }
 
         observe(viewModel.hasAnyFilters) {
-            btnResetShortcut.visibility(it)
+            btnResetShortcut.visibility(it && !viewModel.onlyHidden)
 
             btnReset.isClickable = it
             val targetAlpha = if (it) 1f else 0f

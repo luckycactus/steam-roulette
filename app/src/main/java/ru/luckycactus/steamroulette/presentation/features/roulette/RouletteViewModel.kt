@@ -52,8 +52,8 @@ class RouletteViewModel @ViewModelInject constructor(
     private var getPagingListJob: Job? = null
     private var allGamesShowed = false
     private var viewVisible = true
-    private var hiddenGamesCount = 0
     private var rouletteStateInvalidated = false
+    private var gameWasHidden = false
 
     // first game in list that was previously shown
     // when we get that game on top it means that all games are shown
@@ -80,10 +80,12 @@ class RouletteViewModel @ViewModelInject constructor(
             .distinctUntilChanged()
 
         _contentState.addSource(hiddenGamesCountLiveData) {
-            if (it < hiddenGamesCount)
+            if (gameWasHidden) {
+                gameWasHidden = false
+            } else {
                 rouletteStateInvalidated = true
-            hiddenGamesCount = it
-            syncRouletteState()
+                syncRouletteState()
+            }
         }
 
         games = _gamesPagingList.map { it?.list }
@@ -166,11 +168,9 @@ class RouletteViewModel @ViewModelInject constructor(
 
     private fun hideGame(game: GameHeader) {
         appScope.launch {
+            gameWasHidden = true
             setGamesHidden(
-                SetGamesHiddenUseCase.Params(
-                    listOf(game.appId),
-                    true
-                )
+                SetGamesHiddenUseCase.Params(listOf(game.appId), true)
             )
         }
     }

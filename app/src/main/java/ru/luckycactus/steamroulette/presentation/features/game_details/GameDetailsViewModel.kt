@@ -41,10 +41,6 @@ class GameDetailsViewModel @ViewModelInject constructor(
 
     private var gameStoreInfo: GameStoreInfo? = null
 
-    companion object {
-        const val ARG_GAME = "ARG_GAME"
-    }
-
     init {
         loadInfo(true)
     }
@@ -150,4 +146,8 @@ class GameDetailsViewModel @ViewModelInject constructor(
 
     private fun getInitialHeader(): GameDetailsUiModel =
         GameDetailsUiModel.Header(initialGameHeader)
+
+    companion object {
+        const val ARG_GAME = "ARG_GAME"
+    }
 }
