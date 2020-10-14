@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.ui.widget
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ColorFilter
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -54,6 +55,12 @@ class GameView : MaterialCardView {
     var imageReady = false
         private set
 
+    var colorFilter: ColorFilter?
+        get() = ivGame.colorFilter
+        set(value) {
+            ivGame.colorFilter = value
+        }
+
     private var current: GameHeader? = null
     private var userVisibleHint = true
 
@@ -87,7 +94,8 @@ class GameView : MaterialCardView {
     fun setGame(
         game: GameHeader?,
         disableTransition: Boolean = false,
-        listener: RequestListener<Bitmap>? = null
+        listener: RequestListener<Bitmap>? = null,
+        setTransitionName: Boolean = true
     ) {
         if (game == current)
             return
@@ -106,10 +114,14 @@ class GameView : MaterialCardView {
 //                ivGame,
 //                context.getString(R.string.image_shared_element_transition, game.appId)
 //            )
-            ViewCompat.setTransitionName(
-                this,
-                context.getString(R.string.cardview_shared_element_transition, game.appId)
-            )
+            if (setTransitionName) {
+                ViewCompat.setTransitionName(
+                    this,
+                    context.getString(R.string.cardview_shared_element_transition, game.appId)
+                )
+            } else {
+                ViewCompat.setTransitionName(this, null)
+            }
         } else {
             Glide.with(ivGame).clear(ivGame)
             ViewCompat.setTransitionName(ivGame, null)

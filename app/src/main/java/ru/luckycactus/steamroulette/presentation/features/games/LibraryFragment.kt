@@ -3,12 +3,15 @@ package ru.luckycactus.steamroulette.presentation.features.games
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
+import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
+import android.view.MenuItem.SHOW_AS_ACTION_NEVER
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,7 +28,7 @@ import kotlinx.android.synthetic.main.fragment_library_filter.filterSheet
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.GridSpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
@@ -41,8 +44,8 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     private var actionMode: ActionMode? = null
     private lateinit var selectionTracker: SelectionTracker<Long>
-    private var inSelectionMode = false
 
+    private lateinit var clearHiddenMenuItem: MenuItem
     private lateinit var searchMenuItem: MenuItem
     private lateinit var filtersBehavior: BottomSheetBehavior<*>
     private lateinit var filtersFragment: LibraryFilterFragment
@@ -95,6 +98,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             setTitle(R.string.my_steam_library)
             inflateMenu(R.menu.menu_games_library)
             setOnMenuItemClickListener(::onMenuItemClick)
+            clearHiddenMenuItem = menu.findItem(R.id.action_clear_all_hidden)
             searchMenuItem = menu.findItem(R.id.action_search).apply {
                 setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
                     override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
@@ -154,10 +158,9 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
             .build()
 
-        selectionTracker.addObserver(selectionObserver)
-
-        adapter.tracker = selectionTracker
         selectionTracker.onRestoreInstanceState(savedInstanceState)
+        selectionTracker.addObserver(selectionObserver)
+        adapter.tracker = selectionTracker
         updateSelectionMode()
 
         filtersFragment =
@@ -181,15 +184,35 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
         lifecycleScope.launch {
             viewModel.games.collectLatest {
-//                if (inSelectionMode) { //todo library
-//                    selectionTracker.clearSelection()
-//                    setSelectionModeEnabled(false)
-//                }
                 adapter.submitData(it)
             }
         }
 
+        observeEvent(viewModel.filterChangedEvent) {
+            actionMode?.finish()
+        }
+
         observe(viewModel.hasAnyFilters, ::updateFiltersUi)
+
+        observe(viewModel.hasSelectedHiddenGames) {
+            actionMode?.menu?.run {
+                findItem(R.id.action_hide).isVisible = !it
+                findItem(R.id.action_unhide).isVisible = it
+            }
+        }
+
+        observe(viewModel.clearAllHiddenInFront) {
+            clearHiddenMenuItem.setShowAsAction(
+                if (it)
+                    SHOW_AS_ACTION_ALWAYS
+                else
+                    SHOW_AS_ACTION_NEVER
+            )
+        }
+
+        observe(viewModel.clearAllHiddenVisibility) {
+            clearHiddenMenuItem.isVisible = it
+        }
     }
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -208,8 +231,48 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         }
 
         override fun onItemStateChanged(key: Long, selected: Boolean) {
-            super.onItemStateChanged(key, selected)
+            viewModel.onGameSelectionChanged(key, selected)
         }
+    }
+
+    private val actionModeCallback = object : ActionMode.Callback {
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean = false
+
+        override fun onDestroyActionMode(mode: ActionMode) {
+            //after config change and start of new actionmode old actionmodeCallback can get invoked
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
+                selectionTracker.clearSelection()
+            actionMode = null
+        }
+
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            mode.menuInflater.inflate(R.menu.menu_library_action_mode, menu)
+            return true
+        }
+
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+            return when (item.itemId) {
+                R.id.action_unhide -> {
+                    hideSelectedGames(false)
+                    true
+                }
+                R.id.action_hide -> {
+                    hideSelectedGames(true)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun hideSelectedGames(hide: Boolean) {
+        viewModel.hide(selectionTracker.selection.map { it.toInt() }, hide)
+        selectionTracker.clearSelection()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        actionMode?.finish()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -223,7 +286,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         when (dialog.tag) {
             CONFIRM_CLEAR_DIALOG_TAG ->
                 if (result == MessageDialogFragment.Result.Positive)
-                    viewModel.clearAll()
+                    viewModel.clearAllHidden()
         }
 
     }
@@ -269,7 +332,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     private fun onMenuItemClick(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_clear_all -> {
+            R.id.action_clear_all_hidden -> {
                 showClearAllConfirmation()
                 true
             }
@@ -285,18 +348,18 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         ).show(childFragmentManager, CONFIRM_CLEAR_DIALOG_TAG)
     }
 
-    private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {
+    private fun onGameClick(game: LibraryGame, sharedViews: List<View>, imageIsReady: Boolean) {
         reenterTransition = createExitTransition()
         exitTransition = createExitTransition().apply {
             doOnEnd {
                 exitTransition = null
             }
         }
-        (activity as MainActivity).onGameClick(game, sharedViews, imageIsReady)
+        (activity as MainActivity).onGameClick(game.header, sharedViews, imageIsReady)
     }
 
     private fun onNavigationIconClick(view: View) {
-        if (inSelectionMode)
+        if (actionMode != null)
             selectionTracker.clearSelection()
         else
             requireActivity().onBackPressed()
@@ -306,9 +369,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         val selectionSize = selectionTracker.selection.size()
         val enable = selectionSize > 0
 
-        if (inSelectionMode != enable) {
-            inSelectionMode = enable
-
+        if ((actionMode != null) != enable) {
             if (enable)
                 actionMode = toolbar.startActionMode(actionModeCallback)
             else
@@ -322,36 +383,6 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         }
 
         actionMode?.title = selectionSize.toString()
-    }
-
-    override fun onDestroy() {
-        actionMode?.finish()
-        super.onDestroy()
-    }
-
-    private val actionModeCallback = object : ActionMode.Callback {
-        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean = false
-
-        override fun onDestroyActionMode(mode: ActionMode) {
-            selectionTracker.clearSelection()
-            actionMode = null
-        }
-
-        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-            mode.menuInflater.inflate(R.menu.menu_hidden_games_action_mode, menu)
-            return true
-        }
-
-        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-            return when (item.itemId) {
-                R.id.action_unhide -> {
-                    viewModel.unhide(selectionTracker.selection.map { it.toInt() })
-                    selectionTracker.clearSelection()
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     private fun createExitTransition() = transitionSet {
@@ -394,7 +425,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     companion object {
-        private const val SPAN_COUNT = 3
+        private const val SPAN_COUNT = 4
         private const val CONFIRM_CLEAR_DIALOG_TAG = "CONFIRM_CLEAR_DIALOG"
         fun newInstance() = LibraryFragment()
     }

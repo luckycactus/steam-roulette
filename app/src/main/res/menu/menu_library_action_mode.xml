@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <item
+        android:id="@+id/action_hide"
+        android:icon="@drawable/ic_visibility_off_24dp"
+        android:title="@string/hide_game"
+        app:showAsAction="always"
+        />
+    <item
         android:id="@+id/action_unhide"
         android:icon="@drawable/ic_visibility_24dp"
         android:title="@string/make_visible"

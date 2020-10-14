@@ -13,8 +13,8 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.chunkBuffer
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import javax.inject.Inject
 
 @Reusable
@@ -93,15 +93,19 @@ class LocalGamesDataSource @Inject constructor(
         db.ownedGamesDao().clear(steamId.as64())
     }
 
-    override fun getPagingSource(
+    override fun getLibraryPagingSource(
         steamId: SteamId,
         filter: GamesFilter,
         nameSearchQuery: String?
-    ): PagingSource<Int, GameHeader> = db.ownedGamesDao().getPagingSource(
+    ): PagingSource<Int, LibraryGame> = db.ownedGamesDao().getLibraryPagingSource(
         steamId.as64(),
         filter,
         nameSearchQuery
     )
+
+    override suspend fun getHiddenState(steamId: SteamId, appId: Long): Boolean {
+        return db.ownedGamesDao().getHiddenState(steamId.as64(), appId)
+    }
 
     companion object {
         private const val GAMES_BUFFER_SIZE = 500

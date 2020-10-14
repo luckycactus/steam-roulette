@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 
 interface GamesRepository {
@@ -34,10 +35,12 @@ interface GamesRepository {
 
     suspend fun clearUser(steamId: SteamId)
 
-    fun getOwnedGamesPagingSource(
+    fun getLibraryPagingSource(
         filter: GamesFilter,
         nameSearchQuery: String?
-    ): PagingSource<Int, GameHeader>
+    ): PagingSource<Int, LibraryGame>
+
+    suspend fun getOwnedGameHiddenState(appId: Long): Boolean
 }
 
 class GetOwnedGamesPrivacyException : Exception()

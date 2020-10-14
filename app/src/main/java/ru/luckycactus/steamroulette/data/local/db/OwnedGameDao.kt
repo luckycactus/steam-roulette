@@ -12,6 +12,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameMetaData
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
@@ -33,8 +34,37 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         filter: GamesFilter,
         nameSearchQuery: String? = null
     ): PagingSource<Int, GameHeader> {
-        val (sb, args) = prepareGamesRawQuery(
+        val query = makePagingSourceRawQuery(
             "SELECT appId, name FROM owned_game",
+            steam64,
+            filter,
+            nameSearchQuery
+        )
+        return _getGamesPagingSource(query)
+    }
+
+    fun getLibraryPagingSource(
+        steam64: Long,
+        filter: GamesFilter,
+        nameSearchQuery: String? = null
+    ): PagingSource<Int, LibraryGame> {
+        val query = makePagingSourceRawQuery(
+            "SELECT appId, name, hidden FROM owned_game",
+            steam64,
+            filter,
+            nameSearchQuery
+        )
+        return _getGamesWithMetaPagingSource(query)
+    }
+
+    private fun makePagingSourceRawQuery(
+        query: String,
+        steam64: Long,
+        filter: GamesFilter,
+        nameSearchQuery: String?
+    ): SimpleSQLiteQuery {
+        val (sb, args) = prepareGamesRawQuery(
+            query,
             steam64,
             filter
         )
@@ -48,7 +78,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
         sb.append(" ORDER BY name ASC")
 
-        return _getGamesPagingSource(SimpleSQLiteQuery(sb.toString(), args.toTypedArray()))
+        return SimpleSQLiteQuery(sb.toString(), args.toTypedArray())
     }
 
     @Query(
@@ -64,6 +94,13 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         WHERE appId IN (:appIds) AND userSteam64 = :steam64"""
     )
     abstract suspend fun getHeaders(steam64: Long, appIds: List<Int>): List<GameHeader>
+
+    @Query(
+        """SELECT hidden
+        FROM owned_game 
+        WHERE appId =:appId AND userSteam64 = :steam64"""
+    )
+    abstract suspend fun getHiddenState(steam64: Long, appId: Long): Boolean
 
     @Query(
         """SELECT appId, hidden, shown
@@ -127,6 +164,10 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Transaction
     @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
     abstract fun _getGamesPagingSource(query: SupportSQLiteQuery): PagingSource<Int, GameHeader>
+
+    @Transaction
+    @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
+    abstract fun _getGamesWithMetaPagingSource(query: SupportSQLiteQuery): PagingSource<Int, LibraryGame>
 
     /******************/
 

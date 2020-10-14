@@ -10,4 +10,10 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView"
         />
+    <item
+        android:id="@+id/action_clear_all_hidden"
+        android:icon="@drawable/ic_clear_all_24dp"
+        android:title="@string/make_all_games_visible"
+        app:showAsAction="never"
+        />
 </menu>

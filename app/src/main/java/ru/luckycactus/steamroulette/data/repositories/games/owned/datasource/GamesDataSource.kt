@@ -6,6 +6,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 
 interface GamesDataSource {
 
@@ -36,11 +37,13 @@ interface GamesDataSource {
 
         suspend fun clear(steamId: SteamId)
 
-        fun getPagingSource(
+        fun getLibraryPagingSource(
             steamId: SteamId,
             filter: GamesFilter,
             nameSearchQuery: String?
-        ): PagingSource<Int, GameHeader>
+        ): PagingSource<Int, LibraryGame>
+
+        suspend fun getHiddenState(steamId: SteamId, appId: Long): Boolean
     }
 
     interface Remote : GamesDataSource {
