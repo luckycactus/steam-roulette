@@ -66,8 +66,8 @@ class LibraryViewModel @ViewModelInject constructor(
             Pager(
                 PagingConfig(50),
                 pagingSourceFactory = { getOwnedGamesPagingSource(it) }
-            ).flow.cachedIn(viewModelScope)
-        }
+            ).flow
+        }.cachedIn(viewModelScope)
 
         selectedGamesFilter.addSource(
             combine(
