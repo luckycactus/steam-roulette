@@ -14,13 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_library_game.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class LibraryAdapter(
-    private val onlyHidden: Boolean,
+    private val markHidden: Boolean,
     private val onGameClick: (LibraryGame, List<View>, Boolean) -> Unit
 ) : PagingDataAdapter<LibraryGame, LibraryAdapter.GameViewHolder>(diffCallback) {
 
@@ -35,54 +34,63 @@ class LibraryAdapter(
         GameViewHolder(parent.inflate(R.layout.item_library_game))
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
-        val item = getItem(position)!!
-        holder.bind(item, tracker?.isSelected(item.header.appId.toLong()) ?: false)
+        val item = getItem(position)
+        holder.bind(
+            item,
+            item?.let { tracker?.isSelected(item.header.appId.toLong()) } ?: false
+        )
     }
 
-    fun getSelectionKeyForPosition(position: Int): Long? {
-        return getItem(position)?.let { getSelectionKeyForItem(it) }
-    }
+    fun getSelectionKeyForPosition(position: Int): Long? =
+        getSelectionKeyForItem(getItem(position))
 
-    private fun getSelectionKeyForItem(item: LibraryGame): Long {
-        return item.header.appId.toLong()
-    }
+    private fun getSelectionKeyForItem(item: LibraryGame?): Long? =
+        item?.header?.appId?.toLong()
 
     inner class GameViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
-        private lateinit var game: LibraryGame
+        private var game: LibraryGame? = null
 
         init {
             gameView.memoryCacheEnabled = true
             itemView.setOnClickListener {
-                if (tracker == null || tracker?.selection?.size() == 0) {
-                    //todo library
-                    ViewCompat.setTransitionName(
-                        item_library_game,
-                        itemView.context.getString(R.string.cardview_shared_element_transition, game.header.appId)
-                    )
-                    onGameClick(game, listOf(item_library_game), gameView.imageReady)
+                game?.let { game ->
+                    if (tracker == null || tracker?.selection?.size() == 0) {
+                        //todo library
+                        ViewCompat.setTransitionName(
+                            item_library_game,
+                            itemView.context.getString(
+                                R.string.cardview_shared_element_transition,
+                                game.header.appId
+                            )
+                        )
+                        onGameClick(game, listOf(item_library_game), gameView.imageReady)
+                    }
                 }
             }
+
         }
 
-        fun bind(game: LibraryGame, selected: Boolean) {
+        fun bind(game: LibraryGame?, selected: Boolean) {
             this.game = game
-            gameView.setGame(game.header, setTransitionName = false)
+            gameView.setGame(game?.header, setTransitionName = false)
             gameView.isSelected = selected
             cardViewBottom.isSelected = selected
             checkbox.isSelected = selected
-            hidden.visibility(game.hidden && !onlyHidden)
-            gameView.colorFilter = if (game.hidden && !onlyHidden) hiddenColorFilter else null
+            hidden.visibility(game != null && game.hidden && markHidden)
+            gameView.colorFilter =
+                if (game != null && game.hidden && markHidden)
+                    hiddenColorFilter
+                else null
         }
 
-        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> {
-            return object : ItemDetailsLookup.ItemDetails<Long>() {
+        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+            object : ItemDetailsLookup.ItemDetails<Long>() {
                 override fun getSelectionKey(): Long? = getSelectionKeyForItem(game)
                 override fun getPosition(): Int = absoluteAdapterPosition
                 override fun inSelectionHotspot(e: MotionEvent): Boolean = false
             }
-        }
     }
 
     companion object {
@@ -92,7 +100,6 @@ class LibraryAdapter(
 
             override fun areContentsTheSame(oldItem: LibraryGame, newItem: LibraryGame): Boolean =
                 oldItem == newItem
-
         }
     }
 }

@@ -214,7 +214,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         args: MutableList<Any> = mutableListOf(),
         querySb: StringBuilder = StringBuilder()
     ): SimpleSQLiteQuery {
-        val (sb, args) = prepareGamesRawQuery(query, steam64, filter, args, querySb)
-        return SimpleSQLiteQuery(sb.toString(), args.toTypedArray())
+        val (sb, _args) = prepareGamesRawQuery(query, steam64, filter, args, querySb)
+        return SimpleSQLiteQuery(sb.toString(), _args.toTypedArray())
     }
 }

@@ -141,7 +141,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             }
         }
 
-        adapter = LibraryAdapter(viewModel.onlyHidden, ::onGameClick)
+        adapter = LibraryAdapter(!viewModel.onlyHidden, ::onGameClick)
         rvGames.adapter = adapter
         rvGames.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         rvGames.addItemDecoration(

@@ -56,6 +56,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
             memoryCache.remove(memoryKey)
         }
 
+        @Suppress("UNCHECKED_CAST")
         final override suspend fun loadResult(): ResultType? {
             var data: ResultType? = null
 
@@ -113,6 +114,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
             memoryCache.put(memoryKey, data)
         }
 
+        @Suppress("UNCHECKED_CAST")
         override suspend fun loadResult(): ResultType? {
             return memoryCache[memoryKey] as ResultType?
         }

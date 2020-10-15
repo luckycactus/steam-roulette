@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="steam-roulette/app" />
-      <module fileurl="file://$PROJECT_DIR$/steam-roulette.iml" filepath="$PROJECT_DIR$/steam-roulette.iml" group="steam-roulette" />
+      <module fileurl="file://$PROJECT_DIR$/steam-roulette.iml" filepath="$PROJECT_DIR$/steam-roulette.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/steam-roulette.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/steam-roulette.app.iml" />
     </modules>
   </component>
 </project>
