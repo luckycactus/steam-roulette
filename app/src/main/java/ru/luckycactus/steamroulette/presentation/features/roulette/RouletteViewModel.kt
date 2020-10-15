@@ -14,7 +14,7 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.utils.exhaustive

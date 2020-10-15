@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
+
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_baseline_search_24"
@@ -10,6 +11,14 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView"
         />
+
+    <item
+        android:id="@+id/action_change_scale"
+        android:icon="@drawable/ic_baseline_dashboard_24"
+        android:title="@string/change_scale"
+        app:showAsAction="always"
+        />
+
     <item
         android:id="@+id/action_clear_all_hidden"
         android:icon="@drawable/ic_clear_all_24dp"

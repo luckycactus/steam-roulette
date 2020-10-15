@@ -57,7 +57,6 @@ class LibraryAdapter(
             itemView.setOnClickListener {
                 game?.let { game ->
                     if (tracker == null || tracker?.selection?.size() == 0) {
-                        //todo library
                         ViewCompat.setTransitionName(
                             item_library_game,
                             itemView.context.getString(

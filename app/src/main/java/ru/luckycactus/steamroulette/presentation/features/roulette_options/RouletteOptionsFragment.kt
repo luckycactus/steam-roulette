@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.roulette_options
 import android.os.Bundle
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_options_filter.*
+import kotlinx.android.synthetic.main.fragment_roulette_options.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
@@ -14,7 +14,7 @@ import ru.luckycactus.steamroulette.presentation.utils.showIfNotExist
 class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
     private val viewModel: RouletteOptionsViewModel by viewModels()
 
-    override val layoutResId = R.layout.fragment_options_filter
+    override val layoutResId = R.layout.fragment_roulette_options
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

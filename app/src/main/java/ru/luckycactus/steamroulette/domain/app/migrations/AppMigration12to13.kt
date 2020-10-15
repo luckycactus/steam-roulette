@@ -2,11 +2,10 @@ package ru.luckycactus.steamroulette.domain.app.migrations
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import ru.luckycactus.steamroulette.data.core.edit
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
-import ru.luckycactus.steamroulette.domain.games_filter.GamesFilterRepository
+import ru.luckycactus.steamroulette.domain.games_filter.RouletteFilterRepository
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.user.GetCurrentUserUseCase
 import javax.inject.Inject
@@ -15,7 +14,7 @@ import javax.inject.Named
 class AppMigration12to13 @Inject constructor(
     private val getCurrentUser: GetCurrentUserUseCase,
     @Named("roulette-filters") private val prefs: SharedPreferences,
-    @Named("roulette") private val rouletteFilterRepository: GamesFilterRepository
+    private val rouletteFilterRepository: RouletteFilterRepository
 ) : AppMigration {
 
     override suspend fun migrate() {

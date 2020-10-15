@@ -21,7 +21,19 @@ fun ResourceManager.getPlaytimeFilterDescription(filter: PlaytimeFilter): String
         PlaytimeFilter.All -> this.getString(R.string.playtime_pref_all)
         PlaytimeFilter.NotPlayed -> this.getString(R.string.playtime_pref_not_played)
         is PlaytimeFilter.Limited -> this.getQuantityString(
-            R.plurals.playtime_pref_max_time_full_plurals,
+            R.plurals.playtime_pref_max_time_plurals,
+            filter.maxHours,
+            filter.maxHours
+        )
+    }
+}
+
+fun ResourceManager.getPlaytimeFilterShortDescription(filter: PlaytimeFilter): String {
+    return when (filter) {
+        PlaytimeFilter.All -> this.getString(R.string.playtime_pref_all_short)
+        PlaytimeFilter.NotPlayed -> this.getString(R.string.playtime_pref_not_played_short)
+        is PlaytimeFilter.Limited -> this.getQuantityString(
+            R.plurals.playtime_pref_max_time_plurals_short,
             filter.maxHours,
             filter.maxHours
         )

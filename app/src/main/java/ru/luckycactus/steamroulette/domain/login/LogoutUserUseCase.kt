@@ -7,6 +7,8 @@ import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games_filter.GamesFilterRepository
+import ru.luckycactus.steamroulette.domain.games_filter.LibraryFilterRepository
+import ru.luckycactus.steamroulette.domain.games_filter.RouletteFilterRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import javax.inject.Inject
@@ -17,8 +19,8 @@ class LogoutUserUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val userSessionRepository: UserSessionRepository,
     private val gamesRepository: GamesRepository,
-    @Named("roulette") private val rouletteFiltersRepository: GamesFilterRepository,
-    @Named("library") private val libraryFiltersRepository: GamesFilterRepository,
+    private val rouletteFiltersRepository: RouletteFilterRepository,
+    private val libraryFiltersRepository: LibraryFilterRepository,
     private val imageCacheCleaner: ImageCacheCleaner
 ) : SuspendUseCase<Unit, Unit>() {
 

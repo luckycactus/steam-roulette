@@ -74,52 +74,37 @@
             app:layout_constraintTop_toBottomOf="@id/headerGuideline"
             >
 
-            <LinearLayout
+
+            <RadioGroup
+                android:id="@+id/rgLibraryFilter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/headerGuideline"
                 >
 
-                <RadioGroup
-                    android:id="@+id/rgLibraryFilter"
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbAll"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/headerGuideline"
-                    >
+                    android:text="@string/playtime_pref_all"
+                    />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/rbAll"
-                        style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/playtime_pref_all"
-                        />
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbNotPlayed"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/playtime_pref_not_played"
+                    />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/rbHidden"
-                        style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/only_hidden"
-                        />
-
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/rbNotPlayed"
-                        style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/playtime_pref_not_played"
-                        />
-
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/rbLimit"
-                        style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/playtime_pref_max_time"
-                        />
-
-                </RadioGroup>
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbLimit"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/playtime_pref_max_time"
+                    />
 
                 <ru.luckycactus.steamroulette.presentation.ui.widget.EditTextWithLabel
                     android:id="@+id/etPlaytime"
@@ -133,7 +118,16 @@
                     app:layout_constraintTop_toBottomOf="@+id/rgLibraryFilter"
                     tools:text="9 часов"
                     />
-            </LinearLayout>
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbHidden"
+                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/only_hidden"
+                    />
+
+            </RadioGroup>
 
         </ScrollView>
 

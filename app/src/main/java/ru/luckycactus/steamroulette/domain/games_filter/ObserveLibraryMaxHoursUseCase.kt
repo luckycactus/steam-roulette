@@ -10,7 +10,7 @@ import javax.inject.Named
 
 @Reusable
 class ObserveLibraryMaxHoursUseCase @Inject constructor(
-    @Named("library") private val filtersRepository: GamesFilterRepository
+    private val filtersRepository: LibraryFilterRepository
 ) : UseCase<Unit, Flow<Int>>() {
 
     override fun execute(params: Unit): Flow<Int> =

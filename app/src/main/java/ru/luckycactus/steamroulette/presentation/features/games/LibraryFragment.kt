@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.games
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.view.MenuItem.SHOW_AS_ACTION_NEVER
@@ -14,9 +15,13 @@ import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -24,8 +29,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.empty_layout.*
 import kotlinx.android.synthetic.main.fragment_library.*
 import kotlinx.android.synthetic.main.fragment_library_filter.filterSheet
+import kotlinx.android.synthetic.main.fullscreen_progress.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
@@ -33,6 +40,8 @@ import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.GridSpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
+import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
+import ru.luckycactus.steamroulette.presentation.ui.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
 
@@ -42,14 +51,22 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     override val layoutResId = R.layout.fragment_library
 
     private lateinit var adapter: LibraryAdapter
+    private lateinit var layoutManager: GridLayoutManager
+    private lateinit var spaceDecoration: GridSpaceDecoration
 
     private var actionMode: ActionMode? = null
     private lateinit var selectionTracker: SelectionTracker<Long>
 
     private lateinit var clearHiddenMenuItem: MenuItem
     private lateinit var searchMenuItem: MenuItem
+    private lateinit var changeScaleMenuItem: MenuItem
+
     private lateinit var filtersBehavior: BottomSheetBehavior<*>
     private lateinit var filtersFragment: LibraryFilterFragment
+
+    private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
+
+    private lateinit var placeholderTransition: Transition
 
     private val viewModel: LibraryViewModel by viewModels()
 
@@ -81,12 +98,15 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             insets
         }
         filterSheet.doOnApplyWindowInsets { view, insets, initialPadding ->
+            filterSheet.doOnLayout {
+                filtersBehavior.peekHeight =
+                    insets.systemWindowInsetBottom + resources.getDimensionPixelSize(R.dimen.filter_sheet_header_height)
+            }
             view.updatePadding(bottom = insets.systemWindowInsetBottom + initialPadding.bottom)
-            filtersBehavior.peekHeight =
-                insets.systemWindowInsetBottom + resources.getDimensionPixelSize(R.dimen.filter_sheet_header_height)
             insets
         }
 
+        fab.hide()
         fab.doOnNextLayout {
             //if insets were applied already but fab isn't laid out yet, then we must set extra padding here
             if (insetsApplied)
@@ -97,18 +117,21 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             addSystemTopPadding()
             setNavigationOnClickListener(::onNavigationIconClick)
             setTitle(R.string.my_steam_library)
-            inflateMenu(R.menu.menu_games_library)
+            inflateMenu(R.menu.menu_library)
             setOnMenuItemClickListener(::onMenuItemClick)
             clearHiddenMenuItem = menu.findItem(R.id.action_clear_all_hidden)
+            changeScaleMenuItem = menu.findItem(R.id.action_change_scale)
             searchMenuItem = menu.findItem(R.id.action_search).apply {
                 setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
                     override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                         // searchMenuItem.isActionViewExpanded changes after callback, so we postpone method call
+                        viewModel.onSearchStateChanged(true)
                         post { updateOnBackPressedCallbackEnabled() }
                         return true
                     }
 
                     override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                        viewModel.onSearchStateChanged(false)
                         post { updateOnBackPressedCallbackEnabled() }
                         return true
                     }
@@ -129,6 +152,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
                         return true
                     }
                 })
+                queryHint = getString(R.string.library_search_hint)
             }
         }
 
@@ -141,15 +165,18 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             }
         }
 
-        adapter = LibraryAdapter(!viewModel.onlyHidden, ::onGameClick)
+        adapter = LibraryAdapter(false, ::onGameClick)
         rvGames.adapter = adapter
-        rvGames.layoutManager = GridLayoutManager(context, SPAN_COUNT)
-        rvGames.addItemDecoration(
-            GridSpaceDecoration(
-                SPAN_COUNT,
-                resources.getDimensionPixelSize(R.dimen.spacing_games_library)
-            )
+        layoutManager = GridLayoutManager(context, 1)
+        rvGames.layoutManager = layoutManager
+        spaceDecoration = GridSpaceDecoration(
+            1,
+            resources.getDimensionPixelSize(R.dimen.spacing_games_library)
         )
+        rvGames.addItemDecoration(spaceDecoration)
+        rvGames.setHasFixedSize(true)
+
+
         val itemKeyProvider = LibraryItemKeyProvider(rvGames)
         selectionTracker = SelectionTracker.Builder(
             "games",
@@ -164,6 +191,13 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         selectionTracker.addObserver(selectionObserver)
         adapter.tracker = selectionTracker
         updateSelectionMode()
+
+        dataLoadingViewHolder = DataLoadingViewHolder(
+            emptyLayout,
+            progress,
+            rvGames,
+            { /*nothing*/ }
+        )
 
         filtersFragment =
             childFragmentManager.findFragmentById(R.id.filterSheet) as LibraryFilterFragment
@@ -187,6 +221,31 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         lifecycleScope.launch {
             viewModel.games.collectLatest {
                 adapter.submitData(it)
+            }
+        }
+
+        placeholderTransition = Fade().apply {
+            addTarget(R.id.rvGames)
+            addTarget(R.id.progress)
+            addTarget(R.id.placeholder)
+        }
+        val emptyPlaceholder = ContentState.Placeholder(
+            getString(R.string.error_filtered_games_not_found),
+            ContentState.TitleType.None,
+            ContentState.ButtonType.None
+        )
+        var prevItemCount = -1
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest {
+                if (prevItemCount != adapter.itemCount) {
+                    TransitionManager.beginDelayedTransition(root_fragment_library, placeholderTransition)
+                    prevItemCount = adapter.itemCount
+                }
+                if (adapter.itemCount == 0 && (it.refresh != LoadState.Loading || prevItemCount == 0)) {
+                    dataLoadingViewHolder.showPlaceholder(emptyPlaceholder)
+                } else {
+                    dataLoadingViewHolder.showContent()
+                }
             }
         }
 
@@ -216,10 +275,23 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             clearHiddenMenuItem.isVisible = it
         }
 
+        observe(viewModel.menuItemsVisibility) {
+            toolbar.menu.forEach { menuItem ->
+                if (menuItem != clearHiddenMenuItem)
+                    menuItem.isVisible = it
+            }
+        }
+
         if (viewModel.onlyHidden) {
             observe(viewModel.filteredGamesCount) {
                 toolbar.title = "${getString(R.string.hidden_games)} ($it)"
             }
+        }
+
+        observe(viewModel.spanCount) {
+            spaceDecoration.spanCount = it
+            layoutManager.spanCount = it
+            rvGames.invalidateItemDecorations()
         }
     }
 
@@ -334,8 +406,13 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             return
         }
 
-        if (searchMenuItem.isActionViewExpanded)
+        if (searchMenuItem.isActionViewExpanded) {
             searchMenuItem.collapseActionView()
+            return
+        }
+
+        onBackPressedCallback.isEnabled = false
+        requireActivity().onBackPressed()
     }
 
     private fun updateFiltersScrim(slideOffset: Float) {
@@ -347,6 +424,10 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         return when (item.itemId) {
             R.id.action_clear_all_hidden -> {
                 showClearAllConfirmation()
+                true
+            }
+            R.id.action_change_scale -> {
+                viewModel.onChangeScaleClick()
                 true
             }
             else -> false
@@ -383,16 +464,22 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         val enable = selectionSize > 0
 
         if ((actionMode != null) != enable) {
+            toolbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
+                scrollFlags = if (enable) {
+                    val translation = appBarLayout.y.toInt()
+                    if (translation < 0) {
+                        rvGames.scrollBy(0, -translation)
+                    }
+                    SCROLL_FLAG_ENTER_ALWAYS
+                } else {
+                    SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS
+                }
+            }
+
             if (enable)
                 actionMode = toolbar.startActionMode(actionModeCallback)
             else
                 actionMode?.finish()
-            toolbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
-                scrollFlags = if (enable)
-                    SCROLL_FLAG_ENTER_ALWAYS
-                else
-                    SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS
-            }
         }
 
         actionMode?.title = selectionSize.toString()
@@ -438,7 +525,6 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     companion object {
-        private const val SPAN_COUNT = 4
         private const val CONFIRM_CLEAR_DIALOG_TAG = "CONFIRM_CLEAR_DIALOG"
         fun newInstance(onlyHidden: Boolean = false) = LibraryFragment().apply {
             arguments = bundleOf(LibraryViewModel.ARG_ONLY_HIDDEN to onlyHidden)

@@ -4,7 +4,7 @@ import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import javax.inject.Inject

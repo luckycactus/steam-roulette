@@ -13,7 +13,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
 @Dao

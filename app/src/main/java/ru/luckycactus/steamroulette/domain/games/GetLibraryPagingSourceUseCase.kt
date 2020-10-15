@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import javax.inject.Inject
 
 @Reusable

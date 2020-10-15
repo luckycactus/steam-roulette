@@ -84,8 +84,7 @@ sealed class ContentState {
                     ButtonType.Custom(
                         it
                     )
-                }
-                    ?: ButtonType.Default
+                } ?: ButtonType.Default
             )
     }
 }

@@ -27,7 +27,7 @@ fun <R> Flow<R>.chunkBuffer(bufferSize: Int): Flow<List<R>> = flow {
     }
 }
 
-fun <T> Flow<T>.toStateFlow(scope: CoroutineScope, default: T): StateFlow<T> {
+fun <T> Flow<T>.stateIn(scope: CoroutineScope, default: T): StateFlow<T> {
     val mutableStateFlow = MutableStateFlow(default)
     scope.launch {
         collect { mutableStateFlow.value = it }

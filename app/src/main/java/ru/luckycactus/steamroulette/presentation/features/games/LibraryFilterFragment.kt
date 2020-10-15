@@ -41,10 +41,11 @@ class LibraryFilterFragment : BaseFragment() {
         behavior = from(filterSheet)
         val bottomSheetCallback = object : AdvancedBottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int, previousState: Int) {
-//                if (viewModel.onlyHidden && newState == STATE_DRAGGING)
-//                    behavior.state = STATE_COLLAPSED
                 if (previousState == STATE_EXPANDED) {
                     viewModel.onFilterSheetClosingStarted()
+                }
+                if (newState == STATE_COLLAPSED || newState == STATE_HIDDEN) {
+                    activity?.hideKeyboard(etPlaytime)
                 }
             }
 

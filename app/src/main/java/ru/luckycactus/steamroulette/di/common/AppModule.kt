@@ -22,8 +22,9 @@ import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.G
 import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.RemoteGameStoreDataSource
 import ru.luckycactus.steamroulette.data.repositories.games.owned.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.*
-import ru.luckycactus.steamroulette.data.repositories.games_filter.LibraryFilterRepository
-import ru.luckycactus.steamroulette.data.repositories.games_filter.RouletteFilterRepository
+import ru.luckycactus.steamroulette.data.repositories.games_filter.LibraryFilterRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.games_filter.RouletteFilterRepositoryImpl
+import ru.luckycactus.steamroulette.data.repositories.library.LibrarySettingsRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.login.datasource.LoginDataSource
 import ru.luckycactus.steamroulette.data.repositories.login.datasource.RemoteLoginDataSource
@@ -44,7 +45,9 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
 import ru.luckycactus.steamroulette.domain.games.GameDetailsRepository
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
-import ru.luckycactus.steamroulette.domain.games_filter.GamesFilterRepository
+import ru.luckycactus.steamroulette.domain.games_filter.LibraryFilterRepository
+import ru.luckycactus.steamroulette.domain.games_filter.RouletteFilterRepository
+import ru.luckycactus.steamroulette.domain.library.LibrarySettingsRepository
 import ru.luckycactus.steamroulette.domain.login.LoginRepository
 import ru.luckycactus.steamroulette.domain.review.AppReviewRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
@@ -79,12 +82,10 @@ abstract class AppModule {
     abstract fun bindLoginRepository(loginRepository: LoginRepositoryImpl): LoginRepository
 
     @Binds
-    @Named("library")
-    abstract fun provideLibraryFiltersRepository(repo: LibraryFilterRepository): GamesFilterRepository
+    abstract fun provideLibraryFiltersRepository(repo: LibraryFilterRepositoryImpl): LibraryFilterRepository
 
     @Binds
-    @Named("roulette")
-    abstract fun provideRouletteFiltersRepository(repo: RouletteFilterRepository): GamesFilterRepository
+    abstract fun provideRouletteFiltersRepository(repo: RouletteFilterRepositoryImpl): RouletteFilterRepository
 
     @Binds
     abstract fun bindRemoteUserDataSource(dataSource: RemoteUserDataSource): UserDataSource.Remote
@@ -100,6 +101,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindAppReviewRepository(appReviewRepositoryImpl: AppReviewRepositoryImpl): AppReviewRepository
+
+    @Binds
+    abstract fun bindLibrarySettingsRepository(librarySettingsRepositoryImpl: LibrarySettingsRepositoryImpl): LibrarySettingsRepository
 
     @Binds
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner

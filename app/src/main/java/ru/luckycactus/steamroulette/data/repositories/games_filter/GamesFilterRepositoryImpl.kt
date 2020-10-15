@@ -10,12 +10,13 @@ import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.data.core.intFlow
 import ru.luckycactus.steamroulette.data.core.stringFlow
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.GamesFilterRepository
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
+import ru.luckycactus.steamroulette.presentation.utils.AppUtils.prefKey
 
-open class GamesFilterRepositoryImpl constructor(
+abstract class GamesFilterRepositoryImpl constructor(
     private val prefs: SharedPreferences,
     moshi: Moshi,
     private val userSession: UserSession
@@ -27,12 +28,12 @@ open class GamesFilterRepositoryImpl constructor(
     private val gamesFilterAdapter = moshi.adapter(GamesFilter::class.java)
 
     override fun observeMaxHours(default: Int): Flow<Int> {
-        return prefs.intFlow(key(currentUser, "max-hours"), default)
+        return prefs.intFlow(key("max-hours", currentUser), default)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override fun observeFilter(default: GamesFilter): Flow<GamesFilter> {
-        return prefs.stringFlow(key(currentUser, "filter"), null)
+        return prefs.stringFlow(key("filter", currentUser), null)
             .map {
                 withContext(Dispatchers.IO) {
                     it?.let {
@@ -45,19 +46,19 @@ open class GamesFilterRepositoryImpl constructor(
     override suspend fun saveFilter(filter: GamesFilter) {
         val json = gamesFilterAdapter.toJson(filter)
         prefs.edit {
-            putString(key(currentUser, "filter"), json)
+            putString(key("filter", currentUser), json)
             if (filter.playtime is PlaytimeFilter.Limited) {
-                putInt(key(currentUser, "max-hours"), filter.playtime.maxHours)
+                putInt(key("max-hours", currentUser), filter.playtime.maxHours)
             }
         }
     }
 
     override fun clearUser(steamId: SteamId) {
         prefs.edit {
-            key(currentUser, "filter")
-            remove(key(currentUser, "max-hours"))
+            key("filter", currentUser)
+            remove(key("max-hours", currentUser))
         }
     }
 
-    private fun key(steamId: SteamId, pref: String) = "filter-${pref}-${steamId.as64()}"
+    private fun key(pref: String, steamId: SteamId) = prefKey("filter", pref, steamId)
 }

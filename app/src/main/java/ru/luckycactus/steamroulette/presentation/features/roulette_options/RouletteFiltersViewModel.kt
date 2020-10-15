@@ -3,10 +3,9 @@ package ru.luckycactus.steamroulette.presentation.features.roulette_options
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteMaxHoursUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SaveRouletteFilterUseCase

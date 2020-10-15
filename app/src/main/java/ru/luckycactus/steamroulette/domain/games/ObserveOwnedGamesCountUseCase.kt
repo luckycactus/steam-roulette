@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.domain.games
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import javax.inject.Inject
 
 @Reusable

@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.utils
 
 import android.app.Activity
 import android.content.Context
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.*
 import kotlin.properties.ReadOnlyProperty
@@ -32,15 +33,14 @@ inline fun <reified T> Fragment.getCallbacks(): T? {
 }
 
 fun Activity.hideKeyboard() {
-    currentFocus?.apply {
-        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(
-            windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
-        )
-    }
+    hideKeyboard(currentFocus ?: View(this))
 }
 
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as
+            InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+}
 val Fragment.isFinishing: Boolean
     get() {
         if (requireActivity().isFinishing) {

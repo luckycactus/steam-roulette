@@ -44,6 +44,24 @@
     <string name="playtime_pref_all">All games</string>
     <string name="playtime_pref_not_played">Games I\'ve not played</string>
     <string name="playtime_pref_max_time">Games I\'ve played for no more than:</string>
+    <plurals name="playtime_pref_max_time_plurals">
+        <item quantity="zero">Games I played for no more than %d hours</item>
+        <item quantity="one">Games I played for no more than %d hour</item>
+        <item quantity="two">Games I played for no more than %d hours</item>
+        <item quantity="few">Games I played for no more than %d hours</item>
+        <item quantity="many">Games I played for no more than %d hours</item>
+        <item quantity="other">Games I played for no more than %d hours</item>
+    </plurals>
+    <string name="playtime_pref_all_short">All</string>
+    <string name="playtime_pref_not_played_short">Not played</string>
+    <plurals name="playtime_pref_max_time_plurals_short">
+        <item quantity="zero">Played for %d hours or less</item>
+        <item quantity="one">Played for %d hour or less</item>
+        <item quantity="two">Played for %d hours or less</item>
+        <item quantity="few">Played for %d hours or less</item>
+        <item quantity="many">Played for %d hours or less</item>
+        <item quantity="other">Played for %d hours or less</item>
+    </plurals>
     <string name="playtime_hours_label">hour(s)</string>
     <string name="coming_soon">Coming soon</string>
     <string name="game_details_description">Description</string>
@@ -52,14 +70,6 @@
     <string name="game_details_languages">Languages</string>
     <string name="game_details_platforms">Platforms</string>
     <string name="fail_steam_store_info">Steam Store info isn\'t available for this game</string>
-    <plurals name="playtime_pref_max_time_full_plurals">
-        <item quantity="zero">Games I played for no more than %d hours</item>
-        <item quantity="one">Games I played for no more than %d hour</item>
-        <item quantity="two">Games I played for no more than %d hours</item>
-        <item quantity="few">Games I played for no more than %d hours</item>
-        <item quantity="many">Games I played for no more than %d hours</item>
-        <item quantity="other">Games I played for no more than %d hours</item>
-    </plurals>
     <string name="system_requirements">System requirements</string>
     <string name="game_description">Description</string>
     <string name="hidden_games">Hidden games</string>
@@ -79,4 +89,6 @@
     <string name="clear_filters">Reset</string>
     <string name="only_hidden">Hidden games</string>
     <string name="you_have_n_games">You have %1$s</string>
+    <string name="change_scale">Change scale</string>
+    <string name="library_search_hint">Game title</string>
 </resources>

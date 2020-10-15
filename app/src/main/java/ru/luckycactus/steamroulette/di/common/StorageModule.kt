@@ -52,6 +52,12 @@ class StorageModule {
         fun provideAppReviewSharedPreferences(@ApplicationContext appContext: Context) =
             appContext.getSharedPreferences("app-review", Context.MODE_PRIVATE)
 
+        @Named("library-settings")
+        @Singleton
+        @Provides
+        fun provideLibrarySettingsSharedPreferences(@ApplicationContext appContext: Context) =
+            appContext.getSharedPreferences("library-settings", Context.MODE_PRIVATE)
+
         @Singleton
         @Provides
         fun provideSteamRouletteDb(@ApplicationContext appContext: Context) =

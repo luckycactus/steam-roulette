@@ -1,6 +1,8 @@
 package ru.luckycactus.steamroulette.presentation.ui.widget
 
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.empty_layout.view.*
 import ru.luckycactus.steamroulette.R
@@ -31,7 +33,7 @@ class DataLoadingViewHolder(
     }
 
     fun showLoading() {
-        content.visibility(false)
+        content.visibility = INVISIBLE
         placeholderLayout.visibility(false)
         progress.visibility(true)
         state = State.LOADING
@@ -41,7 +43,7 @@ class DataLoadingViewHolder(
     fun showContent() {
         placeholderLayout.visibility(false)
         progress.visibility(false)
-        content.visibility(true)
+        content.visibility = VISIBLE
         state = State.CONTENT
     }
 
@@ -68,7 +70,7 @@ class DataLoadingViewHolder(
         }
 
         placeholderLayout.tvEmptyDescription.text = placeholder.message
-        content.visibility(false)
+        content.visibility = INVISIBLE
         progress.visibility(false)
         placeholderLayout.visibility(true)
         this.state = State.PLACEHOLDER
@@ -77,7 +79,7 @@ class DataLoadingViewHolder(
     fun hide() {
         placeholderLayout.visibility(false)
         progress.visibility(false)
-        content.visibility(false)
+        content.visibility = INVISIBLE
         state = State.HIDDEN
     }
 

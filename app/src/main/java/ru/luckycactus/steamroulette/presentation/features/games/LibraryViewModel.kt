@@ -11,21 +11,23 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.toStateFlow
+import ru.luckycactus.steamroulette.domain.common.stateIn
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveLibraryFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveLibraryMaxHoursUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SaveLibraryFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.domain.library.GetLibraryScaleUseCase
+import ru.luckycactus.steamroulette.domain.library.SaveLibraryScaleUseCase
 import ru.luckycactus.steamroulette.domain.utils.newDebouncer
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.utils.getPlaytimeFilterDescription
+import ru.luckycactus.steamroulette.presentation.utils.getPlaytimeFilterShortDescription
 import ru.terrakok.cicerone.Router
 
 class LibraryViewModel @ViewModelInject constructor(
@@ -38,6 +40,8 @@ class LibraryViewModel @ViewModelInject constructor(
     private val observeLibraryMaxHours: ObserveLibraryMaxHoursUseCase,
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     private val saveLibraryFilter: SaveLibraryFilterUseCase,
+    private val getLibraryScale: GetLibraryScaleUseCase,
+    private val saveLibraryScale: SaveLibraryScaleUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router
 ) : BaseViewModel() {
@@ -48,37 +52,40 @@ class LibraryViewModel @ViewModelInject constructor(
     val libraryFilter: LiveData<LibraryFilter>
     val filteredGamesCount: LiveData<Int>
     val maxHours: LiveData<Int>
-        get() = _maxHours
     val hasSelectedHiddenGames: LiveData<Boolean>
     val filterChangedEvent: LiveData<Event<Unit>>
     val clearAllHiddenVisibility: LiveData<Boolean>
+    val menuItemsVisibility: LiveData<Boolean>
     val clearAllHiddenInFront: LiveData<Boolean>
+    val spanCount: LiveData<Int>
+        get() = _spanCount
 
     val onlyHidden = savedStateHandle.get<Boolean>(ARG_ONLY_HIDDEN) ?: false
 
-    private val searchQueryFlow = MutableStateFlow<String?>(null)
     private val searchQueryDebouncer = viewModelScope.newDebouncer()
-    private val appliedGamesFilterFlow: StateFlow<GamesFilter>
 
-    private val libraryFilterFlow = MutableStateFlow<LibraryFilter?>(null)
-    private var maxHoursFlow = MutableStateFlow<Int?>(null)
-    private val selectedGamesFilter = MediatorLiveData<GamesFilter>()
-    private val _maxHours = MutableLiveData<Int>()
+    private val searchOpened = MutableStateFlow(false)
+    private val searchQuery = MutableStateFlow<String?>(null)
 
-    private val gameSelectionChangedChannel = Channel<Pair<Long, Boolean>>()
+    private val _libraryFilter = MutableStateFlow<LibraryFilter?>(null)
+    private var _maxHours = MutableStateFlow<Int?>(null)
+    private val selectedGamesFilter = MutableStateFlow<GamesFilter?>(null)
+    private val appliedGamesFilter: StateFlow<GamesFilter>
+    private val _spanCount = MutableLiveData<Int>()
+
+    private val gameSelectionChangedChannel = Channel<Pair<Long, Boolean>>(Channel.BUFFERED)
 
     init {
         val gamesFilterFlow = if (onlyHidden)
             flowOf(GamesFilter.onlyHidden())
         else
-            observeLibraryFilter().distinctUntilChanged()
+            observeLibraryFilter()
 
-        appliedGamesFilterFlow = gamesFilterFlow
-            .toStateFlow(viewModelScope, GamesFilter.empty())
+        appliedGamesFilter = gamesFilterFlow.stateIn(viewModelScope, GamesFilter.empty())
 
         games = combine(
-            searchQueryFlow,
-            appliedGamesFilterFlow
+            searchQuery,
+            appliedGamesFilter
         ) { query, filter ->
             GetLibraryPagingSourceUseCase.Params(filter, query)
         }.flatMapLatest {
@@ -88,28 +95,33 @@ class LibraryViewModel @ViewModelInject constructor(
             ).flow
         }.cachedIn(viewModelScope)
 
-        selectedGamesFilter.addSource(
+        viewModelScope.launch {
             combine(
-                libraryFilterFlow.filterNotNull(),
-                maxHoursFlow.filterNotNull()
+                _libraryFilter.filterNotNull(),
+                _maxHours.filterNotNull()
             ) { libraryFilter, maxHours ->
                 mapLibraryFilterToGamesFilter(libraryFilter, maxHours)
-            }.asLiveData().distinctUntilChanged()
-        ) {
-            selectedGamesFilter.value = it
+            }.collect {
+                selectedGamesFilter.value = it
+            }
         }
 
-        libraryFilter = libraryFilterFlow.filterNotNull().asLiveData()
+        libraryFilter = _libraryFilter
+            .filterNotNull()
+            .asLiveData()
 
-        selectedFilterText = selectedGamesFilter.map {
-            getGamesFilterText(it)
-        }
+        selectedFilterText = selectedGamesFilter
+            .filterNotNull()
+            .map { getGamesFilterText(it) }
+            .asLiveData()
 
-        hasAnyFilters = selectedFilterText.map { !it.isNullOrBlank() }
+        hasAnyFilters = selectedFilterText
+            .map { !it.isNullOrBlank() }
 
-        filteredGamesCount = selectedGamesFilter.switchMap {
-            observeOwnedGamesCount(it).asLiveData()
-        }
+        filteredGamesCount = selectedGamesFilter
+            .filterNotNull()
+            .flatMapLatest { observeOwnedGamesCount(it) }
+            .asLiveData()
 
         hasSelectedHiddenGames = gameSelectionChangedChannel.receiveAsFlow()
             .scan(emptySet<Long>()) { set, event ->
@@ -124,12 +136,17 @@ class LibraryViewModel @ViewModelInject constructor(
             }.map { it.isNotEmpty() }
             .asLiveData()
 
-        filterChangedEvent = appliedGamesFilterFlow
+        filterChangedEvent = appliedGamesFilter
             .asLiveData()
             .distinctUntilChanged()
             .map { Event(Unit) }
 
-        val appliedLibraryFilterFlow = appliedGamesFilterFlow
+        maxHours = _maxHours
+            .filterNotNull()
+            .take(1)
+            .asLiveData()
+
+        val appliedLibraryFilterFlow = appliedGamesFilter
             .map { mapGamesFilterToLibraryFilter(it) }
 
         clearAllHiddenInFront = appliedLibraryFilterFlow
@@ -138,18 +155,23 @@ class LibraryViewModel @ViewModelInject constructor(
 
         val hiddenGamesCountFlow = observeOwnedGamesCount(GamesFilter.onlyHidden())
 
-        clearAllHiddenVisibility = hiddenGamesCountFlow
-            .map { it > 0 }
+        clearAllHiddenVisibility = combine(
+            hiddenGamesCountFlow,
+            searchOpened
+        ) { count, opened -> !opened && count > 0 }
+            .asLiveData()
+
+        menuItemsVisibility = searchOpened
+            .map { !it }
             .asLiveData()
 
         viewModelScope.launch {
             val maxHours = observeLibraryMaxHours().first()
             _maxHours.value = maxHours
-            maxHoursFlow.value = maxHours
-            libraryFilterFlow.value = mapGamesFilterToLibraryFilter(gamesFilterFlow.first())
+            _libraryFilter.value = mapGamesFilterToLibraryFilter(gamesFilterFlow.first())
 
             hiddenGamesCountFlow.collectLatest {
-                if (it == 0 && libraryFilterFlow.value == LibraryFilter.Hidden) {
+                if (it == 0 && _libraryFilter.value == LibraryFilter.Hidden) {
                     if (onlyHidden) {
                         router.backTo(Screens.Roulette)
                     } else {
@@ -159,11 +181,15 @@ class LibraryViewModel @ViewModelInject constructor(
                 }
             }
         }
+
+        viewModelScope.launch {
+            _spanCount.value = getLibraryScale(SPAN_COUNT_SMALL)
+        }
     }
 
     fun onSearchQueryChanged(query: String?) {
         searchQueryDebouncer.debounce(300) {
-            searchQueryFlow.value = query?.trim()
+            searchQuery.value = query?.trim()
         }
     }
 
@@ -184,11 +210,11 @@ class LibraryViewModel @ViewModelInject constructor(
     }
 
     fun onFilterSelectionChanged(filter: LibraryFilter) {
-        libraryFilterFlow.value = filter
+        _libraryFilter.value = filter
     }
 
     fun onMaxHoursChanged(maxHours: Int) {
-        maxHoursFlow.value = maxHours
+        _maxHours.value = maxHours
     }
 
     fun onFilterSheetClosingStarted() {
@@ -196,17 +222,30 @@ class LibraryViewModel @ViewModelInject constructor(
     }
 
     fun clearFilters() {
-        libraryFilterFlow.value = LibraryFilter.All
+        _libraryFilter.value = LibraryFilter.All
         saveSelectedFilter()
+    }
+
+    fun onChangeScaleClick() {
+        val newSpanCount =
+            if (spanCount.value == SPAN_COUNT_SMALL)
+                SPAN_COUNT_BIG
+            else SPAN_COUNT_SMALL
+        viewModelScope.launch { saveLibraryScale(newSpanCount) }
+        _spanCount.value = newSpanCount
     }
 
     fun onGameSelectionChanged(appId: Long, selected: Boolean) {
         gameSelectionChangedChannel.offer(appId to selected)
     }
 
+    fun onSearchStateChanged(opened: Boolean) {
+        searchOpened.value = opened
+    }
+
     private fun saveSelectedFilter() {
         val selectedFilter = selectedGamesFilter.value
-        if (selectedFilter == null || appliedGamesFilterFlow.value == selectedFilter)
+        if (selectedFilter == null || appliedGamesFilter.value == selectedFilter)
             return
 
         viewModelScope.launch {
@@ -218,7 +257,7 @@ class LibraryViewModel @ViewModelInject constructor(
         return when {
             filter.hidden == true -> resourceManager.getString(R.string.only_hidden)
             filter.playtime == PlaytimeFilter.All -> null
-            else -> resourceManager.getPlaytimeFilterDescription(filter.playtime)
+            else -> resourceManager.getPlaytimeFilterShortDescription(filter.playtime)
         }
     }
 
@@ -233,14 +272,14 @@ class LibraryViewModel @ViewModelInject constructor(
             LibraryFilter.Limited -> PlaytimeFilter.Limited(maxHours)
         }
         return GamesFilter(
-            hidden = if (libraryFilter == LibraryFilter.Hidden) true else null,
+            hidden = libraryFilter == LibraryFilter.Hidden,
             playtime = playtimeFilter
         )
     }
 
     private fun mapGamesFilterToLibraryFilter(filter: GamesFilter): LibraryFilter {
-        return when {
-            filter.hidden == true -> LibraryFilter.Hidden
+        return when (filter.hidden) {
+            true -> LibraryFilter.Hidden
             else -> when (filter.playtime) {
                 PlaytimeFilter.All -> LibraryFilter.All
                 PlaytimeFilter.NotPlayed -> LibraryFilter.NotPlayed
@@ -254,6 +293,8 @@ class LibraryViewModel @ViewModelInject constructor(
     }
 
     companion object {
+        const val SPAN_COUNT_SMALL = 3
+        const val SPAN_COUNT_BIG = 4
         const val ARG_ONLY_HIDDEN = "ARG_ONLY_HIDDEN"
     }
 }

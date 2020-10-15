@@ -1,7 +1,6 @@
-package ru.luckycactus.steamroulette.domain.games.entity
+package ru.luckycactus.steamroulette.domain.games_filter.entity
 
 import com.squareup.moshi.JsonClass
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 
 @JsonClass(generateAdapter = true)

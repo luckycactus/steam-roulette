@@ -2,16 +2,15 @@ package ru.luckycactus.steamroulette.domain.games_filter
 
 import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import javax.inject.Inject
-import javax.inject.Named
 
 @Reusable
 class SaveRouletteFilterUseCase @Inject constructor(
-    @Named("roulette") private val rouletteFiltersRepository: GamesFilterRepository
+    private val filtersRepository: RouletteFilterRepository
 ) : SuspendUseCase<GamesFilter, Unit>() {
 
     override suspend fun execute(params: GamesFilter) {
-        rouletteFiltersRepository.saveFilter(params)
+        filtersRepository.saveFilter(params)
     }
 }
