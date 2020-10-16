@@ -73,7 +73,7 @@ class LibraryAdapter(
 
         fun bind(game: LibraryGame?, selected: Boolean) {
             this.game = game
-            gameView.setGame(game?.header, setTransitionName = false)
+            gameView.setGame(game?.header, setTransitionName = false, hd = false)
             gameView.isSelected = selected
             cardViewBottom.isSelected = selected
             checkbox.isSelected = selected

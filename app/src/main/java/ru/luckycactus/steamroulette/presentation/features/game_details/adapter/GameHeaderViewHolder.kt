@@ -1,13 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
-import android.graphics.Bitmap
 import android.view.View
 import androidx.core.view.ViewCompat
-import com.bumptech.glide.request.RequestListener
 import kotlinx.android.synthetic.main.item_game_details_header.*
-import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
+import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class GameHeaderViewHolder(
@@ -21,7 +19,7 @@ class GameHeaderViewHolder(
     fun bind(
         item: GameDetailsUiModel.Header,
         disableTransition: Boolean,
-        listener: RequestListener<Bitmap>?
+        listener: GameView.Listener?
     ) {
         tvHeaderGameName.text = item.gameHeader.name
         tvPublisher.text = item.publisher

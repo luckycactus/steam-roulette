@@ -11,7 +11,7 @@ import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
-import ru.luckycactus.steamroulette.presentation.utils.glide.RequestListenerAdapter
+import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 
 class GameDetailsAdapter constructor(
@@ -49,7 +49,7 @@ class GameDetailsAdapter constructor(
             is GameHeaderViewHolder -> {
                 val shouldWaitForHeader = waitForImageReadyForTransition && !imageReady
 
-                val listener = RequestListenerAdapter<Bitmap> {
+                val listener = GameView.Listener {
                     if (!imageReady) {
                         imageReady = true
                         onHeaderImageReady()

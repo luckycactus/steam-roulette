@@ -12,10 +12,6 @@ import java.io.InputStream
 class MyAppGlideModule : AppGlideModule() {
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        registry.prepend(
-            GameHeader::class.java,
-            InputStream::class.java,
-            GameCoverModelLoader.Factory()
-        )
+
     }
 }

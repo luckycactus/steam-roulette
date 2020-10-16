@@ -82,7 +82,7 @@ class MainViewModel @ViewModelInject constructor(
     fun onColdStart() {
         viewModelScope.launch {
             migrateApp()
-            clearImageCache()
+            //clearImageCache()
             getCurrentUser().let {
                 val screen = if (it != null) Screens.Roulette else Screens.Login
                 router.newRootScreen(screen)

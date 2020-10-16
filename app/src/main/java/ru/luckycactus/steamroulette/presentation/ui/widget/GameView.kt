@@ -4,12 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ColorFilter
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import android.widget.ImageView
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.ViewCompat
 import androidx.core.widget.TextViewCompat
@@ -20,7 +23,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
-import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.request.transition.ViewAnimationFactory
@@ -28,6 +31,7 @@ import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
@@ -94,8 +98,9 @@ class GameView : MaterialCardView {
     fun setGame(
         game: GameHeader?,
         disableTransition: Boolean = false,
-        listener: RequestListener<Bitmap>? = null,
-        setTransitionName: Boolean = true
+        listener: Listener? = null,
+        setTransitionName: Boolean = true,
+        hd: Boolean = true
     ) {
         if (game == current)
             return
@@ -107,13 +112,10 @@ class GameView : MaterialCardView {
             imageReady = false
         tvName.text = game?.name
         placeholder.visibility = View.VISIBLE
+        val target = MyTarget(ivGame, listener)
         if (game != null) {
             if (differentAppId)
-                createRequestBuilder(this, game, disableTransition, listener).into(ivGame)
-//            ViewCompat.setTransitionName(
-//                ivGame,
-//                context.getString(R.string.image_shared_element_transition, game.appId)
-//            )
+                createRequestBuilder(this, game, disableTransition, hd).into(target)
             if (setTransitionName) {
                 ViewCompat.setTransitionName(
                     this,
@@ -123,7 +125,7 @@ class GameView : MaterialCardView {
                 ViewCompat.setTransitionName(this, null)
             }
         } else {
-            Glide.with(ivGame).clear(ivGame)
+            Glide.with(ivGame).clear(target)
             ViewCompat.setTransitionName(ivGame, null)
         }
     }
@@ -137,7 +139,7 @@ class GameView : MaterialCardView {
         view: GameView,
         game: GameHeader,
         disableTransition: Boolean,
-        listener: RequestListener<Bitmap>?
+        hd: Boolean
     ): RequestBuilder<Bitmap> {
         val anim = AlphaAnimation(0f, 1f).apply {
             duration = 300
@@ -150,6 +152,7 @@ class GameView : MaterialCardView {
                     if (game != current)
                         return
                     placeholder.visibility = View.INVISIBLE
+                    Log.d("ololo", "1: " + game.appId.toString())
                     imageReady = true
                 }
 
@@ -172,6 +175,7 @@ class GameView : MaterialCardView {
 
                     if (transition is NoTransition) {
                         placeholder.visibility = View.INVISIBLE
+                        Log.d("ololo", "2: " + game.appId.toString())
                         imageReady = true
                     }
 
@@ -180,20 +184,70 @@ class GameView : MaterialCardView {
             }
         )
 
-        return GlideApp.with(view)
+        val headerImageFirstCache = GlideApp.with(view)
             .asBitmap()
-            .load(game)
             .fitCenter()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .downsample(DownsampleStrategy.CENTER_INSIDE)
-            .skipMemoryCache(!memoryCacheEnabled)
+            .load(GameUrlUtils.headerImage(game.appId))
             .transform(headerImageTransformation)
             .transition(transitionOptions)
-            .also { request ->
-                listener?.let {
-                    request.listener(it)
-                }
-            }
+            .downsample(DownsampleStrategy.CENTER_INSIDE)
+            .skipMemoryCache(!memoryCacheEnabled)
+            .onlyRetrieveFromCache(true)
+
+        val headerImagePost = headerImageFirstCache.clone()
+            .onlyRetrieveFromCache(false)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+        val portraitHdImage = GlideApp.with(view)
+            .asBitmap()
+            .load(GameUrlUtils.libraryPortraitImageHD(game.appId))
+            .fitCenter()
+            .transform(headerImageTransformation)
+            .transition(transitionOptions)
+            .downsample(DownsampleStrategy.CENTER_INSIDE)
+            .skipMemoryCache(!memoryCacheEnabled)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+        val portraitImage = GlideApp.with(view)
+            .asBitmap()
+            .load(GameUrlUtils.libraryPortraitImage(game.appId))
+            .fitCenter()
+            .transform(headerImageTransformation)
+            .transition(transitionOptions)
+            .downsample(DownsampleStrategy.CENTER_INSIDE)
+            .skipMemoryCache(!memoryCacheEnabled)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+        if (hd) {
+            portraitImage.onlyRetrieveFromCache(true)
+            val portraitImageThumbnail = portraitImage.clone()
+            portraitImage.error(headerImagePost)
+            portraitHdImage.thumbnail(portraitImageThumbnail)
+        } else {
+            portraitImage.error(headerImagePost)
+            portraitHdImage.onlyRetrieveFromCache(true)
+        }
+        portraitHdImage.error(portraitImage)
+        headerImageFirstCache.error(portraitHdImage)
+
+        return headerImageFirstCache
+    }
+
+    private class MyTarget(view: ImageView, private val listener: Listener?) :
+        BitmapImageViewTarget(view) {
+        override fun onLoadFailed(errorDrawable: Drawable?) {
+            super.onLoadFailed(errorDrawable)
+            listener?.onLoadFinished(null)
+        }
+
+        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+            super.onResourceReady(resource, transition)
+            listener?.onLoadFinished(resource)
+        }
+    }
+
+    fun interface Listener {
+        fun onLoadFinished(resource: Bitmap?)
     }
 
     companion object {

@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
-import android.graphics.Bitmap
 import android.view.View
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
@@ -9,8 +8,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_game_card_stack.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
+import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
-import ru.luckycactus.steamroulette.presentation.utils.glide.RequestListenerAdapter
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import kotlin.math.absoluteValue
@@ -45,7 +44,7 @@ class RouletteAdapter constructor(
         var palette: Palette? = null
             private set
 
-        private val imageRequestListener = RequestListenerAdapter<Bitmap> {
+        private val imageRequestListener = GameView.Listener {
             if (it == null) {
                 paletteChangeListener(bindingAdapterPosition)
             } else {
