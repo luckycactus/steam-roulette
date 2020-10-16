@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.common.stateIn
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -17,6 +18,7 @@ import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
+import ru.luckycactus.steamroulette.domain.user.ObserveUserSummarySyncsUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
@@ -28,6 +30,7 @@ class MenuViewModel @ViewModelInject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     observeUserSummary: ObserveUserSummaryUseCase,
+    private val observeUserSummarySyncs: ObserveUserSummarySyncsUseCase,
     private val resourceManager: ResourceManager,
     private val userViewModelDelegate: UserViewModelDelegate,
     private val router: Router,
@@ -40,8 +43,11 @@ class MenuViewModel @ViewModelInject constructor(
     val refreshProfileState: LiveData<Boolean>
     val closeAction: LiveData<Unit>
         get() = _closeAction
+    val userSummaryLastSync
+        get() = userSummarySyncs.value
 
     private val _closeAction = MutableLiveData<Unit>()
+    private val userSummarySyncs = observeUserSummarySyncs().stateIn(viewModelScope, 0)
 
     fun refreshProfile() {
         userViewModelDelegate.fetchUserAndGames()

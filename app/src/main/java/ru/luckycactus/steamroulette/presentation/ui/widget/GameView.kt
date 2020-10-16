@@ -152,7 +152,6 @@ class GameView : MaterialCardView {
                     if (game != current)
                         return
                     placeholder.visibility = View.INVISIBLE
-                    Log.d("ololo", "1: " + game.appId.toString())
                     imageReady = true
                 }
 
@@ -175,7 +174,6 @@ class GameView : MaterialCardView {
 
                     if (transition is NoTransition) {
                         placeholder.visibility = View.INVISIBLE
-                        Log.d("ololo", "2: " + game.appId.toString())
                         imageReady = true
                     }
 

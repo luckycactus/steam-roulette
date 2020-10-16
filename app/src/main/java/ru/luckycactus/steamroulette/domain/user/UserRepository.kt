@@ -18,6 +18,8 @@ interface UserRepository {
     suspend fun fetchUserSummary(cachePolicy: CachePolicy)
 
     suspend fun clearUser(steamId: SteamId)
+
+    fun observeSummaryUpdates(): Flow<Long>
 }
 
 class SteamIdNotFoundException(val steamId: String) : Exception()

@@ -1,8 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_menu.*
 import ru.luckycactus.steamroulette.R
@@ -57,6 +59,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
             GlideApp.with(this)
                 .load(it.avatarFull)
                 .placeholder(R.drawable.avatar_placeholder)
+                .signature(ObjectKey(viewModel.userSummaryLastSync))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivAvatar)
         }
