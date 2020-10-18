@@ -1,11 +1,13 @@
 package ru.luckycactus.steamroulette.data.core
 
 import android.util.LruCache
+import androidx.room.withTransaction
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.flow.Flow
+import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.presentation.common.App
 import kotlin.time.Duration
@@ -39,7 +41,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
         return get(cachePolicy)!!
     }
 
-    abstract fun invalidateCache()
+    abstract suspend fun invalidateCache()
 
     abstract class FullCache<RequestType, ResultType>(
         private val key: String,
@@ -51,8 +53,10 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
         protected abstract suspend fun getFromStorage(): ResultType?
 
         final override suspend fun saveResult(data: RequestType) {
-            saveToStorage(data)
-            cacheHelper.setCachedNow(key)
+            db.withTransaction {
+                saveToStorage(data)
+                cacheHelper.setCachedNow(key)
+            }
             memoryCache.remove(memoryKey)
         }
 
@@ -75,7 +79,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
 
         fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
 
-        final override fun invalidateCache() {
+        final override suspend fun invalidateCache() {
             cacheHelper.remove(key)
             memoryCache.remove(memoryKey)
         }
@@ -89,16 +93,23 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
             @InstallIn(ApplicationComponent::class)
             interface FullCacheNBRCompanionEntryPoint {
                 fun cacheHelper(): CacheHelper
+                fun db(): AppDatabase
             }
 
             private val cacheHelper: CacheHelper
+            private val db: AppDatabase
 
             init {
-                val entryPoint = EntryPointAccessors.fromApplication(
-                    App.getInstance(),
-                    FullCacheNBRCompanionEntryPoint::class.java
-                )
-                cacheHelper = entryPoint.cacheHelper()
+                with(
+                    EntryPointAccessors.fromApplication(
+                        App.getInstance(),
+                        FullCacheNBRCompanionEntryPoint::class.java
+                    )
+                ) {
+                    cacheHelper = cacheHelper()
+                    db = db()
+                }
+
             }
         }
     }
@@ -119,7 +130,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
             return memoryCache[memoryKey] as ResultType?
         }
 
-        override fun invalidateCache() {
+        override suspend fun invalidateCache() {
             memoryCache.remove(memoryKey)
         }
     }

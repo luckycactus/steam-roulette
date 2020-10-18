@@ -5,10 +5,11 @@ import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.domain.app.migrations.AppMigration
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import javax.inject.Inject
+import javax.inject.Provider
 
 class MigrateAppUseCase @Inject constructor(
     private val appRepository: AppRepository,
-    private val migrations: Map<Int, @JvmSuppressWildcards AppMigration>
+    private val migrations: Map<Int, @JvmSuppressWildcards Provider<AppMigration>>
 ) : SuspendUseCase<Unit, Unit>() {
 
     override suspend fun execute(params: Unit) {
@@ -17,7 +18,7 @@ class MigrateAppUseCase @Inject constructor(
         while (lastVersion < currentVersion) {
             migrations[lastVersion]?.let {
                 withContext(NonCancellable) {
-                    it.migrate()
+                    it.get().migrate()
                     appRepository.lastVersion = lastVersion + 1
                 }
             }

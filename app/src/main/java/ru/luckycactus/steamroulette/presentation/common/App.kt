@@ -3,8 +3,11 @@ package ru.luckycactus.steamroulette.presentation.common
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import kotlinx.coroutines.runBlocking
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
+import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.app.SystemLanguageSynchronizer
+import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.review.AppReviewExceptionsHandler
 import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import javax.inject.Inject
@@ -23,6 +26,9 @@ open class App : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    @Inject
+    lateinit var migrateApp: MigrateAppUseCase
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -32,6 +38,10 @@ open class App : Application(), Configuration.Provider {
 
         systemLanguageSynchronizer.start()
         gamesPeriodicFetcher.start()
+
+        runBlocking {
+            migrateApp()
+        }
     }
 
     companion object {

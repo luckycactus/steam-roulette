@@ -1,30 +1,40 @@
 package ru.luckycactus.steamroulette.data.core
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import kotlinx.coroutines.flow.Flow
+import ru.luckycactus.steamroulette.data.local.db.AppDatabase
+import ru.luckycactus.steamroulette.data.local.db.CacheInfoRoomEntity
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.Clock
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.time.Duration
 import kotlin.time.milliseconds
 
+interface CacheHelper {
+    suspend fun isCached(key: String): Boolean
+    suspend fun isExpired(key: String, window: Duration): Boolean
+    suspend fun shouldUseCache(cachePolicy: CachePolicy, key: String, window: Duration): Boolean
+    suspend fun shouldUpdate(cachePolicy: CachePolicy, key: String, window: Duration): Boolean
+    suspend fun setCachedNow(key: String)
+    suspend fun remove(key: String)
+    suspend fun clear()
+    fun observeCacheUpdates(key: String): Flow<Long>
+}
+
 @Singleton
-class CacheHelper @Inject constructor(
-    @Named("cache-helper") private val prefs: SharedPreferences,
+class RoomCacheHelper @Inject constructor(
+    private val db: AppDatabase,
     private val clock: Clock
-) {
-    private val prefsEditor = prefs.edit()
+) : CacheHelper {
+    private val cacheInfoDao = db.cacheInfoDao()
 
-    fun isCached(key: String) = prefs.getLong(key, 0) > 0L
+    override suspend fun isCached(key: String) = cacheInfoDao.getTimestamp(key) > 0L
 
-    fun isExpired(
+    override suspend fun isExpired(
         key: String,
         window: Duration
     ): Boolean {
-        val savedTime = prefs.getLong(key, 0L)
+        val savedTime = cacheInfoDao.getTimestamp(key)
         if (savedTime == 0L)
             return true
 
@@ -32,30 +42,30 @@ class CacheHelper @Inject constructor(
         return passedTime >= window
     }
 
-    fun shouldUseCache(
+    override suspend fun shouldUseCache(
         cachePolicy: CachePolicy,
         key: String,
         window: Duration
     ): Boolean = cachePolicy == CachePolicy.Cache ||
             (cachePolicy == CachePolicy.CacheOrRemote && !isExpired(key, window))
 
-    fun shouldUpdate(
+    override suspend fun shouldUpdate(
         cachePolicy: CachePolicy,
         key: String,
         window: Duration
     ): Boolean = !shouldUseCache(cachePolicy, key, window)
 
-    fun setCachedNow(key: String) {
-        prefsEditor.edit { putLong(key, clock.currentTimeMillis()) }
+    override suspend fun setCachedNow(key: String) {
+        cacheInfoDao.upsert(CacheInfoRoomEntity(key, clock.currentTimeMillis()))
     }
 
-    fun remove(key: String) {
-        prefsEditor.edit { remove(key) }
+    override suspend fun remove(key: String) {
+        cacheInfoDao.delete(key)
     }
 
-    fun clear() {
-        prefsEditor.edit { clear() }
+    override suspend fun clear() {
+        cacheInfoDao.clear()
     }
 
-    fun observeCacheUpdates(key: String): Flow<Long> = prefs.longFlow(key, 0L)
+    override fun observeCacheUpdates(key: String): Flow<Long> = cacheInfoDao.observeTimestamp(key)
 }
