@@ -45,6 +45,7 @@ class LoginFragment : BaseFragment() {
                 titleResId = R.string.supported_steamid_formats,
                 messageResId = R.string.steamid_help
             ).show(childFragmentManager, null)
+            analytics.logClick("Login help")
         }
 
         observe(viewModel.progressState) {

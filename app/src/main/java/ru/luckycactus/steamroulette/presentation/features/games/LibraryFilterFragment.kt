@@ -27,6 +27,8 @@ class LibraryFilterFragment : BaseFragment() {
 
     override val layoutResId: Int = R.layout.fragment_library_filter
 
+    override val logScreenName: Nothing? = null
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 

@@ -11,6 +11,7 @@ import ru.luckycactus.steamroulette.domain.login.LoginUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
+import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
 
@@ -18,7 +19,8 @@ class LoginViewModel @ViewModelInject constructor(
     private val validateSteamIdInputUseCase: ValidateSteamIdInputUseCase,
     private val loginUseCase: LoginUseCase,
     private val resourceManager: ResourceManager,
-    private val router: Router
+    private val router: Router,
+    private val analytics: AnalyticsHelper
 ) : BaseViewModel() {
     val progressState: LiveData<Boolean>
         get() = _progressState
@@ -44,6 +46,7 @@ class LoginViewModel @ViewModelInject constructor(
                         _progressState.value = false
                     }
                 }
+                analytics.logLoginAttempt(it)
             }
         }
     }
@@ -53,9 +56,9 @@ class LoginViewModel @ViewModelInject constructor(
             when (fail) {
                 LoginUseCase.Result.Fail.InvalidSteamIdFormat ->
                     getString(R.string.error_invalid_steamid_format)
-                LoginUseCase.Result.Fail.VanityNotFound ->
+                is LoginUseCase.Result.Fail.VanityNotFound ->
                     getString(R.string.error_user_with_vanity_url_not_found)
-                LoginUseCase.Result.Fail.SteamIdNotFound ->
+                is LoginUseCase.Result.Fail.SteamIdNotFound ->
                     getString(R.string.error_user_with_steamid_not_found)
                 is LoginUseCase.Result.Fail.Error -> {
                     fail.exception.printStackTrace()

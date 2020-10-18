@@ -53,7 +53,8 @@ import ru.luckycactus.steamroulette.domain.review.AppReviewRepository
 import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import ru.luckycactus.steamroulette.presentation.features.roulette.GlideCacheCleaner
-import javax.inject.Named
+import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
+import ru.luckycactus.steamroulette.presentation.utils.FirebaseAnalyticsHelper
 import javax.inject.Singleton
 
 @Module
@@ -65,6 +66,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindResourceManager(androidResourceManager: AndroidResourceManager): ResourceManager
+
+    @Binds
+    abstract fun bindAnalytics(firebaseAnalytics: FirebaseAnalyticsHelper): AnalyticsHelper
 
     @Binds
     abstract fun bindGamesPeriodicFetcherManager(job: GamesPeriodicFetcherManager): GamesPeriodicFetcher.Manager

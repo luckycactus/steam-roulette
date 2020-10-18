@@ -25,6 +25,7 @@ import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
+import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
 
@@ -39,6 +40,7 @@ class MainViewModel @ViewModelInject constructor(
     private val resourceManager: ResourceManager,
     private val appReviewManager: AppReviewManager,
     private val router: Router,
+    private val analytics: AnalyticsHelper,
     @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel(), UserViewModelDelegate {
     override val fetchGamesState: LiveData<RequestState<Unit>>
@@ -117,6 +119,7 @@ class MainViewModel @ViewModelInject constructor(
             cancelAndJoinUserScope()
             router.newRootScreen(Screens.Login)
             appScope.launch {
+                analytics.setUserIsLoggingOut()
                 logoutUser()
             }
         }

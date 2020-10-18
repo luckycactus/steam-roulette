@@ -19,6 +19,7 @@ import ru.luckycactus.steamroulette.presentation.features.game_details.model.Gam
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
+import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
 
@@ -27,7 +28,8 @@ class GameDetailsViewModel @ViewModelInject constructor(
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase,
-    private val router: Router
+    private val router: Router,
+    private val analytics: AnalyticsHelper
 ) : BaseViewModel() {
     val gameDetails: LiveData<List<GameDetailsUiModel>>
         get() = _gameDetails
@@ -50,6 +52,7 @@ class GameDetailsViewModel @ViewModelInject constructor(
     }
 
     fun onStoreClick() {
+        analytics.logClick("Steam Store")
         router.navigateTo(
             Screens.ExternalBrowserFlow(
                 GameUrlUtils.storePage(appId),
@@ -59,6 +62,7 @@ class GameDetailsViewModel @ViewModelInject constructor(
     }
 
     fun onHubClick() {
+        analytics.logClick("Steam Community")
         router.navigateTo(
             Screens.ExternalBrowserFlow(
                 GameUrlUtils.hubPage(appId),

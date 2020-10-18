@@ -70,6 +70,9 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     private val viewModel: LibraryViewModel by viewModels()
 
+    override val logScreenName: String?
+        get() = if (viewModel.onlyHidden) "Hidden Games" else "Library"
+
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             onBackPressed()
@@ -238,7 +241,10 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest {
                 if (prevItemCount != adapter.itemCount) {
-                    TransitionManager.beginDelayedTransition(root_fragment_library, placeholderTransition)
+                    TransitionManager.beginDelayedTransition(
+                        root_fragment_library,
+                        placeholderTransition
+                    )
                     prevItemCount = adapter.itemCount
                 }
                 if (adapter.itemCount == 0 && (it.refresh != LoadState.Loading || prevItemCount == 0)) {
@@ -372,6 +378,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
         updateOnBackPressedCallbackEnabled()
     }
 

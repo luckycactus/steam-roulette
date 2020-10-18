@@ -43,19 +43,10 @@ class SteamId private constructor(
             return VanityUrlFormat.Invalid
         }
 
-        fun tryGetVanityUrl(input: String): String? {
-            if (VanityUrlFormat.Short.regex.matches(input))
-                return input
-            return VanityUrlFormat.Full.regex.find(input)?.let {
-                it.groupValues[2]
-            }
-        }
 
         fun tryParse(input: String): SteamId? {
             val format =
-                getFormat(
-                    input
-                )
+                getFormat(input)
 
             if (format == Format.Invalid)
                 return null
@@ -231,15 +222,34 @@ class SteamId private constructor(
         /**
          * Example: gabelogannewell
          */
-        Short("[\\d\\w_-]{3,32}"),
+        Short("[\\d\\w_-]{3,32}") {
+            override fun parseVanity(input: String): String {
+                return if (regex.matches(input))
+                    input
+                else throw IllegalArgumentException()
+            }
+        },
 
         /**
          * Example: https://steamcommunity.com/id/gabelogannewell/
          */
-        Full("(https?://)?steamcommunity\\.com/id/([\\d\\w_-]{3,32})/?"),
+        Full("(https?://)?steamcommunity\\.com/id/([\\d\\w_-]{3,32})/?") {
+            override fun parseVanity(input: String): String {
+                return regex.find(input)!!.let {
+                    it.groupValues[2]
+                }
+            }
+        },
 
-        Invalid("\$a");
+        Invalid("\$a") {
+            override fun parseVanity(input: String): String {
+                throw IllegalStateException("${VanityUrlFormat::class.java.simpleName}.${VanityUrlFormat.Invalid.name} cannot parse anything!") }
+
+        };
 
         val regex: Regex = regExp.toRegex()
+
+        abstract fun parseVanity(input: String): String
+
     }
 }

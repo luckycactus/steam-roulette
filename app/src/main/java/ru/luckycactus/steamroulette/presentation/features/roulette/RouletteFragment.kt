@@ -115,9 +115,11 @@ class RouletteFragment : BaseFragment() {
                 },
                 onSwipedRight = {
                     viewModel.onGameSwiped(false)
+                    analytics.logSelectContent("Game swipe", "right")
                 },
                 onSwipedLeft = {
                     viewModel.onGameSwiped(true)
+                    analytics.logSelectContent("Game swipe", "left")
                 },
                 onSwipeProgress = { _progress, _ ->
                     paletteHelper.edit {
@@ -189,7 +191,7 @@ class RouletteFragment : BaseFragment() {
         paletteHelper.edit {
             for (i in 0..1) {
                 val vh =
-                    (rvRoulette.findViewHolderForAdapterPosition(i) as? RouletteAdapter.RouletteViewHolder)
+                    (rvRoulette?.findViewHolderForAdapterPosition(i) as? RouletteAdapter.RouletteViewHolder)
                 setPageColor(i, PaletteUtils.getColorForGameCover(vh?.palette))
             }
             if (resetProgress)
@@ -219,9 +221,19 @@ class RouletteFragment : BaseFragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         viewModel.onHiddenChanged(hidden)
+    }
+
+    private fun logScreen() {
+        if (isResumed && isVisible) {
+
+        }
     }
 
     private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {

@@ -55,7 +55,7 @@ abstract class GamesFilterRepositoryImpl constructor(
 
     override fun clearUser(steamId: SteamId) {
         prefs.edit {
-            key("filter", currentUser)
+            remove(key("filter", currentUser))
             remove(key("max-hours", currentUser))
         }
     }

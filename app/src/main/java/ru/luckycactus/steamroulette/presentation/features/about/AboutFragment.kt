@@ -1,16 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.forEach
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.Slide
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_about.*
 import kotlinx.coroutines.delay
@@ -55,6 +52,7 @@ class AboutFragment : BaseFragment() {
         }
 
         tvRateApp.setOnClickListener {
+            analytics.logClick("Review app")
             (activity as MainActivity).reviewApp()
         }
 

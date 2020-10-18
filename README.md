@@ -21,7 +21,7 @@ Android app to help you choose a game from your Steam library to play
 - Android KTX
 - Material Components
 - Recycler View Selection
-- Paging Library
+- Paging 3 Library
 - Room
 - OKHttp, Retrofit
 - Moshi
@@ -29,6 +29,4 @@ Android app to help you choose a game from your Steam library to play
 - Dagger-Hilt
 - Palette
 - Cicerone
-- Stetho
-- Leak Canary
-- Crashlytics
+- Firebase Crashlytics, Analytics

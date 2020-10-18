@@ -31,9 +31,9 @@ import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.PlayUtils
 import ru.luckycactus.steamroulette.presentation.utils.observeEvent
-import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
     @Inject
     lateinit var router: Router
 
+    @Inject
+    lateinit var analytics: AnalyticsHelper
+
     val viewModel: MainViewModel by viewModels()
 
     private var runningTransitions = 0
@@ -66,7 +69,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
         }
     }
 
-    private val navigator: Navigator =
+    private val navigator =
         object : SupportAppNavigator(this, supportFragmentManager, R.id.container) {
             // "replace" changed to "hide" + "add"
             override fun fragmentForward(command: Forward) {
@@ -196,7 +199,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
                 positiveResId = R.string.rate,
                 negativeResId = R.string.later,
                 neutralResId = R.string.never
-            ).show(supportFragmentManager, null)
+            ).show(supportFragmentManager, TAG_REVIEW_REQUEST)
         }
     }
 
@@ -224,10 +227,24 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
         dialog: MessageDialogFragment,
         result: MessageDialogFragment.Result
     ) {
-        when (result) {
-            MessageDialogFragment.Result.Positive -> reviewApp()
-            MessageDialogFragment.Result.Neutral -> viewModel.disableAppReview()
-            MessageDialogFragment.Result.Negative -> viewModel.delayAppReview()
+        when (dialog.tag) {
+            TAG_REVIEW_REQUEST -> when (result) {
+                MessageDialogFragment.Result.Positive -> {
+                    analytics.logSelectContent("Review request", "Accepted")
+                    reviewApp()
+                }
+                MessageDialogFragment.Result.Neutral -> {
+                    analytics.logSelectContent("Review request", "Disabled")
+                    viewModel.disableAppReview()
+                }
+                MessageDialogFragment.Result.Negative -> {
+                    analytics.logSelectContent("Review request", "Delayed")
+                    viewModel.delayAppReview()
+                }
+                MessageDialogFragment.Result.Cancel -> {
+                    analytics.logSelectContent("Review request", "Cancelled")
+                }
+            }
         }
     }
 
@@ -246,5 +263,9 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
             PlayUtils.reviewApp(this@MainActivity)
             viewModel.onAppReviewed()
         }
+    }
+
+    companion object {
+        const val TAG_REVIEW_REQUEST = "TAG_REVIEW_REQUEST"
     }
 }
