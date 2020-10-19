@@ -5,10 +5,10 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class AppMigration5to6 @Inject constructor(
-    private val imageCacheCleaner: Provider<ImageCacheCleaner>
+    private val imageCacheCleaner: ImageCacheCleaner
 ) : AppMigration {
 
     override suspend fun migrate() {
-        imageCacheCleaner.get().clearAllCache()
+        imageCacheCleaner.clearDiskCache()
     }
 }

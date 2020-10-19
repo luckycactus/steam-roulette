@@ -42,7 +42,12 @@ class GameHeaderViewHolder(
                 item.gameHeader.appId
             )
         )
-        gameView.setGame(item.gameHeader, disableTransition, listener)
+        gameView.setGame(
+            item.gameHeader,
+            disableTransition,
+            listener,
+            imageType = GameView.ImageType.HdOrSd
+        )
     }
 
     override fun bind(item: GameDetailsUiModel.Header) {

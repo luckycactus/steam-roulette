@@ -69,7 +69,12 @@ class RouletteAdapter constructor(
                 this.palette = null
             this.game = game
             setVisibleHint(bindingAdapterPosition == 0)
-            gameView.setGame(game, false, imageRequestListener)
+            gameView.setGame(
+                game,
+                false,
+                imageRequestListener,
+                imageType = GameView.ImageType.HD
+            )
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {

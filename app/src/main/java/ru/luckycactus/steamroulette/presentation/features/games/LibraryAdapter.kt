@@ -15,6 +15,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_library_game.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
+import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.inflate
 import ru.luckycactus.steamroulette.presentation.utils.visibility
 
@@ -73,7 +74,11 @@ class LibraryAdapter(
 
         fun bind(game: LibraryGame?, selected: Boolean) {
             this.game = game
-            gameView.setGame(game?.header, setTransitionName = false, hd = false)
+            gameView.setGame(
+                game?.header,
+                setTransitionName = false,
+                imageType = GameView.ImageType.SD
+            )
             gameView.isSelected = selected
             cardViewBottom.isSelected = selected
             checkbox.isSelected = selected

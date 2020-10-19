@@ -99,7 +99,7 @@ class GameView : MaterialCardView {
         disableTransition: Boolean = false,
         listener: Listener? = null,
         setTransitionName: Boolean = true,
-        hd: Boolean = true
+        imageType: ImageType = ImageType.HD
     ) {
         if (game == current)
             return
@@ -114,7 +114,7 @@ class GameView : MaterialCardView {
         val target = MyTarget(ivGame, listener)
         if (game != null) {
             if (differentAppId)
-                createRequestBuilder(this, game, disableTransition, hd).into(target)
+                createRequestBuilder(this, game, disableTransition, imageType).into(target)
             if (setTransitionName) {
                 ViewCompat.setTransitionName(
                     this,
@@ -138,7 +138,7 @@ class GameView : MaterialCardView {
         view: GameView,
         game: GameHeader,
         disableTransition: Boolean,
-        hd: Boolean
+        imageType: ImageType
     ): RequestBuilder<Bitmap> {
         val anim = AlphaAnimation(0f, 1f).apply {
             duration = 300
@@ -181,7 +181,7 @@ class GameView : MaterialCardView {
             }
         )
 
-        val headerImageFirstCache = GlideApp.with(view)
+        val headerFirstCache = GlideApp.with(view)
             .asBitmap()
             .fitCenter()
             .load(GameUrlUtils.headerImage(game.appId))
@@ -191,11 +191,11 @@ class GameView : MaterialCardView {
             .skipMemoryCache(!memoryCacheEnabled)
             .onlyRetrieveFromCache(true)
 
-        val headerImagePost = headerImageFirstCache.clone()
+        val headerAfterAll = headerFirstCache.clone()
             .onlyRetrieveFromCache(false)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
 
-        val portraitHdImage = GlideApp.with(view)
+        val portraitHd = GlideApp.with(view)
             .asBitmap()
             .load(GameUrlUtils.libraryPortraitImageHD(game.appId))
             .fitCenter()
@@ -205,7 +205,7 @@ class GameView : MaterialCardView {
             .skipMemoryCache(!memoryCacheEnabled)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
 
-        val portraitImage = GlideApp.with(view)
+        val portrait = GlideApp.with(view)
             .asBitmap()
             .load(GameUrlUtils.libraryPortraitImage(game.appId))
             .fitCenter()
@@ -215,19 +215,24 @@ class GameView : MaterialCardView {
             .skipMemoryCache(!memoryCacheEnabled)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
 
-        if (hd) {
-            portraitImage.onlyRetrieveFromCache(true)
-            val portraitImageThumbnail = portraitImage.clone()
-            portraitImage.error(headerImagePost)
-            portraitHdImage.thumbnail(portraitImageThumbnail)
+        if (imageType == ImageType.HD) {
+            portrait.onlyRetrieveFromCache(true)
+            val portraitImageThumbnail = portrait.clone()
+            portraitHd.thumbnail(portraitImageThumbnail)
+            headerFirstCache.error(portraitHd)
+            portraitHd.error(portrait)
         } else {
-            portraitImage.error(headerImagePost)
-            portraitHdImage.onlyRetrieveFromCache(true)
+            if (imageType == ImageType.HdOrSd) {
+                portraitHd.onlyRetrieveFromCache(true)
+                headerFirstCache.error(portraitHd)
+                portraitHd.error(portrait)
+            } else {
+                headerFirstCache.error(portrait)
+            }
         }
-        portraitHdImage.error(portraitImage)
-        headerImageFirstCache.error(portraitHdImage)
+        portrait.error(headerAfterAll)
 
-        return headerImageFirstCache
+        return headerFirstCache
     }
 
     private class MyTarget(view: ImageView, private val listener: Listener?) :
@@ -245,6 +250,10 @@ class GameView : MaterialCardView {
 
     fun interface Listener {
         fun onLoadFinished(resource: Bitmap?)
+    }
+
+    enum class ImageType {
+        SD, HD, HdOrSd
     }
 
     companion object {

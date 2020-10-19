@@ -8,8 +8,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppCoScope
-import ru.luckycactus.steamroulette.domain.app.ClearImageCacheUseCase
-import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -35,7 +33,6 @@ class MainViewModel @ViewModelInject constructor(
     private val fetchUserSummary: FetchUserSummaryUseCase,
     private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
     private val logoutUser: LogoutUserUseCase,
-    private val clearImageCache: ClearImageCacheUseCase,
     private val resourceManager: ResourceManager,
     private val appReviewManager: AppReviewManager,
     private val router: Router,

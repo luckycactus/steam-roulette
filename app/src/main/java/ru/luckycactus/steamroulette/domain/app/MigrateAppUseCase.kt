@@ -15,6 +15,8 @@ class MigrateAppUseCase @Inject constructor(
     override suspend fun execute(params: Unit) {
         var lastVersion = appRepository.lastVersion
         val currentVersion = appRepository.currentVersion
+        if (lastVersion == 0)
+            lastVersion = currentVersion
         while (lastVersion < currentVersion) {
             migrations[lastVersion]?.let {
                 withContext(NonCancellable) {

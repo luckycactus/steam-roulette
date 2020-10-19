@@ -245,13 +245,17 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
                         root_fragment_library,
                         placeholderTransition
                     )
-                    prevItemCount = adapter.itemCount
                 }
-                if (adapter.itemCount == 0 && (it.refresh != LoadState.Loading || prevItemCount == 0)) {
+                if (prevItemCount != -1
+                    && adapter.itemCount == 0
+                    && (it.refresh != LoadState.Loading || prevItemCount == 0)
+                ) {
                     dataLoadingViewHolder.showPlaceholder(emptyPlaceholder)
                 } else {
                     dataLoadingViewHolder.showContent()
                 }
+
+                prevItemCount = adapter.itemCount
             }
         }
 
