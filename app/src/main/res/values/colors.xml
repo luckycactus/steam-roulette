@@ -9,6 +9,10 @@
     <color name="steam_dark">#16202B</color>
     <color name="steam_dark_2">#141A25</color>
 
+    <color name="logo_bg">#1d2837</color>
+    <color name="logo_gradient_1">#51b9f9</color>
+    <color name="logo_gradient_2">#f651f9</color>
+
     <color name="holo_ripple_color">#15ffffff</color>
     <color name="holo_focused_color">#10ffffff</color>
     <color name="divider">#141A25</color>
