@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.presentation.features.games
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.view.MenuItem.SHOW_AS_ACTION_NEVER
@@ -56,6 +55,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     private var actionMode: ActionMode? = null
     private lateinit var selectionTracker: SelectionTracker<Long>
+    private var inSelectionMode = false
 
     private lateinit var clearHiddenMenuItem: MenuItem
     private lateinit var searchMenuItem: MenuItem
@@ -326,17 +326,43 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     private val actionModeCallback = object : ActionMode.Callback {
+        private var windowCallbackWrapper: WindowCallbackWrapper? = null
+
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean = false
 
         override fun onDestroyActionMode(mode: ActionMode) {
             //after config change and start of new actionmode old actionmodeCallback can get invoked
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
                 selectionTracker.clearSelection()
+            windowCallbackWrapper?.wrapped?.let {
+                activity?.window?.callback = it
+                windowCallbackWrapper = null
+            }
             actionMode = null
+            inSelectionMode = false
+            updateOnBackPressedCallbackEnabled()
         }
 
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
             mode.menuInflater.inflate(R.menu.menu_library_action_mode, menu)
+
+            inSelectionMode = true
+            // ActionMode handles back press itself.
+            // We intercept back press manually when action mode is opened
+            windowCallbackWrapper =
+                object : WindowCallbackWrapper(requireActivity().window.callback) {
+                    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+                        if (event.keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                            requireActivity().onBackPressed()
+                            return true
+                        }
+                        return super.dispatchKeyEvent(event);
+                    }
+                }
+            requireActivity().window.callback = windowCallbackWrapper
+
+            updateOnBackPressedCallbackEnabled()
+
             return true
         }
 
@@ -403,6 +429,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     private fun updateOnBackPressedCallbackEnabled() {
         onBackPressedCallback.isEnabled = when {
             isHidden -> false
+            inSelectionMode -> true
             searchMenuItem.isActionViewExpanded -> true
             else -> when (filtersBehavior.state) {
                 STATE_DRAGGING, STATE_EXPANDED, STATE_HALF_EXPANDED -> true
@@ -414,6 +441,10 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     private fun onBackPressed() {
         if (::filtersBehavior.isInitialized && filtersBehavior.state == STATE_EXPANDED) {
             filtersFragment.close()
+            return
+        }
+
+        actionMode?.finish()?.also {
             return
         }
 
@@ -464,7 +495,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     private fun onNavigationIconClick(view: View) {
-        if (actionMode != null)
+        if (inSelectionMode)
             selectionTracker.clearSelection()
         else
             requireActivity().onBackPressed()
@@ -474,7 +505,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         val selectionSize = selectionTracker.selection.size()
         val enable = selectionSize > 0
 
-        if ((actionMode != null) != enable) {
+        if (inSelectionMode != enable) {
             toolbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
                 scrollFlags = if (enable) {
                     val translation = appBarLayout.y.toInt()
