@@ -45,13 +45,14 @@ class LibraryAdapter(
     fun getSelectionKeyForPosition(position: Int): Long? =
         getSelectionKeyForItem(getItem(position))
 
-    private fun getSelectionKeyForItem(item: LibraryGame?): Long? =
+    fun getSelectionKeyForItem(item: LibraryGame?): Long? =
         item?.header?.appId?.toLong()
 
     inner class GameViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
-        private var game: LibraryGame? = null
+        var game: LibraryGame? = null
+            private set
 
         init {
             gameView.memoryCacheEnabled = true

@@ -545,22 +545,19 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     private class LibraryItemKeyProvider(
-        recyclerView: RecyclerView
+        private val recyclerView: RecyclerView
     ) : ItemKeyProvider<Long>(SCOPE_MAPPED) {
         private val adapter: LibraryAdapter = (recyclerView.adapter as? LibraryAdapter)
             ?: throw IllegalStateException("RecyclerView must have LibraryAdapter set")
-        private val lm = (recyclerView.layoutManager as? GridLayoutManager)
-            ?: throw IllegalStateException("RecyclerView must have GridLayoutManager set")
 
         override fun getKey(position: Int): Long? = adapter.getSelectionKeyForPosition(position)
 
         override fun getPosition(key: Long): Int {
-            val last = lm.findLastVisibleItemPosition()
-            if (last < 0)
-                return RecyclerView.NO_POSITION
-            for (i in lm.findFirstVisibleItemPosition()..last) {
-                if (key == adapter.getSelectionKeyForPosition(i))
-                    return i
+            recyclerView.forEach {
+                val vh =
+                    recyclerView.getChildViewHolder(it) as LibraryAdapter.GameViewHolder
+                if (key == adapter.getSelectionKeyForItem(vh.game))
+                    return vh.absoluteAdapterPosition
             }
             return RecyclerView.NO_POSITION
         }
