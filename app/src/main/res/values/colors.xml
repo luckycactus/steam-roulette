@@ -9,7 +9,8 @@
     <color name="steam_dark">#16202B</color>
     <color name="steam_dark_2">#141A25</color>
 
-    <color name="logo_bg">#1d2837</color>
+    <!-- gradient alpha 40% -->
+    <color name="logo_bg">#223349</color>
     <color name="logo_gradient_1">#51b9f9</color>
     <color name="logo_gradient_2">#f651f9</color>
 
