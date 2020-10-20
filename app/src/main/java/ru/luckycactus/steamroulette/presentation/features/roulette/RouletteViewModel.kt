@@ -1,5 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.util.Log
+import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +34,8 @@ class RouletteViewModel @ViewModelInject constructor(
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
     private val resourceManager: ResourceManager,
-    @AppCoScope private val appScope: CoroutineScope
+    @AppCoScope private val appScope: CoroutineScope,
+    @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     val games: LiveData<List<GameHeader>?>
@@ -47,7 +50,7 @@ class RouletteViewModel @ViewModelInject constructor(
     private val _contentState = MediatorLiveData<ContentState>()
     private val _controlsAvailable = MutableLiveData(true)
     private val gamesFilter: LiveData<GamesFilter>
-    private val topGame = MediatorLiveData<GameHeader?>()
+    private val topGame = savedStateHandle.getLiveData<GameHeader?>(BUNDLE_TOP_GAME)
 
     private var getPagingListJob: Job? = null
     private var allGamesShowed = false
@@ -277,5 +280,9 @@ class RouletteViewModel @ViewModelInject constructor(
                 }
             }
         }
+    }
+
+    companion object {
+        private const val BUNDLE_TOP_GAME = "top-game"
     }
 }
