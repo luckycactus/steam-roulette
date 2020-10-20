@@ -10,12 +10,14 @@ data class GamesFilter(
     val playtime: PlaytimeFilter = PlaytimeFilter.All
 ) {
     companion object {
+        private val all = GamesFilter()
         private val empty = GamesFilter(hidden = false)
         private val hidden by lazyNonThreadSafe {
             GamesFilter(hidden = true)
         }
 
-        fun empty() = empty
+        fun withoutHidden() = empty
         fun onlyHidden() = hidden
+        fun all() = all
     }
 }

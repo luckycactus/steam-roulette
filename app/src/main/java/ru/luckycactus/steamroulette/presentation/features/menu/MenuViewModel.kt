@@ -38,7 +38,7 @@ class MenuViewModel @ViewModelInject constructor(
 ) : BaseViewModel() {
 
     val userSummary = observeUserSummary().asLiveData()
-    val gameCount: LiveData<Int> = observeOwnedGamesCount(GamesFilter.empty()).asLiveData()
+    val gameCount: LiveData<Int> = observeOwnedGamesCount(GamesFilter.all()).asLiveData()
     val gamesLastUpdate: LiveData<String>
     val refreshProfileState: LiveData<Boolean>
     val closeAction: LiveData<Unit>

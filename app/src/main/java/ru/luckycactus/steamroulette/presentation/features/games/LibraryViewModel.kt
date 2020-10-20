@@ -81,7 +81,7 @@ class LibraryViewModel @ViewModelInject constructor(
         else
             observeLibraryFilter()
 
-        appliedGamesFilter = gamesFilterFlow.stateIn(viewModelScope, GamesFilter.empty())
+        appliedGamesFilter = gamesFilterFlow.stateIn(viewModelScope, GamesFilter.withoutHidden())
 
         games = combine(
             searchQuery,

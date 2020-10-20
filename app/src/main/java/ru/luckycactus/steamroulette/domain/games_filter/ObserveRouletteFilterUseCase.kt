@@ -12,5 +12,5 @@ class ObserveRouletteFilterUseCase @Inject constructor(
 ) : UseCase<Unit, Flow<GamesFilter>>() {
 
     override fun execute(params: Unit): Flow<GamesFilter> =
-        filtersRepository.observeFilter(GamesFilter.empty())
+        filtersRepository.observeFilter(GamesFilter.withoutHidden())
 }
