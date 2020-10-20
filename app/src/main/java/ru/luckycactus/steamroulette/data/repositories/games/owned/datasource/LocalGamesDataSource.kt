@@ -55,8 +55,15 @@ class LocalGamesDataSource @Inject constructor(
 
     override suspend fun getIds(
         steamId: SteamId,
-        filter: GamesFilter
-    ): List<Int> = db.ownedGamesDao().getIds(steamId.as64(), filter)
+        filter: GamesFilter,
+        orderById: Boolean
+    ): List<Int> = db.ownedGamesDao().getIds(steamId.as64(), filter, orderById)
+
+    override suspend fun getIdsMutable(
+        steamId: SteamId,
+        filter: GamesFilter,
+        orderById: Boolean
+    ): MutableList<Int> = db.ownedGamesDao().getIdsMutable(steamId.as64(), filter, orderById)
 
     override suspend fun resetAllHidden(steamId: SteamId) {
         db.ownedGamesDao().resetAllHidden(steamId.as64())

@@ -48,8 +48,14 @@ class GamesRepositoryImpl @Inject constructor(
     override suspend fun isUserHasGames(): Boolean =
         localGamesDataSource.isUserHasGames(currentUser)
 
-    override suspend fun getOwnedGamesIds(gamesFilter: GamesFilter) =
-        localGamesDataSource.getIds(currentUser, gamesFilter)
+    override suspend fun getOwnedGamesIds(gamesFilter: GamesFilter, orderById: Boolean) =
+        localGamesDataSource.getIds(currentUser, gamesFilter, orderById)
+
+    override suspend fun getOwnedGamesIdsMutable(
+        gamesFilter: GamesFilter,
+        orderById: Boolean
+    ) = localGamesDataSource.getIdsMutable(currentUser, gamesFilter, orderById)
+
 
     override suspend fun getLocalOwnedGameHeaders(gameIds: List<Int>): List<GameHeader> =
         localGamesDataSource.getHeaders(currentUser, gameIds)

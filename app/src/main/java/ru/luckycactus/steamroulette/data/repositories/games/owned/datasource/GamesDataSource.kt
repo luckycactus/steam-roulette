@@ -15,7 +15,9 @@ interface GamesDataSource {
 
         suspend fun getAll(steamId: SteamId): List<OwnedGameEntity>
 
-        suspend fun getIds(steamId: SteamId, filter: GamesFilter): List<Int>
+        suspend fun getIds(steamId: SteamId, filter: GamesFilter, orderById: Boolean = false): List<Int>
+
+        suspend fun getIdsMutable(steamId: SteamId, filter: GamesFilter, orderById: Boolean = false): MutableList<Int>
 
         suspend fun setHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
 

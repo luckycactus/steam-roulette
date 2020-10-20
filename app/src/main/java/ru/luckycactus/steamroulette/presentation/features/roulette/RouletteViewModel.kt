@@ -206,7 +206,8 @@ class RouletteViewModel @ViewModelInject constructor(
             val result = getOwnedGamesPagingList(
                 GetOwnedGamesPagingListUseCase.Params(
                     filter,
-                    viewModelScope
+                    viewModelScope,
+                    topGame.value
                 )
             )
 

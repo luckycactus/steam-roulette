@@ -138,7 +138,7 @@ abstract class AppModule {
         @Singleton
         @Provides
         @AppCoScope
-        fun provideApplicationCoroutineScope() =
+        fun provideApplicationCoroutineScope(): CoroutineScope =
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
         @Provides

@@ -13,7 +13,9 @@ interface GamesRepository {
     @Throws(GetOwnedGamesPrivacyException::class)
     suspend fun fetchOwnedGames(cachePolicy: CachePolicy)
 
-    suspend fun getOwnedGamesIds(gamesFilter: GamesFilter): List<Int>
+    suspend fun getOwnedGamesIds(gamesFilter: GamesFilter, orderById: Boolean = false): List<Int>
+
+    suspend fun getOwnedGamesIdsMutable(gamesFilter: GamesFilter, orderById: Boolean = false): MutableList<Int>
 
     suspend fun getLocalOwnedGameHeaders(gameIds: List<Int>): List<GameHeader>
 
