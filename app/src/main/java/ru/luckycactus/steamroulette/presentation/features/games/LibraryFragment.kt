@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.*
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.view.MenuItem.SHOW_AS_ACTION_NEVER
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
@@ -67,6 +69,8 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
     private lateinit var placeholderTransition: Transition
+
+    private var observingGames = false
 
     private val viewModel: LibraryViewModel by viewModels()
 
@@ -221,10 +225,10 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             filtersFragment.close()
         }
 
-        lifecycleScope.launch {
-            viewModel.games.collectLatest {
-                adapter.submitData(it)
-            }
+        if (savedInstanceState != null) {
+            observeGames()
+        } else {
+            dataLoadingViewHolder.showLoading()
         }
 
         placeholderTransition = Fade().apply {
@@ -245,14 +249,14 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
                         root_fragment_library,
                         placeholderTransition
                     )
+
                 }
-                if (prevItemCount != -1
-                    && adapter.itemCount == 0
-                    && (it.refresh != LoadState.Loading || prevItemCount == 0)
-                ) {
-                    dataLoadingViewHolder.showPlaceholder(emptyPlaceholder)
-                } else {
-                    dataLoadingViewHolder.showContent()
+                if (it.refresh != LoadState.Loading && prevItemCount != -1) {
+                    if (adapter.itemCount == 0) {
+                        dataLoadingViewHolder.showPlaceholder(emptyPlaceholder)
+                    } else {
+                        dataLoadingViewHolder.showContent()
+                    }
                 }
 
                 prevItemCount = adapter.itemCount
@@ -303,6 +307,26 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             layoutManager.spanCount = it
             rvGames.invalidateItemDecorations()
         }
+    }
+
+    private fun observeGames() {
+        if (!observingGames) {
+            lifecycleScope.launch {
+                viewModel.games.collectLatest {
+                    adapter.submitData(it)
+                }
+            }
+            observingGames = true
+        }
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        if (enter && nextAnim != 0) {
+            val anim = AnimationUtils.loadAnimation(requireContext(), nextAnim)
+            anim?.listener(onEnd = { observeGames() })
+            return anim
+        }
+        return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
@@ -179,4 +180,22 @@ inline fun View.changeThroughFade(duration: Long = 200, crossinline block: View.
         animate().alpha(1f).setDuration(duration / 2)
     }
 }
+
+inline fun Animation.listener(
+    crossinline onEnd: (Animation) -> Unit = {},
+    crossinline onStart: (Animation) -> Unit = {},
+    crossinline onRepeat: (Animation) -> Unit = {},
+) = object : Animation.AnimationListener {
+    override fun onAnimationStart(animation: Animation) {
+        onStart(animation)
+    }
+
+    override fun onAnimationEnd(animation: Animation) {
+        onEnd(animation)
+    }
+
+    override fun onAnimationRepeat(animation: Animation) {
+        onRepeat(animation)
+    }
+}.also { setAnimationListener(it) }
 
