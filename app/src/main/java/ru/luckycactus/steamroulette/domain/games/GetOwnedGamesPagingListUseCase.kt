@@ -3,8 +3,9 @@ package ru.luckycactus.steamroulette.domain.games
 import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
-import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
@@ -15,7 +16,8 @@ import javax.inject.Inject
  * ignores hidden and shown fields of GamesFilter
  */
 class GetOwnedGamesPagingListUseCase @Inject constructor(
-    private val gamesRepository: GamesRepository
+    private val gamesRepository: GamesRepository,
+    private val rouletteRepository: RouletteRepository
 ) : SuspendUseCase<GetOwnedGamesPagingListUseCase.Params, GetOwnedGamesPagingListUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result {
@@ -24,6 +26,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                 return Result.Fail.NoOwnedGames
             }
 
+            val topGameId = rouletteRepository.getLastTopGameId()
             var topGameFound = false
 
             val shownIds = gamesRepository.getOwnedGamesIdsMutable(
@@ -32,13 +35,13 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                     shown = true,
                     playtime = params.filter.playtime
                 ),
-                params.topGame != null
+                topGameId != null
             )
-            if (params.topGame != null) {
-                val index = shownIds.binarySearch(params.topGame.appId)
+            if (topGameId != null) {
+                val index = shownIds.binarySearch(topGameId)
                 if (index >= 0) {
                     topGameFound = true
-                    shownIds.remove(index)
+                    shownIds.removeAt(index)
                 }
             }
 
@@ -48,13 +51,13 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                     shown = false,
                     playtime = params.filter.playtime
                 ),
-                params.topGame != null && !topGameFound
+                topGameId != null && !topGameFound
             )
-            if (params.topGame != null && !topGameFound) {
-                val index = notShownIds.binarySearch(params.topGame.appId)
+            if (topGameId != null && !topGameFound) {
+                val index = notShownIds.binarySearch(topGameId)
                 if (index >= 0) {
                     topGameFound = true
-                    notShownIds.remove(index)
+                    notShownIds.removeAt(index)
                 }
             }
             shownIds.shuffle()
@@ -62,7 +65,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
 
             val firstShownGame = shownIds.firstOrNull()
             val gameIds = if (topGameFound) {
-                listOf(params.topGame!!.appId) + notShownIds + shownIds
+                listOf(topGameId!!) + notShownIds + shownIds
             } else {
                 notShownIds + shownIds
             }
@@ -70,9 +73,21 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                 { gamesRepository.getLocalOwnedGameHeaders(it) },
                 gameIds,
                 5,
-                10,
+                20,
                 params.pagingCoroutineScope
             )
+
+            params.pagingCoroutineScope.launch {
+                pagingList.observeItemsInsertions().collect {
+                    updateTopGame(pagingList)
+                }
+            }
+
+            params.pagingCoroutineScope.launch {
+                pagingList.observeItemsRemovals().collect {
+                    updateTopGame(pagingList)
+                }
+            }
 
             return Result.Success(pagingList, firstShownGame)
         } catch (e: CancellationException) {
@@ -82,10 +97,13 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
         }
     }
 
+    private suspend fun updateTopGame(pagingList: PagingGameList) {
+        pagingList.peekTop()?.appId.let { rouletteRepository.setLastTopGameId(it) }
+    }
+
     data class Params(
         val filter: GamesFilter,
-        val pagingCoroutineScope: CoroutineScope,
-        val topGame: GameHeader? = null
+        val pagingCoroutineScope: CoroutineScope
     )
 
     sealed class Result {

@@ -1,7 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
-import android.util.Log
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineScope
@@ -16,9 +14,9 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
@@ -34,8 +32,7 @@ class RouletteViewModel @ViewModelInject constructor(
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
     private val resourceManager: ResourceManager,
-    @AppCoScope private val appScope: CoroutineScope,
-    @Assisted private val savedStateHandle: SavedStateHandle
+    @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel() {
 
     val games: LiveData<List<GameHeader>?>
@@ -50,7 +47,7 @@ class RouletteViewModel @ViewModelInject constructor(
     private val _contentState = MediatorLiveData<ContentState>()
     private val _controlsAvailable = MutableLiveData(true)
     private val gamesFilter: LiveData<GamesFilter>
-    private val topGame = savedStateHandle.getLiveData<GameHeader?>(BUNDLE_TOP_GAME)
+    private val topGame = MutableLiveData<GameHeader?>()
 
     private var getPagingListJob: Job? = null
     private var allGamesShowed = false
@@ -94,14 +91,14 @@ class RouletteViewModel @ViewModelInject constructor(
         games = _gamesPagingList.map { it?.list }
         itemsInserted = _gamesPagingList
             .asFlow()
-            .flatMapLatest { it?.itemsInsertedChannel?.receiveAsFlow() ?: emptyFlow() }
+            .flatMapLatest { it?.observeItemsInsertions() ?: emptyFlow() }
             .onEach {
                 updateTopGame()
             }
 
         itemRemoved = _gamesPagingList
             .asFlow()
-            .flatMapLatest { it?.itemRemovedChannel?.receiveAsFlow() ?: emptyFlow() }
+            .flatMapLatest { it?.observeItemsRemovals() ?: emptyFlow() }
             .onEach {
                 updateTopGame()
             }
@@ -209,8 +206,7 @@ class RouletteViewModel @ViewModelInject constructor(
             val result = getOwnedGamesPagingList(
                 GetOwnedGamesPagingListUseCase.Params(
                     filter,
-                    viewModelScope,
-                    topGame.value
+                    viewModelScope
                 )
             )
 
@@ -280,9 +276,5 @@ class RouletteViewModel @ViewModelInject constructor(
                 }
             }
         }
-    }
-
-    companion object {
-        private const val BUNDLE_TOP_GAME = "top-game"
     }
 }

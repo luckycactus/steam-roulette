@@ -5,16 +5,23 @@ import androidx.annotation.MainThread
 import androidx.core.util.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 interface PagingGameList {
     val list: List<GameHeader>
     val gameIds: List<Int>
-    val itemsInsertedChannel: ReceiveChannel<Pair<Int, Int>>
-    val itemRemovedChannel: ReceiveChannel<Int>
+
+    fun observeItemsInsertions(): Flow<Pair<Int, Int>>
+    fun observeItemsRemovals(): Flow<Int>
 
     fun isEmpty(): Boolean
     fun isFinished(): Boolean
@@ -45,14 +52,13 @@ class PagingGameListImpl constructor(
 
     override val list: List<GameHeader>
         get() = _list
-    override val itemsInsertedChannel: ReceiveChannel<Pair<Int, Int>>
-        get() = _itemsInsertedChannel
-    override val itemRemovedChannel: ReceiveChannel<Int>
-        get() = _itemRemovedChannel
 
     private val _list = mutableListOf<GameHeader>()
-    private val _itemsInsertedChannel = Channel<Pair<Int, Int>>(Channel.BUFFERED)
-    private val _itemRemovedChannel = Channel<Int>(Channel.BUFFERED)
+    private val _itemsInsertedChannel = BroadcastChannel<Pair<Int, Int>>(Channel.BUFFERED)
+    private val _itemRemovedChannel = BroadcastChannel<Int>(Channel.BUFFERED)
+
+    private val itemsInsertedFlow = _itemsInsertedChannel.asFlow()
+    private val itemRemovedFlow = _itemRemovedChannel.asFlow()
 
     private var nextFetchIndex = 0
     private var fetching = false
@@ -70,6 +76,10 @@ class PagingGameListImpl constructor(
     override fun isEmpty() = gameIds.isEmpty()
 
     override fun isFinished() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
+
+    override fun observeItemsInsertions(): Flow<Pair<Int, Int>> = itemsInsertedFlow
+
+    override fun observeItemsRemovals(): Flow<Int> = itemRemovedFlow
 
     @MainThread
     override fun removeTop(): GameHeader {

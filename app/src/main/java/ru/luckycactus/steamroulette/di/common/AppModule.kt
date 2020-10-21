@@ -22,6 +22,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.G
 import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.RemoteGameStoreDataSource
 import ru.luckycactus.steamroulette.data.repositories.games.owned.GamesRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.*
+import ru.luckycactus.steamroulette.data.repositories.games.roulette.RouletteRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games_filter.LibraryFilterRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.games_filter.RouletteFilterRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.library.LibrarySettingsRepositoryImpl
@@ -45,6 +46,7 @@ import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
 import ru.luckycactus.steamroulette.domain.games.GameDetailsRepository
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.domain.games.RouletteRepository
 import ru.luckycactus.steamroulette.domain.games_filter.LibraryFilterRepository
 import ru.luckycactus.steamroulette.domain.games_filter.RouletteFilterRepository
 import ru.luckycactus.steamroulette.domain.library.LibrarySettingsRepository
@@ -110,6 +112,9 @@ abstract class AppModule {
     abstract fun bindLibrarySettingsRepository(librarySettingsRepositoryImpl: LibrarySettingsRepositoryImpl): LibrarySettingsRepository
 
     @Binds
+    abstract fun bindRouletteRepository(rouletteRepositoryImpl: RouletteRepositoryImpl): RouletteRepository
+
+    @Binds
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner
 
     @Binds
@@ -138,7 +143,7 @@ abstract class AppModule {
         @Singleton
         @Provides
         @AppCoScope
-        fun provideApplicationCoroutineScope(): CoroutineScope =
+        fun provideApplicationCoroutineScope() =
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
         @Provides
