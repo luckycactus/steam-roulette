@@ -55,6 +55,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     private lateinit var adapter: LibraryAdapter
     private lateinit var layoutManager: GridLayoutManager
     private lateinit var spaceDecoration: GridSpaceDecoration
+    private lateinit var itemKeyProvider: LibraryItemKeyProvider
 
     private var actionMode: ActionMode? = null
     private lateinit var selectionTracker: SelectionTracker<Long>
@@ -185,7 +186,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         rvGames.setHasFixedSize(true)
 
 
-        val itemKeyProvider = LibraryItemKeyProvider(rvGames)
+        itemKeyProvider = LibraryItemKeyProvider(rvGames)
         selectionTracker = SelectionTracker.Builder(
             "games",
             rvGames,
@@ -356,13 +357,14 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean = false
 
         override fun onDestroyActionMode(mode: ActionMode) {
-            //after config change and start of new actionmode old actionmodeCallback can get invoked
+            //after config change and start of new actionmode old actionmodeCallback can be invoked
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
                 selectionTracker.clearSelection()
             windowCallbackWrapper?.wrapped?.let {
                 activity?.window?.callback = it
                 windowCallbackWrapper = null
             }
+            itemKeyProvider.reset()
             actionMode = null
             inSelectionMode = false
             updateOnBackPressedCallbackEnabled()
@@ -574,17 +576,30 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     ) : ItemKeyProvider<Long>(SCOPE_MAPPED) {
         private val adapter: LibraryAdapter = (recyclerView.adapter as? LibraryAdapter)
             ?: throw IllegalStateException("RecyclerView must have LibraryAdapter set")
+        
+        private val positionToKey = mutableMapOf<Long, Int>()
+
+        fun reset() {
+            positionToKey.clear()
+        }
 
         override fun getKey(position: Int): Long? = adapter.getSelectionKeyForPosition(position)
 
         override fun getPosition(key: Long): Int {
-            recyclerView.forEach {
-                val vh =
-                    recyclerView.getChildViewHolder(it) as LibraryAdapter.GameViewHolder
-                if (key == adapter.getSelectionKeyForItem(vh.game))
-                    return vh.bindingAdapterPosition
+            var position = positionToKey[key]
+            if (position == null) {
+                recyclerView.forEach {
+                    val vh =
+                        recyclerView.getChildViewHolder(it) as LibraryAdapter.GameViewHolder
+                    if (key == adapter.getSelectionKeyForItem(vh.game)) {
+                        vh.bindingAdapterPosition.let {
+                            position = it
+                            positionToKey[key] = it
+                        }
+                    }
+                }
             }
-            return RecyclerView.NO_POSITION
+            return position ?: RecyclerView.NO_POSITION
         }
     }
 
