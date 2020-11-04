@@ -42,7 +42,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MyTheme.BottomSheet.Title"
+            android:textAppearance="@style/TextAppearance.App.BottomSheet.Title"
             app:layout_constraintBottom_toTopOf="@id/headerGuideline"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -87,7 +87,7 @@
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/rbAll"
-                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    style="@style/Widget.App.CompoundButton.RadioButton.Dialog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/playtime_pref_all"
@@ -95,7 +95,7 @@
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/rbNotPlayed"
-                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    style="@style/Widget.App.CompoundButton.RadioButton.Dialog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/playtime_pref_not_played"
@@ -103,7 +103,7 @@
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/rbLimit"
-                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    style="@style/Widget.App.CompoundButton.RadioButton.Dialog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/playtime_pref_max_time"
@@ -124,7 +124,7 @@
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/rbHidden"
-                    style="@style/Widget.MyTheme.CompoundButton.RadioButton.Dialog"
+                    style="@style/Widget.App.CompoundButton.RadioButton.Dialog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/only_hidden"

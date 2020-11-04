@@ -38,7 +38,7 @@ class LibraryFilterFragment : BaseFragment() {
 
         val shapeAppearanceModel = ShapeAppearanceModel.builder(
             requireContext(),
-            R.style.ShapeAppearance_MyTheme_BottomSheet,
+            R.style.ShapeAppearance_App_BottomSheet,
             0
         ).build()
         val materialShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)

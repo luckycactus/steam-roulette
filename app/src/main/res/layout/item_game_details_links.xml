@@ -11,7 +11,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStore"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        style="@style/Widget.App.Button.GameDetailsLinkButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -26,7 +26,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnHub"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        style="@style/Widget.App.Button.GameDetailsLinkButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

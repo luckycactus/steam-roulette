@@ -35,7 +35,7 @@
     <string name="exit_warning">Are you sure you want to exit?</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_message_reset_hidden_games">Are you sure you want to clear hidden games?</string>
-    <string name="login_screen_help">What should I enter here?</string>
+    <string name="login_button_steamid_help">What should I enter here?</string>
     <string name="supported_steamid_formats">Supported SteamID Formats</string>
     <string name="next_game">Next game</string>
     <string name="hide_game">Hide game</string>
@@ -91,4 +91,5 @@
     <string name="you_have_n_games">You have %1$s</string>
     <string name="change_scale">Change scale</string>
     <string name="library_search_hint">Game title</string>
+    <string name="login_privacy_hint">You should set <b>Game details</b> to public and uncheck <b>Always keep my total playtime private</b> option in your Steam profile\'s <b>Privacy Settings</b> for the app to work</string>
 </resources>

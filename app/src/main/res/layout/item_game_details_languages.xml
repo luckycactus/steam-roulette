@@ -8,13 +8,13 @@
     >
 
     <TextView
-        style="@style/Widget.MyTheme.GameDetailsHeadline"
+        style="@style/Widget.App.GameDetailsHeadline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/default_activity_margin"
         android:paddingRight="@dimen/default_activity_margin"
         android:text="@string/game_details_languages"
-        android:textAppearance="@style/TextAppearance.MyTheme.GameDetailsHeadline"
+        android:textAppearance="@style/TextAppearance.App.GameDetailsHeadline"
         />
 
     <TextView

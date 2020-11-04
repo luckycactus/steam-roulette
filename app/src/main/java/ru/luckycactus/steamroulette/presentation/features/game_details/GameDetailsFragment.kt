@@ -54,6 +54,7 @@ class GameDetailsFragment : BaseFragment() {
         setupTint()
 
         adapter = GameDetailsAdapter(
+            requireArguments().getParcelable<GameHeader>(GameDetailsViewModel.ARG_GAME)!!.appId,
             waitForImage && savedInstanceState == null,
             ::startPostponedEnterTransition,
             ::onCoverChanged,

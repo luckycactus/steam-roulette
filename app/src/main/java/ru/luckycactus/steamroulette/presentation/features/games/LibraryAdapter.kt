@@ -77,7 +77,7 @@ class LibraryAdapter(
             this.game = game
             gameView.setGame(
                 game?.header,
-                setTransitionName = false,
+                transitionGameId = null,
                 imageType = GameView.ImageType.SD
             )
             gameView.isSelected = selected

@@ -55,17 +55,6 @@ fun setDrawableColor(drawable: Drawable, @ColorInt color: Int) {
     }
 }
 
-//todo
-fun longLog(tag: String, message: String) {
-    val maxLogSize = 1000
-    for (i in 0..message.length / maxLogSize) {
-        val start = i * maxLogSize
-        var end = (i + 1) * maxLogSize
-        end = if (end > message.length) message.length else end
-        Log.d(tag, message.substring(start, end))
-    }
-}
-
 /**
  * @param offset current offset of bottomsheet in range [-1, 1]
  * @param min value of offset when alpha should be 0

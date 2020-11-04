@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Steam Shuffle</string>
-    <string name="steamid_help" translatable="false">"\u2022 gabelogannewell
-\u2022 76561197960287930
-\u2022 STEAM_0:0:11101
-\u2022 [U:1:22202]
-\u2022 https://steamcommunity.com/id/gabelogannewell/
-\u2022 https://steamcommunity.com/profiles/76561197960287930/
-\u2022 https://steamcommunity.com/profiles/[U:1:22202]/"</string>
+    <string name="steamid_help" translatable="false">"\u2022 luckycactus
+\u2022 76561198043933405
+\u2022 STEAM_0:1:41833838
+\u2022 [U:1:83667677]
+\u2022 https://steamcommunity.com/id/luckycactus/
+\u2022 https://steamcommunity.com/profiles/76561198043933405/
+\u2022 https://steamcommunity.com/profiles/[U:1:83667677]/"</string>
     <string name="user_id_hint" translatable="false">SteamID / CommunityID / Profile URL</string>
     <string name="app_library_template" translatable="false">%s / %s</string>
 </resources>

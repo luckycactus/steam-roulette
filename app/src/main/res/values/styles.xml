@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="BaseBottomSheetDialog">
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="BaseBottomSheetDialog">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">?colorSurface</item>
         <item name="android:windowTranslucentStatus">true</item>
@@ -18,47 +18,47 @@
     <style name="BaseBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>
-        <item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>
+        <item name="android:windowAnimationStyle">@style/Animation.App.BottomSheet.Modal</item>
+        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Modal</item>
     </style>
 
-    <style name="Widget.MyTheme.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.MyTheme.BottomSheet</item>
+    <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.BottomSheet</item>
     </style>
 
-    <style name="ThemeOverlay.MyTheme.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="android:backgroundDimAmount">0.6</item>
         <item name="windowFixedWidthMajor">90%</item>
         <item name="windowFixedWidthMinor">90%</item>
-        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.AlertDialog</item>
+        <item name="android:windowAnimationStyle">@style/Animation.App.AlertDialog</item>
         <item name="materialAlertDialogTitleTextStyle">
-            @style/MaterialAlertDialog.MyTheme.Title.Text
+            @style/MaterialAlertDialog.App.Title.Text
         </item>
     </style>
 
-    <style name="MaterialAlertDialog.MyTheme.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+    <style name="MaterialAlertDialog.App.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
         <item name="android:textColor">?colorOnSurface</item>
     </style>
 
-    <style name="Widget.MyTheme.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface" />
+    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface" />
 
     <style name="Widget.LuxuryProgressBar" parent="">
         <item name="progressColor">@color/color_on_surface</item>
     </style>
 
-    <style name="Widget.MyTheme.GameView" parent="Widget.MaterialComponents.CardView">
+    <style name="Widget.App.GameView" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@android:color/transparent</item>
     </style>
 
-    <style name="Widget.MyTheme.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton"></style>
+    <style name="Widget.App.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton"></style>
 
-    <style name="Widget.MyTheme.GameDetailsHeadline" parent="Widget.MaterialComponents.TextView">
+    <style name="Widget.App.GameDetailsHeadline" parent="Widget.MaterialComponents.TextView">
         <item name="android:paddingBottom">@dimen/spacing_small</item>
         <item name="android:paddingTop">@dimen/spacing_small</item>
         <item name="android:layout_marginBottom">@dimen/spacing_small</item>
     </style>
 
-    <style name="Widget.MyTheme.MetacriticScoreTextView" parent="Widget.MaterialComponents.TextView">
+    <style name="Widget.App.MetacriticScoreTextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:background">@drawable/background_metacritic_score</item>
         <item name="android:gravity">center</item>
         <item name="android:includeFontPadding">false</item>
@@ -67,15 +67,15 @@
         <item name="android:textSize">30sp</item>
     </style>
 
-    <style name="Widget.MyTheme.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="Widget.App.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/btn_stroke_color_selector</item>
     </style>
 
-    <style name="Widget.MyTheme.CompoundButton.RadioButton.Dialog">
+    <style name="Widget.App.CompoundButton.RadioButton.Dialog">
         <item name="android:textAppearance">?textAppearanceBody2</item>
     </style>
 
-    <style name="Widget.MyTheme.GameDetailsPlatformIcon" parent="">
+    <style name="Widget.App.GameDetailsPlatformIcon" parent="">
         <item name="android:layout_width">@dimen/game_details_platform_icon_size</item>
         <item name="android:layout_height">@dimen/game_details_platform_icon_size</item>
         <item name="android:tint">@color/platforms_icon_tint</item>
@@ -105,5 +105,18 @@
     <style name="AboutItemTextView" parent="MenuItemTextView">
         <item name="android:background">@drawable/surface_selectable_item_background</item>
         <item name="android:textAppearance">?textAppearanceBody1</item>
+    </style>
+
+    <style name="Widget.App.Button.GameDetailsLinkButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="AboutContactButton">
+        <item name="android:layout_width">@dimen/touchable_view_default_size</item>
+        <item name="android:layout_height">@dimen/touchable_view_default_size</item>
+        <item name="android:tint">@android:color/white</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
     </style>
 </resources>

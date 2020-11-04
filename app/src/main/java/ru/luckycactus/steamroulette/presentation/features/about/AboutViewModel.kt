@@ -29,12 +29,20 @@ class AboutViewModel @ViewModelInject constructor(
     }
 
     fun onPrivacyPolicyClick() {
-        router.navigateTo(
-            Screens.ExternalBrowserFlow(PRIVACY_POLICY_URL)
-        )
+        router.navigateTo(Screens.ExternalBrowserFlow(PRIVACY_POLICY_URL))
+    }
+
+    fun contactDevViaSteam() {
+        router.navigateTo(Screens.ExternalBrowserFlow(DEV_STEAM_PROFILE_URL))
+    }
+
+    fun contactDevViaTelegram() {
+        router.navigateTo(Screens.ExternalBrowserFlow(DEV_TELEGRAM_URL))
     }
 
     companion object {
+        private const val DEV_STEAM_PROFILE_URL = "https://steamcommunity.com/id/luckycactus"
+        private const val DEV_TELEGRAM_URL = "https://t.me/luckycactus"
         private const val SOURCE_URL = "https://github.com/luckycactus/steam-roulette"
         private const val PRIVACY_POLICY_URL = "$SOURCE_URL/blob/master/PRIVACY_POLICY.md"
     }

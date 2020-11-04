@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:id="@+id/header"
-        style="@style/Widget.MyTheme.GameDetailsHeadline"
+        style="@style/Widget.App.GameDetailsHeadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/game_details_description"
-            android:textAppearance="@style/TextAppearance.MyTheme.GameDetailsHeadline"
+            android:textAppearance="@style/TextAppearance.App.GameDetailsHeadline"
             />
 
         <ImageView
@@ -104,7 +104,7 @@
 
             <TextView
                 android:id="@+id/tvMetacriticScore"
-                style="@style/Widget.MyTheme.MetacriticScoreTextView"
+                style="@style/Widget.App.MetacriticScoreTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 tools:text="89"

@@ -3,8 +3,8 @@ package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 import org.intellij.lang.annotations.Language
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.presentation.utils.longLog
 import ru.luckycactus.steamroulette.presentation.utils.onDebug
+import timber.log.Timber
 
 interface GamesVerifier {
     fun verify(game: OwnedGameEntity): Boolean
@@ -73,15 +73,15 @@ class GamesVerifierImpl(
 
         fun log() {
             if (enable) {
-                longLog(
-                    "GamesParseLogger",
-                    "Banned games (${bannedGames!!.size}): ${bannedGames.joinToString(separator = "\n")}"
+                Timber.v(
+                    "Banned games (%d): %s",
+                    bannedGames!!.size,
+                    bannedGames.joinToString(separator = "\n")
                 )
-                longLog(
-                    "GamesParseLogger",
-                    "Suspicious games (${suspiciousGames!!.size}): ${suspiciousGames.joinToString(
-                        separator = "\n"
-                    )}"
+                Timber.v(
+                    "Suspicious games (%d): %s",
+                    suspiciousGames!!.size,
+                    suspiciousGames.joinToString(separator = "\n")
                 )
             }
         }

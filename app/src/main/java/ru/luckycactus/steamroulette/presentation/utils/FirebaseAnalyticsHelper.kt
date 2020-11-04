@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
 import android.content.Context
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -22,6 +21,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.login.LoginUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -82,7 +82,7 @@ class FirebaseAnalyticsHelper @Inject constructor(
             analytics.logEvent(Event.SCREEN_VIEW) {
                 param(Param.SCREEN_CLASS, screen)
             }
-            Log.d("Analytics", "Screen recorded: $screen")
+            Timber.d("Screen recorded: $screen")
         }
     }
 
@@ -91,7 +91,7 @@ class FirebaseAnalyticsHelper @Inject constructor(
             param(Param.CONTENT_TYPE, type)
             param(Param.ITEM_ID, itemId)
         }
-        Log.d("Analytics", "Event recorded for $type, $itemId")
+        Timber.d("Event recorded for $type, $itemId")
     }
 
     override fun logClick(button: String) {
@@ -99,7 +99,7 @@ class FirebaseAnalyticsHelper @Inject constructor(
             param(Param.CONTENT_TYPE, "button")
             param(Param.ITEM_ID, button)
         }
-        Log.d("Analytics", "Event recorded for click: $button")
+        Timber.d("Event recorded for click: $button")
     }
 
     override fun logLoginAttempt(it: LoginUseCase.Result) {
@@ -119,7 +119,7 @@ class FirebaseAnalyticsHelper @Inject constructor(
                 if (it is LoginUseCase.Result.Success) "success" else it::class.simpleName!!
             )
         }
-        Log.d("Analytics", "Login attempt recorded for $it")
+        Timber.d("Login attempt recorded for $it")
     }
 
     override fun setUserIsLoggingOut() {
@@ -146,8 +146,7 @@ class FirebaseAnalyticsHelper @Inject constructor(
             "$target max hours",
             if (filter.playtime is PlaytimeFilter.Limited) filter.playtime.maxHours.toString() else null
         )
-        Log.d(
-            "Analytics",
+        Timber.d(
             "Games filter change recorded for $filter in ${if (roulette) "roulette" else "library"}"
         )
     }

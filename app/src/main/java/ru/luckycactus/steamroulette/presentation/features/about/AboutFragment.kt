@@ -56,6 +56,14 @@ class AboutFragment : BaseFragment() {
             (activity as MainActivity).reviewApp()
         }
 
+        contactSteam.setOnClickListener {
+            viewModel.contactDevViaSteam()
+        }
+
+        contactTelegram.setOnClickListener {
+            viewModel.contactDevViaTelegram()
+        }
+
         setupIconDragging()
         setupIconClick()
 
@@ -124,6 +132,7 @@ class AboutFragment : BaseFragment() {
                             startTranslationY = ivIcon.translationY
                             animateToCurrentTouchPosition(event)
                             handled = true
+                            v.parent.requestDisallowInterceptTouchEvent(true)
                         }
                         MotionEvent.ACTION_MOVE -> {
                             click = false
@@ -135,6 +144,7 @@ class AboutFragment : BaseFragment() {
                                 v.performClick()
                             animateToPosition(0f, 0f)
                             handled = true
+                            v.parent.requestDisallowInterceptTouchEvent(false)
                         }
                     }
                     return handled

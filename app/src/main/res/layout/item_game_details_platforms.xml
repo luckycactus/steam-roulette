@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:id="@+id/header"
-        style="@style/Widget.MyTheme.GameDetailsHeadline"
+        style="@style/Widget.App.GameDetailsHeadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/game_details_platforms"
-            android:textAppearance="@style/TextAppearance.MyTheme.GameDetailsHeadline"
+            android:textAppearance="@style/TextAppearance.App.GameDetailsHeadline"
             />
 
         <ImageView
@@ -51,7 +51,7 @@
 
         <ImageView
             android:id="@+id/ivWindows"
-            style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
+            style="@style/Widget.App.GameDetailsPlatformIcon"
             android:layout_marginEnd="@dimen/game_details_platform_icon_margin"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_windows"
@@ -60,7 +60,7 @@
 
         <ImageView
             android:id="@+id/ivMacOs"
-            style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
+            style="@style/Widget.App.GameDetailsPlatformIcon"
             android:layout_marginEnd="@dimen/game_details_platform_icon_margin"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_apple"
@@ -69,7 +69,7 @@
 
         <ImageView
             android:id="@+id/ivSteamOs"
-            style="@style/Widget.MyTheme.GameDetailsPlatformIcon"
+            style="@style/Widget.App.GameDetailsPlatformIcon"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_steam"
             tools:visibility="visible"

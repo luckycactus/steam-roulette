@@ -9,7 +9,8 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class GameHeaderViewHolder(
-    view: View
+    view: View,
+    private val transitionGameId: Int
 ) : GameDetailsViewHolder<GameDetailsUiModel.Header>(view) {
 
     init {
@@ -28,25 +29,12 @@ class GameHeaderViewHolder(
         tvDeveloper.visibility(!item.developer.isNullOrBlank())
         tvReleaseDate.text = item.releaseDate
         tvReleaseDate.visibility(!item.releaseDate.isNullOrBlank())
-//        ViewCompat.setTransitionName(
-//            gameView.ivGame,
-//            gameView.context.getString(
-//                R.string.image_shared_element_transition,
-//                item.gameHeader.appId
-//            )
-//        )
-        ViewCompat.setTransitionName(
-            gameView,
-            gameView.context.getString(
-                R.string.cardview_shared_element_transition,
-                item.gameHeader.appId
-            )
-        )
         gameView.setGame(
             item.gameHeader,
             disableTransition,
             listener,
-            imageType = GameView.ImageType.HdOrSd
+            imageType = GameView.ImageType.HdOrSd,
+            transitionGameId = transitionGameId
         )
     }
 

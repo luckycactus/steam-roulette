@@ -61,7 +61,7 @@ class GlideImageGetter(
                 this.drawable = drawable
                 val drawableWidth = (drawable.intrinsicWidth * density).toInt()
                 val drawableHeight = (drawable.intrinsicHeight * density).toInt()
-                val maxWidth: Int = it.measuredWidth
+                val maxWidth: Int = it.measuredWidth - it.paddingLeft - it.paddingRight
                 if (drawableWidth > maxWidth || matchParentWidth) {
                     val calculatedHeight = maxWidth * drawableHeight / drawableWidth
                     drawable.setBounds(0, 0, maxWidth, calculatedHeight)

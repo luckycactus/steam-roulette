@@ -34,7 +34,7 @@
     <string name="exit_warning">Вы точно хотите выйти?</string>
     <string name="cancel">Отмена</string>
     <string name="dialog_message_reset_hidden_games">Вы точно хотите очистить список скрытых игр?</string>
-    <string name="login_screen_help">Что здесь вводить?</string>
+    <string name="login_button_steamid_help">Что здесь вводить?</string>
     <string name="supported_steamid_formats">Поддерживаемые форматы SteamID</string>
     <string name="next_game">Следующая игра</string>
     <string name="hide_game">Скрыть игру</string>

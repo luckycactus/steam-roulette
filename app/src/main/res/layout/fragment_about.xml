@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,123 +7,142 @@
     android:layout_height="match_parent"
     android:background="?android:colorBackground"
     android:clipChildren="false"
-    android:orientation="vertical"
+    android:fillViewport="true"
     >
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:navigationIcon="?homeAsUpIndicator"
-        app:title="@string/about_app"
-        />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipChildren="false"
         >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="?homeAsUpIndicator"
+            app:title="@string/about_app"
+            />
 
-            <TextView
-                android:id="@+id/tvAppName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_normal"
-                android:text="@string/app_name"
-                android:textAppearance="?textAppearanceHeadline5"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivIcon"
-                />
+        <TextView
+            android:id="@+id/tvAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:text="@string/app_name"
+            android:textAppearance="?textAppearanceHeadline5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivIcon"
+            />
 
-            <TextView
-                android:id="@+id/tvVersion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?textAppearanceHeadline6"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvAppName"
-                tools:text="1.2.0 (8)"
-                />
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?textAppearanceHeadline6"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAppName"
+            tools:text="1.2.0 (8)"
+            />
 
-            <TextView
-                android:id="@+id/tvCopyright"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_normal"
-                android:text="\u00A9 luckycactus"
-                android:textAppearance="?textAppearanceOverline"
-                android:textColor="?colorOnBackground"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvVersion"
-                />
+        <TextView
+            android:id="@+id/tvCopyright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="\u00A9 luckycactus"
+            android:textAppearance="?textAppearanceOverline"
+            android:textColor="?colorOnBackground"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvVersion"
+            />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvSourceCode"
-                style="@style/AboutItemTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:drawableStart="@drawable/ic_github"
-                android:drawableEnd="@drawable/ic_chevron_right"
-                android:text="@string/show_app_source_code"
-                app:layout_constraintTop_toBottomOf="@id/tvCopyright"
-                />
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/contactFlow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="contactTelegram,contactSteam"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCopyright"
+            app:flow_horizontalStyle="packed"
+            app:flow_horizontalGap="@dimen/spacing_small"
+            />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvUsedLibraries"
-                style="@style/AboutItemTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_layers_black_24dp"
-                android:drawableEnd="@drawable/ic_chevron_right"
-                android:text="@string/open_source_libraries"
-                app:layout_constraintTop_toBottomOf="@id/tvSourceCode"
-                />
+        <ImageView
+            android:id="@+id/contactTelegram"
+            app:srcCompat="@drawable/telegram"
+            style="@style/AboutContactButton"
+            />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvPrivacyPolicy"
-                style="@style/AboutItemTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_security_24dp"
-                android:drawableEnd="@drawable/ic_chevron_right"
-                android:text="@string/privacy_policy"
-                app:layout_constraintTop_toBottomOf="@id/tvUsedLibraries"
-                />
+        <ImageView
+            android:id="@+id/contactSteam"
+            app:srcCompat="@drawable/ic_steam"
+            style="@style/AboutContactButton"
+            />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvRateApp"
-                style="@style/AboutItemTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/primary_selectable_item_background"
-                android:drawableStart="@drawable/ic_baseline_thumb_up_24"
-                android:drawableEnd="@drawable/ic_chevron_right"
-                android:text="@string/rate_app_title"
-                app:layout_constraintTop_toBottomOf="@id/tvPrivacyPolicy"
-                />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSourceCode"
+            style="@style/AboutItemTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:drawableStart="@drawable/ic_github"
+            android:drawableEnd="@drawable/ic_chevron_right"
+            android:text="@string/show_app_source_code"
+            app:layout_constraintTop_toBottomOf="@id/contactFlow"
+            />
 
-            <ImageView
-                android:id="@+id/ivIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:src="@mipmap/ic_launcher"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvUsedLibraries"
+            style="@style/AboutItemTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_layers_black_24dp"
+            android:drawableEnd="@drawable/ic_chevron_right"
+            android:text="@string/open_source_libraries"
+            app:layout_constraintTop_toBottomOf="@id/tvSourceCode"
+            />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvPrivacyPolicy"
+            style="@style/AboutItemTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_security_24dp"
+            android:drawableEnd="@drawable/ic_chevron_right"
+            android:text="@string/privacy_policy"
+            app:layout_constraintTop_toBottomOf="@id/tvUsedLibraries"
+            />
 
-    </ScrollView>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvRateApp"
+            style="@style/AboutItemTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/primary_selectable_item_background"
+            android:drawableStart="@drawable/ic_baseline_thumb_up_24"
+            android:drawableEnd="@drawable/ic_chevron_right"
+            android:text="@string/rate_app_title"
+            app:layout_constraintTop_toBottomOf="@id/tvPrivacyPolicy"
+            />
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

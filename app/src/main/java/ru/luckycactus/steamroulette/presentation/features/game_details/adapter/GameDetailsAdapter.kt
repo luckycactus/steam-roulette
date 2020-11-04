@@ -15,6 +15,8 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
 
 class GameDetailsAdapter constructor(
+    // store api can return different id, but we need use old one for working shared element transition
+    private val transitionGameId: Int,
     private val waitForImageReadyForTransition: Boolean,
     private val onHeaderImageReady: () -> Unit,
     private val onHeaderBitmapChanged: (Bitmap?) -> Unit,
@@ -27,7 +29,7 @@ class GameDetailsAdapter constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameDetailsViewHolder<*> {
         val view = parent.inflate(viewType)
         return when (viewType) {
-            R.layout.item_game_details_header -> GameHeaderViewHolder(view)
+            R.layout.item_game_details_header -> GameHeaderViewHolder(view, transitionGameId)
             R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(
                 view,
                 gameDetailsViewModel

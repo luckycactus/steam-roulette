@@ -98,7 +98,7 @@ class GameView : MaterialCardView {
         game: GameHeader?,
         disableTransition: Boolean = false,
         listener: Listener? = null,
-        setTransitionName: Boolean = true,
+        transitionGameId: Int? = game?.appId,
         imageType: ImageType = ImageType.HD
     ) {
         if (game == current)
@@ -115,10 +115,10 @@ class GameView : MaterialCardView {
         if (game != null) {
             if (differentAppId)
                 createRequestBuilder(this, game, disableTransition, imageType).into(target)
-            if (setTransitionName) {
+            if (transitionGameId != null) {
                 ViewCompat.setTransitionName(
                     this,
-                    context.getString(R.string.cardview_shared_element_transition, game.appId)
+                    context.getString(R.string.cardview_shared_element_transition, transitionGameId)
                 )
             } else {
                 ViewCompat.setTransitionName(this, null)
