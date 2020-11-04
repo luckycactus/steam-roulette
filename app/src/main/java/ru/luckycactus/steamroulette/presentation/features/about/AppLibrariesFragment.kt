@@ -5,11 +5,12 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_app_libraries.*
+import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.addSystemTopPadding
-import ru.luckycactus.steamroulette.presentation.utils.observeFirst
+import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
+import ru.luckycactus.steamroulette.presentation.utils.extensions.viewLifecycleScope
 
 @AndroidEntryPoint
 class AppLibrariesFragment : BaseFragment() {
@@ -26,8 +27,8 @@ class AppLibrariesFragment : BaseFragment() {
             requireActivity().onBackPressed()
         }
 
-        observeFirst(viewModel.libraries) {
-            val adapter = AppLibrariesAdapter(it, ::onItemClick)
+        viewLifecycleScope.launch {
+            val adapter = AppLibrariesAdapter(viewModel.getLibraries(), ::onItemClick)
             rvAppLibraries.layoutManager = LinearLayoutManager(requireContext())
             rvAppLibraries.adapter = adapter
         }

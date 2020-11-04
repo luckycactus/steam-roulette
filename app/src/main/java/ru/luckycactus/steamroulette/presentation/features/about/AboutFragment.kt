@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.addSystemTopPadding
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.setDrawableColorFromAttribute
+import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
+import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
+import ru.luckycactus.steamroulette.presentation.utils.extensions.setDrawableColorFromAttribute
 
 @AndroidEntryPoint
 class AboutFragment : BaseFragment() {

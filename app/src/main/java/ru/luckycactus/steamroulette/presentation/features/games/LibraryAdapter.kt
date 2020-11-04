@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.item_library_game.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
-import ru.luckycactus.steamroulette.presentation.utils.inflate
-import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class LibraryAdapter(
     private val markHidden: Boolean,
@@ -93,7 +93,7 @@ class LibraryAdapter(
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
             object : ItemDetailsLookup.ItemDetails<Long>() {
                 override fun getSelectionKey(): Long? = getSelectionKeyForItem(game)
-                override fun getPosition(): Int = absoluteAdapterPosition
+                override fun getPosition(): Int = bindingAdapterPosition
                 override fun inSelectionHotspot(e: MotionEvent): Boolean = false
             }
     }

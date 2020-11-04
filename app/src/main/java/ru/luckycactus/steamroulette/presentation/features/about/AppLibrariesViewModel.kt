@@ -1,8 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import ru.luckycactus.steamroulette.domain.about.GetAppLibrariesUseCase
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
@@ -15,9 +13,8 @@ class AppLibrariesViewModel @ViewModelInject constructor(
     private val router: Router
 ) : BaseViewModel() {
 
-    val libraries: LiveData<List<AppLibrary>> = liveData {
-        emit(getAppLibraries().sortedWith(compareBy(AppLibrary::author, AppLibrary::name)))
-    }
+    suspend fun getLibraries() =
+        getAppLibraries().sortedWith(compareBy(AppLibrary::author, AppLibrary::name))
 
     fun onLibraryClick(library: AppLibrary) {
         router.navigateTo(Screens.ExternalBrowserFlow(library.sourceUrl))

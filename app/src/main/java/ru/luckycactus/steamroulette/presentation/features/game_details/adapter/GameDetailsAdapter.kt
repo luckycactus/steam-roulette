@@ -12,7 +12,7 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
-import ru.luckycactus.steamroulette.presentation.utils.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
 
 class GameDetailsAdapter constructor(
     private val waitForImageReadyForTransition: Boolean,

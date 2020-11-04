@@ -12,12 +12,12 @@ import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
-import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
 
 class LoginViewModel @ViewModelInject constructor(
-    private val validateSteamIdInputUseCase: ValidateSteamIdInputUseCase,
-    private val loginUseCase: LoginUseCase,
+    private val validateSteamIdInput: ValidateSteamIdInputUseCase,
+    private val login: LoginUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router,
     private val analytics: AnalyticsHelper
@@ -38,7 +38,7 @@ class LoginViewModel @ViewModelInject constructor(
     fun onSteamIdConfirmed(id: String) {
         viewModelScope.launch {
             _progressState.value = true
-            loginUseCase(id.trim()).let {
+            login(id.trim()).let {
                 when (it) {
                     is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
                     is LoginUseCase.Result.Fail -> {
@@ -69,6 +69,6 @@ class LoginViewModel @ViewModelInject constructor(
     }
 
     fun onSteamIdInputChanged(userId: String) {
-        _loginButtonAvailableState.value = validateSteamIdInputUseCase(userId.trim())
+        _loginButtonAvailableState.value = validateSteamIdInput(userId.trim())
     }
 }

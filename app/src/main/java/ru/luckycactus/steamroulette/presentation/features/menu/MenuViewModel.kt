@@ -23,7 +23,7 @@ import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.utils.combine
+import ru.luckycactus.steamroulette.presentation.utils.extensions.combine
 import ru.terrakok.cicerone.Router
 
 class MenuViewModel @ViewModelInject constructor(

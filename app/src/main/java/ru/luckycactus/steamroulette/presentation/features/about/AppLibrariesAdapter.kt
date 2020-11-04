@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.item_app_library.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.domain.about.entity.LicenseType
-import ru.luckycactus.steamroulette.presentation.utils.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
 
 class AppLibrariesAdapter(
     private val items: List<AppLibrary>,

@@ -29,6 +29,10 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackL
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemBottomPadding
+import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
+import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
+import ru.luckycactus.steamroulette.presentation.utils.extensions.showIfNotExist
 import ru.luckycactus.steamroulette.presentation.utils.palette.PalettePageHelper
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext

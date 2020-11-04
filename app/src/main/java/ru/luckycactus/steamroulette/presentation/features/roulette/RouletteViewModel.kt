@@ -21,7 +21,7 @@ import ru.luckycactus.steamroulette.domain.utils.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
-import ru.luckycactus.steamroulette.presentation.utils.getCommonErrorDescription
+import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 
 class RouletteViewModel @ViewModelInject constructor(
     private val userViewModelDelegate: UserViewModelDelegate,

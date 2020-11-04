@@ -10,7 +10,7 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
-import ru.luckycactus.steamroulette.presentation.utils.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import kotlin.math.absoluteValue
 
@@ -18,6 +18,7 @@ class RouletteAdapter constructor(
     private val onGameClick: (GameHeader, List<View>, Boolean) -> Unit,
     private val paletteChangeListener: (Int) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
+
     var items: List<GameHeader>? = null
         set(value) {
             field = value

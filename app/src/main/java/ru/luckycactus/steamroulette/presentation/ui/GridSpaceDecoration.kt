@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.ui
 
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
@@ -16,7 +17,9 @@ class GridSpaceDecoration(
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        val position = parent.getChildAdapterPosition(view) // item position
+        var position = parent.getChildAdapterPosition(view) // item position
+        if (position < 0) // item is removing from adapter
+            position = parent.getChildLayoutPosition(view)
         val column = position % spanCount // item column
         if (includeEdge) {
             outRect.left =

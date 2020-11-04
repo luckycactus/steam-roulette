@@ -45,6 +45,7 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.ui.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
 class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
@@ -267,7 +268,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             actionMode?.finish()
         }
 
-        observe(viewModel.hasAnyFilters, ::updateFiltersUi)
+        observe(viewModel.hasAnyFilters, onChanged = ::updateFiltersUi)
 
         observe(viewModel.hasSelectedHiddenGames) {
             actionMode?.menu?.run {
@@ -581,7 +582,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
                 val vh =
                     recyclerView.getChildViewHolder(it) as LibraryAdapter.GameViewHolder
                 if (key == adapter.getSelectionKeyForItem(vh.game))
-                    return vh.absoluteAdapterPosition
+                    return vh.bindingAdapterPosition
             }
             return RecyclerView.NO_POSITION
         }

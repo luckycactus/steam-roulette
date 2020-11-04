@@ -7,9 +7,8 @@ import androidx.core.text.HtmlCompat
 import kotlinx.android.synthetic.main.fragment_detailed_description.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.addSystemTopPadding
-import ru.luckycactus.steamroulette.presentation.utils.argument
-import ru.luckycactus.steamroulette.presentation.utils.doOnApplyWindowInsets
+import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
+import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideImageGetter
 
 class DetailedDescriptionFragment : BaseFragment() {

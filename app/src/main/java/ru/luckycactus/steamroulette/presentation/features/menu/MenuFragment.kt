@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.signature.ObjectKey
@@ -11,9 +10,9 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
-import ru.luckycactus.steamroulette.presentation.utils.observe
-import ru.luckycactus.steamroulette.presentation.utils.setDrawableColorFromAttribute
-import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
+import ru.luckycactus.steamroulette.presentation.utils.extensions.setDrawableColorFromAttribute
+import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 @AndroidEntryPoint
 class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {

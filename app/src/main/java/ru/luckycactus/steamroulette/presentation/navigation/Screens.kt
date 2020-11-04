@@ -17,7 +17,7 @@ import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqsFragment
 import ru.luckycactus.steamroulette.presentation.utils.customtabs.CustomTabsHelper
-import ru.luckycactus.steamroulette.presentation.utils.getThemeColorOrThrow
+import ru.luckycactus.steamroulette.presentation.utils.extensions.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 

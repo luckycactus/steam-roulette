@@ -1,11 +1,13 @@
 package ru.luckycactus.steamroulette.domain.games
 
+import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import javax.inject.Inject
 
+@Reusable
 class GetGameStoreInfoUseCase @Inject constructor(
     private val gameDetailsRepository: GameDetailsRepository
 ) : SuspendUseCase<GetGameStoreInfoUseCase.Params, GetGameStoreInfoUseCase.Result>() {

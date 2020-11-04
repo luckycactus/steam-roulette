@@ -1,35 +1,47 @@
-package ru.luckycactus.steamroulette.presentation.utils
+package ru.luckycactus.steamroulette.presentation.utils.extensions
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.core.Event
 
-fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit) {
-    liveData.observe(this, Observer { body(it) })
-}
+val Fragment.viewLifecycleScope: CoroutineScope
+    get() = viewLifecycleOwner.lifecycleScope
 
-fun <T> LifecycleOwner.observeFirst(liveData: LiveData<T>, body: (T) -> Unit) {
-    val observer = object : Observer<T> {
-        override fun onChanged(t: T) {
-            body(t)
-            liveData.removeObserver(this)
-        }
 
+fun Fragment.getLifecycleOwner(useViewLifecycle: Boolean) =
+    if (useViewLifecycle) viewLifecycleOwner else this
+
+inline fun <T> Fragment.observe(
+    liveData: LiveData<T>,
+    useViewLifecycle: Boolean = true,
+    crossinline onChanged: (T) -> Unit
+) = liveData.observe(getLifecycleOwner(useViewLifecycle), onChanged)
+
+inline fun <T> Fragment.observeEvent(
+    liveData: LiveData<Event<T>>,
+    useViewLifecycle: Boolean = true,
+    crossinline onChanged: (T) -> Unit
+): Observer<Event<T>> = liveData.observeEvent(getLifecycleOwner(useViewLifecycle), onChanged)
+
+inline fun <T> AppCompatActivity.observe(
+    liveData: LiveData<T>,
+    crossinline body: (T) -> Unit
+) = liveData.observe(this, body)
+
+inline fun <T> AppCompatActivity.observeEvent(
+    liveData: LiveData<Event<T>>,
+    crossinline body: (T) -> Unit
+): Observer<Event<T>> = liveData.observeEvent(this, body)
+
+inline fun <T> LiveData<Event<T>>.observeEvent(
+    owner: LifecycleOwner,
+    crossinline onEvent: (T) -> Unit
+): Observer<Event<T>> = observe(owner) { event ->
+    event.ifNotHandled {
+        onEvent.invoke(it)
     }
-    liveData.observe(this, observer)
-}
-
-fun <T> LifecycleOwner.observeNotNull(liveData: LiveData<T>, body: (T) -> Unit) {
-    liveData.observe(this, Observer { it?.let { body(it) } })
-}
-
-fun <T> LiveData<T?>.filterNotNull(): LiveData<T> {
-    return MediatorLiveData<T>().apply {
-        addSource(this@filterNotNull) { it?.let { value = it } }
-    }
-}
-
-fun <T> LifecycleOwner.observeEvent(liveData: LiveData<Event<T>>, body: (T) -> Unit) {
-    liveData.observe(this, Observer { event -> event.ifNotHandled { body(it) } })
 }
 
 fun <T> LiveData<T>.first(block: (T) -> Unit) {
@@ -81,6 +93,12 @@ inline fun <X, Y> LiveData<X?>.nullableSwitchMap(
         x?.let { it -> transform(it) } ?: MutableLiveData<Y>(
             nullValue
         )
+    }
+}
+
+fun <T> LiveData<T?>.filterNotNull(): LiveData<T> {
+    return MediatorLiveData<T>().apply {
+        addSource(this@filterNotNull) { it?.let { value = it } }
     }
 }
 

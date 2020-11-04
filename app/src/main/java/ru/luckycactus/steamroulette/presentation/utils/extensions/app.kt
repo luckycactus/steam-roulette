@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.utils
+package ru.luckycactus.steamroulette.presentation.utils.extensions
 
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.data.core.NetworkConnectionException

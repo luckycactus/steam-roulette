@@ -1,12 +1,8 @@
-package ru.luckycactus.steamroulette.presentation.utils
+package ru.luckycactus.steamroulette.presentation.utils.extensions
 
-import android.app.Activity
-import android.content.Context
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.*
+import com.google.android.material.snackbar.Snackbar
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 inline fun <reified T> argument(
     key: String,
@@ -20,11 +16,11 @@ inline fun <reified T> argument(
         result as T
     }
 
-inline fun <reified T> Fragment.getCallbacksOrThrow(): T {
-    return getCallbacks() ?: throw ClassCastException("${T::class.java} not implemented")
+inline fun <reified T> Fragment.requireCallback(): T {
+    return getCallback() ?: throw ClassCastException("${T::class.java} not implemented")
 }
 
-inline fun <reified T> Fragment.getCallbacks(): T? {
+inline fun <reified T> Fragment.getCallback(): T? {
     return when {
         parentFragment is T -> parentFragment as T
         activity is T -> activity as T
@@ -32,15 +28,6 @@ inline fun <reified T> Fragment.getCallbacks(): T? {
     }
 }
 
-fun Activity.hideKeyboard() {
-    hideKeyboard(currentFocus ?: View(this))
-}
-
-fun Context.hideKeyboard(view: View) {
-    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as
-            InputMethodManager
-    inputMethodManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-}
 val Fragment.isFinishing: Boolean
     get() {
         if (requireActivity().isFinishing) {
@@ -83,4 +70,8 @@ inline fun FragmentManager.commitIfNotExist(
     if (findFragmentByTag(tag) == null) {
         commit(allowStateLoss, body)
     }
+}
+
+fun Fragment.showSnackbar(message: String, duration: Int = Snackbar.LENGTH_LONG) {
+    view?.showSnackbar(message, duration)
 }

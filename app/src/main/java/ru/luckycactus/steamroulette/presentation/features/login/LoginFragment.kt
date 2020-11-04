@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.progress.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
-import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment() {

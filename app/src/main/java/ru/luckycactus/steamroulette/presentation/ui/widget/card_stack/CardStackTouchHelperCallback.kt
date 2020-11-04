@@ -63,7 +63,7 @@ class CardStackTouchHelperCallback(
         isCurrentlyActive: Boolean
     ) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-        if (viewHolder.absoluteAdapterPosition == 0) {
+        if (viewHolder.bindingAdapterPosition == 0) {
             val newSwipeProgress = (dX / recyclerView.width).coerceIn(-1f, 1f)
             val lastSwipeState = this.inSwipeState
             inSwipeState = (newSwipeProgress != 0f)
@@ -83,7 +83,7 @@ class CardStackTouchHelperCallback(
             val layoutManager = recyclerView.layoutManager as CardStackLayoutManager
             for (i in 0 until recyclerView.childCount) {
                 val vh = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
-                val adapterPosition = vh.absoluteAdapterPosition
+                val adapterPosition = vh.bindingAdapterPosition
                 if (adapterPosition != 0) {
                     layoutManager.setChildGaps(
                         recyclerView.getChildAt(i),
@@ -106,7 +106,7 @@ class CardStackTouchHelperCallback(
         if (viewHolder is ViewHolderSwipeProgressListener) {
             viewHolder.onSwipeProgress(0f, getSwipeThreshold(viewHolder))
         }
-        if (viewHolder.absoluteAdapterPosition < 0 && viewHolder is ViewHolderVisibleHintListener) {
+        if (viewHolder.bindingAdapterPosition < 0 && viewHolder is ViewHolderVisibleHintListener) {
             viewHolder.setVisibleHint(false)
             this.inSwipeState = false
         }

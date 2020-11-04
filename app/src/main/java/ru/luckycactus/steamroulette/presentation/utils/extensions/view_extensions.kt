@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.utils
+package ru.luckycactus.steamroulette.presentation.utils.extensions
 
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
@@ -18,9 +17,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.updatePadding
-import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import java.lang.reflect.Method
 
 fun View.visibility(visible: Boolean) {
@@ -49,11 +48,10 @@ fun View.expandTouchArea(desiredWidth: Int, desiredHeight: Int) {
 fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): View =
     LayoutInflater.from(context).inflate(resId, this, attachToRoot)
 
-private val setTransitionAlphaMethod: Method? by lazy {
+private val setTransitionAlphaMethod: Method? by lazyNonThreadSafe {
     try {
         View::class.java.getMethod("setTransitionAlpha", Float::class.java)
     } catch (e: NoSuchMethodException) {
-        //todo log
         null
     }
 }
@@ -65,10 +63,6 @@ fun View.trySetTransitionAlpha(alpha: Float, invalidate: Boolean = false): Boole
             invalidate()
         true
     } ?: false
-}
-
-fun Fragment.showSnackbar(message: String, duration: Int = Snackbar.LENGTH_LONG) {
-    view?.showSnackbar(message, duration)
 }
 
 fun View.showSnackbar(
@@ -180,22 +174,3 @@ inline fun View.changeThroughFade(duration: Long = 200, crossinline block: View.
         animate().alpha(1f).setDuration(duration / 2)
     }
 }
-
-inline fun Animation.listener(
-    crossinline onEnd: (Animation) -> Unit = {},
-    crossinline onStart: (Animation) -> Unit = {},
-    crossinline onRepeat: (Animation) -> Unit = {},
-) = object : Animation.AnimationListener {
-    override fun onAnimationStart(animation: Animation) {
-        onStart(animation)
-    }
-
-    override fun onAnimationEnd(animation: Animation) {
-        onEnd(animation)
-    }
-
-    override fun onAnimationRepeat(animation: Animation) {
-        onRepeat(animation)
-    }
-}.also { setAnimationListener(it) }
-

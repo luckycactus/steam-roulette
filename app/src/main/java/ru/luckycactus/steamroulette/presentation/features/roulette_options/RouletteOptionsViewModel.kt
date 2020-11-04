@@ -12,7 +12,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.utils.getPlaytimeFilterDescription
+import ru.luckycactus.steamroulette.presentation.utils.extensions.getPlaytimeFilterDescription
 import ru.terrakok.cicerone.Router
 
 class RouletteOptionsViewModel @ViewModelInject constructor(

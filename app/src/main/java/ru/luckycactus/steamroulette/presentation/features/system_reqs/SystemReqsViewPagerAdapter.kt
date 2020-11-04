@@ -8,8 +8,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_system_reqs.*
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
-import ru.luckycactus.steamroulette.presentation.utils.inflate
-import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class SystemReqsViewPagerAdapter(
     private val items: List<SystemRequirements>

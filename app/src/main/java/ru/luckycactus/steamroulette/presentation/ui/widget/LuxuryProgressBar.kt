@@ -11,7 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.utils.dp
-import ru.luckycactus.steamroulette.presentation.utils.getThemeColorOrThrow
+import ru.luckycactus.steamroulette.presentation.utils.extensions.getThemeColorOrThrow
 
 class LuxuryProgressBar : View {
 

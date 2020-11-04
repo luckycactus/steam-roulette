@@ -6,7 +6,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.empty_layout.view.*
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class DataLoadingViewHolder(
     private val placeholderLayout: ViewGroup,

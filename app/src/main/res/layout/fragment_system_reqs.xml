@@ -47,12 +47,10 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <View
-        android:id="@+id/statusBarBg"
+    <ru.luckycactus.steamroulette.presentation.ui.widget.StatusBarScrim
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="?colorSurface"
-        android:layout_gravity="top"
         />
 
 </FrameLayout>

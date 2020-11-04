@@ -23,7 +23,7 @@ interface CacheHelper {
 
 @Singleton
 class RoomCacheHelper @Inject constructor(
-    private val db: AppDatabase,
+    db: AppDatabase,
     private val clock: Clock
 ) : CacheHelper {
     private val cacheInfoDao = db.cacheInfoDao()

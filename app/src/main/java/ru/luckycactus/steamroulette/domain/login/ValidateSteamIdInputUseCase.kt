@@ -1,11 +1,9 @@
 package ru.luckycactus.steamroulette.domain.login
 
-import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
 import javax.inject.Inject
 
-@Reusable
 class ValidateSteamIdInputUseCase @Inject constructor() : UseCase<String, Boolean>() {
 
     override fun execute(params: String): Boolean {

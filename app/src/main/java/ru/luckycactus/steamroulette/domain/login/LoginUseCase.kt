@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.domain.login
 
-import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
@@ -9,7 +8,6 @@ import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import javax.inject.Inject
 
-@Reusable
 class LoginUseCase @Inject constructor(
     private val getUserSummaryUseCase: GetUserSummaryUseCase,
     private val userSessionRepository: UserSessionRepository,

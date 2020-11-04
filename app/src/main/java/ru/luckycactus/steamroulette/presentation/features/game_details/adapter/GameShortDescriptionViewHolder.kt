@@ -12,9 +12,9 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
-import ru.luckycactus.steamroulette.presentation.utils.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 import ru.luckycactus.steamroulette.presentation.utils.setDrawableColor
-import ru.luckycactus.steamroulette.presentation.utils.visibility
 
 class GameShortDescriptionViewHolder(
     view: View,

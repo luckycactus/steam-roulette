@@ -9,7 +9,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Fade
@@ -26,9 +25,9 @@ import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.G
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.DEFAULT_TRANSITION_DURATION
-import ru.luckycactus.steamroulette.presentation.utils.argument
-import ru.luckycactus.steamroulette.presentation.utils.doOnApplyWindowInsets
-import ru.luckycactus.steamroulette.presentation.utils.observe
+import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
+import ru.luckycactus.steamroulette.presentation.utils.extensions.doOnApplyWindowInsets
+import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 

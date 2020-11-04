@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
-import dagger.Reusable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,7 +14,6 @@ import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPrivacyException
 import javax.inject.Inject
 import javax.inject.Named
 
-@Reusable
 class RemoteGamesDataSource @Inject constructor(
     private val steamApiService: SteamApiService,
     @Named("api") private val moshi: Moshi

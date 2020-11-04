@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import dagger.Reusable
 import ru.luckycactus.steamroulette.data.core.edit
+import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.RouletteRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import ru.luckycactus.steamroulette.presentation.utils.AppUtils.prefKey
@@ -31,7 +32,9 @@ class RouletteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun clear() {
-        prefs.edit { clear() }
+    override suspend fun clearUser(steamId: SteamId) {
+        editor.edit {
+            remove(prefKey("last_game", steamId))
+        }
     }
 }

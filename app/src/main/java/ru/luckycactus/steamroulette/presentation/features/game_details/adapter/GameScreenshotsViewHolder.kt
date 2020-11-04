@@ -17,7 +17,7 @@ import ru.luckycactus.steamroulette.presentation.features.game_details.model.Gam
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.glide.crossfade.CrossFadeFactory
-import ru.luckycactus.steamroulette.presentation.utils.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
 
 class GameScreenshotsViewHolder(
     view: View
@@ -85,7 +85,7 @@ class GameScreenshotsViewHolder(
         ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
             init {
                 ivScreenshot.setOnClickListener {
-                    onScreenshotClick(absoluteAdapterPosition, ivScreenshot)
+                    onScreenshotClick(bindingAdapterPosition, ivScreenshot)
                 }
             }
 

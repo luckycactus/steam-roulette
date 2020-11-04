@@ -1,14 +1,10 @@
 package ru.luckycactus.steamroulette.domain.games_filter
 
-import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.domain.core.usecase.UseCase
 import javax.inject.Inject
-import javax.inject.Named
 
-
-@Reusable
 class ObserveLibraryMaxHoursUseCase @Inject constructor(
     private val filtersRepository: LibraryFilterRepository
 ) : UseCase<Unit, Flow<Int>>() {

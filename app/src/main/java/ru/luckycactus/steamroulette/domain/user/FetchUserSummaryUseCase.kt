@@ -1,11 +1,9 @@
 package ru.luckycactus.steamroulette.domain.user
 
-import dagger.Reusable
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.usecase.ResultSuspendUseCase
 import javax.inject.Inject
 
-@Reusable
 class FetchUserSummaryUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) : ResultSuspendUseCase<FetchUserSummaryUseCase.Params, Unit>() {

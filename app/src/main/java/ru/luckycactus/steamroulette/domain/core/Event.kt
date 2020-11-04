@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.domain.core
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.Observer
 
 class Event<out T>(
     private val data: T
@@ -24,6 +23,11 @@ class Event<out T>(
     fun peek(): T = data
 }
 
-fun <T> LiveData<T>.toEvent(): LiveData<Event<T>> = map {
-    Event(it)
+inline class EventObserver<T>(
+    private inline val onEvent: (T) -> Unit
+) : Observer<Event<T>> {
+    override fun onChanged(event: Event<T>?) {
+        event?.ifNotHandled { onEvent(it) }
+    }
+
 }

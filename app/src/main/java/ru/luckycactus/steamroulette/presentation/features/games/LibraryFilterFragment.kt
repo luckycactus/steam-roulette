@@ -16,6 +16,10 @@ import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteFiltersDialog
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.extensions.changeThroughFade
+import ru.luckycactus.steamroulette.presentation.utils.extensions.hideKeyboard
+import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
+import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 
 @AndroidEntryPoint

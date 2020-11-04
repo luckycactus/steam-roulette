@@ -9,7 +9,7 @@ import javax.inject.Provider
 
 class MigrateAppUseCase @Inject constructor(
     private val appRepository: AppRepository,
-    private val migrations: Map<Int, @JvmSuppressWildcards Provider<AppMigration>>
+    private val migrationsProvider: Provider<Map<Int, @JvmSuppressWildcards Provider<AppMigration>>>
 ) : SuspendUseCase<Unit, Unit>() {
 
     override suspend fun execute(params: Unit) {
@@ -17,6 +17,9 @@ class MigrateAppUseCase @Inject constructor(
         val currentVersion = appRepository.currentVersion
         if (lastVersion == 0)
             lastVersion = currentVersion
+        if (lastVersion == currentVersion)
+            return
+        val migrations = migrationsProvider.get()
         while (lastVersion < currentVersion) {
             migrations[lastVersion]?.let {
                 withContext(NonCancellable) {

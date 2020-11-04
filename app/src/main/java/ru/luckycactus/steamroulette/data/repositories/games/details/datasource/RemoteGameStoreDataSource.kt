@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.data.repositories.games.details.datasource
 import androidx.collection.arrayMapOf
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
-import dagger.Reusable
 import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
 import ru.luckycactus.steamroulette.data.net.api.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.repositories.games.details.models.GameStoreInfoEntity
@@ -13,7 +12,6 @@ import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import javax.inject.Inject
 import javax.inject.Named
 
-@Reusable
 class RemoteGameStoreDataSource @Inject constructor(
     private val steamStoreApiService: SteamStoreApiService,
     private val languageProvider: LanguageProvider,

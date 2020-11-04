@@ -8,8 +8,8 @@ import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import ru.luckycactus.steamroulette.presentation.utils.argument
-import ru.luckycactus.steamroulette.presentation.utils.getCallbacks
+import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
+import ru.luckycactus.steamroulette.presentation.utils.extensions.getCallback
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 
 class MessageDialogFragment : DialogFragment() {
@@ -37,7 +37,7 @@ class MessageDialogFragment : DialogFragment() {
     )
 
     private val callbacks by lazyNonThreadSafe {
-        getCallbacks<Callbacks>()
+        getCallback<Callbacks>()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

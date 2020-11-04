@@ -4,7 +4,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.item_game_details_platforms.*
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
-import ru.luckycactus.steamroulette.presentation.utils.visibility
+import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class GamePlatformsViewHolder(
     view: View,

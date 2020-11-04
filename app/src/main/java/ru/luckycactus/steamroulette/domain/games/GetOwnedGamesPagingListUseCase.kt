@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.domain.games
 
-import dagger.Reusable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
@@ -11,7 +10,6 @@ import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import javax.inject.Inject
 
-@Reusable
 /**
  * ignores hidden and shown fields of GamesFilter
  */

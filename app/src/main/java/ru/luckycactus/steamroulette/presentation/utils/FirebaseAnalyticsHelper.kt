@@ -12,6 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
@@ -67,6 +68,7 @@ class FirebaseAnalyticsHelper @Inject constructor(
         appScope.launch {
             currentUser.collect {
                 setUserSignedIn(it != null)
+                analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG && it?.as64() != devId)
             }
         }
     }
@@ -148,5 +150,9 @@ class FirebaseAnalyticsHelper @Inject constructor(
             "Analytics",
             "Games filter change recorded for $filter in ${if (roulette) "roulette" else "library"}"
         )
+    }
+
+    companion object {
+        private const val devId = 76561198043933405L
     }
 }

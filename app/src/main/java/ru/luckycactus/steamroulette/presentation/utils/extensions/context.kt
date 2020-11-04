@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.utils
+package ru.luckycactus.steamroulette.presentation.utils.extensions
 
 import android.content.Context
 import android.util.TypedValue
