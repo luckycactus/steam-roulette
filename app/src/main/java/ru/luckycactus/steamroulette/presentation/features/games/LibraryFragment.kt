@@ -576,7 +576,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     ) : ItemKeyProvider<Long>(SCOPE_MAPPED) {
         private val adapter: LibraryAdapter = (recyclerView.adapter as? LibraryAdapter)
             ?: throw IllegalStateException("RecyclerView must have LibraryAdapter set")
-        
+
         private val positionToKey = mutableMapOf<Long, Int>()
 
         fun reset() {
