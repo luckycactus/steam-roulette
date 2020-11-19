@@ -5,15 +5,15 @@ import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.*
 import dagger.hilt.android.qualifiers.ApplicationContext
-import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
+import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GamesPeriodicFetcherManager @Inject constructor(
+class GamesPeriodicUpdateManager @Inject constructor(
     @ApplicationContext private val context: Context
-) : GamesPeriodicFetcher.Manager {
+) : GamesPeriodicUpdater.Manager {
 
     override fun enqueue(restart: Boolean) {
         val constraints = Constraints.Builder()
@@ -43,7 +43,7 @@ class GamesPeriodicFetcherManager @Inject constructor(
     ) : CoroutineWorker(appContext, params) {
 
         @Inject
-        lateinit var work: GamesPeriodicFetcher.Work
+        lateinit var work: GamesPeriodicUpdater.Work
 
         override suspend fun doWork(): Result {
             return work.run()

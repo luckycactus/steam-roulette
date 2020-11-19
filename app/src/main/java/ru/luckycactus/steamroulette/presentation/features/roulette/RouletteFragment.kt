@@ -59,8 +59,8 @@ class RouletteFragment : BaseFragment() {
 
     private val fabClickListener = View.OnClickListener { fab ->
         when (fab) {
-            fabNextGame -> swipeTop(ItemTouchHelper.RIGHT)
-            fabHideGame -> swipeTop(ItemTouchHelper.LEFT)
+            fabNextGame -> swipe(ItemTouchHelper.RIGHT)
+            fabHideGame -> swipe(ItemTouchHelper.LEFT)
             fabGameInfo -> {
                 rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.callOnClick()
             }
@@ -225,19 +225,9 @@ class RouletteFragment : BaseFragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         viewModel.onHiddenChanged(hidden)
-    }
-
-    private fun logScreen() {
-        if (isResumed && isVisible) {
-
-        }
     }
 
     private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {
@@ -284,7 +274,7 @@ class RouletteFragment : BaseFragment() {
         addListener((activity as MainActivity).touchSwitchTransitionListener)
     }
 
-    private fun swipeTop(direction: Int) {
+    private fun swipe(direction: Int) {
         rvRoulette.findViewHolderForAdapterPosition(0)?.let {
             itemTouchHelper.swipe(it, direction)
         }

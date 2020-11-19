@@ -248,9 +248,7 @@ class RouletteViewModel @ViewModelInject constructor(
             is RequestState.Error -> ContentState.Placeholder(
                 message = fetchGamesState.message,
                 titleType = ContentState.TitleType.Custom(
-                    resourceManager.getString(
-                        R.string.error_get_owned_games
-                    )
+                    resourceManager.getString(R.string.error_get_owned_games)
                 ),
                 buttonType = ContentState.ButtonType.Default
             )

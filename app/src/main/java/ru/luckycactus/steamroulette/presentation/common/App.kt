@@ -5,7 +5,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import kotlinx.coroutines.runBlocking
 import ru.luckycactus.steamroulette.BuildConfig
-import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
+import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.app.SystemLanguageSynchronizer
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
@@ -20,7 +20,7 @@ open class App : Application(), Configuration.Provider {
     lateinit var systemLanguageSynchronizer: SystemLanguageSynchronizer
 
     @Inject
-    lateinit var gamesPeriodicFetcher: GamesPeriodicFetcher
+    lateinit var gamesPeriodicUpdater: GamesPeriodicUpdater
 
     @Inject
     lateinit var appReviewManager: AppReviewManager
@@ -44,7 +44,7 @@ open class App : Application(), Configuration.Provider {
         }
 
         systemLanguageSynchronizer.start()
-        gamesPeriodicFetcher.start()
+        gamesPeriodicUpdater.start()
 
         runBlocking {
             migrateApp()

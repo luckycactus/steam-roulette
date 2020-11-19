@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.presentation.features.roulette
+package ru.luckycactus.steamroulette.presentation.utils.glide
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext

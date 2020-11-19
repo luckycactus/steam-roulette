@@ -19,62 +19,82 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
 ) : SuspendUseCase<GetOwnedGamesPagingListUseCase.Params, GetOwnedGamesPagingListUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result {
-        try {
-            if (!gamesRepository.isUserHasGames()) {
-                return Result.Fail.NoOwnedGames
-            }
+        return Impl(params).execute()
+    }
 
-            val topGameId = rouletteRepository.getLastTopGameId()
-            var topGameFound = false
+    private inner class Impl(
+        private val params: Params
+    ) {
+        private var topGameId: Int? = null
+        private var topGameFound = false
 
-            val shownIds = gamesRepository.getOwnedGamesIdsMutable(
-                GamesFilter(
-                    hidden = false,
-                    shown = true,
-                    playtime = params.filter.playtime
-                ),
-                topGameId != null
-            )
-            if (topGameId != null) {
-                val index = shownIds.binarySearch(topGameId)
-                if (index >= 0) {
-                    topGameFound = true
-                    shownIds.removeAt(index)
+        suspend fun execute(): Result {
+            try {
+                if (!gamesRepository.isUserHasGames()) {
+                    return Result.Fail.NoOwnedGames
                 }
-            }
 
-            val notShownIds = gamesRepository.getOwnedGamesIdsMutable(
+                topGameId = rouletteRepository.getLastTopGameId()
+
+                val shownIds = getFilteredGames(shown = true)
+                findAndRemoveTopGame(shownIds)
+                val notShownIds = getFilteredGames(shown = false)
+                findAndRemoveTopGame(notShownIds)
+
+                shownIds.shuffle()
+                notShownIds.shuffle()
+
+                val firstShownGame = shownIds.firstOrNull()
+
+                val gameIds = ArrayList<Int>(shownIds.size + notShownIds.size + 1).apply {
+                    if (topGameFound) {
+                        add(topGameId!!)
+                    }
+                    addAll(notShownIds)
+                    addAll(shownIds)
+                }
+
+                val pagingList = PagingGameListImpl(
+                    { gamesRepository.getLocalOwnedGameHeaders(it) },
+                    gameIds,
+                    5,
+                    20,
+                    params.pagingCoroutineScope
+                )
+
+                setupLastTopGameUpdates(pagingList)
+
+                return Result.Success(pagingList, firstShownGame)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                return Result.Fail.Error(e)
+            }
+        }
+
+        private suspend fun getFilteredGames(shown: Boolean): MutableList<Int> {
+            return gamesRepository.getOwnedGamesIdsMutable(
                 GamesFilter(
                     hidden = false,
-                    shown = false,
+                    shown = shown,
                     playtime = params.filter.playtime
                 ),
                 topGameId != null && !topGameFound
             )
+        }
+
+        private fun findAndRemoveTopGame(games: MutableList<Int>): MutableList<Int> {
             if (topGameId != null && !topGameFound) {
-                val index = notShownIds.binarySearch(topGameId)
+                val index = games.binarySearch(topGameId)
                 if (index >= 0) {
                     topGameFound = true
-                    notShownIds.removeAt(index)
+                    games.removeAt(index)
                 }
             }
-            shownIds.shuffle()
-            notShownIds.shuffle()
+            return games
+        }
 
-            val firstShownGame = shownIds.firstOrNull()
-            val gameIds = if (topGameFound) {
-                listOf(topGameId!!) + notShownIds + shownIds
-            } else {
-                notShownIds + shownIds
-            }
-            val pagingList = PagingGameListImpl(
-                { gamesRepository.getLocalOwnedGameHeaders(it) },
-                gameIds,
-                5,
-                20,
-                params.pagingCoroutineScope
-            )
-
+        private fun setupLastTopGameUpdates(pagingList: PagingGameList) {
             params.pagingCoroutineScope.launch {
                 pagingList.observeItemsInsertions().collect {
                     updateTopGame(pagingList)
@@ -86,17 +106,11 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                     updateTopGame(pagingList)
                 }
             }
-
-            return Result.Success(pagingList, firstShownGame)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            return Result.Fail.Error(e)
         }
-    }
 
-    private suspend fun updateTopGame(pagingList: PagingGameList) {
-        pagingList.peekTop()?.appId.let { rouletteRepository.setLastTopGameId(it) }
+        private suspend fun updateTopGame(pagingList: PagingGameList) {
+            pagingList.peekTop()?.appId.let { rouletteRepository.setLastTopGameId(it) }
+        }
     }
 
     data class Params(

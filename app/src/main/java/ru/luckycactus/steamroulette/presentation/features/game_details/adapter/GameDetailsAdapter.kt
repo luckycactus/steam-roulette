@@ -47,6 +47,7 @@ class GameDetailsAdapter constructor(
     }
 
     override fun onBindViewHolder(holder: GameDetailsViewHolder<*>, position: Int) {
+        val item = getItem(position)
         when (holder) {
             is GameHeaderViewHolder -> {
                 val shouldWaitForHeader = waitForImageReadyForTransition && !imageReady
@@ -60,7 +61,7 @@ class GameDetailsAdapter constructor(
                 }
 
                 holder.bind(
-                    getItem(position) as GameDetailsUiModel.Header,
+                    item as GameDetailsUiModel.Header,
                     shouldWaitForHeader,
                     listener
                 )
@@ -69,12 +70,12 @@ class GameDetailsAdapter constructor(
                     imageReady = true
                 }
             }
-            is GameShortDescriptionViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.ShortDescription)
-            is GameLinksViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Links)
-            is GameLanguagesViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Languages)
-            is GamePlatformsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Platforms)
-            is GameScreenshotsViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Screenshots)
-            is GamePlaceholderViewHolder -> holder.bind(getItem(position) as GameDetailsUiModel.Placeholder)
+            is GameShortDescriptionViewHolder -> holder.bind(item as GameDetailsUiModel.ShortDescription)
+            is GameLinksViewHolder -> holder.bind(item as GameDetailsUiModel.Links)
+            is GameLanguagesViewHolder -> holder.bind(item as GameDetailsUiModel.Languages)
+            is GamePlatformsViewHolder -> holder.bind(item as GameDetailsUiModel.Platforms)
+            is GameScreenshotsViewHolder -> holder.bind(item as GameDetailsUiModel.Screenshots)
+            is GamePlaceholderViewHolder -> holder.bind(item as GameDetailsUiModel.Placeholder)
         }
     }
 

@@ -12,49 +12,17 @@ import kotlinx.coroutines.SupervisorJob
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
-import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.about.datasource.AboutDataSource
-import ru.luckycactus.steamroulette.data.repositories.about.datasource.LocalAboutDataSource
-import ru.luckycactus.steamroulette.data.repositories.app.AppRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicFetcherManager
-import ru.luckycactus.steamroulette.data.repositories.games.details.GameDetailsRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.GameStoreDataSource
-import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.RemoteGameStoreDataSource
-import ru.luckycactus.steamroulette.data.repositories.games.owned.GamesRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.*
-import ru.luckycactus.steamroulette.data.repositories.games.roulette.RouletteRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games_filter.LibraryFilterRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.games_filter.RouletteFilterRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.library.LibrarySettingsRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.login.LoginRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.login.datasource.LoginDataSource
-import ru.luckycactus.steamroulette.data.repositories.login.datasource.RemoteLoginDataSource
-import ru.luckycactus.steamroulette.data.repositories.review.AppReviewRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.user.UserRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.user.UserSessionRepositoryImpl
-import ru.luckycactus.steamroulette.data.repositories.user.datasource.LocalUserDataSource
-import ru.luckycactus.steamroulette.data.repositories.user.datasource.RemoteUserDataSource
-import ru.luckycactus.steamroulette.data.repositories.user.datasource.UserDataSource
+import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicUpdateManager
+import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesVerifier
+import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesVerifierImpl
 import ru.luckycactus.steamroulette.di.AppCoScope
-import ru.luckycactus.steamroulette.domain.about.AboutRepository
-import ru.luckycactus.steamroulette.domain.app.AppRepository
-import ru.luckycactus.steamroulette.domain.app.GamesPeriodicFetcher
+import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
-import ru.luckycactus.steamroulette.domain.games.GameDetailsRepository
-import ru.luckycactus.steamroulette.domain.games.GamesRepository
-import ru.luckycactus.steamroulette.domain.games.RouletteRepository
-import ru.luckycactus.steamroulette.domain.games_filter.LibraryFilterRepository
-import ru.luckycactus.steamroulette.domain.games_filter.RouletteFilterRepository
-import ru.luckycactus.steamroulette.domain.library.LibrarySettingsRepository
-import ru.luckycactus.steamroulette.domain.login.LoginRepository
-import ru.luckycactus.steamroulette.domain.review.AppReviewRepository
-import ru.luckycactus.steamroulette.domain.user.UserRepository
-import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
-import ru.luckycactus.steamroulette.presentation.features.roulette.GlideCacheCleaner
+import ru.luckycactus.steamroulette.presentation.utils.glide.GlideCacheCleaner
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.FirebaseAnalyticsHelper
 import javax.inject.Singleton
@@ -73,7 +41,7 @@ abstract class AppModule {
     abstract fun bindAnalytics(firebaseAnalytics: FirebaseAnalyticsHelper): AnalyticsHelper
 
     @Binds
-    abstract fun bindGamesPeriodicFetcherManager(job: GamesPeriodicFetcherManager): GamesPeriodicFetcher.Manager
+    abstract fun bindGamesPeriodicFetcherManager(job: GamesPeriodicUpdateManager): GamesPeriodicUpdater.Manager
 
     @Binds
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner

@@ -26,7 +26,7 @@ class GamesRepositoryImpl @Inject constructor(
     private val currentUser
         get() = userSession.requireCurrentUser()
 
-    override suspend fun fetchOwnedGames(cachePolicy: CachePolicy) {
+    override suspend fun updateOwnedGames(cachePolicy: CachePolicy) {
         createOwnedGamesNBR(currentUser).fetchIfNeed(cachePolicy)
     }
 

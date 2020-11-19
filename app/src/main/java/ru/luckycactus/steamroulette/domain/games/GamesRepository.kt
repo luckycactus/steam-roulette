@@ -11,7 +11,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 interface GamesRepository {
 
     @Throws(GetOwnedGamesPrivacyException::class)
-    suspend fun fetchOwnedGames(cachePolicy: CachePolicy)
+    suspend fun updateOwnedGames(cachePolicy: CachePolicy)
 
     suspend fun getOwnedGamesIds(gamesFilter: GamesFilter, orderById: Boolean = false): List<Int>
 

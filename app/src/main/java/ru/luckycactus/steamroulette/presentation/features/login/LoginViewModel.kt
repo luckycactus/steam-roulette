@@ -41,14 +41,16 @@ class LoginViewModel @ViewModelInject constructor(
             login(id.trim()).let {
                 when (it) {
                     is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
-                    is LoginUseCase.Result.Fail -> {
-                        renderFail(it)
-                        _progressState.value = false
-                    }
+                    is LoginUseCase.Result.Fail -> renderFail(it)
                 }
                 analytics.logLoginAttempt(it)
             }
+            _progressState.value = false
         }
+    }
+
+    fun onSteamIdInputChanged(userId: String) {
+        _loginButtonAvailableState.value = validateSteamIdInput(userId.trim())
     }
 
     private fun renderFail(fail: LoginUseCase.Result.Fail) {
@@ -66,9 +68,5 @@ class LoginViewModel @ViewModelInject constructor(
                 }
             }
         }
-    }
-
-    fun onSteamIdInputChanged(userId: String) {
-        _loginButtonAvailableState.value = validateSteamIdInput(userId.trim())
     }
 }

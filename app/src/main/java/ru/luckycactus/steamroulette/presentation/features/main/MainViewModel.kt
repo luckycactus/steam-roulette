@@ -13,7 +13,7 @@ import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.Result
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
-import ru.luckycactus.steamroulette.domain.games.FetchUserOwnedGamesUseCase
+import ru.luckycactus.steamroulette.domain.games.UpdateOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.login.LogoutUserUseCase
 import ru.luckycactus.steamroulette.domain.review.AppReviewManager
@@ -31,7 +31,7 @@ class MainViewModel @ViewModelInject constructor(
     observeCurrentUser: ObserveCurrentUserSteamIdUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
     private val fetchUserSummary: FetchUserSummaryUseCase,
-    private val fetchUserOwnedGames: FetchUserOwnedGamesUseCase,
+    private val updateOwnedGames: UpdateOwnedGamesUseCase,
     private val logoutUser: LogoutUserUseCase,
     private val resourceManager: ResourceManager,
     private val appReviewManager: AppReviewManager,
@@ -167,15 +167,15 @@ class MainViewModel @ViewModelInject constructor(
 
     private suspend fun fetchGames(reload: Boolean): RequestState<Unit> {
         _fetchGamesState.value = RequestState.Loading
-        return when (val result = fetchUserOwnedGames(FetchUserOwnedGamesUseCase.Params(reload))) {
-            is FetchUserOwnedGamesUseCase.Result.Success -> {
+        return when (val result = updateOwnedGames(UpdateOwnedGamesUseCase.Params(reload))) {
+            is UpdateOwnedGamesUseCase.Result.Success -> {
                 RequestState.success.also { _fetchGamesState.value = it }
             }
-            is FetchUserOwnedGamesUseCase.Result.Fail -> {
+            is UpdateOwnedGamesUseCase.Result.Fail -> {
                 val message = when (result) {
-                    FetchUserOwnedGamesUseCase.Result.Fail.PrivateProfile ->
+                    UpdateOwnedGamesUseCase.Result.Fail.PrivateProfile ->
                         resourceManager.getString(R.string.error_get_owned_games_privacy)
-                    is FetchUserOwnedGamesUseCase.Result.Fail.Error -> {
+                    is UpdateOwnedGamesUseCase.Result.Fail.Error -> {
                         result.cause.printStackTrace()
                         resourceManager.getCommonErrorDescription(result.cause)
                     }

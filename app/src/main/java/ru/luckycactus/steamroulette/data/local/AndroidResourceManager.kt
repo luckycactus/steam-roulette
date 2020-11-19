@@ -19,6 +19,9 @@ class AndroidResourceManager @Inject constructor(
     override fun getString(@StringRes strId: Int, vararg formatArgs: Any): String =
         context.getString(strId, *formatArgs)
 
+    override fun getText(@StringRes strId: Int): CharSequence =
+        context.getText(strId)
+
     override fun getQuantityString(@PluralsRes strId: Int, num: Int): String =
         context.resources.getQuantityString(strId, num)
 

@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GamesPeriodicFetcher @Inject constructor(
+class GamesPeriodicUpdater @Inject constructor(
     private val userSession: UserSession,
     private val gamesRepository: GamesRepository,
     private val manager: Manager,
@@ -54,7 +54,7 @@ class GamesPeriodicFetcher @Inject constructor(
     ) {
         suspend fun run(): ListenableWorker.Result =
             userSession.currentUser?.let {
-                gamesRepository.fetchOwnedGames(CachePolicy.Remote)
+                gamesRepository.updateOwnedGames(CachePolicy.Remote)
                 ListenableWorker.Result.success()
             } ?: ListenableWorker.Result.failure()
     }

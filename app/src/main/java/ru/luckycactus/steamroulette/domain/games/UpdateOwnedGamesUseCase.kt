@@ -5,13 +5,13 @@ import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import javax.inject.Inject
 
-class FetchUserOwnedGamesUseCase @Inject constructor(
+class UpdateOwnedGamesUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
-) : SuspendUseCase<FetchUserOwnedGamesUseCase.Params, FetchUserOwnedGamesUseCase.Result>() {
+) : SuspendUseCase<UpdateOwnedGamesUseCase.Params, UpdateOwnedGamesUseCase.Result>() {
 
     override suspend fun execute(params: Params): Result {
         return try {
-            gamesRepository.fetchOwnedGames(
+            gamesRepository.updateOwnedGames(
                 if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
             )
             Result.Success

@@ -8,4 +8,5 @@ interface ResourceManager {
     fun getQuantityString(@PluralsRes strId: Int, num: Int): String
     fun getString(@StringRes strId: Int, vararg formatArgs: Any): String
     fun getQuantityString(@PluralsRes strId: Int, num: Int, vararg formatArgs: Any): String
+    fun getText(@StringRes strId: Int): CharSequence
 }
