@@ -4,6 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.*
@@ -15,11 +18,11 @@ import androidx.transition.Fade
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_game_details.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentGameDetailsBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
@@ -32,7 +35,7 @@ import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 
 @AndroidEntryPoint
-class GameDetailsFragment : BaseFragment() {
+class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
 
     private val viewModel: GameDetailsViewModel by viewModels()
 
@@ -43,10 +46,11 @@ class GameDetailsFragment : BaseFragment() {
 
     private lateinit var tintContext: TintContext
 
-    override val layoutResId: Int = R.layout.fragment_game_details
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentGameDetailsBinding.inflate(inflater, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
+        super.onViewCreated(view, savedInstanceState)
 
         postponeEnterTransition()
         setupTransition()
@@ -106,11 +110,11 @@ class GameDetailsFragment : BaseFragment() {
     private fun setupTint() {
         tintContext = TintContext(requireContext(), tintColor = initialTintColor)
 
-        bgTint.background =
+        binding.bgTint.background =
             tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
 
         observe(tintContext.fabBackgroundTint) {
-            fabBack.backgroundTintList = it
+            binding.fabBack.backgroundTintList = it
         }
     }
 

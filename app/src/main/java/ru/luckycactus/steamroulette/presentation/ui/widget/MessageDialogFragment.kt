@@ -40,13 +40,13 @@ class MessageDialogFragment : DialogFragment() {
         getCallback<Callbacks>()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         isCancelable = cancelable
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        with(MaterialAlertDialogBuilder(context!!)) {
+        with(MaterialAlertDialogBuilder(requireContext())) {
             setTitle(title)
             setMessage(message)
 

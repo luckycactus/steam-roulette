@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.*
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 
 class GameDetailsAdapter constructor(
     // store api can return different id, but we need use old one for working shared element transition
@@ -27,21 +28,34 @@ class GameDetailsAdapter constructor(
     private var imageReady = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameDetailsViewHolder<*> {
-        val view = parent.inflate(viewType)
+        val inflater = parent.layoutInflater
         return when (viewType) {
-            R.layout.item_game_details_header -> GameHeaderViewHolder(view, transitionGameId)
+            R.layout.item_game_details_header -> GameHeaderViewHolder(
+                ItemGameDetailsHeaderBinding.inflate(inflater, parent, false),
+                transitionGameId
+            )
             R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(
-                view,
+                ItemGameDetailsShortDescriptionBinding.inflate(inflater, parent, false),
                 gameDetailsViewModel
             )
-            R.layout.item_game_details_links -> GameLinksViewHolder(view, gameDetailsViewModel)
-            R.layout.item_game_details_languages -> GameLanguagesViewHolder(view)
+            R.layout.item_game_details_links -> GameLinksViewHolder(
+                ItemGameDetailsLinksBinding.inflate(inflater, parent, false),
+                gameDetailsViewModel
+            )
+            R.layout.item_game_details_languages -> GameLanguagesViewHolder(
+                ItemGameDetailsLanguagesBinding.inflate(inflater, parent, false)
+            )
             R.layout.item_game_details_platforms -> GamePlatformsViewHolder(
-                view,
+                ItemGameDetailsPlatformsBinding.inflate(inflater, parent, false),
                 gameDetailsViewModel
             )
-            R.layout.item_game_details_screenshots -> GameScreenshotsViewHolder(view)
-            R.layout.item_placeholder -> GamePlaceholderViewHolder(view, gameDetailsViewModel)
+            R.layout.item_game_details_screenshots -> GameScreenshotsViewHolder(
+                ItemGameDetailsScreenshotsBinding.inflate(inflater, parent, false)
+            )
+            R.layout.item_placeholder -> GamePlaceholderViewHolder(
+                ItemPlaceholderBinding.inflate(inflater, parent, false),
+                gameDetailsViewModel
+            )
             else -> throw IllegalStateException("Unknown view type $viewType")
         }
     }
@@ -113,7 +127,7 @@ class GameDetailsAdapter constructor(
 }
 
 abstract class GameDetailsViewHolder<T : GameDetailsUiModel>(
-    override val containerView: View
-) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    itemView: View
+) : RecyclerView.ViewHolder(itemView) {
     abstract fun bind(item: T)
 }

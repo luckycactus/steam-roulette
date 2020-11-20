@@ -1,7 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
 import android.os.Build
+import androidx.viewbinding.ViewBinding
 import ru.luckycactus.steamroulette.BuildConfig
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 
 fun <T> lazyNonThreadSafe(initializer: () -> T): Lazy<T> =
@@ -32,3 +35,7 @@ inline fun <T> onDebug(block: () -> T): T? {
         block()
     } else null
 }
+
+//inline fun <T : ViewBinding> withBinding(receiver: T, block: T.() -> Unit) {
+//    receiver.block()
+//}

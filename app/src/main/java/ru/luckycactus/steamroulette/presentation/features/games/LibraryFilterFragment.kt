@@ -1,7 +1,9 @@
 package ru.luckycactus.steamroulette.presentation.features.games
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.doOnLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -10,12 +12,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_library_filter.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentLibraryFilterBinding
 import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteFiltersDialog
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.AdvancedBottomSheetCallback
+import ru.luckycactus.steamroulette.presentation.utils.bsOffsetToAlpha
 import ru.luckycactus.steamroulette.presentation.utils.extensions.changeThroughFade
 import ru.luckycactus.steamroulette.presentation.utils.extensions.hideKeyboard
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
@@ -23,17 +26,20 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 
 @AndroidEntryPoint
-class LibraryFilterFragment : BaseFragment() {
+class LibraryFilterFragment : BaseFragment<FragmentLibraryFilterBinding>() {
 
     private val viewModel: LibraryViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
     private lateinit var behavior: BottomSheetBehavior<*>
 
-    override val layoutResId: Int = R.layout.fragment_library_filter
-
     override val logScreenName: Nothing? = null
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentLibraryFilterBinding.inflate(inflater, container, false)
+
+    // it should be onActivityCreated and not onViewCreated, because we need behaviour, but
+    // in onViewCreated fragment isn't added into hierarchy yet
+    override fun onActivityCreated(savedInstanceState: Bundle?) : Unit = with(binding) {
         super.onActivityCreated(savedInstanceState)
 
         val shapeAppearanceModel = ShapeAppearanceModel.builder(
@@ -175,12 +181,11 @@ class LibraryFilterFragment : BaseFragment() {
         close()
     }
 
-    private fun updateHeadersAlpha(slideOffset: Float) {
+    private fun updateHeadersAlpha(slideOffset: Float): Unit = with(binding) {
         expanded.alpha = bsOffsetToAlpha(slideOffset, 0.36f, 0.67f)
         expanded.visibility = if (expanded.alpha > 0f) View.VISIBLE else View.INVISIBLE
 
         collapsed.alpha = bsOffsetToAlpha(slideOffset, 0.36f, 0f)
         collapsed.visibility = if (collapsed.alpha > 0f) View.VISIBLE else View.INVISIBLE
-
     }
 }

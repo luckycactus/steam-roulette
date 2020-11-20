@@ -2,7 +2,7 @@ package ru.luckycactus.steamroulette.domain.games.entity
 
 import android.os.Parcelable
 import androidx.annotation.ColorInt
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 data class GameStoreInfo(
     val name: String,
@@ -36,7 +36,9 @@ data class SystemRequirements(
     val platform: Platform,
     val minimal: String?,
     val recommended: String?
-): Parcelable
+) : Parcelable {
+
+}
 
 data class MetacriticInfo constructor(
     val score: Int,

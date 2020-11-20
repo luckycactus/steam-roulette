@@ -1,18 +1,17 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
-import android.view.View
-import kotlinx.android.synthetic.main.item_game_details_links.*
+import ru.luckycactus.steamroulette.databinding.ItemGameDetailsLinksBinding
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 
 class GameLinksViewHolder(
-    itemView: View,
+    binding: ItemGameDetailsLinksBinding,
     gameDetailsViewModel: GameDetailsViewModel
-) : GameDetailsViewHolder<GameDetailsUiModel.Links>(itemView) {
+) : GameDetailsViewHolder<GameDetailsUiModel.Links>(binding.root) {
 
     init {
-        btnStore.setOnClickListener { gameDetailsViewModel.onStoreClick() }
-        btnHub.setOnClickListener { gameDetailsViewModel.onHubClick() }
+        binding.btnStore.setOnClickListener { gameDetailsViewModel.onStoreClick() }
+        binding.btnHub.setOnClickListener { gameDetailsViewModel.onHubClick() }
     }
 
     override fun bind(item: GameDetailsUiModel.Links) {

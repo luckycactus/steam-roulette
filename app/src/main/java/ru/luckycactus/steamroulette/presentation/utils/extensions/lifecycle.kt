@@ -6,9 +6,11 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.core.Event
 
-val Fragment.viewLifecycleScope: CoroutineScope
+val Fragment.viewLifecycleScope: LifecycleCoroutineScope
     get() = viewLifecycleOwner.lifecycleScope
 
+val Fragment.viewLifecycle: Lifecycle
+    get() = viewLifecycleOwner.lifecycle
 
 fun Fragment.getLifecycleOwner(useViewLifecycle: Boolean) =
     if (useViewLifecycle) viewLifecycleOwner else this

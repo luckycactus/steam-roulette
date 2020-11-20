@@ -5,43 +5,45 @@ import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_game_description_block_tag.*
-import kotlinx.android.synthetic.main.item_game_details_short_description.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.ItemGameDescriptionBlockTagBinding
+import ru.luckycactus.steamroulette.databinding.ItemGameDetailsShortDescriptionBinding
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
-import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 import ru.luckycactus.steamroulette.presentation.utils.setDrawableColor
 
 class GameShortDescriptionViewHolder(
-    view: View,
+    private val binding: ItemGameDetailsShortDescriptionBinding,
     viewModel: GameDetailsViewModel
-) : GameDetailsViewHolder<GameDetailsUiModel.ShortDescription>(view) {
+) : GameDetailsViewHolder<GameDetailsUiModel.ShortDescription>(binding.root) {
+
     init {
-        val space = view.resources.getDimensionPixelSize(R.dimen.default_activity_margin)
-        val decoration = SpaceDecoration(space, 0, space / 2, false)
+        with(binding) {
+            val space = itemView.resources.getDimensionPixelSize(R.dimen.default_activity_margin)
+            val decoration = SpaceDecoration(space, 0, space / 2, false)
 
-        rvGenres.layoutManager =
-            LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
-        rvGenres.addItemDecoration(decoration)
+            rvGenres.layoutManager =
+                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+            rvGenres.addItemDecoration(decoration)
 
-        rvCategories.layoutManager =
-            LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
-        rvCategories.addItemDecoration(decoration)
+            rvCategories.layoutManager =
+                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+            rvCategories.addItemDecoration(decoration)
 
-        layoutMetacriticScore.setOnClickListener {
-            viewModel.onMetacriticClick()
-        }
+            layoutMetacriticScore.setOnClickListener {
+                viewModel.onMetacriticClick()
+            }
 
-        header.setOnClickListener {
-            viewModel.onDetailedDescriptionClick()
+            header.setOnClickListener {
+                viewModel.onDetailedDescriptionClick()
+            }
         }
     }
 
-    override fun bind(item: GameDetailsUiModel.ShortDescription) {
+    override fun bind(item: GameDetailsUiModel.ShortDescription): Unit = with(binding) {
         tvDescription.text = item.value?.let { HtmlCompat.fromHtml(it, 0) }
         ivForward.visibility(item.detailedDescriptionAvailable)
         header.isClickable = item.detailedDescriptionAvailable
@@ -96,9 +98,9 @@ class GameShortDescriptionViewHolder(
     class TagsAdapter(
         private val items: List<String>
     ) : RecyclerView.Adapter<TagsAdapter.TagViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagViewHolder {
-            return TagViewHolder(parent.inflate(R.layout.item_game_description_block_tag))
-        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            TagViewHolder(ItemGameDescriptionBlockTagBinding.inflate(parent.layoutInflater, parent, false))
 
         override fun getItemCount(): Int = items.size
 
@@ -107,12 +109,11 @@ class GameShortDescriptionViewHolder(
         }
 
         class TagViewHolder(
-            override val containerView: View
-        ) : RecyclerView.ViewHolder(containerView),
-            LayoutContainer {
+            private val binding: ItemGameDescriptionBlockTagBinding,
+        ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(tag: String) {
-                tagView.text = tag
+                binding.tagView.text = tag
             }
         }
     }

@@ -1,23 +1,20 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
-import android.view.View
-import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.item_placeholder.*
-import kotlinx.android.synthetic.main.progress.*
+import ru.luckycactus.steamroulette.databinding.ItemPlaceholderBinding
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.ui.widget.DataLoadingViewHolder
 
 class GamePlaceholderViewHolder(
-    view: View,
+    binding: ItemPlaceholderBinding,
     viewModel: GameDetailsViewModel
-) : GameDetailsViewHolder<GameDetailsUiModel.Placeholder>(view) {
+) : GameDetailsViewHolder<GameDetailsUiModel.Placeholder>(binding.root) {
 
     private val dataLoadingViewHolder = DataLoadingViewHolder(
-        emptyLayout,
-        progress,
-        dummyContent,
+        binding.empty.root,
+        binding.progress.root,
+        binding.dummyContent,
         viewModel::onRetryClick
     )
 

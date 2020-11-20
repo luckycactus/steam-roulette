@@ -1,27 +1,24 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details.adapter
 
-import android.view.View
-import androidx.core.view.ViewCompat
-import kotlinx.android.synthetic.main.item_game_details_header.*
-import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.ItemGameDetailsHeaderBinding
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class GameHeaderViewHolder(
-    view: View,
+    private val binding: ItemGameDetailsHeaderBinding,
     private val transitionGameId: Int
-) : GameDetailsViewHolder<GameDetailsUiModel.Header>(view) {
+) : GameDetailsViewHolder<GameDetailsUiModel.Header>(binding.root) {
 
     init {
-        gameView.memoryCacheEnabled = true
+        binding.gameView.memoryCacheEnabled = true
     }
 
     fun bind(
         item: GameDetailsUiModel.Header,
         disableTransition: Boolean,
         listener: GameView.Listener?
-    ) {
+    ): Unit = with(binding) {
         tvHeaderGameName.text = item.gameHeader.name
         tvPublisher.text = item.publisher
         tvPublisher.visibility(!item.publisher.isNullOrBlank())

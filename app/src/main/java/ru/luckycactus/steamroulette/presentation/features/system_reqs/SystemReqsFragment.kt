@@ -1,24 +1,26 @@
 package ru.luckycactus.steamroulette.presentation.features.system_reqs
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.fragment_system_reqs.*
-import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentSystemReqsBinding
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
 import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
 
-class SystemReqsFragment : BaseFragment() {
+class SystemReqsFragment : BaseFragment<FragmentSystemReqsBinding>() {
     private val appName: String by argument(ARG_APP_NAME)
     private val systemReqs: List<SystemRequirements> by argument(ARG_SYSTEM_REQS)
 
-    override val layoutResId: Int = R.layout.fragment_system_reqs
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentSystemReqsBinding.inflate(inflater, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
+        super.onViewCreated(view, savedInstanceState)
         appBarLayout.addSystemTopPadding()
 
         toolbar.setNavigationOnClickListener {
@@ -27,12 +29,10 @@ class SystemReqsFragment : BaseFragment() {
 
         toolbar.title = appName
         vpSystemReqs.adapter = SystemReqsViewPagerAdapter(systemReqs)
-        TabLayoutMediator(tabsLayoutSystemReqs, vpSystemReqs,
-            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
-                tab.text =
-                    (vpSystemReqs.adapter as SystemReqsViewPagerAdapter).getPageTitle(position)
-            }
-        ).attach()
+        TabLayoutMediator(tabsLayoutSystemReqs, vpSystemReqs) { tab, position ->
+            tab.text =
+                (vpSystemReqs.adapter as SystemReqsViewPagerAdapter).getPageTitle(position)
+        }.attach()
     }
 
     companion object {

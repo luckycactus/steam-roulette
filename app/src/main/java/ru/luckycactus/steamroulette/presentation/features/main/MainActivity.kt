@@ -20,10 +20,9 @@ import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.main_toolbar.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.ActivityMainBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
@@ -34,6 +33,7 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.PlayUtils
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observeEvent
+import ru.luckycactus.steamroulette.presentation.utils.extensions.showSnackbar
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -45,7 +45,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
-    private var sharedViews: List<View>? = null
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
@@ -57,6 +56,10 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
     lateinit var analytics: AnalyticsHelper
 
     val viewModel: MainViewModel by viewModels()
+
+    private lateinit var binding: ActivityMainBinding
+
+    private var sharedViews: List<View>? = null
 
     private var runningTransitions = 0
     val touchSwitchTransitionListener = object : TransitionListenerAdapter() {
@@ -176,19 +179,15 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (savedInstanceState == null) {
             viewModel.onColdStart()
         }
 
         observeEvent(viewModel.errorMessage) {
-            Snackbar.make(container, it, Snackbar.LENGTH_LONG).apply {
-                view.updateLayoutParams<FrameLayout.LayoutParams> {
-                    gravity = Gravity.TOP
-                    topMargin += toolbar.bottom
-                }
-            }.show()
+            binding.container.showSnackbar(it, Snackbar.LENGTH_LONG)
         }
 
         observeEvent(viewModel.reviewRequest) {

@@ -7,94 +7,87 @@ import android.text.Spanned
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.dialog_roulette_filters.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.DialogRouletteFiltersBinding
 import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
+import ru.luckycactus.steamroulette.presentation.ui.base.BaseDialogFragment
 
 @AndroidEntryPoint
-class RouletteFiltersDialog : DialogFragment() {
+class RouletteFiltersDialog : BaseDialogFragment() {
 
-    private var layoutContainer: DialogLayoutContainer? = null
-
+    private var binding: DialogRouletteFiltersBinding? = null
     private val viewModel: RouletteFiltersViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return with(MaterialAlertDialogBuilder(requireContext())) {
             setTitle(getString(R.string.playtime))
 
-            with(LayoutInflater.from(context).inflate(R.layout.dialog_roulette_filters, null)) {
-                setView(this)
-                layoutContainer = DialogLayoutContainer(this, savedInstanceState)
-            }
+            binding = DialogRouletteFiltersBinding.inflate(LayoutInflater.from(context))
+            initViews(binding!!.root, savedInstanceState)
+            setView(binding!!.root)
 
             setNegativeButton(R.string.cancel, null)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                with(layoutContainer!!) {
-                    val filter = when {
-                        rbAll.isChecked -> PlaytimeFilter.All
-                        rbNotPlayed.isChecked -> PlaytimeFilter.NotPlayed
-                        rbLimit.isChecked -> {
-                            val maxHours = try {
-                                Integer.parseInt(etPlaytime.textWithoutLabel.toString())
-                            } catch (nfe: NumberFormatException) {
-                                1
-                            }
-                            PlaytimeFilter.Limited(maxHours)
-                        }
-                        else -> throw IllegalStateException()
-                    }
-
-                    viewModel.onOkClick(filter)
-                }
-            }
+            setPositiveButton(android.R.string.ok) { _, _ -> onPositiveClick() }
 
             create()
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        layoutContainer = null
-    }
+    private fun initViews(view: View, savedInstanceState: Bundle?): Unit = with(binding!!) {
+        super.onViewCreated(view, savedInstanceState)
 
-    //workaround to force the compiler to cache views
-    inner class DialogLayoutContainer(
-        override val containerView: View?,
-        savedInstanceState: Bundle?
-    ) : LayoutContainer {
-        init {
-            rbLimit.setOnCheckedChangeListener { _, isChecked ->
-                etPlaytime.isEnabled = isChecked
+        rbLimit.setOnCheckedChangeListener { _, isChecked ->
+            etPlaytime.isEnabled = isChecked
+        }
+
+        etPlaytime.filters += MinMaxInputFilter(
+            Consts.FILTER_MIN_HOURS,
+            Consts.FILTER_MAX_HOURS
+        )
+        etPlaytime.label = getString(R.string.playtime_hours_label)
+
+        if (savedInstanceState == null) {
+            lifecycleScope.launch {
+                when (viewModel.getCurrentPlaytimeFilter()) {
+                    PlaytimeFilter.All -> rbAll
+                    PlaytimeFilter.NotPlayed -> rbNotPlayed
+                    is PlaytimeFilter.Limited -> rbLimit
+                }.isChecked = true
             }
 
-            etPlaytime.filters += MinMaxInputFilter(
-                Consts.FILTER_MIN_HOURS,
-                Consts.FILTER_MAX_HOURS
-            )
-            etPlaytime.label = getString(R.string.playtime_hours_label)
-
-            if (savedInstanceState == null) {
-                lifecycleScope.launch {
-                    when (viewModel.getCurrentPlaytimeFilter()) {
-                        PlaytimeFilter.All -> rbAll
-                        PlaytimeFilter.NotPlayed -> rbNotPlayed
-                        is PlaytimeFilter.Limited -> rbLimit
-                    }.isChecked = true
-                }
-
-                lifecycleScope.launch {
-                    etPlaytime.setText(viewModel.getCurrentMaxPlaytimeSetting().toString())
-                }
+            lifecycleScope.launch {
+                etPlaytime.setText(viewModel.getCurrentMaxPlaytimeSetting().toString())
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    private fun onPositiveClick() {
+        val filter = when (binding!!.rgLibraryFilter.checkedRadioButtonId) {
+            R.id.rbAll -> PlaytimeFilter.All
+            R.id.rbNotPlayed -> PlaytimeFilter.NotPlayed
+            R.id.rbLimit -> {
+                val maxHours = try {
+                    Integer.parseInt(binding!!.etPlaytime.textWithoutLabel.toString())
+                } catch (nfe: NumberFormatException) {
+                    1
+                }
+                PlaytimeFilter.Limited(maxHours)
+            }
+            else -> throw IllegalStateException()
+        }
+
+        viewModel.onOkClick(filter)
     }
 
     class MinMaxInputFilter(

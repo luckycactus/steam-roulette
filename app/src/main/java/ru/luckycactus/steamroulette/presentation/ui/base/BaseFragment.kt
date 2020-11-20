@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewbinding.ViewBinding
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -12,10 +13,12 @@ import dagger.hilt.android.components.ApplicationComponent
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 
-abstract class BaseFragment : Fragment() {
-    abstract val layoutResId: Int
+abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
 
     protected val analytics: AnalyticsHelper
+
+    protected val binding: Binding get() = _binding!!
+    private var _binding: Binding? = null
 
     init {
         val entryPoint = EntryPointAccessors.fromApplication(
@@ -30,8 +33,16 @@ abstract class BaseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(layoutResId, container, false)
+        _binding = inflateViewBinding(inflater, container)
+        return binding.root
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    protected abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): Binding
 
     open val logScreenName: String? = this::class.simpleName
 

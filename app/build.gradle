@@ -1,9 +1,11 @@
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'dagger.hilt.android.plugin'
+plugins {
+    id 'com.android.application'
+    id 'com.google.firebase.crashlytics'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
+}
 
 def keystorePropertiesFile = rootProject.file("./keystore.properties")
 def keystoreProperties = new Properties()
@@ -42,8 +44,8 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-    androidExtensions {
-        experimental = true
+    buildFeatures {
+        viewBinding true
     }
 
     kotlinOptions {

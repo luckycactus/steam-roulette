@@ -17,7 +17,9 @@
         android:focusableInTouchMode="true"
         />
 
-    <include layout="@layout/progress" />
+    <include
+        android:id="@+id/progress"
+        layout="@layout/progress" />
 
     <ScrollView
         android:layout_width="match_parent"

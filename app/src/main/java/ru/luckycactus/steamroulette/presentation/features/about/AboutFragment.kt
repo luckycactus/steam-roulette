@@ -1,18 +1,20 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_about.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentAboutBinding
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
@@ -20,35 +22,44 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
 import ru.luckycactus.steamroulette.presentation.utils.extensions.setDrawableColorFromAttribute
 
 @AndroidEntryPoint
-class AboutFragment : BaseFragment() {
+class AboutFragment : BaseFragment<FragmentAboutBinding>() {
+
     private val viewModel: AboutViewModel by viewModels()
 
-    override val layoutResId = R.layout.fragment_about
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentAboutBinding.inflate(inflater, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
+        super.onViewCreated(view, savedInstanceState)
 
-        toolbar.addSystemTopPadding()
-
-        toolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
+        toolbar.apply {
+            addSystemTopPadding()
+            setNavigationOnClickListener {
+                requireActivity().onBackPressed()
+            }
         }
 
         tvVersion.text = viewModel.version
 
-        tvSourceCode.setDrawableColorFromAttribute(R.attr.colorOnSurface)
-        tvSourceCode.setOnClickListener {
-            viewModel.onSourceCodeClick()
+        tvSourceCode.apply {
+            setDrawableColorFromAttribute(R.attr.colorOnSurface)
+            setOnClickListener {
+                viewModel.onSourceCodeClick()
+            }
         }
 
-        tvUsedLibraries.setDrawableColorFromAttribute(R.attr.colorOnSurface)
-        tvUsedLibraries.setOnClickListener {
-            viewModel.onUsedLibrariesClick()
+        tvUsedLibraries.apply {
+            setDrawableColorFromAttribute(R.attr.colorOnSurface)
+            setOnClickListener {
+                viewModel.onUsedLibrariesClick()
+            }
         }
 
-        tvPrivacyPolicy.setDrawableColorFromAttribute(R.attr.colorOnSurface)
-        tvPrivacyPolicy.setOnClickListener {
-            viewModel.onPrivacyPolicyClick()
+        tvPrivacyPolicy.apply {
+            setDrawableColorFromAttribute(R.attr.colorOnSurface)
+            setOnClickListener {
+                viewModel.onPrivacyPolicyClick()
+            }
         }
 
         tvRateApp.setOnClickListener {
@@ -67,11 +78,6 @@ class AboutFragment : BaseFragment() {
         setupIconDragging()
         setupIconClick()
 
-        lifecycleScope.launch {
-            delay(100)
-            ivIcon.performClick()
-        }
-
         observe(viewModel.appRated) {
             tvRateApp.setBackgroundResource(
                 if (it)
@@ -80,20 +86,25 @@ class AboutFragment : BaseFragment() {
                     R.drawable.primary_selectable_item_background
             )
         }
+
+        lifecycleScope.launch {
+            delay(100)
+            ivIcon.performClick()
+        }
     }
 
     private fun setupIconClick() {
         val scaleX = createIconScaleSpringAnimation(DynamicAnimation.SCALE_X)
         val scaleY = createIconScaleSpringAnimation(DynamicAnimation.SCALE_Y)
-        ivIcon.setOnClickListener {
+        binding.ivIcon.setOnClickListener {
             scaleX.animateToFinalPosition(ICON_CLICK_SCALE)
             scaleY.animateToFinalPosition(ICON_CLICK_SCALE)
         }
     }
 
     private fun createIconScaleSpringAnimation(property: DynamicAnimation.ViewProperty) =
-        ivIcon.let {
-            SpringAnimation(ivIcon, property, ICON_CLICK_SCALE).apply {
+        binding.ivIcon.let {
+            SpringAnimation(binding.ivIcon, property, ICON_CLICK_SCALE).apply {
                 addUpdateListener { _, _, _ ->
                     if (property.getValue(it) >= ICON_CLICK_SCALE) {
                         animateToFinalPosition(1f)
@@ -105,6 +116,7 @@ class AboutFragment : BaseFragment() {
         }
 
     private fun setupIconDragging() {
+        val ivIcon = binding.ivIcon
         ivIcon.setOnTouchListener(
             object : View.OnTouchListener {
                 var startX: Float = 0f

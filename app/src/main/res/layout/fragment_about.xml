@@ -93,7 +93,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:drawableStart="@drawable/ic_github"
-            android:drawableEnd="@drawable/ic_chevron_right"
             android:text="@string/show_app_source_code"
             app:layout_constraintTop_toBottomOf="@id/contactFlow"
             />
@@ -115,7 +114,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_security_24dp"
-            android:drawableEnd="@drawable/ic_chevron_right"
             android:text="@string/privacy_policy"
             app:layout_constraintTop_toBottomOf="@id/tvUsedLibraries"
             />
@@ -127,7 +125,6 @@
             android:layout_height="wrap_content"
             android:background="@drawable/primary_selectable_item_background"
             android:drawableStart="@drawable/ic_baseline_thumb_up_24"
-            android:drawableEnd="@drawable/ic_chevron_right"
             android:text="@string/rate_app_title"
             app:layout_constraintTop_toBottomOf="@id/tvPrivacyPolicy"
             />

@@ -4,21 +4,18 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.fragment_roulette.*
-import kotlinx.android.synthetic.main.fullscreen_progress.*
-import kotlinx.android.synthetic.main.main_toolbar.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentRouletteBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.features.menu.MenuFragment
@@ -29,17 +26,14 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackL
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
 import ru.luckycactus.steamroulette.presentation.utils.*
-import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemBottomPadding
-import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
-import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
-import ru.luckycactus.steamroulette.presentation.utils.extensions.showIfNotExist
+import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 import ru.luckycactus.steamroulette.presentation.utils.palette.PalettePageHelper
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 import kotlin.math.abs
 
 @AndroidEntryPoint
-class RouletteFragment : BaseFragment() {
+class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
     private val viewModel: RouletteViewModel by viewModels()
 
     private lateinit var fabs: List<FloatingActionButton>
@@ -50,7 +44,6 @@ class RouletteFragment : BaseFragment() {
 
     private lateinit var itemTouchHelper: ItemTouchHelper
 
-    override val layoutResId: Int = R.layout.fragment_roulette
 
     private lateinit var tintContext: TintContext
     private val paletteHelper = PalettePageHelper {
@@ -58,41 +51,41 @@ class RouletteFragment : BaseFragment() {
     }
 
     private val fabClickListener = View.OnClickListener { fab ->
-        when (fab) {
-            fabNextGame -> swipe(ItemTouchHelper.RIGHT)
-            fabHideGame -> swipe(ItemTouchHelper.LEFT)
-            fabGameInfo -> {
-                rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.callOnClick()
+        when (fab.id) {
+            R.id.fabNextGame -> swipe(ItemTouchHelper.RIGHT)
+            R.id.fabHideGame -> swipe(ItemTouchHelper.LEFT)
+            R.id.fabGameInfo -> {
+                binding.rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.callOnClick()
             }
         }
     }
+
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentRouletteBinding.inflate(inflater, container, false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
+        super.onViewCreated(view, savedInstanceState)
 
         fabs = listOf(fabNextGame, fabHideGame, fabGameInfo)
 
-        toolbar.addSystemTopPadding()
-        roulette_fragment_root.addSystemBottomPadding()
+        root.addSystemBottomPadding()
+        toolbar.root.addSystemTopPadding()
 
         setupTint()
 
-        with(activity as AppCompatActivity) {
-            setSupportActionBar(toolbar)
-            supportActionBar!!.setDisplayShowTitleEnabled(false)
-        }
-
-        toolbar.setNavigationIcon(R.drawable.ic_menu_24)
-        toolbar.setNavigationOnClickListener {
+        toolbar.root.setNavigationIcon(R.drawable.ic_menu_24)
+        toolbar.root.setNavigationOnClickListener {
             childFragmentManager.showIfNotExist(MENU_FRAGMENT_TAG) {
                 MenuFragment.newInstance()
             }
         }
+        toolbar.root.inflateMenu(R.menu.menu_roulette)
+        toolbar.root.setOnMenuItemClickListener(this@RouletteFragment::onMenuItemClick)
 
         val fabLongClickListener = View.OnLongClickListener {
             val text = getString(
@@ -142,8 +135,8 @@ class RouletteFragment : BaseFragment() {
         }
 
         dataLoadingViewHolder = DataLoadingViewHolder(
-            emptyLayout,
-            progress,
+            empty.root,
+            progress.root,
             content,
             viewModel::onRetryClick
         )
@@ -181,7 +174,7 @@ class RouletteFragment : BaseFragment() {
     private fun setupTint() {
         tintContext = TintContext(requireContext(), animate = false)
 
-        roulette_fragment_root.background =
+        binding.root.background =
             tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
 
         observe(tintContext.fabBackgroundTint) { colorStateList ->
@@ -195,25 +188,25 @@ class RouletteFragment : BaseFragment() {
         paletteHelper.edit {
             for (i in 0..1) {
                 val vh =
-                    (rvRoulette?.findViewHolderForAdapterPosition(i) as? RouletteAdapter.RouletteViewHolder)
+                    (binding.rvRoulette.findViewHolderForAdapterPosition(i) as? RouletteAdapter.RouletteViewHolder)
                 setPageColor(i, PaletteUtils.getColorForGameCover(vh?.palette))
             }
             if (resetProgress)
                 progress = 0f
         }
+
     }
 
     private fun onPaletteReady(position: Int) {
-        if (position in 0..1) {
-            updatePaletteHelper()
+        // method can be invoked asynchronously from adapter when view is already destroyed
+        if (viewLifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+            if (position in 0..1) {
+                updatePaletteHelper()
+            }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_roulette, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    private fun onMenuItemClick(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_roulette_options -> {
                 childFragmentManager.showIfNotExist(FILTER_FRAGMENT_TAG) {
@@ -232,13 +225,13 @@ class RouletteFragment : BaseFragment() {
 
     private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {
         reenterTransition = createExitTransition().apply {
-            rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.let { topItemView ->
+            binding.rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.let { topItemView ->
                 fade {
                     addTarget(topItemView)
                 }
-                if (rvRoulette.childCount > 1) {
+                if (binding.rvRoulette.childCount > 1) {
                     fade {
-                        rvRoulette.forEach {
+                        binding.rvRoulette.forEach {
                             if (it != topItemView)
                                 addTarget(it)
                         }
@@ -269,13 +262,13 @@ class RouletteFragment : BaseFragment() {
             fabs.forEach { addTarget(it) }
         }
         slide(Gravity.TOP) {
-            addTarget(toolbar)
+            addTarget(binding.toolbar.root)
         }
         addListener((activity as MainActivity).touchSwitchTransitionListener)
     }
 
     private fun swipe(direction: Int) {
-        rvRoulette.findViewHolderForAdapterPosition(0)?.let {
+        binding.rvRoulette.findViewHolderForAdapterPosition(0)?.let {
             itemTouchHelper.swipe(it, direction)
         }
     }

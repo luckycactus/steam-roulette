@@ -3,12 +3,12 @@ package ru.luckycactus.steamroulette.presentation.ui.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.withStyledAttributes
-import kotlinx.android.synthetic.main.view_preference.view.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.ViewPreferenceBinding
 
 class PreferenceView @JvmOverloads constructor(
     context: Context,
@@ -21,15 +21,15 @@ class PreferenceView @JvmOverloads constructor(
 ) {
     var title: CharSequence?
         set(value) {
-            tvPrefTitle.text = value
+            binding.tvPrefTitle.text = value
         }
-        get() = tvPrefTitle.text
+        get() = binding.tvPrefTitle.text
 
     var value: CharSequence?
         set(value) {
-            tvPrefValue.text = value
+            binding.tvPrefValue.text = value
         }
-        get() = tvPrefValue.text
+        get() = binding.tvPrefValue.text
 
     var type: Type = Type.Dropdown
         set(value) {
@@ -37,12 +37,14 @@ class PreferenceView @JvmOverloads constructor(
                 Type.Dropdown -> R.drawable.ic_chevron_down
                 Type.Forward -> R.drawable.ic_chevron_right
             }
-            imageView.setImageResource(img)
+            binding.imageView.setImageResource(img)
             field = value
         }
 
+    private val binding =
+        ViewPreferenceBinding.inflate(LayoutInflater.from(context), this)
+
     init {
-        View.inflate(context, R.layout.view_preference, this)
         gravity = Gravity.CENTER_VERTICAL
         orientation = HORIZONTAL
 
@@ -54,9 +56,9 @@ class PreferenceView @JvmOverloads constructor(
     }
 
     override fun setEnabled(enabled: Boolean) {
-        tvPrefTitle.isEnabled = enabled
-        tvPrefValue.isEnabled = enabled
-        imageView.alpha =
+        binding.tvPrefTitle.isEnabled = enabled
+        binding.tvPrefValue.isEnabled = enabled
+        binding.imageView.alpha =
             if (enabled)
                 1f
             else ResourcesCompat.getFloat(

@@ -48,6 +48,9 @@ fun View.expandTouchArea(desiredWidth: Int, desiredHeight: Int) {
 fun ViewGroup.inflate(@LayoutRes resId: Int, attachToRoot: Boolean = false): View =
     LayoutInflater.from(context).inflate(resId, this, attachToRoot)
 
+val View.layoutInflater: LayoutInflater
+    get() = LayoutInflater.from(context)
+
 private val setTransitionAlphaMethod: Method? by lazyNonThreadSafe {
     try {
         View::class.java.getMethod("setTransitionAlpha", Float::class.java)

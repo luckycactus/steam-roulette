@@ -30,13 +30,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.fragment_library.*
-import kotlinx.android.synthetic.main.fragment_library_filter.filterSheet
-import kotlinx.android.synthetic.main.fullscreen_progress.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentLibraryBinding
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.GridSpaceDecoration
@@ -48,9 +45,7 @@ import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
-class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
-
-    override val layoutResId = R.layout.fragment_library
+class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFragment.Callbacks {
 
     private lateinit var adapter: LibraryAdapter
     private lateinit var layoutManager: GridLayoutManager
@@ -67,6 +62,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     private lateinit var filtersBehavior: BottomSheetBehavior<*>
     private lateinit var filtersFragment: LibraryFilterFragment
+    private lateinit var filterSheetView: View
 
     private lateinit var dataLoadingViewHolder: DataLoadingViewHolder
 
@@ -87,13 +83,14 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentLibraryBinding.inflate(inflater, container, false)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
+        filterSheetView = view.findViewById(R.id.filterSheet)
         var insetsApplied = false
         val fabInitialMargin = fab.marginBottom
         rvGames.doOnApplyWindowInsets { it, insets, padding ->
@@ -106,8 +103,8 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             insetsApplied = true
             insets
         }
-        filterSheet.doOnApplyWindowInsets { view, insets, initialPadding ->
-            filterSheet.doOnLayout {
+        filterSheetView.doOnApplyWindowInsets { view, insets, initialPadding ->
+            filterSheetView.doOnLayout {
                 filtersBehavior.peekHeight =
                     insets.systemWindowInsetBottom + resources.getDimensionPixelSize(R.dimen.filter_sheet_header_height)
             }
@@ -202,17 +199,17 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
         updateSelectionMode()
 
         dataLoadingViewHolder = DataLoadingViewHolder(
-            emptyLayout,
-            progress,
+            empty.root,
+            progress.root,
             rvGames,
             { /*nothing*/ }
         )
 
         filtersFragment =
             childFragmentManager.findFragmentById(R.id.filterSheet) as LibraryFilterFragment
-        filtersBehavior = from(filterSheet)
+        filtersBehavior = from(filterSheetView)
         filtersBehavior.addBottomSheetCallback(bottomSheetCallback)
-        filterSheet.doOnLayout {
+        filterSheetView.doOnLayout {
             val slideOffset = when (filtersBehavior.state) {
                 STATE_EXPANDED -> 1f
                 STATE_COLLAPSED -> 0f
@@ -221,7 +218,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             updateFiltersScrim(slideOffset)
         }
 
-        filterSheet.setOnClickListener { /* nothing */ }
+        filterSheetView.setOnClickListener { /* nothing */ }
 
         scrimView.setOnClickListener {
             filtersFragment.close()
@@ -248,7 +245,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             adapter.loadStateFlow.collectLatest {
                 if (prevItemCount != adapter.itemCount) {
                     TransitionManager.beginDelayedTransition(
-                        root_fragment_library,
+                        binding.root,
                         placeholderTransition
                     )
 
@@ -440,7 +437,7 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     private fun updateFiltersUi(hasAnyFilters: Boolean) {
-        fab.show(!hasAnyFilters && !viewModel.onlyHidden)
+        binding.fab.show(!hasAnyFilters && !viewModel.onlyHidden)
 
         if (viewModel.onlyHidden) {
             filtersBehavior.isHideable = true
@@ -485,8 +482,10 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
     }
 
     private fun updateFiltersScrim(slideOffset: Float) {
-        scrimView.alpha = slideOffset.coerceAtLeast(0f)
-        scrimView.visibility(slideOffset > 0f)
+        binding.scrimView.run {
+            alpha = slideOffset.coerceAtLeast(0f)
+            visibility(slideOffset > 0f)
+        }
     }
 
     private fun onMenuItemClick(item: MenuItem): Boolean {
@@ -528,20 +527,22 @@ class LibraryFragment : BaseFragment(), MessageDialogFragment.Callbacks {
             requireActivity().onBackPressed()
     }
 
-    private fun updateSelectionMode() {
+    private fun updateSelectionMode(): Unit = with(binding) {
         val selectionSize = selectionTracker.selection.size()
         val enable = selectionSize > 0
 
         if (inSelectionMode != enable) {
-            toolbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
-                scrollFlags = if (enable) {
-                    val translation = appBarLayout.y.toInt()
-                    if (translation < 0) {
-                        rvGames.scrollBy(0, -translation)
+            if (viewLifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                toolbar.updateLayoutParams<AppBarLayout.LayoutParams> {
+                    scrollFlags = if (enable) {
+                        val translation = appBarLayout.y.toInt()
+                        if (translation < 0) {
+                            rvGames.scrollBy(0, -translation)
+                        }
+                        SCROLL_FLAG_ENTER_ALWAYS
+                    } else {
+                        SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS
                     }
-                    SCROLL_FLAG_ENTER_ALWAYS
-                } else {
-                    SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS
                 }
             }
 

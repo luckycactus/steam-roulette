@@ -1,23 +1,27 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette_options
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_roulette_options.*
-import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentRouletteOptionsBinding
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
 import ru.luckycactus.steamroulette.presentation.utils.extensions.showIfNotExist
 
 @AndroidEntryPoint
-class RouletteOptionsFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
+class RouletteOptionsFragment : BaseBottomSheetDialogFragment<FragmentRouletteOptionsBinding>(),
+    MessageDialogFragment.Callbacks {
     private val viewModel: RouletteOptionsViewModel by viewModels()
 
-    override val layoutResId = R.layout.fragment_roulette_options
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentRouletteOptionsBinding.inflate(inflater, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
+        super.onViewCreated(view, savedInstanceState)
 
         prefViewMaxPlaytime.setOnClickListener {
             dismiss()

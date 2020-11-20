@@ -1,29 +1,32 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_menu.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentMenuBinding
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
-import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
 import ru.luckycactus.steamroulette.presentation.utils.extensions.setDrawableColorFromAttribute
 import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
+import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 
 @AndroidEntryPoint
-class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Callbacks {
+class MenuFragment : BaseBottomSheetDialogFragment<FragmentMenuBinding>(),
+    MessageDialogFragment.Callbacks {
 
     private val viewModel: MenuViewModel by viewModels()
 
-    override val layoutResId: Int = R.layout.fragment_menu
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        FragmentMenuBinding.inflate(inflater, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         listOf(tvExit, tvAbout).forEach {
             it.setDrawableColorFromAttribute(R.attr.colorOnBackground)
         }
@@ -55,7 +58,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(), MessageDialogFragment.Call
 
         observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
-            GlideApp.with(this)
+            GlideApp.with(this@MenuFragment)
                 .load(it.avatarFull)
                 .placeholder(R.drawable.avatar_placeholder)
                 .signature(ObjectKey(viewModel.userSummaryLastSync))

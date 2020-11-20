@@ -13,12 +13,14 @@
         />
 
     <include
+        android:id="@+id/empty"
         layout="@layout/empty_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
 
     <include
+        android:id="@+id/progress"
         layout="@layout/progress"
         android:layout_width="match_parent"
         android:layout_height="48dp"

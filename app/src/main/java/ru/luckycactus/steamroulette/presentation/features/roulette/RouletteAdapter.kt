@@ -4,13 +4,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_game_card_stack.*
-import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.ItemGameCardStackBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
-import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import kotlin.math.absoluteValue
 
@@ -26,7 +24,7 @@ class RouletteAdapter constructor(
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RouletteViewHolder =
-        RouletteViewHolder(parent.inflate(R.layout.item_game_card_stack))
+        RouletteViewHolder(ItemGameCardStackBinding.inflate(parent.layoutInflater, parent, false))
 
     override fun getItemCount(): Int = items?.size ?: 0
 
@@ -35,9 +33,8 @@ class RouletteAdapter constructor(
     }
 
     inner class RouletteViewHolder(
-        override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView),
-        LayoutContainer,
+        val binding: ItemGameCardStackBinding
+    ) : RecyclerView.ViewHolder(binding.root),
         CardStackTouchHelperCallback.ViewHolderSwipeProgressListener,
         CardStackTouchHelperCallback.ViewHolderVisibleHintListener {
 
@@ -61,7 +58,11 @@ class RouletteAdapter constructor(
 
         init {
             itemView.setOnClickListener {
-                onGameClick(game, listOf(gameView), gameView.imageReady)
+                onGameClick(
+                    game,
+                    listOf(binding.gameView),
+                    binding.gameView.imageReady
+                )
             }
         }
 
@@ -70,7 +71,7 @@ class RouletteAdapter constructor(
                 this.palette = null
             this.game = game
             setVisibleHint(bindingAdapterPosition == 0)
-            gameView.setGame(
+            binding.gameView.setGame(
                 game,
                 false,
                 imageRequestListener,
@@ -80,12 +81,12 @@ class RouletteAdapter constructor(
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {
             val thresholdedProgress = (progress / threshold).coerceIn(-1f, 1f)
-            overlayHide.alpha = thresholdedProgress.coerceAtMost(0f).absoluteValue
+            binding.overlayHide.alpha = thresholdedProgress.coerceAtMost(0f).absoluteValue
             //itemView.overlayNext.alpha = thresholdedProgress.coerceAtLeast(0f).absoluteValue
         }
 
         override fun setVisibleHint(visible: Boolean) {
-            gameView.setUserVisibleHint(visible)
+            binding.gameView.setUserVisibleHint(visible)
         }
     }
 }

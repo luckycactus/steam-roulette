@@ -11,12 +11,11 @@ import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_library_game.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.ItemLibraryGameBinding
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
-import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
+import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class LibraryAdapter(
@@ -32,7 +31,7 @@ class LibraryAdapter(
     var tracker: SelectionTracker<Long>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder =
-        GameViewHolder(parent.inflate(R.layout.item_library_game))
+        GameViewHolder(ItemLibraryGameBinding.inflate(parent.layoutInflater, parent, false))
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
         val item = getItem(position)
@@ -49,32 +48,34 @@ class LibraryAdapter(
         item?.header?.appId?.toLong()
 
     inner class GameViewHolder(
-        override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+        private val binding: ItemLibraryGameBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
         var game: LibraryGame? = null
             private set
 
         init {
-            gameView.memoryCacheEnabled = true
-            itemView.setOnClickListener {
-                game?.let { game ->
-                    if (tracker == null || tracker?.selection?.size() == 0) {
-                        ViewCompat.setTransitionName(
-                            item_library_game,
-                            itemView.context.getString(
-                                R.string.cardview_shared_element_transition,
-                                game.header.appId
+            with(binding) {
+                gameView.memoryCacheEnabled = true
+                itemView.setOnClickListener {
+                    game?.let { game ->
+                        if (tracker == null || tracker?.selection?.size() == 0) {
+                            ViewCompat.setTransitionName(
+                                root,
+                                itemView.context.getString(
+                                    R.string.cardview_shared_element_transition,
+                                    game.header.appId
+                                )
                             )
-                        )
-                        onGameClick(game, listOf(item_library_game), gameView.imageReady)
+                            onGameClick(game, listOf(root), gameView.imageReady)
+                        }
                     }
                 }
             }
-
         }
 
-        fun bind(game: LibraryGame?, selected: Boolean) {
-            this.game = game
+        fun bind(game: LibraryGame?, selected: Boolean): Unit = with(binding) {
+            this@GameViewHolder.game = game
             gameView.setGame(
                 game?.header,
                 transitionGameId = null,

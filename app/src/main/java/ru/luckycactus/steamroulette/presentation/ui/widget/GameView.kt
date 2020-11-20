@@ -12,6 +12,7 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.ViewCompat
 import androidx.core.widget.TextViewCompat
@@ -27,8 +28,8 @@ import com.bumptech.glide.request.transition.NoTransition
 import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.request.transition.ViewAnimationFactory
 import com.google.android.material.card.MaterialCardView
-import kotlinx.android.synthetic.main.view_game_roulette.view.*
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.ViewGameBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.presentation.common.App
@@ -52,7 +53,6 @@ class GameView : MaterialCardView {
             )
         }
         get() = tvName.textSize
-
     var memoryCacheEnabled = false
 
     var imageReady = false
@@ -63,6 +63,10 @@ class GameView : MaterialCardView {
         set(value) {
             ivGame.colorFilter = value
         }
+
+    private lateinit var ivGame: ImageView
+    private lateinit var tvName: TextView
+    private lateinit var placeholder: View
 
     private var current: GameHeader? = null
     private var userVisibleHint = true
@@ -84,7 +88,11 @@ class GameView : MaterialCardView {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        LayoutInflater.from(context).inflate(R.layout.view_game_roulette, this, true)
+        val binding = ViewGameBinding.inflate(LayoutInflater.from(context), this)
+        ivGame = binding.ivGame
+        tvName = binding.tvName
+        placeholder = binding.placeholder
+
         setRippleColorResource(android.R.color.transparent)
         onApiAtLeast(21) {
             ivGame.clipToOutline = true
