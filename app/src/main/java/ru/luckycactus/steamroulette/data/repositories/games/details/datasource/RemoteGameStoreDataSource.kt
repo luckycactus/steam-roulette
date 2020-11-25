@@ -15,7 +15,7 @@ import javax.inject.Named
 class RemoteGameStoreDataSource @Inject constructor(
     private val steamStoreApiService: SteamStoreApiService,
     private val languageProvider: LanguageProvider,
-    @Named("api") private val moshi: Moshi
+    moshi: Moshi
 ) : GameStoreDataSource.Remote {
 
     private val gameStoreInfoResultAdapter =

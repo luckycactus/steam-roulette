@@ -7,10 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.stateIn
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -47,7 +48,8 @@ class MenuViewModel @ViewModelInject constructor(
         get() = userSummarySyncs.value
 
     private val _closeAction = MutableLiveData<Unit>()
-    private val userSummarySyncs = observeUserSummarySyncs().stateIn(viewModelScope, 0)
+    private val userSummarySyncs =
+        observeUserSummarySyncs().stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
     fun refreshProfile() {
         userViewModelDelegate.fetchUserAndGames()

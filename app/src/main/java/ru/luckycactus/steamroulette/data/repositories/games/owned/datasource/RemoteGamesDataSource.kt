@@ -12,11 +12,10 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPrivacyException
 import javax.inject.Inject
-import javax.inject.Named
 
 class RemoteGamesDataSource @Inject constructor(
     private val steamApiService: SteamApiService,
-    @Named("api") private val moshi: Moshi
+    moshi: Moshi
 ) : GamesDataSource.Remote {
 
     private val ownedGameAdapter =

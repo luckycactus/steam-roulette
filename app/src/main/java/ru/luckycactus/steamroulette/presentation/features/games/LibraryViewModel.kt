@@ -11,24 +11,23 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.domain.common.stateIn
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
-import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveLibraryFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveLibraryMaxHoursUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SaveLibraryFilterUseCase
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.library.GetLibraryScaleUseCase
 import ru.luckycactus.steamroulette.domain.library.SaveLibraryScaleUseCase
-import ru.luckycactus.steamroulette.domain.utils.newDebouncer
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getPlaytimeFilterShortDescription
 import ru.terrakok.cicerone.Router
+import kotlin.time.milliseconds
 
 class LibraryViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
@@ -62,8 +61,6 @@ class LibraryViewModel @ViewModelInject constructor(
 
     val onlyHidden = savedStateHandle.get<Boolean>(ARG_ONLY_HIDDEN) ?: false
 
-    private val searchQueryDebouncer = viewModelScope.newDebouncer()
-
     private val searchOpened = MutableStateFlow(false)
     private val searchQuery = MutableStateFlow<String?>(null)
 
@@ -81,10 +78,14 @@ class LibraryViewModel @ViewModelInject constructor(
         else
             observeLibraryFilter()
 
-        appliedGamesFilter = gamesFilterFlow.stateIn(viewModelScope, GamesFilter.withoutHidden())
+        appliedGamesFilter = gamesFilterFlow.stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            GamesFilter.withoutHidden()
+        )
 
         games = combine(
-            searchQuery,
+            searchQuery.debounce(300.milliseconds),
             appliedGamesFilter
         ) { query, filter ->
             GetLibraryPagingSourceUseCase.Params(filter, query)
@@ -188,9 +189,7 @@ class LibraryViewModel @ViewModelInject constructor(
     }
 
     fun onSearchQueryChanged(query: String?) {
-        searchQueryDebouncer.debounce(300) {
-            searchQuery.value = query?.trim()
-        }
+        searchQuery.value = query?.trim()
     }
 
     fun hide(selection: List<Int>, hide: Boolean) {

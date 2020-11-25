@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.di.common
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import ru.luckycactus.steamroulette.data.repositories.about.AboutRepositoryImpl
 import ru.luckycactus.steamroulette.data.repositories.about.datasource.AboutDataSource
 import ru.luckycactus.steamroulette.data.repositories.about.datasource.LocalAboutDataSource
@@ -42,7 +42,7 @@ import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
     @Binds

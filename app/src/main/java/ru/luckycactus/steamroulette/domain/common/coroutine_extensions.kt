@@ -1,8 +1,8 @@
 package ru.luckycactus.steamroulette.domain.common
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 
 fun <R> Flow<R>.chunkBuffer(bufferSize: Int): Flow<List<R>> = flow {
     var buffer: MutableList<R>? = null
@@ -25,12 +25,4 @@ fun <R> Flow<R>.chunkBuffer(bufferSize: Int): Flow<List<R>> = flow {
             emit(it)
         }
     }
-}
-
-fun <T> Flow<T>.stateIn(scope: CoroutineScope, default: T): StateFlow<T> {
-    val mutableStateFlow = MutableStateFlow(default)
-    scope.launch {
-        collect { mutableStateFlow.value = it }
-    }
-    return mutableStateFlow
 }

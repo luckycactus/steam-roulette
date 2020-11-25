@@ -25,10 +25,8 @@ enum class CommunityVisibleState(
     companion object {
         val map = values().associateBy { it.value }
 
-        @JvmStatic
-        fun fromInt(value: Int): CommunityVisibleState =
-            map[value]
-                ?: throw IllegalArgumentException("Illegal value of ${CommunityVisibleState::class.java.simpleName}")
+        fun fromInt(value: Int): CommunityVisibleState = map[value]
+            ?: throw IllegalArgumentException("Illegal value of ${CommunityVisibleState::class.java.simpleName}")
     }
 }
 
@@ -46,10 +44,8 @@ enum class PersonaState(
     companion object {
         val map = values().associateBy { it.value }
 
-        @JvmStatic
-        fun fromInt(value: Int): PersonaState =
-            map[value]
-                ?: throw java.lang.IllegalArgumentException("Illegal value of ${PersonaState::class.java.simpleName}")
+        fun fromInt(value: Int): PersonaState = map[value]
+            ?: throw java.lang.IllegalArgumentException("Illegal value of ${PersonaState::class.java.simpleName}")
     }
 }
 

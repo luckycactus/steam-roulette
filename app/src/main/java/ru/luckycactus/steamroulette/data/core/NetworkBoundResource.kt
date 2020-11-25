@@ -5,7 +5,7 @@ import androidx.room.withTransaction
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
@@ -90,7 +90,7 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
 
         companion object {
             @EntryPoint
-            @InstallIn(ApplicationComponent::class)
+            @InstallIn(SingletonComponent::class)
             interface FullCacheNBRCompanionEntryPoint {
                 fun cacheHelper(): CacheHelper
                 fun db(): AppDatabase

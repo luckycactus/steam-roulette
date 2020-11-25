@@ -9,7 +9,7 @@ import androidx.viewbinding.ViewBinding
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 
@@ -63,7 +63,7 @@ abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
     }
 
     @EntryPoint
-    @InstallIn(ApplicationComponent::class)
+    @InstallIn(SingletonComponent::class)
     interface BaseFragmentEntryPoint {
         fun analytics(): AnalyticsHelper
     }

@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,13 +22,13 @@ import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
-import ru.luckycactus.steamroulette.presentation.utils.glide.GlideCacheCleaner
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.FirebaseAnalyticsHelper
+import ru.luckycactus.steamroulette.presentation.utils.glide.GlideCacheCleaner
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class AppModule {
 
     @Binds
@@ -50,11 +50,10 @@ abstract class AppModule {
     abstract fun bindLanguageProvider(languageProviderImpl: LanguageProviderImpl): LanguageProvider
 
     companion object {
-
         @Singleton
         @Provides
         @AppCoScope
-        fun provideApplicationCoroutineScope() =
+        fun provideApplicationCoroutineScope(): CoroutineScope =
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
         @Provides
