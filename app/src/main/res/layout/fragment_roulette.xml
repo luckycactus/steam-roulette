@@ -97,7 +97,7 @@
 
     <include
         android:id="@+id/progress"
-        layout="@layout/fullscreen_progress"
+        layout="@layout/progress"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -108,6 +108,7 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/main_toolbar" />
+        layout="@layout/main_toolbar"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

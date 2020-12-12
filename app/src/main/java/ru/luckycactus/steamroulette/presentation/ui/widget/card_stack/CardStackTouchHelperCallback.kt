@@ -18,15 +18,7 @@ class CardStackTouchHelperCallback(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int = if (viewHolder.bindingAdapterPosition == 0) {
-        //doesn't work properly for some reason
-        makeFlag(
-            ItemTouchHelper.ACTION_STATE_IDLE,
-            ItemTouchHelper.LEFT or ItemTouchHelper.UP or
-                    ItemTouchHelper.RIGHT or ItemTouchHelper.DOWN
-        ) or makeFlag(
-            ItemTouchHelper.ACTION_STATE_SWIPE,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-        )
+        makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
     } else {
         makeMovementFlags(0, 0)
     }
