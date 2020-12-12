@@ -18,9 +18,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
     private val rouletteRepository: RouletteRepository
 ) : SuspendUseCase<GetOwnedGamesPagingListUseCase.Params, GetOwnedGamesPagingListUseCase.Result>() {
 
-    override suspend fun execute(params: Params): Result {
-        return Impl(params).execute()
-    }
+    override suspend fun execute(params: Params): Result = Impl(params).execute()
 
     private inner class Impl(
         private val params: Params
@@ -96,21 +94,12 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
 
         private fun setupLastTopGameUpdates(pagingList: PagingGameList) {
             params.pagingCoroutineScope.launch {
-                pagingList.observeItemsInsertions().collect {
-                    updateTopGame(pagingList)
-                }
-            }
-
-            params.pagingCoroutineScope.launch {
-                pagingList.observeItemsRemovals().collect {
-                    updateTopGame(pagingList)
+                pagingList.topGameFlow.collect {
+                    it?.let { rouletteRepository.setLastTopGameId(it.appId) }
                 }
             }
         }
 
-        private suspend fun updateTopGame(pagingList: PagingGameList) {
-            pagingList.peekTop()?.appId.let { rouletteRepository.setLastTopGameId(it) }
-        }
     }
 
     data class Params(

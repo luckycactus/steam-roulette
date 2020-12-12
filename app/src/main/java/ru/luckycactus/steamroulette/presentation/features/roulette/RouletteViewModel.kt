@@ -43,11 +43,11 @@ class RouletteViewModel @ViewModelInject constructor(
     val controlsAvailable: LiveData<Boolean>
         get() = _controlsAvailable.distinctUntilChanged()
 
-    private val _gamesPagingList = MutableLiveData<PagingGameList?>()
+    private val _gamesPagingList = MutableStateFlow<PagingGameList?>(null)
     private val _contentState = MediatorLiveData<ContentState>()
     private val _controlsAvailable = MutableLiveData(true)
     private val gamesFilter: LiveData<GamesFilter>
-    private val topGame = MutableLiveData<GameHeader?>()
+    private val topGame: Flow<GameHeader?>
 
     private var getPagingListJob: Job? = null
     private var allGamesShowed = false
@@ -88,22 +88,20 @@ class RouletteViewModel @ViewModelInject constructor(
             }
         }
 
-        games = _gamesPagingList.map { it?.list }
+        games = _gamesPagingList.map { it?.list }.asLiveData()
+
         itemsInserted = _gamesPagingList
-            .asFlow()
-            .flatMapLatest { it?.observeItemsInsertions() ?: emptyFlow() }
-            .onEach {
-                updateTopGame()
-            }
+            .flatMapLatest { it?.itemsInsertionsFlow ?: emptyFlow() }
 
         itemRemoved = _gamesPagingList
-            .asFlow()
-            .flatMapLatest { it?.observeItemsRemovals() ?: emptyFlow() }
-            .onEach {
-                updateTopGame()
-            }
+            .flatMapLatest { it?.itemRemovalsFlow ?: emptyFlow() }
 
-        observe(topGame, this::onTopGameUpdated)
+        topGame = _gamesPagingList
+            .flatMapLatest { it?.topGameFlow ?: emptyFlow() }
+
+        viewModelScope.launch {
+            topGame.collect { onTopGameUpdated(it) }
+        }
     }
 
     fun onGameSwiped(hide: Boolean) {
@@ -145,12 +143,6 @@ class RouletteViewModel @ViewModelInject constructor(
     fun onHiddenChanged(hidden: Boolean) {
         viewVisible = !hidden
         syncRouletteState()
-    }
-
-    private fun updateTopGame() {
-        val newTopGame = _gamesPagingList.value?.peekTop()
-        if (topGame.value != newTopGame)
-            topGame.value = newTopGame
     }
 
     private fun onTopGameUpdated(game: GameHeader?) {

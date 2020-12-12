@@ -1,5 +1,7 @@
 package ru.luckycactus.steamroulette.di.common
 
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -7,8 +9,6 @@ import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
@@ -25,7 +25,6 @@ import ru.luckycactus.steamroulette.domain.core.SystemClock
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.FirebaseAnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideCacheCleaner
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -50,11 +49,10 @@ abstract class AppModule {
     abstract fun bindLanguageProvider(languageProviderImpl: LanguageProviderImpl): LanguageProvider
 
     companion object {
-        @Singleton
         @Provides
         @AppCoScope
         fun provideApplicationCoroutineScope(): CoroutineScope =
-            CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+            ProcessLifecycleOwner.get().lifecycleScope
 
         @Provides
         @Reusable
