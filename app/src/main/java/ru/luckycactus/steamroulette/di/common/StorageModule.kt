@@ -11,6 +11,9 @@ import dagger.hilt.components.SingletonComponent
 import ru.luckycactus.steamroulette.data.core.CacheHelper
 import ru.luckycactus.steamroulette.data.core.RoomCacheHelper
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
+import ru.luckycactus.steamroulette.data.local.db.CacheInfoDao
+import ru.luckycactus.steamroulette.data.local.db.OwnedGameDao
+import ru.luckycactus.steamroulette.data.local.db.UserSummaryDao
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -74,6 +77,15 @@ abstract class StorageModule {
         @Provides
         fun provideSteamRouletteDb(@ApplicationContext appContext: Context) =
             AppDatabase.buildDatabase(appContext)
+
+        @Provides
+        fun provideCacheInfoDao(db: AppDatabase): CacheInfoDao = db.cacheInfoDao()
+
+        @Provides
+        fun provideOwnedGameDao(db: AppDatabase): OwnedGameDao = db.ownedGamesDao()
+
+        @Provides
+        fun provideUserSummaryDao(db: AppDatabase): UserSummaryDao = db.userSummaryDao()
 
         @Provides
         fun provideAssets(@ApplicationContext context: Context): AssetManager = context.assets

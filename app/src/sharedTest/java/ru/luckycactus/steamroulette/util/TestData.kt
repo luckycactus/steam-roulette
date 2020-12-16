@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.test.util
+package ru.luckycactus.steamroulette.util
 
 import okhttp3.MediaType.Companion.toMediaType
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
@@ -8,9 +8,9 @@ import ru.luckycactus.steamroulette.domain.common.SteamId
 object TestData {
 
     val jsonMediaType = "application/json".toMediaType()
-    val gabenSteamId = SteamId.fromSteam64(76561197960287930L)
+    val testSteamId = SteamId.fromSteam64(76561197960287930L)
     val userSummaryEntityDummy = UserSummaryEntity(
-        gabenSteamId.as64(),
+        testSteamId.as64(),
         1,
         0,
         "",

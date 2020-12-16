@@ -5,8 +5,8 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.spyk
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -45,7 +45,7 @@ class PagingGameListImplTest {
         val expectedIds = mutableListOf<Int>()
 
         testScope.launch {
-            pagingGameList.itemsInsertedChannel.consumeEach {
+            pagingGameList.itemsInsertionsFlow.collect {
                 expectedIds.addAll(it.first, ids.subList(currentIndex, currentIndex + it.second))
                 currentIndex += it.second
                 assertEquals(expectedIds, pagingGameList.list.map { it.appId })
@@ -53,7 +53,7 @@ class PagingGameListImplTest {
         }
 
         testScope.launch {
-            pagingGameList.itemRemovedChannel.consumeEach {
+            pagingGameList.itemRemovalsFlow.collect {
                 expectedIds.removeAt(it)
                 assertEquals(expectedIds, pagingGameList.list.map { it.appId })
             }
@@ -103,7 +103,7 @@ class PagingGameListImplTest {
         )
 
         testScope.launch {
-            pagingGameList.itemsInsertedChannel.consumeEach {
+            pagingGameList.itemsInsertionsFlow.collect {
                 val (index, count) = it
                 if (index + count < 10) {
                     assertEquals(fetchDistance, count)
@@ -133,7 +133,7 @@ class PagingGameListImplTest {
         )
 
         testScope.launch {
-            pagingGameList.itemsInsertedChannel.consumeEach {
+            pagingGameList.itemsInsertionsFlow.collect {
                 val (_, count) = it
                 if (pagingGameList.list.size - count > 0) {
                     //not initial fetch

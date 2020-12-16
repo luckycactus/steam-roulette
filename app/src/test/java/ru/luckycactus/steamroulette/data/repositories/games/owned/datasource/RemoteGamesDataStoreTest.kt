@@ -1,6 +1,8 @@
 package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
@@ -14,29 +16,28 @@ import ru.luckycactus.steamroulette.data.net.api.SteamApiService
 import ru.luckycactus.steamroulette.data.net.api.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.di.common.MoshiModule
-import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPrivacyException
-import ru.luckycactus.steamroulette.test.util.TestData
-import ru.luckycactus.steamroulette.test.util.fakes.FixedLanguageProvider
-import ru.luckycactus.steamroulette.test.util.getJson
-import ru.luckycactus.steamroulette.test.util.testCommonNetworkExceptions
+import ru.luckycactus.steamroulette.util.TestData
+import ru.luckycactus.steamroulette.util.getJson
+import ru.luckycactus.steamroulette.util.testCommonNetworkExceptions
 
 
 class RemoteGamesDataSourceTest {
 
-    private lateinit var steamApiServiceMock: SteamApiService
-    private lateinit var steamStoreApiServiceMock: SteamStoreApiService
-    private lateinit var remoteGamesDataSource: RemoteGamesDataSource
+    @MockK
+    lateinit var steamApiServiceMock: SteamApiService
+
+    @MockK
+    lateinit var steamStoreApiServiceMock: SteamStoreApiService
+
+    lateinit var remoteGamesDataSource: RemoteGamesDataSource
 
     @Before
     fun setup() {
-        steamApiServiceMock = mockk()
-        steamStoreApiServiceMock = mockk()
+        MockKAnnotations.init(this)
         remoteGamesDataSource = RemoteGamesDataSource(
             steamApiServiceMock,
-            steamStoreApiServiceMock,
-            MoshiModule.provideMoshiForApi(),
-            FixedLanguageProvider()
+            MoshiModule.provideMoshi()
         )
     }
 
@@ -45,9 +46,10 @@ class RemoteGamesDataSourceTest {
         coEvery {
             steamApiServiceMock.getOwnedGames(any(), any(), any())
         } returns getJson("json/games/owned_games_response_success.json").toResponseBody()
-        val dataFlow = remoteGamesDataSource.getAll(TestData.gabenSteamId)
-        val actualData = dataFlow.toList()
-        assertEquals(TestData.ownedGamesData, actualData)
+
+        val actual = remoteGamesDataSource.getAll(TestData.testSteamId).toList()
+
+        assertEquals(TestData.ownedGamesData, actual)
     }
 
     @Test(expected = GetOwnedGamesPrivacyException::class)
@@ -56,14 +58,15 @@ class RemoteGamesDataSourceTest {
             coEvery {
                 steamApiServiceMock.getOwnedGames(any(), any(), any())
             } returns getJson("json/games/owned_games_response_empty.json").toResponseBody()
-            remoteGamesDataSource.getAll(TestData.gabenSteamId).collect()
+
+            remoteGamesDataSource.getAll(TestData.testSteamId).collect()
         }
 
     @Test
     fun `getOwnedGames() should throw correct common network exceptions`() = runBlockingTest {
         testCommonNetworkExceptions(
             { steamApiServiceMock.getOwnedGames(any(), any(), any()) },
-            { remoteGamesDataSource.getAll(TestData.gabenSteamId) }
+            { remoteGamesDataSource.getAll(TestData.testSteamId) }
         )
     }
 
@@ -73,31 +76,7 @@ class RemoteGamesDataSourceTest {
             steamApiServiceMock.getOwnedGames(any(), any(), any())
         } returns getJson("json/games/owned_games_response_no_games.json").toResponseBody()
 
-        val data = remoteGamesDataSource.getAll(TestData.gabenSteamId).toList()
+        val data = remoteGamesDataSource.getAll(TestData.testSteamId).toList()
         assertEquals(emptyList<OwnedGameEntity>(), data)
-    }
-
-    @Test
-    fun `getGameStoreInfo() should successfully return data for game`() = runBlocking {
-        coEvery {
-            steamStoreApiServiceMock.getGamesStoreInfo(listOf(252950), any())
-        } returns getJson("json/games/game_store_info_response_success.json").toResponseBody()
-        val data = remoteGamesDataSource.getGameStoreInfo(252950)
-    }
-
-    @Test(expected = GetGameStoreInfoException::class)
-    fun `getGameStoreInfo() should throw GetGameStoreInfoException`() = runBlocking {
-        coEvery {
-            steamStoreApiServiceMock.getGamesStoreInfo(listOf(961440), any())
-        } returns getJson("json/games/game_store_info_response_error.json").toResponseBody()
-        val data = remoteGamesDataSource.getGameStoreInfo(961440)
-    }
-
-    @Test
-    fun `getGameStoreInfo() should throw correct common network exceptions`() = runBlockingTest {
-        testCommonNetworkExceptions(
-            { steamStoreApiServiceMock.getGamesStoreInfo(any(), any()) },
-            { remoteGamesDataSource.getGameStoreInfo(1) }
-        )
     }
 }

@@ -1,49 +1,52 @@
 package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 
-import androidx.room.withTransaction
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.slot
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
-import ru.luckycactus.steamroulette.test.util.TestData
-import ru.luckycactus.steamroulette.test.util.TestData.gabenSteamId
-import ru.luckycactus.steamroulette.test.util.fakes.NaiveGamesVerifier
+import ru.luckycactus.steamroulette.test.rules.RoomTransactionsMockRule
+import ru.luckycactus.steamroulette.util.TestData
+import ru.luckycactus.steamroulette.util.TestData.testSteamId
+import ru.luckycactus.steamroulette.util.fakes.NaiveGamesVerifier
 
 class LocalGamesDataSourceInsertBufferTest {
 
-    private lateinit var dbMock: AppDatabase
-    private lateinit var localGamesDataSource: LocalGamesDataSource
+    @get:Rule
+    val dbTransactionsMockRule = RoomTransactionsMockRule()
+
+    @RelaxedMockK
+    lateinit var dbMock: AppDatabase
+    lateinit var localGamesDataSource: LocalGamesDataSource
 
     @Before
     fun setup() {
-        dbMock = mockk(relaxed = true)
+        MockKAnnotations.init(this)
+
         localGamesDataSource = LocalGamesDataSource(dbMock, NaiveGamesVerifier.Factory())
-
-        mockkStatic(
-            "androidx.room.RoomDatabaseKt"
-        )
-    }
-
-    @After
-    fun tearDown() {
-        unmockkStatic(
-            "androidx.room.RoomDatabaseKt"
-        )
     }
 
     @Test
     fun `updateOwnedGames() should buffer games and insert them by chunks`() = runBlocking {
         val totalGames = 2000
-        coEvery { dbMock.ownedGamesDao().getIds(any()) } returns emptyList()
-        coEvery { dbMock.ownedGamesDao().getIds(any(), hidden = true) } returns emptyList()
-        coEvery { dbMock.ownedGamesDao().getIds(any(), shown = true) } returns emptyList()
-        val gamesSlot = slot<List<OwnedGameRoomEntity>>()
+        val manyGamesFlow = flow {
+            for (id in 1..totalGames) {
+                emit(TestData.ownedGameEntityDummy/*.copy(appId = id)*/)
+            }
+        }
+
+        coEvery { dbMock.ownedGamesDao().getAllMetaData(any()) } returns emptyList()
+
         var gamesInserted = 0
+        val gamesSlot = slot<List<OwnedGameRoomEntity>>()
         coEvery {
             dbMock.ownedGamesDao().insert(capture(gamesSlot))
         } answers {
@@ -51,22 +54,14 @@ class LocalGamesDataSourceInsertBufferTest {
             emptyList()
         }
 
-        val manyGamesFlow = flow {
-            for (id in 1..totalGames) {
-                emit(TestData.ownedGameEntityDummy/*.copy(appId = id)*/)
-            }
-        }
+        dbTransactionsMockRule.mockTransactions(dbMock)
 
-        coEvery { dbMock.withTransaction(captureLambda<suspend () -> Any>()) } coAnswers {
-            lambda<suspend () -> Any>().captured.invoke()
-        }
-
-        localGamesDataSource.update(gabenSteamId, manyGamesFlow)
+        localGamesDataSource.update(testSteamId, manyGamesFlow)
 
         assertEquals(totalGames, gamesInserted)
-        coVerify(atLeast = 2, atMost = 10) {
+        // insert at least 100 but not all games at once
+        coVerify(atLeast = 2, atMost = totalGames / 100 + 1) {
             dbMock.ownedGamesDao().insert(any() as List<OwnedGameRoomEntity>)
         }
     }
-
 }

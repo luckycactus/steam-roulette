@@ -32,6 +32,10 @@ abstract class AppDatabase : RoomDatabase() {
                     Migration3to4()
                 )
                 .build()
+
+        fun buildTestDatabase(context: Context): AppDatabase =
+            Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+                .build()
     }
 }
 

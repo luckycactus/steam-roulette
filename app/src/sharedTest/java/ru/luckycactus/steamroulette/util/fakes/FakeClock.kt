@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.test.util.fakes
+package ru.luckycactus.steamroulette.util.fakes
 
 import ru.luckycactus.steamroulette.domain.core.Clock
 import kotlin.time.Duration
@@ -15,5 +15,9 @@ class FakeClock(
 
     fun set(millis: Long) {
         current = millis
+    }
+
+    fun setToSystem() {
+        set(System.currentTimeMillis())
     }
 }

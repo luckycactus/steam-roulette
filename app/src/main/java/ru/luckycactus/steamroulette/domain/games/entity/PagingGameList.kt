@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 
 interface PagingGameList {
-    val list: List<GameHeader>
+    val ids: List<Int>
     val itemsInsertionsFlow: Flow<Pair<Int, Int>>
+    val list: List<GameHeader>
     val itemRemovalsFlow: Flow<Int>
     val topGameFlow: Flow<GameHeader?>
 
@@ -36,6 +37,8 @@ class PagingGameListImpl constructor(
     private val fetchDistance: Int,
     coroutineScope: CoroutineScope
 ) : PagingGameList {
+
+    override val ids: List<Int> = gameIds
 
     override val list: List<GameHeader>
         get() = _list

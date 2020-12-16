@@ -10,7 +10,7 @@ class ObserveLibraryFilterUseCase @Inject constructor(
 ): UseCase<Unit, Flow<GamesFilter>>() {
 
     override fun execute(params: Unit): Flow<GamesFilter> {
-        return filterRepository.observeFilter(GamesFilter.withoutHidden())
+        return filterRepository.observeFilter(GamesFilter.onlyVisible())
     }
 
 }

@@ -12,10 +12,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.test.util.TestData
-import ru.luckycactus.steamroulette.test.util.TestData.gabenSteamId
-import ru.luckycactus.steamroulette.test.util.fakes.NaiveGamesVerifier
+import ru.luckycactus.steamroulette.util.TestData
+import ru.luckycactus.steamroulette.util.TestData.testSteamId
+import ru.luckycactus.steamroulette.util.fakes.NaiveGamesVerifier
 
 @RunWith(AndroidJUnit4::class)
 class LocalGamesDataSourceTest {
@@ -46,35 +47,35 @@ class LocalGamesDataSourceTest {
     @Test
     fun `updateOwnedGames() should simply insert games into empty table and then return them`() =
         runBlocking {
-            localGamesDataSource.update(gabenSteamId, TestData.ownedGamesData.asFlow())
-            val actualData = localGamesDataSource.getAll(gabenSteamId).sortedBy { it.appId }
+            localGamesDataSource.update(testSteamId, TestData.ownedGamesData.asFlow())
+            val actualData = localGamesDataSource.getAll(testSteamId).sortedBy { it.appId }
             val expectedData = TestData.ownedGamesData.sortedBy { it.appId }
             assertEquals(expectedData, actualData)
         }
 
     @Test
     fun `test games hiding`() = runBlocking {
-        localGamesDataSource.update(gabenSteamId, TestData.ownedGamesData.asFlow())
+        localGamesDataSource.update(testSteamId, TestData.ownedGamesData.asFlow())
         val ids = TestData.ownedGamesData.map { it.appId }.sorted()
 
         assertEquals(ids, getAllVisibleSortedIds())
 
-        localGamesDataSource.setHidden(gabenSteamId, ids.drop(1), true)
+        localGamesDataSource.setHidden(testSteamId, ids.drop(1), true)
         assertEquals(ids.subList(0, 1), getAllVisibleSortedIds())
 
-        localGamesDataSource.setHidden(gabenSteamId, ids.drop(1), false)
+        localGamesDataSource.setHidden(testSteamId, ids.drop(1), false)
         assertEquals(ids, getAllVisibleSortedIds())
     }
 
     @Test
     fun `updateOwnedGames() should preserve existing games hidden state`() = runBlocking {
-        localGamesDataSource.update(gabenSteamId, TestData.ownedGamesData.asFlow())
+        localGamesDataSource.update(testSteamId, TestData.ownedGamesData.asFlow())
         val ids = TestData.ownedGamesData.map { it.appId }.sorted()
 
-        localGamesDataSource.setHidden(gabenSteamId, ids.take(1), true)
-        localGamesDataSource.update(gabenSteamId, TestData.ownedGamesDataUpdated.asFlow())
+        localGamesDataSource.setHidden(testSteamId, ids.take(1), true)
+        localGamesDataSource.update(testSteamId, TestData.ownedGamesDataUpdated.asFlow())
 
-        val actualData = localGamesDataSource.getAll(gabenSteamId).sortedBy { it.appId }
+        val actualData = localGamesDataSource.getAll(testSteamId).sortedBy { it.appId }
         val expectedData = TestData.ownedGamesDataUpdated.sortedBy { it.appId }
         assertEquals(expectedData, actualData)
         assertEquals(ids.drop(1), getAllVisibleSortedIds())
@@ -82,32 +83,34 @@ class LocalGamesDataSourceTest {
 
     @Test
     fun `updateOwnedGames() should preserve existing games shown state`() = runBlocking {
-        localGamesDataSource.update(gabenSteamId, TestData.ownedGamesData.asFlow())
+        localGamesDataSource.update(testSteamId, TestData.ownedGamesData.asFlow())
         val ids = TestData.ownedGamesData.map { it.appId }.sorted()
 
-        localGamesDataSource.setShown(gabenSteamId, ids.take(1), true)
-        localGamesDataSource.update(gabenSteamId, TestData.ownedGamesDataUpdated.asFlow())
+        localGamesDataSource.setShown(testSteamId, ids.take(1), true)
+        localGamesDataSource.update(testSteamId, TestData.ownedGamesDataUpdated.asFlow())
 
-        val actualData = localGamesDataSource.getAll(gabenSteamId).sortedBy { it.appId }
+        val actualData = localGamesDataSource.getAll(testSteamId).sortedBy { it.appId }
         val expectedData = TestData.ownedGamesDataUpdated.sortedBy { it.appId }
         assertEquals(expectedData, actualData)
         assertEquals(ids.take(1), getAllVisibleSortedIds(shown = true))
     }
 
     private suspend fun getAllVisibleSortedIds(shown: Boolean = false) =
-        db.ownedGamesDao().getIds(gabenSteamId.as64(), shown = shown, hidden = false).sorted()
+        db.ownedGamesDao().getIds(
+            testSteamId.as64(),
+            GamesFilter(shown = shown, hidden = false),
+            false
+        ).sorted()
 
     @Test
     fun `getVisibleOwnedGamesIds() should properly filter output by playtime`() = runBlocking {
-        localGamesDataSource.update(gabenSteamId, TestData.ownedGamesData.asFlow())
+        localGamesDataSource.update(testSteamId, TestData.ownedGamesData.asFlow())
 
         assertEquals(
             TestData.ownedGamesData.map { it.appId }.sorted(),
             localGamesDataSource.getIds(
-                gabenSteamId,
-                shown = false,
-                hidden = false,
-                filter = PlaytimeFilter.All
+                testSteamId,
+                GamesFilter(shown = false, hidden = false, playtime = PlaytimeFilter.All)
             ).sorted()
         )
 
@@ -118,10 +121,8 @@ class LocalGamesDataSourceTest {
                 .sorted()
                 .toList(),
             localGamesDataSource.getIds(
-                gabenSteamId,
-                shown = false,
-                hidden = false,
-                filter = PlaytimeFilter.NotPlayed
+                testSteamId,
+                GamesFilter(shown = false, hidden = false, playtime = PlaytimeFilter.NotPlayed)
             ).sorted()
         )
 
@@ -132,17 +133,15 @@ class LocalGamesDataSourceTest {
                 .sorted()
                 .toList(),
             localGamesDataSource.getIds(
-                gabenSteamId,
-                shown = false,
-                hidden = false,
-                filter = PlaytimeFilter.Limited(1)
+                testSteamId,
+                GamesFilter(shown = false, hidden = false, playtime = PlaytimeFilter.Limited(1))
             ).sorted()
         )
     }
 
     @Test
     fun `getVisibleOwnedGamesIds() should properly filter output by shown state`() = runBlocking {
-        localGamesDataSource.update(gabenSteamId, TestData.ownedGamesData.asFlow())
+        localGamesDataSource.update(testSteamId, TestData.ownedGamesData.asFlow())
 
         val filteredIds = TestData.ownedGamesData.asSequence()
             .filter { it.playtimeForever < 60 }
@@ -153,42 +152,34 @@ class LocalGamesDataSourceTest {
         assertEquals(
             filteredIds,
             localGamesDataSource.getIds(
-                gabenSteamId,
-                shown = false,
-                hidden = false,
-                filter = PlaytimeFilter.Limited(1)
+                testSteamId,
+                GamesFilter(shown = false, hidden = false, playtime = PlaytimeFilter.Limited(1))
             ).sorted()
         )
 
         assertEquals(
             emptyList<Int>(),
             localGamesDataSource.getIds(
-                gabenSteamId,
-                shown = true,
-                hidden = false,
-                filter = PlaytimeFilter.Limited(1)
+                testSteamId,
+                GamesFilter(shown = true, hidden = false, playtime = PlaytimeFilter.Limited(1))
             ).sorted()
         )
 
-        localGamesDataSource.setShown(gabenSteamId, filteredIds.take(1), true)
+        localGamesDataSource.setShown(testSteamId, filteredIds.take(1), true)
 
         assertEquals(
             filteredIds.drop(1),
             localGamesDataSource.getIds(
-                gabenSteamId,
-                shown = false,
-                hidden = false,
-                filter = PlaytimeFilter.Limited(1)
+                testSteamId,
+                GamesFilter(shown = false, hidden = false, playtime = PlaytimeFilter.Limited(1))
             ).sorted()
         )
 
         assertEquals(
             filteredIds.take(1),
             localGamesDataSource.getIds(
-                gabenSteamId,
-                shown = true,
-                hidden = false,
-                filter = PlaytimeFilter.Limited(1)
+                testSteamId,
+                GamesFilter(shown = true, hidden = false, playtime = PlaytimeFilter.Limited(1))
             ).sorted()
         )
     }

@@ -4,7 +4,7 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.ToJson
 import org.json.JSONException
-import ru.luckycactus.steamroulette.data.repositories.games.details.models.RequiredAgeEntity
+import ru.luckycactus.steamroulette.data.net.RequiredAge
 import javax.inject.Inject
 
 /**
@@ -12,19 +12,18 @@ import javax.inject.Inject
  */
 class RequiredAgeMoshiAdapter @Inject constructor() {
     @FromJson
-    fun fromJson(jsonReader: JsonReader): RequiredAgeEntity? {
+    @RequiredAge
+    fun fromJson(jsonReader: JsonReader): Int? {
         return when (jsonReader.peek()) {
             JsonReader.Token.STRING -> {
-                jsonReader.nextString().toIntOrNull()?.let {
-                    RequiredAgeEntity(it)
-                }
+                jsonReader.nextString().toIntOrNull()
             }
             JsonReader.Token.NUMBER -> {
                 jsonReader.nextInt()
                 null
             }
             JsonReader.Token.NULL -> {
-                jsonReader.nextNull<RequiredAgeEntity>()
+                jsonReader.nextNull<Int>()
                 null
             }
             else -> throw JSONException("Cannot parse requiredAge")
@@ -32,7 +31,7 @@ class RequiredAgeMoshiAdapter @Inject constructor() {
     }
 
     @ToJson
-    fun toJson(requiredAge: RequiredAgeEntity): String {
+    fun toJson(@RequiredAge requiredAge: Int?): String {
         throw UnsupportedOperationException()
     }
 }

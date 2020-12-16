@@ -32,6 +32,11 @@ class SharedPreferencesExtensionsTest {
         prefs = context.getSharedPreferences("shared_prefs_extensions_test", Context.MODE_PRIVATE)
     }
 
+    @After
+    fun tearDown() {
+        prefs.edit { clear() }
+    }
+
     @Test
     fun testIntPreference() = testPreference(
         prefs.int(key, -1),
@@ -121,10 +126,5 @@ class SharedPreferencesExtensionsTest {
                 job.cancel()
             }
         }
-    }
-
-    @After
-    fun tearDown() {
-        prefs.edit { clear() }
     }
 }

@@ -1,69 +1,146 @@
 package ru.luckycactus.steamroulette.domain.games
 
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.impl.annotations.MockK
+import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.core.Is
 import org.hamcrest.core.IsInstanceOf
-import org.junit.Test
 import org.junit.Assert.*
-import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.test.util.TestData
+import org.junit.Before
+import org.junit.Test
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 
 class GetOwnedGamesPagingListUseCaseTest {
 
-    private val testScope = TestCoroutineScope()
+    val testScope = TestCoroutineScope()
 
-    @Test
-    fun overall() = testScope.runBlockingTest {
-        val shownIds = listOf(1, 3, 5)
-        val notShownIds = listOf(2, 4, 6)
+    @MockK
+    lateinit var gamesRepoMock: GamesRepository
 
-        val gamesRepositoryMock = mockk<GamesRepository>()
-        coEvery { gamesRepositoryMock.isUserHasGames(any()) } returns true
-        coEvery {
-            gamesRepositoryMock.getOwnedGamesIds(shown = true, hidden = false, playtimeFilter = any())
-        } returns shownIds
-        coEvery {
-            gamesRepositoryMock.getOwnedGamesIds(shown = false, hidden = false, playtimeFilter = any())
-        } returns notShownIds
+    @MockK
+    lateinit var rouletteRepoMock: RouletteRepository
 
-        val getOwnedGamesPagingListUseCase = GetOwnedGamesPagingListUseCase(gamesRepositoryMock)
-        val result = getOwnedGamesPagingListUseCase.invoke(
-            GetOwnedGamesPagingListUseCase.Params(
-                TestData.gabenSteamId,
-                PlaytimeFilter.All,
-                testScope
-            )
-        ) as GetOwnedGamesPagingListUseCase.Result.Success
+    lateinit var getOwnedGamesPagingListUseCase: GetOwnedGamesPagingListUseCase
 
-        assertEquals((shownIds + notShownIds).sorted(), result.pagingList.gameIds.sorted())
-        assertTrue(shownIds.contains(result.firstShownGameId))
+    lateinit var shownIds: List<Int>
+    lateinit var notShownIds: List<Int>
+    var lastTopGameId: Int = 0
 
-        val i = result.pagingList.gameIds.indexOf(result.firstShownGameId)
-        assertEquals(notShownIds, result.pagingList.gameIds.take(i).sorted())
-        assertEquals(shownIds, result.pagingList.gameIds.drop(i).sorted())
+    @Before
+    fun setup() {
+        MockKAnnotations.init(this)
+
+        getOwnedGamesPagingListUseCase = GetOwnedGamesPagingListUseCase(
+            gamesRepoMock,
+            rouletteRepoMock
+        )
     }
 
     @Test
-    fun `no games`() = testScope.runBlockingTest {
-        val gamesRepositoryMock = mockk<GamesRepository>()
-        coEvery { gamesRepositoryMock.isUserHasGames(any()) } returns false
+    fun `firstShownGameId should split ids list onto not shown ids and shown ids`() =
+        testScope.runBlockingTest {
+            initWithDefaultIds()
+            lastTopGameId = shownIds.last()
+            setupMockForSuccessResult()
 
-        val getOwnedGamesPagingListUseCase = GetOwnedGamesPagingListUseCase(gamesRepositoryMock)
+            val (pagingList, firstShownGameId) = runUseCaseAndRequireSuccess()
+            val ids = pagingList.ids.drop(1) // first element contains last top game
+            val i = ids.indexOf(firstShownGameId)
+            assertTrue(i >= 0)
+            assertEquals(
+                notShownIds,
+                ids.take(i).sorted()
+            )
+            assertEquals(
+                shownIds,
+                (ids.drop(i) + lastTopGameId).sorted()
+            )
+        }
+
+    @Test
+    fun `ids should be shuffled`() = runBlocking {
+        initWithDefaultIds()
+        lastTopGameId = 0
+        setupMockForSuccessResult()
+
+        val (pagingList, firstShownGameId) = runUseCaseAndRequireSuccess()
+
+        val i = pagingList.ids.indexOf(firstShownGameId)
+        val notShownIdsSubList = pagingList.ids.take(i)
+        val shownIdsSubList = pagingList.ids.drop(i)
+
+        // there is tiny chance of shuffled list being equal to original one,
+        // but chance of it is so negligible that we can ignore it
+        assertNotEquals(notShownIds, notShownIdsSubList)
+        assertNotEquals(shownIds, shownIdsSubList)
+    }
+
+    @Test
+    fun `ids list should start with last top game id`() = runBlocking {
+        initWithDefaultIds()
+        lastTopGameId = shownIds.last()
+        setupMockForSuccessResult()
+
+        repeat(5) {
+            val (pagingList, _) = runUseCaseAndRequireSuccess()
+            if (pagingList.ids.first() != lastTopGameId)
+                fail()
+        }
+    }
+
+    @Test
+    fun `ids list should not contain last top game id if it is absent in initial lists`() =
+        runBlocking {
+            initWithDefaultIds()
+            lastTopGameId = 100
+            setupMockForSuccessResult()
+
+            val (pagingList, _) = runUseCaseAndRequireSuccess()
+            assertFalse(pagingList.ids.contains(lastTopGameId))
+        }
+
+    @Test
+    fun `no games`() = testScope.runBlockingTest {
+        coEvery { gamesRepoMock.isUserHasGames() } returns false
 
         assertThat(
             getOwnedGamesPagingListUseCase.invoke(
                 GetOwnedGamesPagingListUseCase.Params(
-                    TestData.gabenSteamId,
-                    PlaytimeFilter.All,
+                    GamesFilter.all(),
                     testScope
                 )
             ),
             IsInstanceOf(GetOwnedGamesPagingListUseCase.Result.Fail.NoOwnedGames::class.java)
         )
     }
+
+    private fun initWithDefaultIds() {
+        shownIds = generateSequence(1) { it + 2 }.take(10).toList()
+        notShownIds = generateSequence(2) { it + 2 }.take(10).toList()
+    }
+
+    private fun setupMockForSuccessResult() {
+        coEvery { gamesRepoMock.isUserHasGames() } returns true
+
+        val gamesFilterSlot = slot<GamesFilter>()
+        coEvery {
+            gamesRepoMock.getOwnedGamesIdsMutable(gamesFilter = capture(gamesFilterSlot), any())
+        } answers {
+            if (gamesFilterSlot.captured.shown == true)
+                shownIds.toMutableList()
+            else notShownIds.toMutableList()
+        }
+
+        coEvery { rouletteRepoMock.getLastTopGameId() } returns lastTopGameId
+    }
+
+    private suspend fun runUseCaseAndRequireSuccess() = getOwnedGamesPagingListUseCase.invoke(
+        GetOwnedGamesPagingListUseCase.Params(
+            GamesFilter.all(),
+            testScope
+        )
+    ) as GetOwnedGamesPagingListUseCase.Result.Success
 }

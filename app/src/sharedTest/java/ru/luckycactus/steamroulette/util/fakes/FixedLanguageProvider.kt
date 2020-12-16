@@ -1,12 +1,11 @@
-package ru.luckycactus.steamroulette.test.util.fakes
+package ru.luckycactus.steamroulette.util.fakes
 
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 
 class FixedLanguageProvider(
     private val storeApiLang: String = "en",
     private val webApiLang: String = "english"
-) :
-    LanguageProvider {
+) : LanguageProvider {
     override fun getLanguageForStoreApi(): String = storeApiLang
 
     override fun getLanguageForWebApi(): String = webApiLang

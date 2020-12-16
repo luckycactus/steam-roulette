@@ -1,14 +1,10 @@
-package ru.luckycactus.steamroulette.test.util
+package ru.luckycactus.steamroulette.util
 
 import io.mockk.MockKMatcherScope
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import retrofit2.HttpException
@@ -20,21 +16,6 @@ import java.io.IOException
 fun getJson(path: String): String {
     val file = File("src/test/resources/$path")
     return String(file.readBytes())
-}
-
-fun <T> Flow<T>.checkValues(
-    expectedValues: List<T>,
-    testBody: suspend TestCoroutineScope.() -> Unit
-) = runBlockingTest {
-    val actualValues = mutableListOf<T>()
-    val job = launch {
-        collect { actualValues.add(it) }
-    }
-
-    testBody()
-
-    assertEquals(expectedValues, actualValues)
-    job.cancel()
 }
 
 suspend fun <T> testCommonNetworkExceptions(
@@ -62,5 +43,17 @@ suspend fun <T> testCommonNetworkExceptions(
         block()
         fail("RuntimeException expected")
     } catch (e: RuntimeException) {
+    }
+}
+
+inline fun <T> CoroutineScope.testFlow(
+    flow: Flow<T>,
+    block: FlowTestHelper<T>.() -> Unit
+) {
+    val helper = FlowTestHelper(flow, this)
+    try {
+        block.invoke(helper)
+    } finally {
+        helper.close()
     }
 }

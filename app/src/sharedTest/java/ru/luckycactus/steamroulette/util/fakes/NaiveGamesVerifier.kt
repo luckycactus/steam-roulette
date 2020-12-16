@@ -1,4 +1,4 @@
-package ru.luckycactus.steamroulette.test.util.fakes
+package ru.luckycactus.steamroulette.util.fakes
 
 import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesVerifier
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity

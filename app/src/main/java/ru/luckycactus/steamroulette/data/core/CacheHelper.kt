@@ -1,7 +1,8 @@
 package ru.luckycactus.steamroulette.data.core
 
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.data.local.db.AppDatabase
+import kotlinx.coroutines.flow.distinctUntilChanged
+import ru.luckycactus.steamroulette.data.local.db.CacheInfoDao
 import ru.luckycactus.steamroulette.data.local.db.CacheInfoRoomEntity
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.Clock
@@ -23,10 +24,9 @@ interface CacheHelper {
 
 @Singleton
 class RoomCacheHelper @Inject constructor(
-    db: AppDatabase,
+    private val cacheInfoDao: CacheInfoDao,
     private val clock: Clock
 ) : CacheHelper {
-    private val cacheInfoDao = db.cacheInfoDao()
 
     override suspend fun isCached(key: String) = cacheInfoDao.getTimestamp(key) > 0L
 
@@ -67,5 +67,6 @@ class RoomCacheHelper @Inject constructor(
         cacheInfoDao.clear()
     }
 
-    override fun observeCacheUpdates(key: String): Flow<Long> = cacheInfoDao.observeTimestamp(key)
+    override fun observeCacheUpdates(key: String): Flow<Long> =
+        cacheInfoDao.observeTimestamp(key).distinctUntilChanged()
 }

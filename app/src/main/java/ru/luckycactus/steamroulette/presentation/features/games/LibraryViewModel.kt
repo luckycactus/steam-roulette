@@ -81,7 +81,7 @@ class LibraryViewModel @ViewModelInject constructor(
         appliedGamesFilter = gamesFilterFlow.stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
-            GamesFilter.withoutHidden()
+            GamesFilter.onlyVisible()
         )
 
         games = combine(

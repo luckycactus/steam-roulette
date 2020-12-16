@@ -13,7 +13,7 @@ data class GameStoreInfoResult(
 data class GameStoreInfoEntity(
     @Json(name = "name") val name: String,
     @Json(name = "steam_appid") val appId: Int,
-    @Json(name = "required_age") val requiredAge: RequiredAgeEntity?,
+    @Json(name = "required_age") val requiredAge: Int?,
     //@Json(name="controller_support") val controllerSupport: String,
     @Json(name = "detailed_description") val detailedDescription: String,
     @Json(name = "about_the_game") val aboutTheGame: String,
@@ -36,10 +36,6 @@ data class GameStoreInfoEntity(
     @Json(name = "release_date") val releaseDate: ReleaseDateInfoEntity?
     //@Json(name="content_descriptors") val contentDescriptors: ContentDescriptorsEntity,
     //@Json(name="background") val background: String
-)
-
-data class RequiredAgeEntity(
-    val age: Int
 )
 
 @JsonClass(generateAdapter = true)

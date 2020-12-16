@@ -10,14 +10,16 @@ import ru.luckycactus.steamroulette.data.repositories.games.details.models.Syste
 
 class SystemRequirementsMoshiAdapterTest {
 
-    private val adapter = Moshi.Builder().add(SystemRequirementsMoshiAdapter()).build()
+    private val adapter = Moshi.Builder()
+        .add(SystemRequirementsMoshiAdapter())
+        .build()
         .adapter(Pojo::class.java)
 
     @Test
     fun testNormal() {
         val json = """{"pc_requirements":{"minimum":"minimum","recommended":"recommended"}}"""
-        val pojo = adapter.fromJson(json)
-        val reqs = pojo!!.reqs!!
+        val pojo = adapter.fromJson(json)!!
+        val reqs = pojo.reqs!!
         assertEquals(reqs.minimum, "minimum")
         assertEquals(reqs.recommended, "recommended")
     }
@@ -25,15 +27,15 @@ class SystemRequirementsMoshiAdapterTest {
     @Test
     fun testNull() {
         val json = """{"pc_requirements":null}"""
-        val pojo = adapter.fromJson(json)
-        assertNull(pojo!!.reqs)
+        val pojo = adapter.fromJson(json)!!
+        assertNull(pojo.reqs)
     }
 
     @Test
     fun testEmptyArray() {
         val json = """{"pc_requirements":[]}"""
-        val pojo = adapter.fromJson(json)
-        assertNull(pojo!!.reqs)
+        val pojo = adapter.fromJson(json)!!
+        assertNull(pojo.reqs)
     }
 
     @JsonClass(generateAdapter = true)

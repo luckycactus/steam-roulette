@@ -18,7 +18,7 @@ class GameStoreInfoEntityMapper @Inject constructor(
         return GameStoreInfo(
             from.name,
             from.appId,
-            from.requiredAge?.age,
+            from.requiredAge,
             from.detailedDescription,
             from.aboutTheGame,
             from.shortDescription,
