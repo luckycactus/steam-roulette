@@ -11,8 +11,8 @@ import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 
 interface PagingGameList {
     val ids: List<Int>
-    val itemsInsertionsFlow: Flow<Pair<Int, Int>>
     val list: List<GameHeader>
+    val itemsInsertionsFlow: Flow<Pair<Int, Int>>
     val itemRemovalsFlow: Flow<Int>
     val topGameFlow: Flow<GameHeader?>
 
