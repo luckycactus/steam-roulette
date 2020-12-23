@@ -128,12 +128,10 @@ class MainViewModel @ViewModelInject constructor(
 
     override fun fetchUserAndGames() {
         userScope!!.launch {
-            supervisorScope {
-                val userDeferred = userScope!!.async { fetchUserSummary(true) }
-                val gamesState = fetchGames(true).also { handleGamesFetchError(it) }
-                if (gamesState !is RequestState.Error) {
-                    handleUserFetchError(userDeferred.await())
-                }
+            val userDeferred = userScope!!.async { fetchUserSummary(true) }
+            val gamesState = fetchGames(true).also { handleGamesFetchError(it) }
+            if (gamesState !is RequestState.Error) {
+                handleUserFetchError(userDeferred.await())
             }
         }
     }

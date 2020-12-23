@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.utils.extensions
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.domain.core.Event
 
 val Fragment.viewLifecycleScope: LifecycleCoroutineScope

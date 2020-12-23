@@ -10,8 +10,8 @@ import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.data.core.intFlow
 import ru.luckycactus.steamroulette.data.core.stringFlow
 import ru.luckycactus.steamroulette.domain.common.SteamId
-import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.GamesFilterRepository
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import ru.luckycactus.steamroulette.presentation.utils.AppUtils.prefKey

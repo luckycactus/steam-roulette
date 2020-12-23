@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -107,20 +107,20 @@ class SharedPreferencesExtensionsTest {
                     if (index > 0) {
                         pref = value
                     }
-                    assertEquals(pref, value)
-                    assertEquals(actualFlowValues, values.subList(0, index + 1))
-                    assertEquals(actualLiveDataValues, values.subList(0, index + 1))
+                    assertThat(pref).isEqualTo(value)
+                    assertThat(actualFlowValues).isEqualTo(values.subList(0, index + 1))
+                    assertThat(actualLiveDataValues).isEqualTo(values.subList(0, index + 1))
                 }
 
                 //check flow and livedata don't emit duplicates
                 pref = values.last()
-                assertEquals(actualFlowValues, values)
-                assertEquals(actualLiveDataValues, values)
+                assertThat(actualFlowValues).isEqualTo(values)
+                assertThat(actualLiveDataValues).isEqualTo(values)
 
                 prefs.edit { remove(key) }
-                assertEquals(pref, values[0])
-                assertEquals(actualFlowValues.last(), values[0])
-                assertEquals(actualLiveDataValues.last(), values[0])
+                assertThat(pref).isEqualTo(values[0])
+                assertThat(actualFlowValues.last()).isEqualTo(values[0])
+                assertThat(actualLiveDataValues.last()).isEqualTo(values[0])
             } finally {
                 liveData.removeObserver(liveDataObserver)
                 job.cancel()

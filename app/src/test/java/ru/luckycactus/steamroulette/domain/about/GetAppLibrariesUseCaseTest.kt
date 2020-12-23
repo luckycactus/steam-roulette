@@ -5,7 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +19,7 @@ class GetAppLibrariesUseCaseTest {
     private lateinit var getAppLibrariesUseCase: GetAppLibrariesUseCase
 
     @Before
-    fun setUp() {
+    fun setup() {
         val moshi = Moshi.Builder().build()
         val assetManager = ApplicationProvider.getApplicationContext<Application>().assets
         val aboutDataSource = LocalAboutDataSource(moshi, assetManager)
@@ -28,9 +28,9 @@ class GetAppLibrariesUseCaseTest {
     }
 
     @Test
-    fun `should return not empty libraries list`() = runBlocking {
+    fun `when invoke - should return not empty result`(): Unit = runBlocking {
         val libraries = getAppLibrariesUseCase.invoke()
-        assertTrue(libraries.isNotEmpty())
+        assertThat(libraries.isNotEmpty()).isTrue()
     }
 
 }

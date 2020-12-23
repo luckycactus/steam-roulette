@@ -57,7 +57,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                     gameIds,
                     5,
                     20,
-                    params.pagingCoroutineScope
+                    params.parentScope
                 )
 
                 setupLastTopGameUpdates(pagingList)
@@ -93,7 +93,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
         }
 
         private fun setupLastTopGameUpdates(pagingList: PagingGameList) {
-            params.pagingCoroutineScope.launch {
+            pagingList.coroutineScope.launch {
                 pagingList.topGameFlow.collect {
                     it?.let { rouletteRepository.setLastTopGameId(it.appId) }
                 }
@@ -104,7 +104,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
 
     data class Params(
         val filter: GamesFilter,
-        val pagingCoroutineScope: CoroutineScope
+        val parentScope: CoroutineScope
     )
 
     sealed class Result {

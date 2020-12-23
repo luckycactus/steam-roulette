@@ -7,7 +7,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.slot
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -35,7 +35,7 @@ class LocalGamesDataSourceInsertBufferTest {
     }
 
     @Test
-    fun `updateOwnedGames() should buffer games and insert them by chunks`() = runBlocking {
+    fun `when update - should buffer games and insert them in db by chunks`() = runBlocking {
         val totalGames = 2000
         val manyGamesFlow = flow {
             for (id in 1..totalGames) {
@@ -58,7 +58,7 @@ class LocalGamesDataSourceInsertBufferTest {
 
         localGamesDataSource.update(testSteamId, manyGamesFlow)
 
-        assertEquals(totalGames, gamesInserted)
+        assertThat(gamesInserted).isEqualTo(totalGames)
         // insert at least 100 but not all games at once
         coVerify(atLeast = 2, atMost = totalGames / 100 + 1) {
             dbMock.ownedGamesDao().insert(any() as List<OwnedGameRoomEntity>)

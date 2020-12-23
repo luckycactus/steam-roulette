@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import ru.terrakok.cicerone.Cicerone

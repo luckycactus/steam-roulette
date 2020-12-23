@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,32 +40,32 @@ class RoomCacheHelperTest {
     }
 
     @Test
-    fun cache_should_not_be_cached_and_valid_before_insert() {
+    fun while_before_insert__should_not_be_cached_and_valid() {
         checkCacheState(shouldBeCached = false, shouldBeValid = false)
     }
 
     @Test
-    fun cache_should_be_valid_if_just_inserted() = runBlocking {
+    fun while_just_inserted__should_be_valid(): Unit = runBlocking {
         cacheHelper.setCachedNow(key)
         checkCacheState(shouldBeCached = true, shouldBeValid = true)
     }
 
     @Test
-    fun cache_should_be_valid_right_before_window_end() = runBlocking {
+    fun while_right_before_window_end__should_be_valid(): Unit = runBlocking {
         cacheHelper.setCachedNow(key)
         clock.advanceTimeBy(window - 1.milliseconds)
         checkCacheState(shouldBeCached = true, shouldBeValid = true)
     }
 
     @Test
-    fun cache_should_be_invalid_after_window_end() = runBlocking {
+    fun while_right_after_window_end__should_be_invalid(): Unit = runBlocking {
         cacheHelper.setCachedNow(key)
         clock.advanceTimeBy(window)
         checkCacheState(shouldBeCached = true, shouldBeValid = false)
     }
 
     @Test
-    fun cache_should_be_invalid_and_not_exist_after_remove() = runBlocking {
+    fun when_remove__should_be_invalid_and_not_exist(): Unit = runBlocking {
         cacheHelper.setCachedNow(key)
         cacheHelper.remove(key)
         checkCacheState(shouldBeCached = false, shouldBeValid = false)
@@ -73,34 +73,32 @@ class RoomCacheHelperTest {
 
     private fun checkCacheState(shouldBeCached: Boolean, shouldBeValid: Boolean) = runBlocking {
         checkConstantCases()
-        Assert.assertEquals(cacheHelper.isCached(key), shouldBeCached)
-        Assert.assertEquals(cacheHelper.isExpired(key, window), !shouldBeValid)
-        Assert.assertEquals(
-            cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window),
-            !shouldBeValid
-        )
-        Assert.assertEquals(
-            cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window),
-            shouldBeValid
-        )
+        assertThat(cacheHelper.isCached(key)).isEqualTo(shouldBeCached)
+        assertThat(cacheHelper.isExpired(key, window)).isEqualTo(!shouldBeValid)
+        assertThat(
+            cacheHelper.shouldUpdate(CachePolicy.CacheOrRemote, key, window)
+        ).isEqualTo(!shouldBeValid)
+        assertThat(
+            cacheHelper.shouldUseCache(CachePolicy.CacheOrRemote, key, window)
+        ).isEqualTo(shouldBeValid)
     }
 
     private suspend fun checkConstantCases() {
-        Assert.assertFalse(cacheHelper.shouldUpdate(CachePolicy.Cache, key, window))
-        Assert.assertTrue(cacheHelper.shouldUpdate(CachePolicy.Remote, key, window))
-        Assert.assertTrue(cacheHelper.shouldUseCache(CachePolicy.Cache, key, window))
-        Assert.assertFalse(cacheHelper.shouldUseCache(CachePolicy.Remote, key, window))
+        assertThat(cacheHelper.shouldUpdate(CachePolicy.Cache, key, window)).isFalse()
+        assertThat(cacheHelper.shouldUpdate(CachePolicy.Remote, key, window)).isTrue()
+        assertThat(cacheHelper.shouldUseCache(CachePolicy.Cache, key, window)).isTrue()
+        assertThat(cacheHelper.shouldUseCache(CachePolicy.Remote, key, window)).isFalse()
     }
 
     @Test
-    fun observeCacheUpdates_should_emit_zero_if_not_cached() = runBlocking {
+    fun when_observeCacheUpdates__while_not_cached__should_emit_zero() = runBlocking {
         testFlow(cacheHelper.observeCacheUpdates(key)) {
             assertNextValue(0L)
         }
     }
 
     @Test
-    fun observeCacheUpdates_should_emit_value_after_cache_insert() = runBlocking {
+    fun when_observeCacheUpdates__while_after_cache_insert__should_emit_value() = runBlocking {
         testFlow(cacheHelper.observeCacheUpdates(key)) {
             nextValue()
             cacheHelper.setCachedNow(key)
@@ -110,7 +108,7 @@ class RoomCacheHelperTest {
 
 
     @Test
-    fun observeCacheUpdates_should_emit_distinct_values_until_changed() = runBlocking {
+    fun when_observeCacheUpdates__should_emit_distinct_values_until_changed() = runBlocking {
         testFlow(cacheHelper.observeCacheUpdates(key)) {
             nextValue()
 
@@ -128,7 +126,7 @@ class RoomCacheHelperTest {
     }
 
     @Test
-    fun observeCacheUpdates_should_emit_zero_if_cache_removed() = runBlocking {
+    fun when_observeCacheUpdates__while_cache_removed__should_emit_zero() = runBlocking {
         testFlow(cacheHelper.observeCacheUpdates(key)) {
             nextValue()
 

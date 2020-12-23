@@ -10,7 +10,6 @@ import ru.luckycactus.steamroulette.data.repositories.games.details.models.GameS
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import javax.inject.Inject
-import javax.inject.Named
 
 class RemoteGameStoreDataSource @Inject constructor(
     private val steamStoreApiService: SteamStoreApiService,

@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.presentation.features.about
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.asLiveData
-import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import ru.luckycactus.steamroulette.presentation.navigation.Screens

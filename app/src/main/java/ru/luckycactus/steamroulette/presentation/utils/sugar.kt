@@ -1,10 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.utils
 
 import android.os.Build
-import androidx.viewbinding.ViewBinding
 import ru.luckycactus.steamroulette.BuildConfig
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 
 fun <T> lazyNonThreadSafe(initializer: () -> T): Lazy<T> =

@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
+import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 
 interface GamesDataSource {
 

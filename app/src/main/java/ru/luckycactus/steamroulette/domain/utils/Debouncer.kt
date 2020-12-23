@@ -1,6 +1,9 @@
 package ru.luckycactus.steamroulette.domain.utils
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class Debouncer(
     private val coroutineScope: CoroutineScope

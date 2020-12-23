@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.repositories.games.owned.mapper
 
-import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameMetaData
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
+import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameMetaData
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameRoomEntity
 import ru.luckycactus.steamroulette.domain.core.Mapper
 

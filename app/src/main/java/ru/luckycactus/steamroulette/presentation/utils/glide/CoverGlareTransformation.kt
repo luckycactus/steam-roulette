@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.utils.glide
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.core.graphics.applyCanvas
 import com.bumptech.glide.load.Key

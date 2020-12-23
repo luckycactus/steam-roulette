@@ -12,7 +12,6 @@ import ru.luckycactus.steamroulette.databinding.*
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
-import ru.luckycactus.steamroulette.presentation.utils.extensions.inflate
 import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 
 class GameDetailsAdapter constructor(

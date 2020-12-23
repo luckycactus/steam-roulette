@@ -7,8 +7,9 @@ import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.core.IsInstanceOf
-import org.junit.Assert.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.SoftAssertions.assertSoftly
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
@@ -40,28 +41,25 @@ class GetOwnedGamesPagingListUseCaseTest {
     }
 
     @Test
-    fun `firstShownGameId should split ids list onto not shown ids and shown ids`() =
+    fun `when invoke - firstShownGameId should split ids list onto not shown ids and shown ids`() =
         testScope.runBlockingTest {
             initWithDefaultIds()
             lastTopGameId = shownIds.last()
             setupMockForSuccessResult()
 
             val (pagingList, firstShownGameId) = runUseCaseAndRequireSuccess()
+
             val ids = pagingList.ids.drop(1) // first element contains last top game
             val i = ids.indexOf(firstShownGameId)
-            assertTrue(i >= 0)
-            assertEquals(
-                notShownIds,
-                ids.take(i).sorted()
-            )
-            assertEquals(
-                shownIds,
-                (ids.drop(i) + lastTopGameId).sorted()
-            )
+            assertSoftly {
+                it.assertThat(i).isGreaterThan(0)
+                it.assertThat(ids.take(i)).hasSameElementsAs(notShownIds)
+                it.assertThat(ids.drop(i) + lastTopGameId).hasSameElementsAs(shownIds)
+            }
         }
 
     @Test
-    fun `ids should be shuffled`() = runBlocking {
+    fun `when invoke - ids should be shuffled`() = runBlocking {
         initWithDefaultIds()
         lastTopGameId = 0
         setupMockForSuccessResult()
@@ -74,48 +72,53 @@ class GetOwnedGamesPagingListUseCaseTest {
 
         // there is tiny chance of shuffled list being equal to original one,
         // but chance of it is so negligible that we can ignore it
-        assertNotEquals(notShownIds, notShownIdsSubList)
-        assertNotEquals(shownIds, shownIdsSubList)
-    }
-
-    @Test
-    fun `ids list should start with last top game id`() = runBlocking {
-        initWithDefaultIds()
-        lastTopGameId = shownIds.last()
-        setupMockForSuccessResult()
-
-        repeat(5) {
-            val (pagingList, _) = runUseCaseAndRequireSuccess()
-            if (pagingList.ids.first() != lastTopGameId)
-                fail()
+        assertSoftly {
+            it.assertThat(notShownIdsSubList).isNotEqualTo(notShownIds)
+            it.assertThat(shownIdsSubList).isNotEqualTo(shownIds)
         }
     }
 
     @Test
-    fun `ids list should not contain last top game id if it is absent in initial lists`() =
+    fun `when invoke - while lastTopGameId is containing in games list - ids list should start with lastTopGameId`() =
         runBlocking {
             initWithDefaultIds()
-            lastTopGameId = 100
+            lastTopGameId = shownIds.last()
             setupMockForSuccessResult()
 
-            val (pagingList, _) = runUseCaseAndRequireSuccess()
-            assertFalse(pagingList.ids.contains(lastTopGameId))
+            repeat(5) {
+                val (pagingList, _) = runUseCaseAndRequireSuccess()
+                if (pagingList.ids.first() != lastTopGameId)
+                    fail()
+            }
         }
 
     @Test
-    fun `no games`() = testScope.runBlockingTest {
-        coEvery { gamesRepoMock.isUserHasGames() } returns false
+    fun `when invoke - while lastTopGameId is absent in games list - ids list should not contain lastTopGameId`(): Unit =
+        runBlocking {
+            runBlocking {
+                initWithDefaultIds()
+                lastTopGameId = 100
+                setupMockForSuccessResult()
 
-        assertThat(
-            getOwnedGamesPagingListUseCase.invoke(
+                val (pagingList, _) = runUseCaseAndRequireSuccess()
+                assertThat(pagingList.ids).doesNotContain(lastTopGameId)
+            }
+        }
+
+    @Test
+    fun `when invoke - while user has no games - should return failure`() =
+        testScope.runBlockingTest {
+            coEvery { gamesRepoMock.isUserHasGames() } returns false
+
+            val result = getOwnedGamesPagingListUseCase.invoke(
                 GetOwnedGamesPagingListUseCase.Params(
                     GamesFilter.all(),
                     testScope
                 )
-            ),
-            IsInstanceOf(GetOwnedGamesPagingListUseCase.Result.Fail.NoOwnedGames::class.java)
-        )
-    }
+            )
+
+            assertThat(result).isInstanceOf(GetOwnedGamesPagingListUseCase.Result.Fail.NoOwnedGames::class.java)
+        }
 
     private fun initWithDefaultIds() {
         shownIds = generateSequence(1) { it + 2 }.take(10).toList()
@@ -137,10 +140,11 @@ class GetOwnedGamesPagingListUseCaseTest {
         coEvery { rouletteRepoMock.getLastTopGameId() } returns lastTopGameId
     }
 
-    private suspend fun runUseCaseAndRequireSuccess() = getOwnedGamesPagingListUseCase.invoke(
-        GetOwnedGamesPagingListUseCase.Params(
-            GamesFilter.all(),
-            testScope
-        )
-    ) as GetOwnedGamesPagingListUseCase.Result.Success
+    private suspend fun runUseCaseAndRequireSuccess() =
+        getOwnedGamesPagingListUseCase.invoke(
+            GetOwnedGamesPagingListUseCase.Params(
+                GamesFilter.all(),
+                testScope
+            )
+        ) as GetOwnedGamesPagingListUseCase.Result.Success
 }

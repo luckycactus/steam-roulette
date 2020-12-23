@@ -15,6 +15,7 @@ interface PagingGameList {
     val itemsInsertionsFlow: Flow<Pair<Int, Int>>
     val itemRemovalsFlow: Flow<Int>
     val topGameFlow: Flow<GameHeader?>
+    val coroutineScope: CoroutineScope
 
     fun isEmpty(): Boolean
     fun isFinished(): Boolean
@@ -35,7 +36,7 @@ class PagingGameListImpl constructor(
     private val gameIds: List<Int>,
     private val minSize: Int,
     private val fetchDistance: Int,
-    coroutineScope: CoroutineScope
+    parentScope: CoroutineScope
 ) : PagingGameList {
 
     override val ids: List<Int> = gameIds
@@ -47,7 +48,7 @@ class PagingGameListImpl constructor(
     override val itemRemovalsFlow by lazyNonThreadSafe { itemRemovedChannel.asFlow() }
     override val topGameFlow: Flow<GameHeader?>
 
-    private val coroutineScope = coroutineScope + Job(coroutineScope.coroutineContext[Job])
+    override val coroutineScope = parentScope + Job(parentScope.coroutineContext[Job])
     private val itemsInsertedChannel = BroadcastChannel<Pair<Int, Int>>(Channel.BUFFERED)
     private val itemRemovedChannel = BroadcastChannel<Int>(Channel.BUFFERED)
 
@@ -59,9 +60,15 @@ class PagingGameListImpl constructor(
     private var state = State.NotStarted
 
     init {
-        topGameFlow = combine(itemRemovalsFlow, itemsInsertionsFlow) { _, _ ->
-            _list.firstOrNull()
-        }.distinctUntilChanged().shareIn(coroutineScope, SharingStarted.WhileSubscribed())
+        topGameFlow = merge(
+            itemRemovalsFlow.map { },
+            itemsInsertionsFlow.map { }
+        ).map { _list.firstOrNull() }
+            .distinctUntilChanged()
+            .shareIn(coroutineScope, SharingStarted.Eagerly)
+
+        if (isFinished())
+            closeChannels()
     }
 
     override fun start() {
@@ -73,15 +80,19 @@ class PagingGameListImpl constructor(
 
     override fun isEmpty() = gameIds.isEmpty()
 
-    override fun isFinished() = isEmpty() || (_list.isEmpty() && nextFetchIndex >= gameIds.size)
+    override fun isFinished() = _list.isEmpty() && nextFetchIndex >= gameIds.size
 
     @MainThread
     override fun removeTop(): GameHeader {
         checkState(State.Started)
+        check(_list.isNotEmpty())
+
         val removedItem = _list.removeAt(0)
         itemRemovedChannel.offer(0)
         if (_list.size <= minSize && !fetching && nextFetchIndex < gameIds.size)
             fetch()
+        if (isFinished())
+            closeChannels()
         return removedItem
     }
 
@@ -93,10 +104,8 @@ class PagingGameListImpl constructor(
 
     @MainThread
     override fun close() {
-        checkState(State.NotStarted, State.Started)
         coroutineScope.cancel()
-        itemRemovedChannel.close()
-        itemsInsertedChannel.close()
+        closeChannels()
         state = State.Closed
     }
 
@@ -138,6 +147,11 @@ class PagingGameListImpl constructor(
             }
             throw IllegalStateException(message)
         }
+    }
+
+    private fun closeChannels() {
+        itemRemovedChannel.close()
+        itemsInsertedChannel.close()
     }
 
     private enum class State {

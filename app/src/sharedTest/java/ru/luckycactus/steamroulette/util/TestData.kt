@@ -25,6 +25,9 @@ object TestData {
         1, "", 0, 0, "", "", true
     )
 
+    /**
+     * parsed data of json/games/owned_games_response_success.json
+     */
     val ownedGamesData = listOf(
         OwnedGameEntity(
             17460,
@@ -66,8 +69,8 @@ object TestData {
             true
         ),
         OwnedGameEntity(
-            30,
-            "Day of Defeat",
+            31,
+            "Half-Life",
             400,
             400,
             "aadc0ce51ff6ba2042d633f8ec033b0de62091d0",

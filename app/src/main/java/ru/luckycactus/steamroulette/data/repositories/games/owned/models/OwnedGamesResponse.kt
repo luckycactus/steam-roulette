@@ -18,7 +18,7 @@ data class OwnedGameEntity(
     @Json(name="name") val name: String?,
     @Json(name="playtime_2weeks") val playtime2Weeks: Int = 0,
     @Json(name="playtime_forever") val playtimeForever: Int = 0,
-    @Json(name="img_icon_url") val iconUrl: String?,
-    @Json(name="img_logo_url") val logoUrl: String?,
-    @Json(name="has_community_visible_stats") val hasCommunityVisibleStats: Boolean?
+    @Json(name="img_icon_url") val iconUrl: String? = null,
+    @Json(name="img_logo_url") val logoUrl: String? = null,
+    @Json(name="has_community_visible_stats") val hasCommunityVisibleStats: Boolean? = null
 )

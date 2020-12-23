@@ -5,7 +5,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.days
 import kotlin.time.milliseconds
-import kotlin.time.minutes
 
 @Singleton
 class AppReviewManager @Inject constructor(

@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.user
 
 import androidx.lifecycle.LiveData
-import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.RequestState
 
 interface UserViewModelDelegate {
