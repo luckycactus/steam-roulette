@@ -44,9 +44,9 @@ class RouletteViewModel @ViewModelInject constructor(
         get() = _controlsAvailable.distinctUntilChanged()
 
     private val _gamesPagingList = MutableStateFlow<PagingGameList?>(null)
-    private val _contentState = MediatorLiveData<ContentState>()
+    private val _contentState = MutableLiveData<ContentState>()
     private val _controlsAvailable = MutableLiveData(true)
-    private val gamesFilter: LiveData<GamesFilter>
+    private val gamesFilter: StateFlow<GamesFilter?>
     private val topGame: Flow<GameHeader?>
 
     private var getPagingListJob: Job? = null
@@ -62,33 +62,31 @@ class RouletteViewModel @ViewModelInject constructor(
 
     init {
         gamesFilter = observeRouletteFilter()
-            .asLiveData()
-            .distinctUntilChanged()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-        _contentState.addSource(userViewModelDelegate.fetchGamesState) {
-            rouletteStateInvalidated = true
-            syncRouletteState()
-        }
-
-        _contentState.addSource(gamesFilter) {
-            rouletteStateInvalidated = true
-            syncRouletteState()
-        }
-
-        val hiddenGamesCountLiveData = observeOwnedGamesCount(GamesFilter.onlyHidden())
-            .asLiveData()
-            .distinctUntilChanged()
-
-        _contentState.addSource(hiddenGamesCountLiveData) {
-            if (gameWasHidden) {
-                gameWasHidden = false
-            } else {
-                rouletteStateInvalidated = true
-                syncRouletteState()
+        viewModelScope.launch {
+            gamesFilter.collect {
+                invalidateRouletteState()
             }
         }
+        viewModelScope.launch {
+            userViewModelDelegate.fetchGamesState.collect {
+                invalidateRouletteState()
+            }
+        }
+        viewModelScope.launch {
+            observeOwnedGamesCount(GamesFilter.onlyHidden())
+                .distinctUntilChanged()
+                .collect {
+                    if (gameWasHidden) {
+                        gameWasHidden = false
+                    } else {
+                        invalidateRouletteState()
+                    }
+                }
+        }
 
-        games = _gamesPagingList.map { it?.list }.asLiveData()
+        games = _gamesPagingList.map { it?.data }.asLiveData()
 
         itemsInserted = _gamesPagingList
             .flatMapLatest { it?.itemsInsertionsFlow ?: emptyFlow() }
@@ -129,8 +127,7 @@ class RouletteViewModel @ViewModelInject constructor(
 
     fun onRetryClick() {
         if (allGamesShowed) {
-            rouletteStateInvalidated = true
-            syncRouletteState()
+            invalidateRouletteState()
         } else {
             userViewModelDelegate.fetchGames()
         }
@@ -162,9 +159,17 @@ class RouletteViewModel @ViewModelInject constructor(
         appScope.launch {
             gameWasHidden = true
             setGamesHidden(
-                SetGamesHiddenUseCase.Params(listOf(game.appId), true)
+                SetGamesHiddenUseCase.Params(
+                    listOf(game.appId),
+                    true
+                )
             )
         }
+    }
+
+    private fun invalidateRouletteState() {
+        rouletteStateInvalidated = true
+        syncRouletteState()
     }
 
     private fun syncRouletteState() {
@@ -184,7 +189,7 @@ class RouletteViewModel @ViewModelInject constructor(
         allGamesShowed = false
         rouletteStateInvalidated = false
 
-        if (fetchGamesState == null || filter == null)
+        if (filter == null)
             return
 
         if (fetchGamesState == RequestState.Loading) {

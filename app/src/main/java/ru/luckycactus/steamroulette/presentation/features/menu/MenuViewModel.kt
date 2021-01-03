@@ -8,6 +8,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -70,9 +71,12 @@ class MenuViewModel @ViewModelInject constructor(
                 resourceManager.getString(R.string.games_last_sync, ago)
             }.asLiveData()
 
-        refreshProfileState = userViewModelDelegate.fetchUserSummaryState.combine(
+        refreshProfileState = combine(
+            userViewModelDelegate.fetchUserSummaryState,
             userViewModelDelegate.fetchGamesState
-        ) { a, b -> a || (b is RequestState.Loading) }
+        ) { userState, gamesState ->
+            userState || (gamesState is RequestState.Loading)
+        }.asLiveData()
     }
 
     fun onAboutClick() {

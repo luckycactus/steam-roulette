@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
@@ -93,27 +94,29 @@ class GameDetailsViewModel @ViewModelInject constructor(
         gameStoreInfo?.appId != null && gameStoreInfo?.appId != initialGameHeader.appId
 
     private fun loadInfo(tryCache: Boolean) {
+        renderLoading()
         viewModelScope.launch {
-            var gameStoreInfo = if (tryCache)
-                getGameStoreInfo.getFromCache(initialGameHeader.appId)
-            else null
-            if (gameStoreInfo == null) {
-                renderLoading()
-
-                val result =
-                    getGameStoreInfo(GetGameStoreInfoUseCase.Params(initialGameHeader.appId))
-                when (result) {
-                    is GetGameStoreInfoUseCase.Result.Success -> {
-                        gameStoreInfo = result.data
-                    }
-                    is GetGameStoreInfoUseCase.Result.Fail -> renderError(result)
-                }.exhaustive
+            val cachePolicy = if (tryCache) {
+                CachePolicy.CacheOrRemote
+            } else {
+                CachePolicy.Remote
             }
-            gameStoreInfo?.let {
-                this@GameDetailsViewModel.gameStoreInfo = gameStoreInfo
-                _gameDetails.value = gameDetailsUiModelMapper.mapFrom(it)
-            }
+            val result = getGameStoreInfo(
+                GetGameStoreInfoUseCase.Params(
+                    initialGameHeader.appId,
+                    cachePolicy
+                )
+            )
+            when (result) {
+                is GetGameStoreInfoUseCase.Result.Success -> renderSuccess(result)
+                is GetGameStoreInfoUseCase.Result.Fail -> renderError(result)
+            }.exhaustive
         }
+    }
+
+    private fun renderSuccess(result: GetGameStoreInfoUseCase.Result.Success) {
+        gameStoreInfo = result.data
+        _gameDetails.value = gameDetailsUiModelMapper.mapFrom(result.data)
     }
 
     private fun renderError(fail: GetGameStoreInfoUseCase.Result.Fail) {

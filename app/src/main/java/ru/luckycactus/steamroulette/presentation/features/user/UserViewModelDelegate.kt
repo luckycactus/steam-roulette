@@ -1,11 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.user
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.StateFlow
 import ru.luckycactus.steamroulette.domain.core.RequestState
 
 interface UserViewModelDelegate {
-    val fetchGamesState: LiveData<RequestState<Unit>>
-    val fetchUserSummaryState: LiveData<Boolean>
+    val fetchGamesState: StateFlow<RequestState<Unit>>
+    val fetchUserSummaryState: StateFlow<Boolean>
     fun fetchUserAndGames()
     fun fetchGames()
     fun logout()

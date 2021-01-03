@@ -11,7 +11,7 @@ import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 
 interface PagingGameList {
     val ids: List<Int>
-    val list: List<GameHeader>
+    val data: List<GameHeader>
     val itemsInsertionsFlow: Flow<Pair<Int, Int>>
     val itemRemovalsFlow: Flow<Int>
     val topGameFlow: Flow<GameHeader?>
@@ -33,15 +33,13 @@ interface PagingGameList {
 
 class PagingGameListImpl constructor(
     private val gamesFactory: suspend (List<Int>) -> List<GameHeader>,
-    private val gameIds: List<Int>,
+    override val ids: List<Int>,
     private val minSize: Int,
     private val fetchDistance: Int,
     parentScope: CoroutineScope
 ) : PagingGameList {
 
-    override val ids: List<Int> = gameIds
-
-    override val list: List<GameHeader>
+    override val data: List<GameHeader>
         get() = _list
 
     override val itemsInsertionsFlow by lazyNonThreadSafe { itemsInsertedChannel.asFlow() }
@@ -74,13 +72,13 @@ class PagingGameListImpl constructor(
     override fun start() {
         checkState(State.NotStarted)
         state = State.Started
-        if (gameIds.isNotEmpty())
+        if (ids.isNotEmpty())
             fetch()
     }
 
-    override fun isEmpty() = gameIds.isEmpty()
+    override fun isEmpty() = ids.isEmpty()
 
-    override fun isFinished() = _list.isEmpty() && nextFetchIndex >= gameIds.size
+    override fun isFinished() = _list.isEmpty() && nextFetchIndex >= ids.size
 
     @MainThread
     override fun removeTop(): GameHeader {
@@ -89,7 +87,7 @@ class PagingGameListImpl constructor(
 
         val removedItem = _list.removeAt(0)
         itemRemovedChannel.offer(0)
-        if (_list.size <= minSize && !fetching && nextFetchIndex < gameIds.size)
+        if (_list.size <= minSize && !fetching && nextFetchIndex < ids.size)
             fetch()
         if (isFinished())
             closeChannels()
@@ -117,8 +115,8 @@ class PagingGameListImpl constructor(
                 minSize + 1
             else
                 fetchDistance
-            val fetchEnd = minOf(nextFetchIndex + fetchDistance, gameIds.size)
-            val fetchIds = gameIds.subList(
+            val fetchEnd = minOf(nextFetchIndex + fetchDistance, ids.size)
+            val fetchIds = ids.subList(
                 nextFetchIndex,
                 fetchEnd
             )

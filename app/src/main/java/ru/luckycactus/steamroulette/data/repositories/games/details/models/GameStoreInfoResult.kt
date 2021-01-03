@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.data.repositories.games.details.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import ru.luckycactus.steamroulette.data.net.RequiredAge
 
 @JsonClass(generateAdapter = true)
 data class GameStoreInfoResult(
@@ -13,6 +14,7 @@ data class GameStoreInfoResult(
 data class GameStoreInfoEntity(
     @Json(name = "name") val name: String,
     @Json(name = "steam_appid") val appId: Int,
+    @RequiredAge
     @Json(name = "required_age") val requiredAge: Int?,
     //@Json(name="controller_support") val controllerSupport: String,
     @Json(name = "detailed_description") val detailedDescription: String,

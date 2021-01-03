@@ -36,6 +36,8 @@
         android:scrollbars="vertical"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:listitem="@layout/item_library_game"
+        tools:spanCount="3"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         />
 
     <include
@@ -48,6 +50,7 @@
     <include
         android:id="@+id/progress"
         layout="@layout/progress"
+        tools:visibility="invisible"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

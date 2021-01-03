@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.ui.widget
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -76,6 +77,13 @@ class LuxuryProgressBar : View {
         arcSpace = (360f - arcCount * arcAngle) / arcCount
 
         resetState()
+
+        if (isInEditMode) {
+            currentState = STATE_ROTATION
+            currentScale = 1f
+            currentProgressTime = 0.5f * stateDurations[currentState]
+            updateAnimation()
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

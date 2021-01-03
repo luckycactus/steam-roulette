@@ -28,14 +28,6 @@ class GetGameStoreInfoUseCase @Inject constructor(
         }
     }
 
-    //todo
-    suspend fun getFromCache(gameId: Int): GameStoreInfo? {
-        return gameDetailsRepository.getGameStoreInfo(
-            gameId,
-            CachePolicy.Cache
-        )
-    }
-
     data class Params(
         val gameId: Int,
         val cachePolicy: CachePolicy = CachePolicy.CacheOrRemote

@@ -133,7 +133,7 @@ class PagingGameListImplTest {
                 expectedIds.addAll(it.first, ids.subList(currentIndex, currentIndex + it.second))
                 currentIndex += it.second
                 expectedLists += expectedIds.toImmutableList()
-                actualLists += pagingList.list.map { it.appId }
+                actualLists += pagingList.data.map { it.appId }
             }
         }
 
@@ -141,7 +141,7 @@ class PagingGameListImplTest {
             pagingList.itemRemovalsFlow.collect {
                 expectedIds.removeAt(it)
                 expectedLists += expectedIds.toImmutableList()
-                actualLists += pagingList.list.map { it.appId }
+                actualLists += pagingList.data.map { it.appId }
             }
         }
 
@@ -236,7 +236,7 @@ class PagingGameListImplTest {
         initPagingList(ids = (1..10).toList(), minSize = minSize, fetchDistance = 2)
         pagingList.start()
 
-        val size = pagingList.list.size
+        val size = pagingList.data.size
 
         assertThat(size).isGreaterThan(minSize)
     }
@@ -274,7 +274,7 @@ class PagingGameListImplTest {
         testScope.launch {
             pagingList.itemsInsertionsFlow.collect {
                 val count = it.second
-                listSizesWhenInsert += (pagingList.list.size - count)
+                listSizesWhenInsert += (pagingList.data.size - count)
             }
         }
         pagingList.start()

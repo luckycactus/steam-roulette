@@ -78,7 +78,6 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
 
         setupTint()
 
-        toolbar.root.setNavigationIcon(R.drawable.ic_menu_24)
         toolbar.root.setNavigationOnClickListener {
             childFragmentManager.showIfNotExist(MENU_FRAGMENT_TAG) {
                 MenuFragment.newInstance()

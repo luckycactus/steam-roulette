@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppCoScope
@@ -39,9 +41,9 @@ class MainViewModel @ViewModelInject constructor(
     private val analytics: AnalyticsHelper,
     @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel(), UserViewModelDelegate {
-    override val fetchGamesState: LiveData<RequestState<Unit>>
+    override val fetchGamesState: StateFlow<RequestState<Unit>>
         get() = _fetchGamesState
-    override val fetchUserSummaryState: LiveData<Boolean>
+    override val fetchUserSummaryState: StateFlow<Boolean>
         get() = _fetchUserSummaryState
 
     val errorMessage: LiveData<Event<String>>
@@ -49,8 +51,8 @@ class MainViewModel @ViewModelInject constructor(
     val reviewRequest: LiveData<Event<Unit>>
         get() = _reviewRequest
 
-    private val _fetchGamesState = MutableLiveData<RequestState<Unit>>()
-    private val _fetchUserSummaryState = MutableLiveData<Boolean>()
+    private val _fetchGamesState = MutableStateFlow<RequestState<Unit>>(RequestState.success)
+    private val _fetchUserSummaryState = MutableStateFlow(true)
     private val _errorMessage = MutableLiveData<Event<String>>()
     private val _reviewRequest = MutableLiveData<Event<Unit>>()
 

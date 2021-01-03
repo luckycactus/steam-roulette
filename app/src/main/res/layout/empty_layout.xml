@@ -9,6 +9,7 @@
     android:orientation="vertical"
     android:padding="@dimen/default_activity_margin"
     android:visibility="gone"
+    tools:visibility="visible"
     >
 
     <TextView

@@ -90,6 +90,7 @@
                 android:layout_gravity="center"
                 android:padding="12dp"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:size="24dp"
                 />
 

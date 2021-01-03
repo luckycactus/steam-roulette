@@ -37,16 +37,12 @@ class RouletteOptionsViewModel @ViewModelInject constructor(
         hiddenGamesCount = observeOwnedGamesCount(GamesFilter.onlyHidden()).asLiveData()
     }
 
-    private fun close() {
-        _closeAction.value = Unit
-    }
-
     fun onHiddenGamesClick() {
         router.navigateTo(Screens.HiddenGames)
         close()
     }
 
-    companion object {
-        private const val CLOSE_DELAY = 300L
+    private fun close() {
+        _closeAction.value = Unit
     }
 }
