@@ -8,8 +8,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.cancellable
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+
+private val compositeListeners = Collections.synchronizedMap(
+    WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
+)
 
 fun SharedPreferences.Editor.edit(
     commit: Boolean = false,
@@ -148,15 +153,11 @@ fun SharedPreferences.stringFlow(key: String, defValue: String?): Flow<String?> 
 
 private typealias PrefChangeListener = () -> Unit
 
-private val compositeListeners = WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
-
 private fun SharedPreferences.getCompositeListener() =
-    synchronized(this) {
-        compositeListeners.getOrPut(this, {
-            CompositePreferenceChangeListener().also {
-                registerOnSharedPreferenceChangeListener(it)
-            }
-        })
+    compositeListeners.getOrPut(this) {
+        CompositePreferenceChangeListener().also {
+            registerOnSharedPreferenceChangeListener(it)
+        }
     }
 
 private fun <T> SharedPreferences.liveData(
@@ -225,25 +226,26 @@ private class SharedPreferenceLiveData<T>(
 
 private class CompositePreferenceChangeListener :
     SharedPreferences.OnSharedPreferenceChangeListener {
-    val keyListenersMultimap = mutableMapOf<String, MutableSet<PrefChangeListener>>()
+    val keyListenersMultimap = ConcurrentHashMap<String, MutableSet<PrefChangeListener>>()
 
     override fun onSharedPreferenceChanged(
         sharedPreferences: SharedPreferences?,
         key: String
     ) {
-        keyListenersMultimap[key]?.forEach { it.invoke() }
+        getListenersSetForKey(key)?.forEach { it.invoke() }
     }
 
     fun addListener(key: String, listener: PrefChangeListener) {
-        synchronized(key.intern()) {
-            keyListenersMultimap.getOrPut(
-                key,
-                { Collections.newSetFromMap(WeakHashMap()) }
-            ).add(listener)
-        }
+        val listeners = keyListenersMultimap.getOrPut(
+            key,
+            { Collections.newSetFromMap(WeakHashMap()) }
+        )
+        listeners.add(listener)
     }
 
     fun removeListener(key: String, listener: PrefChangeListener) {
-        keyListenersMultimap[key]?.remove(listener)
+        getListenersSetForKey(key)?.remove(listener)
     }
+
+    private fun getListenersSetForKey(key: String) = keyListenersMultimap[key]
 }
