@@ -11,83 +11,102 @@ class PalettePageHelper(
     private val onColorChange: (Int) -> Unit
 ) {
     private val colorEvaluator = ArgbEvaluatorCompat()
-    private val pageBundles = arrayOf(
-        PageBundle(),
-        PageBundle()
+    private val pages = arrayOf(
+        Page(0),
+        Page(1)
     )
-    private var color: Int = 0
+    private var resultColor: Int = 0
     private var progress: Float = 0f
 
-    private val editor by lazy { Editor() }
-
-    @PublishedApi
-    internal val `access$editor`: Editor
-        get() = editor
+    val editor by lazy { Editor() }
 
     inline fun edit(block: Editor.() -> Unit) {
-        `access$editor`.edit(block)
+        editor.edit(block)
     }
 
     fun edit() = Editor()
 
     private fun update(newProgress: Float, newColors: IntArray) {
-        if (!checkColorsChanged(newColors)) {
-            if (progress != newProgress) {
-                progress = newProgress
-                updateColor()
+        val colorsChanged = checkColorsChanged(newColors)
+        val progressChanged = progress != newProgress
+
+        if (colorsChanged) {
+            pages.forEach {
+                updatePage(
+                    it,
+                    newProgress,
+                    newColors[it.number]
+                )
             }
-            return
         }
-
-        (0..1).forEach { updatePage(it, newProgress, newColors) }
         progress = newProgress
-        updateColor()
+        if (colorsChanged || progressChanged)
+            updateResultColor()
     }
 
-    private fun updatePage(pageNumber: Int, newProgress: Float, newColors: IntArray) {
-        val newColor = newColors[pageNumber]
-        val bundle = pageBundles[pageNumber]
-        if (newColor == bundle.targetColor)
+    private fun checkColorsChanged(newColors: IntArray): Boolean =
+        pages.any { it.targetColor != newColors[it.number] }
+
+    private fun updatePage(page: Page, newProgress: Float, newPageColor: Int) {
+        if (newPageColor == page.targetColor)
             return
-        if (pageNumber == 0 && newProgress == 0f && progress == 1f) {
-            bundle.color = pageBundles[1].color
-            bundle.targetColor = bundle.color
+
+        // item swiped => second page became first, so set first page's color to current color for avoid blinking
+        if (page.number == 0 && newProgress == 0f && progress != 0f) {
+            page.color = resultColor
         }
+
+        page.animator?.cancel()
+        page.targetColor = newPageColor
+
         val notAnimate =
-            (pageNumber == 0 && newProgress == 0f && this.color == newColor)
-                    || (pageNumber == 1 && newProgress == 0f)
-        bundle.animator?.cancel()
-        bundle.targetColor = newColor
+            (isPageExclusivelyVisible(page, newProgress) && resultColor == newPageColor) ||
+                    isPageCompletelyInvisible(page, newProgress)
+
         if (notAnimate) {
-            bundle.color = bundle.targetColor
+            page.color = page.targetColor
         } else {
-            bundle.animator = ValueAnimator.ofArgb(bundle.color, bundle.targetColor).apply {
-                duration = 300
-                addUpdateListener {
-                    bundle.color = it.animatedValue as Int
-                    updateColor()
-                }
-                doOnEnd {
-                    bundle.animator = null
-                }
-            }.also { it.start() }
+            animatePageColor(page)
         }
     }
 
-    private fun checkColorsChanged(newColors: IntArray): Boolean {
-        for (i in 0..1) {
-            if (pageBundles[i].targetColor != newColors[i])
-                return true
+    private fun isPageExclusivelyVisible(page: Page, progress: Float): Boolean =
+        progress == getPageTargetProgress(page)
+
+    private fun isPageCompletelyInvisible(page: Page, progress: Float): Boolean =
+        abs(getPageTargetProgress(page) - progress) >= 1f
+
+    private fun getPageTargetProgress(page: Page): Float =
+        when (page.number) {
+            0 -> 0f
+            1 -> 1f
+            else -> throw IllegalStateException()
         }
-        return false
+
+    private fun animatePageColor(page: Page) {
+        page.animator = ValueAnimator.ofArgb(page.color, page.targetColor).apply {
+            duration = 300
+            addUpdateListener {
+                page.color = it.animatedValue as Int
+                updateResultColor()
+            }
+            doOnEnd {
+                page.animator = null
+            }
+        }.also {
+            it.start()
+        }
     }
 
-    private fun updateColor() {
-        val color =
-            colorEvaluator.evaluate(abs(progress), pageBundles[0].color, pageBundles[1].color)
-        if (this.color != color) {
+    private fun updateResultColor() {
+        val color = colorEvaluator.evaluate(
+            abs(progress),
+            pages[0].color,
+            pages[1].color
+        )
+        if (this.resultColor != color) {
             onColorChange(color)
-            this.color = color
+            this.resultColor = color
         }
     }
 
@@ -98,7 +117,7 @@ class PalettePageHelper(
                 field = value
             }
 
-        private val colors = intArrayOf(pageBundles[0].targetColor, pageBundles[1].targetColor)
+        private val colors = pages.map { it.targetColor }.toIntArray()
 
         fun setPageColor(page: Int, color: Int) {
             colors[page] = color
@@ -118,7 +137,9 @@ class PalettePageHelper(
         }
     }
 
-    private class PageBundle {
+    private class Page(
+        val number: Int
+    ) {
         var animator: Animator? = null
         var color: Int = 0
         var targetColor = 0

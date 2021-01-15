@@ -1,9 +1,10 @@
 package ru.luckycactus.steamroulette.data.repositories.games.details.datasource
 
+import androidx.collection.ArrayMap
 import androidx.collection.arrayMapOf
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
-import ru.luckycactus.steamroulette.data.core.wrapCommonNetworkExceptions
+import okhttp3.ResponseBody
 import ru.luckycactus.steamroulette.data.net.api.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.repositories.games.details.models.GameStoreInfoEntity
 import ru.luckycactus.steamroulette.data.repositories.games.details.models.GameStoreInfoResult
@@ -23,13 +24,20 @@ class RemoteGameStoreDataSource @Inject constructor(
     //todo document
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun get(appId: Int): GameStoreInfoEntity {
-        val response = wrapCommonNetworkExceptions {
-            steamStoreApiService.getGamesStoreInfo(
-                listOf(appId),
-                languageProvider.getLanguageForStoreApi()
-            )
-        }
+        val response = steamStoreApiService.getGamesStoreInfo(
+            listOf(appId),
+            languageProvider.getLanguageForStoreApi()
+        )
 
+        val results = parseResults(response)
+
+        val result = results[appId.toString()] ?: throw GetGameStoreInfoException()
+        if (!result.success || result.gameStoreInfo == null)
+            throw GetGameStoreInfoException()
+        return result.gameStoreInfo
+    }
+
+    private fun parseResults(response: ResponseBody): ArrayMap<String, GameStoreInfoResult> {
         val reader = JsonReader.of(response.source())
         val results = arrayMapOf<String, GameStoreInfoResult>()
         try {
@@ -43,10 +51,6 @@ class RemoteGameStoreDataSource @Inject constructor(
             reader.close()
             response.close()
         }
-
-        val result = results[appId.toString()] ?: throw GetGameStoreInfoException()
-        if (!result.success || result.gameStoreInfo == null)
-            throw GetGameStoreInfoException()
-        return result.gameStoreInfo
+        return results
     }
 }

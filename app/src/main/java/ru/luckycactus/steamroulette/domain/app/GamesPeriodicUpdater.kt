@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.domain.app
 
-import androidx.work.ListenableWorker
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
@@ -12,12 +11,14 @@ import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.days
 
 @Singleton
 class GamesPeriodicUpdater @Inject constructor(
     private val userSession: UserSession,
     private val gamesRepository: GamesRepository,
-    private val manager: Manager,
+    private val scheduler: Scheduler,
     @AppCoScope private val appScope: CoroutineScope
 ) {
     private val coroutineScope = appScope + Job(appScope.coroutineContext[Job])
@@ -31,20 +32,24 @@ class GamesPeriodicUpdater @Inject constructor(
         coroutineScope.launch {
             userSession.observeCurrentUser().collect {
                 if (it != null)
-                    manager.enqueue(false)
+                    enqueueWithDefaultIntervals(restart = false)
                 else
-                    manager.cancel()
+                    scheduler.cancel()
             }
         }
         coroutineScope.launch {
             gamesUpdatesFlow.collect {
-                manager.enqueue(true)
+                enqueueWithDefaultIntervals(restart = true)
             }
         }
     }
 
+    private fun enqueueWithDefaultIntervals(restart: Boolean) {
+        scheduler.enqueue(REPEAT_INTERVAL, FLEX_INTERVAL, restart)
+    }
+
     fun stop() {
-        manager.cancel()
+        scheduler.cancel()
         coroutineScope.coroutineContext.cancelChildren()
     }
 
@@ -52,15 +57,24 @@ class GamesPeriodicUpdater @Inject constructor(
         private val gamesRepository: GamesRepository,
         private val userSession: UserSession
     ) {
-        suspend fun run(): ListenableWorker.Result =
+        suspend fun run(): Result =
             userSession.currentUser?.let {
                 gamesRepository.updateOwnedGames(CachePolicy.Remote)
-                ListenableWorker.Result.success()
-            } ?: ListenableWorker.Result.failure()
+                Result.Success
+            } ?: Result.Failure
     }
 
-    interface Manager {
-        fun enqueue(restart: Boolean)
+    enum class Result {
+        Success, Failure
+    }
+
+    interface Scheduler {
+        fun enqueue(repeatInterval: Duration, flexInterval: Duration, restart: Boolean)
         fun cancel()
+    }
+
+    private companion object {
+        val REPEAT_INTERVAL = 6.days
+        val FLEX_INTERVAL = 1.days
     }
 }

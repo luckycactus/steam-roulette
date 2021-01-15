@@ -12,9 +12,9 @@ import kotlinx.coroutines.CoroutineScope
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.local.AndroidResourceManager
 import ru.luckycactus.steamroulette.data.local.LanguageProviderImpl
-import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicUpdateManager
-import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesVerifier
-import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesVerifierImpl
+import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicUpdateScheduler
+import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesValidator
+import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesValidatorImpl
 import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
@@ -40,7 +40,7 @@ abstract class AppModule {
     abstract fun bindAnalytics(firebaseAnalytics: FirebaseAnalyticsHelper): AnalyticsHelper
 
     @Binds
-    abstract fun bindGamesPeriodicFetcherManager(job: GamesPeriodicUpdateManager): GamesPeriodicUpdater.Manager
+    abstract fun bindGamesPeriodicFetcherManager(job: GamesPeriodicUpdateScheduler): GamesPeriodicUpdater.Scheduler
 
     @Binds
     abstract fun bindGameCoverCacheCleaner(glideCacheCleaner: GlideCacheCleaner): ImageCacheCleaner
@@ -56,8 +56,8 @@ abstract class AppModule {
 
         @Provides
         @Reusable
-        fun provideGamesVerifier(): GamesVerifier.Factory {
-            return GamesVerifierImpl.Factory(BuildConfig.DEBUG)
+        fun provideGamesVerifier(): GamesValidator.Factory {
+            return GamesValidatorImpl.Factory(BuildConfig.DEBUG)
         }
     }
 }

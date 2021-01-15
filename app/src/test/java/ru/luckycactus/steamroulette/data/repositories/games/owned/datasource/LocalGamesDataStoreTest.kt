@@ -18,7 +18,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.util.TestData
 import ru.luckycactus.steamroulette.util.TestData.testSteamId
-import ru.luckycactus.steamroulette.util.fakes.NaiveGamesVerifier
+import ru.luckycactus.steamroulette.util.fakes.NaiveGamesValidator
 
 @RunWith(AndroidJUnit4::class)
 class LocalGamesDataSourceTest {
@@ -37,7 +37,7 @@ class LocalGamesDataSourceTest {
 
     @Before
     fun setup() {
-        dataSource = LocalGamesDataSource(db, NaiveGamesVerifier.Factory())
+        dataSource = LocalGamesDataSource(db, NaiveGamesValidator.Factory())
     }
 
     @After

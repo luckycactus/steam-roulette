@@ -9,20 +9,25 @@ import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.days
 
 @Singleton
-class GamesPeriodicUpdateManager @Inject constructor(
+class GamesPeriodicUpdateScheduler @Inject constructor(
     @ApplicationContext private val context: Context
-) : GamesPeriodicUpdater.Manager {
+) : GamesPeriodicUpdater.Scheduler {
 
-    override fun enqueue(restart: Boolean) {
+    override fun enqueue(repeatInterval: Duration, flexInterval: Duration, restart: Boolean) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             .build()
 
-        val work = PeriodicWorkRequestBuilder<Worker>(5, TimeUnit.DAYS)
-            .setConstraints(constraints)
-            .setInitialDelay(5, TimeUnit.DAYS)
+        val work = PeriodicWorkRequestBuilder<Worker>(
+            repeatInterval.toLongMilliseconds(),
+            TimeUnit.MILLISECONDS,
+            flexInterval.toLongMilliseconds(),
+            TimeUnit.MILLISECONDS
+        ).setConstraints(constraints)
             .build()
 
         WorkManager.getInstance(context)
@@ -46,7 +51,10 @@ class GamesPeriodicUpdateManager @Inject constructor(
         lateinit var work: GamesPeriodicUpdater.Work
 
         override suspend fun doWork(): Result {
-            return work.run()
+            return when (work.run()) {
+                GamesPeriodicUpdater.Result.Success -> Result.success()
+                GamesPeriodicUpdater.Result.Failure -> Result.failure()
+            }
         }
     }
 

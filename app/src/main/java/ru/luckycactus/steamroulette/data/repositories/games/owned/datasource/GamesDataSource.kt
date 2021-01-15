@@ -13,31 +13,20 @@ interface GamesDataSource {
     interface Local : GamesDataSource {
         suspend fun update(steamId: SteamId, gamesFlow: Flow<OwnedGameEntity>)
 
+        suspend fun clear(steamId: SteamId)
+
+
         suspend fun getAll(steamId: SteamId): List<OwnedGameEntity>
 
         suspend fun getIds(steamId: SteamId, filter: GamesFilter, orderById: Boolean = false): List<Int>
 
         suspend fun getIdsMutable(steamId: SteamId, filter: GamesFilter, orderById: Boolean = false): MutableList<Int>
 
-        suspend fun setHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
-
-        suspend fun setAllHidden(steamId: SteamId, hide: Boolean)
-
-        suspend fun setShown(steamId: SteamId, gameIds: List<Int>, shown: Boolean)
-
-        suspend fun setAllShown(steamId: SteamId, shown: Boolean)
-
         suspend fun getHeader(steamId: SteamId, gameId: Int): GameHeader
 
         suspend fun getHeaders(steamId: SteamId, gameIds: List<Int>): List<GameHeader>
 
-        suspend fun isUserHasGames(steamId: SteamId): Boolean
-
         fun observeCount(steamId: SteamId, filter: GamesFilter): Flow<Int>
-
-        suspend fun resetAllHidden(steamId: SteamId)
-
-        suspend fun clear(steamId: SteamId)
 
         fun getLibraryPagingSource(
             steamId: SteamId,
@@ -45,7 +34,21 @@ interface GamesDataSource {
             nameSearchQuery: String?
         ): PagingSource<Int, LibraryGame>
 
+        suspend fun isUserHasGames(steamId: SteamId): Boolean
+
+
+        suspend fun setHidden(steamId: SteamId, gameIds: List<Int>, hide: Boolean)
+
+        suspend fun setAllHidden(steamId: SteamId, hide: Boolean)
+
+        suspend fun resetAllHidden(steamId: SteamId)
+
         suspend fun getHiddenState(steamId: SteamId, appId: Long): Boolean
+
+
+        suspend fun setShown(steamId: SteamId, gameIds: List<Int>, shown: Boolean)
+
+        suspend fun setAllShown(steamId: SteamId, shown: Boolean)
     }
 
     interface Remote : GamesDataSource {

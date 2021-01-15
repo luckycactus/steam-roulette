@@ -20,7 +20,7 @@ import javax.inject.Inject
 @Reusable
 class LocalGamesDataSource @Inject constructor(
     private val db: AppDatabase,
-    private val gamesVerifierFactory: GamesVerifier.Factory
+    private val gamesValidatorFactory: GamesValidator.Factory
 ) : GamesDataSource.Local {
 
     override fun observeCount(steamId: SteamId, filter: GamesFilter): Flow<Int> =
@@ -34,12 +34,12 @@ class LocalGamesDataSource @Inject constructor(
         db.withTransaction {
             val metaData = db.ownedGamesDao().getAllMetaData(steam64).associateBy { it.appId }
             val mapper = OwnedGameRoomEntityMapper(steam64, metaData)
-            val gamesVerifier = gamesVerifierFactory.create(metaData.keys)
+            val gamesVerifier = gamesValidatorFactory.create(metaData.keys)
 
             db.ownedGamesDao().clear(steam64)
 
             gamesFlow
-                .filter { gamesVerifier.verify(it) }
+                .filter { gamesVerifier.validate(it) }
                 .map { mapper.mapFrom(it) }
                 .chunkBuffer(GAMES_BUFFER_SIZE)
                 .collect {

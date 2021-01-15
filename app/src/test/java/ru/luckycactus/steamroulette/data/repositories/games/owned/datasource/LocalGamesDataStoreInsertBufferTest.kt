@@ -16,7 +16,7 @@ import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGa
 import ru.luckycactus.steamroulette.test.rules.RoomTransactionsMockRule
 import ru.luckycactus.steamroulette.util.TestData
 import ru.luckycactus.steamroulette.util.TestData.testSteamId
-import ru.luckycactus.steamroulette.util.fakes.NaiveGamesVerifier
+import ru.luckycactus.steamroulette.util.fakes.NaiveGamesValidator
 
 class LocalGamesDataSourceInsertBufferTest {
 
@@ -31,7 +31,7 @@ class LocalGamesDataSourceInsertBufferTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        localGamesDataSource = LocalGamesDataSource(dbMock, NaiveGamesVerifier.Factory())
+        localGamesDataSource = LocalGamesDataSource(dbMock, NaiveGamesValidator.Factory())
     }
 
     @Test

@@ -13,9 +13,7 @@ class RemoteUserDataSource @Inject constructor(
 
     @Throws(SteamIdNotFoundException::class)
     override suspend fun getSummary(steamId: SteamId): UserSummaryEntity {
-        val response = wrapCommonNetworkExceptions {
-            steamApiService.getUserSummaries(listOf(steamId.as64()))
-        }
+        val response = steamApiService.getUserSummaries(listOf(steamId.as64()))
 
         return response.result.players.getOrNull(0)
             ?: throw SteamIdNotFoundException(steamId.toString())

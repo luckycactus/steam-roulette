@@ -28,12 +28,12 @@ abstract class GamesFilterRepositoryImpl constructor(
     private val gamesFilterAdapter = moshi.adapter(GamesFilter::class.java)
 
     override fun observeMaxHours(default: Int): Flow<Int> {
-        return prefs.intFlow(key("max-hours", currentUser), default)
+        return prefs.intFlow(maxHoursKey(currentUser), default)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override fun observeFilter(default: GamesFilter): Flow<GamesFilter> {
-        return prefs.stringFlow(key("filter", currentUser), null)
+        return prefs.stringFlow(filterKey(currentUser), null)
             .map {
                 withContext(Dispatchers.IO) {
                     it?.let {
@@ -46,19 +46,21 @@ abstract class GamesFilterRepositoryImpl constructor(
     override suspend fun saveFilter(filter: GamesFilter) {
         val json = gamesFilterAdapter.toJson(filter)
         prefs.edit {
-            putString(key("filter", currentUser), json)
+            putString(filterKey(currentUser), json)
             if (filter.playtime is PlaytimeFilter.Limited) {
-                putInt(key("max-hours", currentUser), filter.playtime.maxHours)
+                putInt(maxHoursKey(currentUser), filter.playtime.maxHours)
             }
         }
     }
 
+    private fun filterKey(steamId: SteamId) = prefKey("filter", "filter", steamId)
+
     override fun clearUser(steamId: SteamId) {
         prefs.edit {
-            remove(key("filter", currentUser))
-            remove(key("max-hours", currentUser))
+            remove(filterKey(steamId))
+            remove(maxHoursKey(steamId))
         }
     }
 
-    private fun key(pref: String, steamId: SteamId) = prefKey("filter", pref, steamId)
+    private fun maxHoursKey(steamId: SteamId) = prefKey("filter", "max-hours", steamId)
 }

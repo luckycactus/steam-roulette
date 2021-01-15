@@ -3,51 +3,58 @@ package ru.luckycactus.steamroulette.data.repositories.games.owned.datasource
 import org.intellij.lang.annotations.Language
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
-import ru.luckycactus.steamroulette.presentation.utils.onDebug
 import timber.log.Timber
 
-interface GamesVerifier {
-    fun verify(game: OwnedGameEntity): Boolean
+interface GamesValidator {
+    fun validate(game: OwnedGameEntity): Boolean
+    fun log()
 
     interface Factory {
-        fun create(previouslyVerifiedAppIds: Set<Int>): GamesVerifier
+        fun create(previouslyVerifiedAppIds: Set<Int>): GamesValidator
     }
-
-    fun log()
 }
 
-class GamesVerifierImpl(
-    private val previouslyVerifiedAppIds: Set<Int>,
-    log: Boolean = BuildConfig.DEBUG
-) : GamesVerifier {
+class GamesValidatorImpl(
+    private val previouslyValidatedAppIds: Set<Int>,
+    private val log: Boolean = BuildConfig.DEBUG
+) : GamesValidator {
     private val logger = GamesParseLogger(log)
 
-    override fun verify(game: OwnedGameEntity): Boolean {
-        //usually games have iconUrl and logoUrl
+    override fun validate(game: OwnedGameEntity): Boolean {
+        var valid = false
+        //usually games have both iconUrl and logoUrl
         val suspicious = game.iconUrl.isNullOrEmpty() || game.logoUrl.isNullOrEmpty()
-        if (previouslyVerifiedAppIds.contains(game.appId)) {
-            onDebug {
-                if (suspicious)
-                    logger.addSuspiciousGame(game)
-            }
-            return true
+        if (previouslyValidatedAppIds.contains(game.appId)) {
+            valid = true
         } else {
-            var banned = game.iconUrl.isNullOrEmpty() && game.logoUrl.isNullOrEmpty()
-            if (!banned && !game.name.isNullOrEmpty()) {
-                banned = banRegex.containsMatchIn(game.name)
+            valid = if (game.name == null) { //shouldn't be null or empty, added just for null-safety
+                false
+            } else {
+                val ban = hasNoImages(game) ||
+                        containsBannedWordsInName(game) ||
+                        (suspicious && containsSuspiciousWordsInName(game))
 
-                if (!banned && suspicious) {
-                    banned = banIfSuspiciousRegex.containsMatchIn(game.name)
-                }
+                if (ban)
+                    logger.addBannedGame(game)
+
+                !ban
             }
-            if (banned) {
-                logger.addBannedGame(game)
-            } else if (suspicious) {
-                logger.addSuspiciousGame(game)
-            }
-            return !banned
         }
+
+        if (log && valid && suspicious)
+            logger.addSuspiciousGame(game)
+
+        return valid
     }
+
+    private fun hasNoImages(game: OwnedGameEntity) =
+        game.iconUrl.isNullOrEmpty() && game.logoUrl.isNullOrEmpty()
+
+    private fun containsBannedWordsInName(game: OwnedGameEntity) =
+        banRegex.containsMatchIn(game.name!!)
+
+    private fun containsSuspiciousWordsInName(game: OwnedGameEntity) =
+        banIfSuspiciousRegex.containsMatchIn(game.name!!)
 
     override fun log() {
         logger.log()
@@ -89,9 +96,9 @@ class GamesVerifierImpl(
 
     class Factory constructor(
         private val log: Boolean = BuildConfig.DEBUG
-    ) : GamesVerifier.Factory {
-        override fun create(previouslyVerifiedAppIds: Set<Int>): GamesVerifier {
-            return GamesVerifierImpl(previouslyVerifiedAppIds, log)
+    ) : GamesValidator.Factory {
+        override fun create(previouslyVerifiedAppIds: Set<Int>): GamesValidator {
+            return GamesValidatorImpl(previouslyVerifiedAppIds, log)
         }
     }
 

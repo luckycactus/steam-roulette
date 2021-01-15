@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.data.repositories.games.details
 
 import dagger.Reusable
-import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
+import ru.luckycactus.steamroulette.data.core.MemoryCacheNbr
 import ru.luckycactus.steamroulette.data.repositories.games.details.datasource.GameStoreDataSource
 import ru.luckycactus.steamroulette.data.repositories.games.details.mapper.GameStoreInfoEntityMapper
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
@@ -16,13 +16,14 @@ class GameDetailsRepositoryImpl @Inject constructor(
 ) : GameDetailsRepository {
 
     override suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo? {
-        return object : NetworkBoundResource.MemoryCache<GameStoreInfo, GameStoreInfo>(
-            "game_store_info_$gameId"
+        val resource = object : MemoryCacheNbr<GameStoreInfo, GameStoreInfo>(
+            memoryKey = "game_store_info_$gameId"
         ) {
             override suspend fun fetch(): GameStoreInfo =
                 gameStoreInfoEntityMapper.mapFrom(
                     remoteGameStoreDataSource.get(gameId)
                 )
-        }.get(cachePolicy)
+        }
+        return resource.get(cachePolicy)
     }
 }

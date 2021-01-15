@@ -11,5 +11,4 @@ class LoginRepositoryImpl @Inject constructor(
 
     override suspend fun resolveVanityUrl(vanityUrl: String): SteamId =
         SteamId.fromSteam64(loginDataSource.resolveVanityUrl(vanityUrl))
-
 }

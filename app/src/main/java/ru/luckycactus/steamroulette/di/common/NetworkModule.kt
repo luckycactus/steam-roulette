@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.luckycactus.steamroulette.BuildConfig
+import ru.luckycactus.steamroulette.data.net.ErrorsCallAdapterFactory
 import ru.luckycactus.steamroulette.data.net.api.SteamApiService
 import ru.luckycactus.steamroulette.data.net.api.SteamStoreApiService
 import ru.luckycactus.steamroulette.data.net.interceptors.AuthInterceptor
@@ -59,6 +60,7 @@ abstract class NetworkModule {
                 .client(okHttpClient)
                 .baseUrl("https://api.steampowered.com/")
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .addCallAdapterFactory(ErrorsCallAdapterFactory())
                 .build()
 
         @Provides
@@ -71,6 +73,7 @@ abstract class NetworkModule {
                 .client(okHttpClient)
                 .baseUrl("https://store.steampowered.com/api/")
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .addCallAdapterFactory(ErrorsCallAdapterFactory())
                 .build()
         }
 

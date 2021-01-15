@@ -16,7 +16,7 @@ private val compositeListeners = Collections.synchronizedMap(
     WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
 )
 
-fun SharedPreferences.Editor.edit(
+inline fun SharedPreferences.Editor.edit(
     commit: Boolean = false,
     block: SharedPreferences.Editor.() -> Unit
 ) {

@@ -12,7 +12,7 @@ import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.presentation.common.App
 import kotlin.time.Duration
 
-private val memoryCache = LruCache<String, Any>(50)
+private val memoryCache = MemoryCache()
 
 abstract class NetworkBoundResource<RequestType, ResultType> {
     abstract suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean
@@ -22,9 +22,13 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
 
     suspend fun fetchIfNeed(cachePolicy: CachePolicy) {
         if (shouldFetch(cachePolicy)) {
-            val data = wrapCommonNetworkExceptions { fetch() }
+            val data = fetch()
             saveResult(data)
         }
+    }
+
+    suspend fun getOrThrow(cachePolicy: CachePolicy): ResultType {
+        return get(cachePolicy)!!
     }
 
     /**
@@ -37,101 +41,112 @@ abstract class NetworkBoundResource<RequestType, ResultType> {
         return loadResult()
     }
 
-    suspend fun getOrThrow(cachePolicy: CachePolicy): ResultType {
-        return get(cachePolicy)!!
-    }
-
     abstract suspend fun invalidateCache()
+}
 
-    abstract class FullCache<RequestType, ResultType>(
-        private val key: String,
-        private val memoryKey: String?,
-        private val window: Duration
-    ) : NetworkBoundResource<RequestType, ResultType>() {
+abstract class FullCacheNbr<RequestType, ResultType>(
+    private val key: String,
+    private val memoryKey: String?,
+    private val window: Duration
+) : NetworkBoundResource<RequestType, ResultType>() {
 
-        protected abstract suspend fun saveToStorage(data: RequestType)
-        protected abstract suspend fun getFromStorage(): ResultType?
+    protected abstract suspend fun saveToStorage(data: RequestType)
+    protected abstract suspend fun getFromStorage(): ResultType?
 
-        final override suspend fun saveResult(data: RequestType) {
-            db.withTransaction {
-                saveToStorage(data)
-                cacheHelper.setCachedNow(key)
+    final override suspend fun saveResult(data: RequestType) {
+        db.withTransaction {
+            saveToStorage(data)
+            cacheHelper.setCachedNow(key)
+        }
+        memoryCache.remove(memoryKey)
+    }
+
+    final override suspend fun loadResult(): ResultType? {
+        var data: ResultType? = null
+
+        if (shouldCacheToMemory()) {
+            data = memoryCache[memoryKey!!]
+        }
+        if (data == null) {
+            data = getFromStorage()
+            if (shouldCacheToMemory()) {
+                memoryCache[memoryKey!!] = data
             }
-            memoryCache.remove(memoryKey)
+        }
+        return data
+    }
+
+    private fun shouldCacheToMemory(): Boolean = memoryKey != null
+
+    fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
+
+    final override suspend fun invalidateCache() {
+        cacheHelper.remove(key)
+        memoryCache.remove(memoryKey)
+    }
+
+    final override suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean {
+        return cacheHelper.shouldUpdate(cachePolicy, key, window)
+    }
+
+    companion object {
+        @EntryPoint
+        @InstallIn(SingletonComponent::class)
+        interface FullCacheNBRCompanionEntryPoint {
+            fun cacheHelper(): CacheHelper
+            fun db(): AppDatabase
         }
 
-        @Suppress("UNCHECKED_CAST")
-        final override suspend fun loadResult(): ResultType? {
-            var data: ResultType? = null
+        private val cacheHelper: CacheHelper
+        private val db: AppDatabase
 
-            if (memoryKey != null) {
-                data = memoryCache[memoryKey] as ResultType?
-            }
-            if (data == null) {
-                data = getFromStorage()?.also {
-                    if (memoryKey != null) {
-                        memoryCache.put(memoryKey, it)
-                    }
-                }
-            }
-            return data
-        }
-
-        fun observeCacheUpdates(): Flow<Long> = cacheHelper.observeCacheUpdates(key)
-
-        final override suspend fun invalidateCache() {
-            cacheHelper.remove(key)
-            memoryCache.remove(memoryKey)
-        }
-
-        final override suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean {
-            return cacheHelper.shouldUpdate(cachePolicy, key, window)
-        }
-
-        companion object {
-            @EntryPoint
-            @InstallIn(SingletonComponent::class)
-            interface FullCacheNBRCompanionEntryPoint {
-                fun cacheHelper(): CacheHelper
-                fun db(): AppDatabase
-            }
-
-            private val cacheHelper: CacheHelper
-            private val db: AppDatabase
-
-            init {
-                with(
-                    EntryPointAccessors.fromApplication(
-                        App.getInstance(),
-                        FullCacheNBRCompanionEntryPoint::class.java
-                    )
-                ) {
-                    cacheHelper = cacheHelper()
-                    db = db()
-                }
-
+        init {
+            with(
+                EntryPointAccessors.fromApplication(
+                    App.getInstance(),
+                    FullCacheNBRCompanionEntryPoint::class.java
+                )
+            ) {
+                cacheHelper = cacheHelper()
+                db = db()
             }
         }
     }
+}
 
-    abstract class MemoryCache<RequestType, ResultType>(
-        private val memoryKey: String,
-    ) : NetworkBoundResource<RequestType, ResultType>() {
+abstract class MemoryCacheNbr<RequestType, ResultType>(
+    private val memoryKey: String,
+) : NetworkBoundResource<RequestType, ResultType>() {
 
-        override suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean =
-            cachePolicy == CachePolicy.Remote || (cachePolicy == CachePolicy.CacheOrRemote && memoryCache[memoryKey] == null)
+    override suspend fun shouldFetch(cachePolicy: CachePolicy): Boolean =
+        cachePolicy == CachePolicy.Remote ||
+                (cachePolicy == CachePolicy.CacheOrRemote && memoryKey !in memoryCache)
 
-        override suspend fun saveResult(data: RequestType) {
-            memoryCache.put(memoryKey, data)
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        override suspend fun loadResult(): ResultType? {
-            return memoryCache[memoryKey] as ResultType?
-        }
-
-        override suspend fun invalidateCache() {
-            memoryCache.remove(memoryKey)
-        }
+    override suspend fun saveResult(data: RequestType) {
+        memoryCache[memoryKey] = data
     }
+
+    override suspend fun loadResult(): ResultType? = memoryCache[memoryKey]
+
+    override suspend fun invalidateCache() {
+        memoryCache.remove(memoryKey)
+    }
+}
+
+private class MemoryCache {
+    private val cache = LruCache<String, Any>(50)
+
+    fun remove(key: String?) {
+        cache.remove(key)
+    }
+
+    operator fun <T> get(key: String): T? {
+        return cache[key] as T?
+    }
+
+    operator fun <T> set(key: String, value: T) {
+        cache.put(key, value)
+    }
+
+    operator fun contains(key: String) = cache[key] != null
 }

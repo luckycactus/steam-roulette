@@ -21,12 +21,15 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
 
     private val nonAlphanumericRegex = "[^\\w]".toRegex()
 
+    suspend fun getIds(steam64: Long, filter: GamesFilter, orderById: Boolean): List<Int> =
+        getIdsMutable(steam64, filter, orderById)
+
     suspend fun getIdsMutable(
         steam64: Long,
         filter: GamesFilter,
         orderById: Boolean
     ): MutableList<Int> {
-        val rawQuery = makeGamesRawQuery(
+        val rawQuery = buildGamesRawQuery(
             "SELECT appId FROM owned_game",
             steam64,
             filter
@@ -38,27 +41,13 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         return _getIds(rawQuery)
     }
 
-    suspend fun getIds(steam64: Long, filter: GamesFilter, orderById: Boolean): List<Int> {
-        return getIdsMutable(steam64, filter, orderById)
-    }
+    @Transaction
+    @RawQuery
+    abstract suspend fun _getIds(query: SupportSQLiteQuery): MutableList<Int>
 
     @Transaction
     @Query("SELECT * FROM owned_game WHERE userSteam64 = :steam64")
     abstract suspend fun getAll(steam64: Long): List<OwnedGameEntity>
-
-    fun getPagingSource(
-        steam64: Long,
-        filter: GamesFilter,
-        nameSearchQuery: String? = null
-    ): PagingSource<Int, GameHeader> {
-        val query = makePagingSourceRawQuery(
-            "SELECT appId, name FROM owned_game",
-            steam64,
-            filter,
-            nameSearchQuery
-        )
-        return _getGamesPagingSource(query)
-    }
 
     fun getLibraryPagingSource(
         steam64: Long,
@@ -71,7 +60,7 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
             filter,
             nameSearchQuery
         )
-        return _getGamesWithMetaPagingSource(query)
+        return _getLibraryPagingSource(query)
     }
 
     private fun makePagingSourceRawQuery(
@@ -79,16 +68,20 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
         steam64: Long,
         filter: GamesFilter,
         nameSearchQuery: String?
-    ): SimpleSQLiteQuery = makeGamesRawQuery(query, steam64, filter) { sb, args ->
+    ): SimpleSQLiteQuery = buildGamesRawQuery(query, steam64, filter) { sb, args ->
         if (!nameSearchQuery.isNullOrBlank()) {
-            for (word in nameSearchQuery.split(nonAlphanumericRegex)) {
+            val words = nameSearchQuery.split(nonAlphanumericRegex)
+            words.forEach {
                 sb.append(" AND name LIKE ?")
-                args += "%${word}%"
+                args += "%${it}%"
             }
+            sb.append(" ORDER BY name ASC")
         }
-
-        sb.append(" ORDER BY name ASC")
     }
+
+    @Transaction
+    @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
+    abstract fun _getLibraryPagingSource(query: SupportSQLiteQuery): PagingSource<Int, LibraryGame>
 
     @Query(
         """SELECT appId, name
@@ -124,32 +117,37 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     @Query("DELETE FROM owned_game")
     abstract suspend fun clear()
 
-    @Query("UPDATE owned_game SET hidden = :hidden WHERE userSteam64 =:steam64 AND appId IN (:gameIds)")
+    @Query(
+        """UPDATE owned_game 
+        SET hidden = :hidden 
+        WHERE userSteam64 =:steam64 
+            AND appId IN (:gameIds)"""
+    )
     abstract suspend fun setHidden(steam64: Long, gameIds: List<Int>, hidden: Boolean)
 
-    @Query("UPDATE owned_game SET hidden = :hidden WHERE userSteam64 =:steam64")
+    @Query(
+        """UPDATE owned_game 
+        SET hidden = :hidden 
+        WHERE userSteam64 =:steam64"""
+    )
     abstract suspend fun setAllHidden(steam64: Long, hidden: Boolean)
 
-    @Query("UPDATE owned_game SET shown = :shown WHERE userSteam64 =:steam64 AND appId IN (:gameIds)")
+    @Query(
+        """UPDATE owned_game 
+        SET shown = :shown
+        WHERE userSteam64 =:steam64 
+            AND appId IN (:gameIds)"""
+    )
     abstract suspend fun setShown(steam64: Long, gameIds: List<Int>, shown: Boolean)
 
-    @Query("UPDATE owned_game SET shown = :shown WHERE userSteam64 =:steam64")
+    @Query(
+        """UPDATE owned_game 
+        SET shown = :shown 
+        WHERE userSteam64 =:steam64"""
+    )
     abstract suspend fun setAllShown(steam64: Long, shown: Boolean)
 
     suspend fun isUserHasGames(steam64: Long) = _isUserHasGames(steam64) == 1
-
-    fun observeCount(steam64: Long, filter: GamesFilter): Flow<Int> {
-        return _observeCount(
-            makeGamesRawQuery(
-                "SELECT COUNT(*) FROM owned_game",
-                steam64,
-                filter
-            )
-        )
-    }
-
-    @Query("UPDATE owned_game set hidden = 0 WHERE userSteam64 =:steam64 AND hidden = 1")
-    abstract suspend fun resetAllHidden(steam64: Long)
 
     @Query(
         """SELECT COUNT(*) 
@@ -162,36 +160,35 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
     )
     abstract suspend fun _isUserHasGames(steam64: Long): Int
 
-    @Transaction
-    @RawQuery
-    abstract suspend fun _getIds(query: SupportSQLiteQuery): MutableList<Int>
-
-    @Transaction
-    @RawQuery
-    abstract suspend fun _getIdsMutable(query: SupportSQLiteQuery): MutableList<Int>
+    fun observeCount(steam64: Long, filter: GamesFilter): Flow<Int> {
+        val query = buildGamesRawQuery(
+            "SELECT COUNT(*) FROM owned_game",
+            steam64,
+            filter
+        )
+        return _observeCount(query)
+    }
 
     @Transaction
     @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
     abstract fun _observeCount(query: SupportSQLiteQuery): Flow<Int>
 
-    @Transaction
-    @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
-    abstract fun _getGamesPagingSource(query: SupportSQLiteQuery): PagingSource<Int, GameHeader>
+    @Query(
+        """UPDATE owned_game
+        SET hidden = 'false'
+        WHERE userSteam64 =:steam64 
+            AND hidden = 'true' """
+    )
+    abstract suspend fun resetAllHidden(steam64: Long)
 
-    @Transaction
-    @RawQuery(observedEntities = [OwnedGameRoomEntity::class])
-    abstract fun _getGamesWithMetaPagingSource(query: SupportSQLiteQuery): PagingSource<Int, LibraryGame>
-
-    /******************/
-
-    private inline fun makeGamesRawQuery(
+    private fun buildGamesRawQuery(
         query: String,
         steam64: Long,
         filter: GamesFilter,
-        block: (StringBuilder, MutableList<Any>) -> Unit = { _, _ -> Unit }
+        block: (StringBuilder, MutableList<Any>) -> Unit = { _, _ -> }
     ): SimpleSQLiteQuery {
-        val args: MutableList<Any> = mutableListOf()
-        val querySb: StringBuilder = StringBuilder()
+        val args = mutableListOf<Any>()
+        val querySb = StringBuilder()
 
         querySb.append(query)
 

@@ -14,12 +14,10 @@ class LocalAboutDataSource @Inject constructor(
 ) : AboutDataSource {
     override suspend fun getAppLibraries(): List<AppLibrary> = withContext(Dispatchers.IO) {
         val type = Types.newParameterizedType(List::class.java, AppLibrary::class.java)
-
+        val adapter = moshi.adapter<List<AppLibrary>>(type)
         val json = assets.open("open_source_libraries.json").bufferedReader().use {
             it.readText()
         }
-        moshi.adapter<List<AppLibrary>>(type).fromJson(json)!!
-
+        adapter.fromJson(json)!!
     }
-
 }

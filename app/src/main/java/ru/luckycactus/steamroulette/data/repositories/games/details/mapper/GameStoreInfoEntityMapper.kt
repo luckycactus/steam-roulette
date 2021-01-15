@@ -35,22 +35,6 @@ class GameStoreInfoEntityMapper @Inject constructor(
         )
     }
 
-    private fun mapReleaseDate(from: GameStoreInfoEntity): ReleaseDateInfo? {
-        return from.releaseDate?.let { ReleaseDateInfo(it.comingSoon, it.date) }
-    }
-
-    private fun mapScreenshots(from: GameStoreInfoEntity): List<Screenshot> {
-        return from.screenshots?.map { Screenshot(it.id, it.thumbnail, it.full) } ?: emptyList()
-    }
-
-    private fun mapGenres(from: GameStoreInfoEntity): List<GameGenre> {
-        return from.genres?.map { GameGenre(it.id, it.description) } ?: emptyList()
-    }
-
-    private fun mapCategories(from: GameStoreInfoEntity): List<GameCategory> {
-        return from.categories?.map { GameCategory(it.id, it.description) } ?: emptyList()
-    }
-
     private fun mapPlatformsAvailability(from: GameStoreInfoEntity): PlatformsAvailability {
         return PlatformsAvailability(
             from.platforms?.windows ?: false,
@@ -88,5 +72,21 @@ class GameStoreInfoEntityMapper @Inject constructor(
 
     private fun mapMetacriticInfo(from: GameStoreInfoEntity): MetacriticInfo? {
         return from.metacritic?.let { MetacriticInfo(it.score, it.url) }
+    }
+
+    private fun mapCategories(from: GameStoreInfoEntity): List<GameCategory> {
+        return from.categories?.map { GameCategory(it.id, it.description) } ?: emptyList()
+    }
+
+    private fun mapGenres(from: GameStoreInfoEntity): List<GameGenre> {
+        return from.genres?.map { GameGenre(it.id, it.description) } ?: emptyList()
+    }
+
+    private fun mapScreenshots(from: GameStoreInfoEntity): List<Screenshot> {
+        return from.screenshots?.map { Screenshot(it.id, it.thumbnail, it.full) } ?: emptyList()
+    }
+
+    private fun mapReleaseDate(from: GameStoreInfoEntity): ReleaseDateInfo? {
+        return from.releaseDate?.let { ReleaseDateInfo(it.comingSoon, it.date) }
     }
 }

@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.data.repositories.user
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
+import ru.luckycactus.steamroulette.data.core.FullCacheNbr
 import ru.luckycactus.steamroulette.data.repositories.user.datasource.UserDataSource
 import ru.luckycactus.steamroulette.data.repositories.user.mapper.UserSummaryMapper
 import ru.luckycactus.steamroulette.data.repositories.user.models.UserSummaryEntity
@@ -52,9 +52,9 @@ class UserRepositoryImpl @Inject constructor(
 
     private fun createUserSummaryNBR(
         steamId: SteamId
-    ): NetworkBoundResource.FullCache<UserSummaryEntity, UserSummary> {
+    ): FullCacheNbr<UserSummaryEntity, UserSummary> {
         val cacheKey = "user_summary_${steamId.as64()}"
-        return object : NetworkBoundResource.FullCache<UserSummaryEntity, UserSummary>(
+        return object : FullCacheNbr<UserSummaryEntity, UserSummary>(
             cacheKey,
             cacheKey,
             SUMMARY_CACHE_WINDOW

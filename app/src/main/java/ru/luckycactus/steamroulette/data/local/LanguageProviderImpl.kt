@@ -50,17 +50,7 @@ class LanguageProviderImpl @Inject constructor(
 
     override fun updateLanguage() {
         localeCode = context.getString(R.string.locale)
-        var info = languages[localeCode]
-        if (info == null) {
-            info = languages["en"]
-        }
-        languageInfo = info!!
-    }
-
-    private fun getLanguageInfo(): Pair<String, String> {
-        if (languageInfo == null)
-            updateLanguage()
-        return languageInfo!!
+        languageInfo = languages[localeCode] ?: languages["en"]
     }
 
     override fun getLanguageForWebApi(): String {
@@ -69,5 +59,11 @@ class LanguageProviderImpl @Inject constructor(
 
     override fun getLanguageForStoreApi(): String {
         return getLanguageInfo().second
+    }
+
+    private fun getLanguageInfo(): Pair<String, String> {
+        if (languageInfo == null)
+            updateLanguage()
+        return languageInfo!!
     }
 }

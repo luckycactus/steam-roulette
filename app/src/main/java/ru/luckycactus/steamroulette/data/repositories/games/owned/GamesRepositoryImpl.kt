@@ -3,7 +3,7 @@ package ru.luckycactus.steamroulette.data.repositories.games.owned
 import androidx.paging.PagingSource
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
-import ru.luckycactus.steamroulette.data.core.NetworkBoundResource
+import ru.luckycactus.steamroulette.data.core.FullCacheNbr
 import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesDataSource
 import ru.luckycactus.steamroulette.data.repositories.games.owned.models.OwnedGameEntity
 import ru.luckycactus.steamroulette.domain.common.SteamId
@@ -27,7 +27,7 @@ class GamesRepositoryImpl @Inject constructor(
         get() = userSession.requireCurrentUser()
 
     override suspend fun updateOwnedGames(cachePolicy: CachePolicy) {
-        createOwnedGamesNBR(currentUser).fetchIfNeed(cachePolicy)
+        createOwnedGamesResource(currentUser).fetchIfNeed(cachePolicy)
     }
 
     override fun observeGamesCount(filter: GamesFilter): Flow<Int> =
@@ -38,11 +38,11 @@ class GamesRepositoryImpl @Inject constructor(
     }
 
     override fun observeGamesUpdates(): Flow<Long> =
-        createOwnedGamesNBR(currentUser).observeCacheUpdates()
+        createOwnedGamesResource(currentUser).observeCacheUpdates()
 
     override suspend fun clearUser(steamId: SteamId) {
         localGamesDataSource.clear(steamId)
-        createOwnedGamesNBR(steamId).invalidateCache()
+        createOwnedGamesResource(steamId).invalidateCache()
     }
 
     override suspend fun isUserHasGames(): Boolean =
@@ -82,11 +82,11 @@ class GamesRepositoryImpl @Inject constructor(
         localGamesDataSource.setAllShown(currentUser, shown)
     }
 
-    private fun createOwnedGamesNBR(
+    private fun createOwnedGamesResource(
         steamId: SteamId
-    ): NetworkBoundResource.FullCache<Flow<OwnedGameEntity>, Unit> {
+    ): FullCacheNbr<Flow<OwnedGameEntity>, Unit> {
         val cacheKey = "owned_games_${steamId.as64()}"
-        return object : NetworkBoundResource.FullCache<Flow<OwnedGameEntity>, Unit>(
+        return object : FullCacheNbr<Flow<OwnedGameEntity>, Unit>(
             cacheKey,
             cacheKey,
             OWNED_GAMES_CACHE_WINDOW

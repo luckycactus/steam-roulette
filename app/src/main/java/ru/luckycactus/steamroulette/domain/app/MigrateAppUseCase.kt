@@ -13,12 +13,14 @@ class MigrateAppUseCase @Inject constructor(
 ) : SuspendUseCase<Unit, Unit>() {
 
     override suspend fun execute(params: Unit) {
-        var lastVersion = appRepository.lastVersion
         val currentVersion = appRepository.currentVersion
+        var lastVersion = appRepository.lastVersion
         if (lastVersion == 0)
             lastVersion = currentVersion
+
         if (lastVersion == currentVersion)
             return
+
         val migrations = migrationsProvider.get()
         while (lastVersion < currentVersion) {
             migrations[lastVersion]?.let {

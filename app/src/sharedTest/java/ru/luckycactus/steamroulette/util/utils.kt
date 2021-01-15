@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import retrofit2.HttpException
 import ru.luckycactus.steamroulette.data.core.NetworkConnectionException
-import ru.luckycactus.steamroulette.data.core.ServerException
+import ru.luckycactus.steamroulette.data.core.ApiException
 import java.io.File
 import java.io.IOException
 
@@ -26,7 +26,7 @@ suspend fun <T> testCommonNetworkExceptions(
     try {
         block()
         fail("ServerException expected")
-    } catch (e: ServerException) {
+    } catch (e: ApiException) {
         assertEquals(HttpException::class.java, e.cause?.javaClass)
     }
 
