@@ -55,15 +55,10 @@ class CoverBlurTransformation(
             drawBitmap(toTransform, 0f, 0f, paint)
         }
 
-        blurBitmap = try {
-            FastBlur.blur(blurBitmap, radius, true)
-        } catch (e: RuntimeException) {
-            SupportRSBlur.blur(context, blurBitmap, radius)
-        } catch (e: NoClassDefFoundError) {
-            RSBlur.blur(context, blurBitmap, radius)
-        }
+        blurBitmap = blur(blurBitmap, context)
 
-        return pool.get(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888).applyCanvas {
+        val result = pool.get(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
+        result.applyCanvas {
             withScale(
                 width / blurBackgroundWidth,
                 height / blurBackgroundHeight
@@ -74,9 +69,20 @@ class CoverBlurTransformation(
             val y = (height - toTransform.height) * bias
             translate(0f, y)
             drawBitmap(toTransform, 0f, 0f, paint)
-        }.also {
-            pool.put(blurBitmap)
         }
+        pool.put(blurBitmap)
+        return result
+    }
+
+    private fun blur(
+        blurBitmap: Bitmap,
+        context: Context
+    ) = try {
+        FastBlur.blur(blurBitmap, radius, true)
+    } catch (e: RuntimeException) {
+        SupportRSBlur.blur(context, blurBitmap, radius)
+    } catch (e: NoClassDefFoundError) {
+        RSBlur.blur(context, blurBitmap, radius)
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {

@@ -53,7 +53,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                 }
 
                 val pagingList = PagingGameListImpl(
-                    { gamesRepository.getLocalOwnedGameHeaders(it) },
+                    { gamesRepository.getOwnedGameHeaders(it) },
                     gameIds,
                     5,
                     20,

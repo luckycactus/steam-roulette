@@ -25,13 +25,8 @@ class GameShortDescriptionViewHolder(
             val space = itemView.resources.getDimensionPixelSize(R.dimen.default_activity_margin)
             val decoration = SpaceDecoration(space, 0, space / 2, false)
 
-            rvGenres.layoutManager =
-                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
-            rvGenres.addItemDecoration(decoration)
-
-            rvCategories.layoutManager =
-                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
-            rvCategories.addItemDecoration(decoration)
+            setupTagsRv(rvGenres, decoration)
+            setupTagsRv(rvCategories, decoration)
 
             layoutMetacriticScore.setOnClickListener {
                 viewModel.onMetacriticClick()
@@ -43,24 +38,19 @@ class GameShortDescriptionViewHolder(
         }
     }
 
+    private fun setupTagsRv(view: RecyclerView, decoration: RecyclerView.ItemDecoration) {
+        view.layoutManager =
+            LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+        view.addItemDecoration(decoration)
+    }
+
     override fun bind(item: GameDetailsUiModel.ShortDescription): Unit = with(binding) {
         tvDescription.text = item.value?.let { HtmlCompat.fromHtml(it, 0) }
         ivForward.visibility(item.detailedDescriptionAvailable)
         header.isClickable = item.detailedDescriptionAvailable
 
-        if (!item.genres.isNullOrEmpty()) {
-            rvGenres.adapter = TagsAdapter(item.genres)
-            rvGenres.visibility = View.VISIBLE
-        } else {
-            rvGenres.visibility = View.GONE
-        }
-
-        if (!item.categories.isNullOrEmpty()) {
-            rvCategories.adapter = TagsAdapter(item.categories)
-            rvCategories.visibility = View.VISIBLE
-        } else {
-            rvCategories.visibility = View.GONE
-        }
+        bindTagsRv(rvGenres, item.genres)
+        bindTagsRv(rvCategories, item.categories)
 
         val ageResource = item.requiredAge?.let { getAgeDrawableResource(it) }
         if (ageResource != null) {
@@ -84,6 +74,15 @@ class GameShortDescriptionViewHolder(
         blockExtraInfo.visibility(ageResource != null || item.metacriticInfo != null)
     }
 
+    private fun bindTagsRv(rv: RecyclerView, tags: List<String>?) {
+        if (!tags.isNullOrEmpty()) {
+            rv.adapter = TagsAdapter(tags)
+            rv.visibility = View.VISIBLE
+        } else {
+            rv.visibility = View.GONE
+        }
+    }
+
     private fun getAgeDrawableResource(age: Int): Int? {
         return when (age) {
             0 -> R.drawable.age_0
@@ -100,7 +99,9 @@ class GameShortDescriptionViewHolder(
     ) : RecyclerView.Adapter<TagsAdapter.TagViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            TagViewHolder(ItemGameDescriptionBlockTagBinding.inflate(parent.layoutInflater, parent, false))
+            TagViewHolder(
+                ItemGameDescriptionBlockTagBinding.inflate(parent.layoutInflater, parent, false)
+            )
 
         override fun getItemCount(): Int = items.size
 

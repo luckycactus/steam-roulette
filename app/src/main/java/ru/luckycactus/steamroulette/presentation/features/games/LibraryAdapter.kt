@@ -3,8 +3,6 @@ package ru.luckycactus.steamroulette.presentation.features.games
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 import androidx.core.view.ViewCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.selection.ItemDetailsLookup
@@ -16,17 +14,10 @@ import ru.luckycactus.steamroulette.databinding.ItemLibraryGameBinding
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
-import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 class LibraryAdapter(
-    private val markHidden: Boolean,
     private val onGameClick: (LibraryGame, List<View>, Boolean) -> Unit
 ) : PagingDataAdapter<LibraryGame, LibraryAdapter.GameViewHolder>(diffCallback) {
-
-    private val hiddenColorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-        0x90ffffffL.toInt(),
-        BlendModeCompat.LIGHTEN
-    )
 
     var tracker: SelectionTracker<Long>? = null
 
@@ -84,11 +75,6 @@ class LibraryAdapter(
             gameView.isSelected = selected
             cardViewBottom.isSelected = selected
             checkbox.isSelected = selected
-            hidden.visibility(game != null && game.hidden && markHidden)
-            gameView.colorFilter =
-                if (game != null && game.hidden && markHidden)
-                    hiddenColorFilter
-                else null
         }
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =

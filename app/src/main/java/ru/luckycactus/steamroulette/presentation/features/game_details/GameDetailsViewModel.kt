@@ -14,7 +14,7 @@ import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
-import ru.luckycactus.steamroulette.domain.utils.exhaustive
+import ru.luckycactus.steamroulette.domain.utils.extensions.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
@@ -36,9 +36,9 @@ class GameDetailsViewModel @ViewModelInject constructor(
         get() = _gameDetails
 
     private val appId: Int
-        get() = gameStoreInfo?.appId ?: initialGameHeader.appId
+        get() = gameStoreInfo?.appId ?: requestedGame.appId
 
-    private val initialGameHeader = savedStateHandle.get<GameHeader>(ARG_GAME)!!
+    private val requestedGame = savedStateHandle.get<GameHeader>(ARG_GAME)!!
 
     private val _gameDetails = MutableLiveData<List<GameDetailsUiModel>>()
 
@@ -90,20 +90,16 @@ class GameDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    fun resolvedGameHasDifferentId() =
-        gameStoreInfo?.appId != null && gameStoreInfo?.appId != initialGameHeader.appId
+    fun resolvedGameHasSameId() =
+        gameStoreInfo.let { it == null || it.appId == requestedGame.appId }
 
     private fun loadInfo(tryCache: Boolean) {
         renderLoading()
         viewModelScope.launch {
-            val cachePolicy = if (tryCache) {
-                CachePolicy.CacheOrRemote
-            } else {
-                CachePolicy.Remote
-            }
+            val cachePolicy = if (tryCache) CachePolicy.CacheOrRemote else CachePolicy.Remote
             val result = getGameStoreInfo(
                 GetGameStoreInfoUseCase.Params(
-                    initialGameHeader.appId,
+                    requestedGame.appId,
                     cachePolicy
                 )
             )
@@ -152,7 +148,7 @@ class GameDetailsViewModel @ViewModelInject constructor(
     }
 
     private fun getInitialHeader(): GameDetailsUiModel =
-        GameDetailsUiModel.Header(initialGameHeader)
+        GameDetailsUiModel.Header(requestedGame)
 
     companion object {
         const val ARG_GAME = "ARG_GAME"

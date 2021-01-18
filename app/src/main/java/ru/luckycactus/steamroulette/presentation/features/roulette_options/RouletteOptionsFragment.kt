@@ -15,6 +15,7 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.showIfNotExist
 @AndroidEntryPoint
 class RouletteOptionsFragment : BaseBottomSheetDialogFragment<FragmentRouletteOptionsBinding>(),
     MessageDialogFragment.Callbacks {
+
     private val viewModel: RouletteOptionsViewModel by viewModels()
 
     override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =

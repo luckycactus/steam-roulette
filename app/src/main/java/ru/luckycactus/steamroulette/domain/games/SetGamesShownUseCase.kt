@@ -8,7 +8,7 @@ class SetGamesShownUseCase @Inject constructor(
 ) : SuspendUseCase<SetGamesShownUseCase.Params, Unit>() {
 
     override suspend fun execute(params: Params) {
-        gamesRepository.setLocalOwnedGamesShown(params.gameIds, params.shown)
+        gamesRepository.setOwnedGamesShown(params.gameIds, params.shown)
     }
 
     data class Params(

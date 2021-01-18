@@ -11,9 +11,8 @@ class UpdateOwnedGamesUseCase @Inject constructor(
 
     override suspend fun execute(params: Params): Result {
         return try {
-            gamesRepository.updateOwnedGames(
-                if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
-            )
+            val cachePolicy = if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
+            gamesRepository.updateOwnedGames(cachePolicy)
             Result.Success
         } catch (e: GetOwnedGamesPrivacyException) {
             Result.Fail.PrivateProfile

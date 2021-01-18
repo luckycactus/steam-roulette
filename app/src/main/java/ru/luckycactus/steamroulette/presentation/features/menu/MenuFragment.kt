@@ -10,6 +10,7 @@ import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentMenuBinding
+import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
@@ -58,12 +59,7 @@ class MenuFragment : BaseBottomSheetDialogFragment<FragmentMenuBinding>(),
 
         observe(viewModel.userSummary) {
             tvNickname.text = it.personaName
-            GlideApp.with(this@MenuFragment)
-                .load(it.avatarFull)
-                .placeholder(R.drawable.avatar_placeholder)
-                .signature(ObjectKey(viewModel.userSummaryLastSync))
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(ivAvatar)
+            loadAvatar(it)
         }
 
         observe(viewModel.refreshProfileState) {
@@ -83,6 +79,15 @@ class MenuFragment : BaseBottomSheetDialogFragment<FragmentMenuBinding>(),
         observe(viewModel.gamesLastUpdate) {
             tvGamesUpdateDate.text = it
         }
+    }
+
+    private fun loadAvatar(it: UserSummary) {
+        GlideApp.with(this@MenuFragment)
+            .load(it.avatarFull)
+            .placeholder(R.drawable.avatar_placeholder)
+            .signature(ObjectKey(viewModel.userSummaryLastSync))
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(binding.ivAvatar)
     }
 
     override fun onMessageDialogResult(

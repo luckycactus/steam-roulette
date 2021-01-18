@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.ui.widget
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -111,10 +110,8 @@ class LuxuryProgressBar : View {
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        if (visibility == GONE || visibility == INVISIBLE) {
+        if (visibility == VISIBLE)
             resetState()
-        }
-        super.onVisibilityChanged(changedView, visibility)
     }
 
     private fun resetState() {

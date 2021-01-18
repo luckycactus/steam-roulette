@@ -17,7 +17,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
-import ru.luckycactus.steamroulette.domain.utils.exhaustive
+import ru.luckycactus.steamroulette.domain.utils.extensions.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
@@ -36,8 +36,8 @@ class RouletteViewModel @ViewModelInject constructor(
 ) : BaseViewModel() {
 
     val games: LiveData<List<GameHeader>?>
-    val itemRemoved: Flow<Int>
-    val itemsInserted: Flow<Pair<Int, Int>>
+    val itemRemovals: Flow<Int>
+    val itemInsertions: Flow<Pair<Int, Int>>
     val contentState: LiveData<ContentState>
         get() = _contentState.distinctUntilChanged()
     val controlsAvailable: LiveData<Boolean>
@@ -88,10 +88,10 @@ class RouletteViewModel @ViewModelInject constructor(
 
         games = _gamesPagingList.map { it?.data }.asLiveData()
 
-        itemsInserted = _gamesPagingList
+        itemInsertions = _gamesPagingList
             .flatMapLatest { it?.itemsInsertionsFlow ?: emptyFlow() }
 
-        itemRemoved = _gamesPagingList
+        itemRemovals = _gamesPagingList
             .flatMapLatest { it?.itemRemovalsFlow ?: emptyFlow() }
 
         topGame = _gamesPagingList

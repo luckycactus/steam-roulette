@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.ItemAppLibraryBinding
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
-import ru.luckycactus.steamroulette.domain.about.entity.LicenseType
 import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 
 class AppLibrariesAdapter(
@@ -38,11 +37,7 @@ class AppLibrariesAdapter(
             binding.apply {
                 tvLibraryName.text =
                     itemView.context.getString(R.string.app_library_template, lib.author, lib.name)
-                tvLibraryLicense.text = when (lib.licenseType) {
-                    LicenseType.MIT -> "MIT"
-                    LicenseType.Apache2 -> "Apache 2.0"
-                    LicenseType.Custom -> "Custom license"
-                }
+                tvLibraryLicense.text = lib.licenseType.title
             }
             this.lib = lib
         }

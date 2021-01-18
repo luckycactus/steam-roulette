@@ -7,9 +7,8 @@ import javax.inject.Inject
 class ValidateSteamIdInputUseCase @Inject constructor() : UseCase<String, Boolean>() {
 
     override fun execute(params: String): Boolean {
-        with(params.trim()) {
-            return SteamId.getFormat(this) != SteamId.Format.Invalid
-                    || SteamId.getVanityUrlFormat(this) != SteamId.VanityUrlFormat.Invalid
-        }
+        val input = params.trim()
+        return SteamId.getFormat(input) != SteamId.Format.Invalid
+                || SteamId.getVanityUrlFormat(input) != SteamId.VanityUrlFormat.Invalid
     }
 }

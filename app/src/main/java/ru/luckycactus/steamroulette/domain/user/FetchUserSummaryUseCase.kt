@@ -9,9 +9,8 @@ class FetchUserSummaryUseCase @Inject constructor(
 ) : ResultSuspendUseCase<FetchUserSummaryUseCase.Params, Unit>() {
 
     override suspend fun getResult(params: Params) {
-        userRepository.fetchUserSummary(
-            if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
-        )
+        val cachePolicy = if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
+        userRepository.fetchUserSummary(cachePolicy)
     }
 
     data class Params(

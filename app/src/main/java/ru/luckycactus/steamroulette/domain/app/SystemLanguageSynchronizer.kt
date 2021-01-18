@@ -11,16 +11,17 @@ import javax.inject.Singleton
 
 @Singleton
 class SystemLanguageSynchronizer @Inject constructor(
-    appRepository: AppRepository,
+    private val appRepository: AppRepository,
     private val languageProvider: LanguageProvider,
     @AppCoScope private val appScope: CoroutineScope
 ) {
-    private val localeChangesFlow = appRepository.observeSystemLocaleChanges()
     private var job: Job? = null
 
     fun start() {
+        if (job?.isActive == true)
+            return
         job = appScope.launch {
-            localeChangesFlow.collect {
+            appRepository.observeSystemLocaleChanges().collect {
                 languageProvider.updateLanguage()
             }
         }

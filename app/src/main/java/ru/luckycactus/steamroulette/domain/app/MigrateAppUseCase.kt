@@ -15,8 +15,11 @@ class MigrateAppUseCase @Inject constructor(
     override suspend fun execute(params: Unit) {
         val currentVersion = appRepository.currentVersion
         var lastVersion = appRepository.lastVersion
-        if (lastVersion == 0)
-            lastVersion = currentVersion
+
+        if (lastVersion == 0) {
+            appRepository.lastVersion = currentVersion
+            return
+        }
 
         if (lastVersion == currentVersion)
             return

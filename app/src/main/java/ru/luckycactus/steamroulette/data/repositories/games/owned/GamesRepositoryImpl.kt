@@ -57,28 +57,28 @@ class GamesRepositoryImpl @Inject constructor(
     ) = localGamesDataSource.getIdsMutable(currentUser, gamesFilter, orderById)
 
 
-    override suspend fun getLocalOwnedGameHeaders(gameIds: List<Int>): List<GameHeader> =
+    override suspend fun getOwnedGameHeaders(gameIds: List<Int>): List<GameHeader> =
         localGamesDataSource.getHeaders(currentUser, gameIds)
 
-    override suspend fun setLocalOwnedGamesHidden(
+    override suspend fun setOwnedGamesHidden(
         gameIds: List<Int>,
         hide: Boolean
     ) {
         localGamesDataSource.setHidden(currentUser, gameIds, hide)
     }
 
-    override suspend fun setAllLocalOwnedGamesHidden(hide: Boolean) {
+    override suspend fun setAllOwnedGamesHidden(hide: Boolean) {
         localGamesDataSource.setAllHidden(currentUser, hide)
     }
 
-    override suspend fun setLocalOwnedGamesShown(
+    override suspend fun setOwnedGamesShown(
         gameIds: List<Int>,
         shown: Boolean
     ) {
         localGamesDataSource.setShown(currentUser, gameIds, shown)
     }
 
-    override suspend fun setAllLocalOwnedGamesShown(shown: Boolean) {
+    override suspend fun setAllOwnedGamesShown(shown: Boolean) {
         localGamesDataSource.setAllShown(currentUser, shown)
     }
 

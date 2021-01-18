@@ -18,12 +18,9 @@ class GetUserSummaryUseCase @Inject constructor(
     override suspend fun execute(params: Params): Result =
         try {
             val user = params.steamId ?: userSession.requireCurrentUser()
-            Result.Success(
-                userRepository.getUserSummaryOrThrow(
-                    user,
-                    if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
-                )
-            )
+            val cachePolicy = if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
+            val userSummary = userRepository.getUserSummaryOrThrow(user, cachePolicy)
+            Result.Success(userSummary)
         } catch (e: CancellationException) {
             throw e
         } catch (e: SteamIdNotFoundException) {

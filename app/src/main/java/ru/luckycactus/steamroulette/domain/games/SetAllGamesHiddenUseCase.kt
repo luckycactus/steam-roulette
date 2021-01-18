@@ -6,8 +6,9 @@ import javax.inject.Inject
 class SetAllGamesHiddenUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
 ) : SuspendUseCase<SetAllGamesHiddenUseCase.Params, Unit>() {
+
     override suspend fun execute(params: Params) {
-        gamesRepository.setAllLocalOwnedGamesHidden(params.hide)
+        gamesRepository.setAllOwnedGamesHidden(params.hide)
     }
 
     data class Params(

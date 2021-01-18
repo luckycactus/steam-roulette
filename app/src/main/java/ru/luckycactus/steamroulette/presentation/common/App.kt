@@ -46,6 +46,7 @@ open class App : Application(), Configuration.Provider {
         systemLanguageSynchronizer.start()
         gamesPeriodicUpdater.start()
 
+        //todo
         runBlocking {
             migrateApp()
         }

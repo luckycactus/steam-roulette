@@ -13,6 +13,7 @@ class AboutViewModel @ViewModelInject constructor(
     appReviewManager: AppReviewManager,
     private val router: Router
 ) : BaseViewModel() {
+
     val version: String = "${appRepository.currentVersionName} (${appRepository.currentVersion})"
 
     val appRated = appReviewManager.observeRatedState().asLiveData()

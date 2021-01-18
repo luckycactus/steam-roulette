@@ -171,7 +171,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFra
             }
         }
 
-        adapter = LibraryAdapter(false, ::onGameClick)
+        adapter = LibraryAdapter(::onGameClick)
         rvGames.adapter = adapter
         layoutManager = GridLayoutManager(context, 1)
         rvGames.layoutManager = layoutManager
@@ -593,10 +593,9 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFra
                     val vh =
                         recyclerView.getChildViewHolder(it) as LibraryAdapter.GameViewHolder
                     if (key == adapter.getSelectionKeyForItem(vh.game)) {
-                        vh.bindingAdapterPosition.let {
-                            position = it
-                            positionToKey[key] = it
-                        }
+                            position = vh.bindingAdapterPosition
+                            positionToKey[key] = position!!
+
                     }
                 }
             }

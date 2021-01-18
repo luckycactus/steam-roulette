@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.presentation.ui.widget
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ColorFilter
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -38,31 +37,16 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransform
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.onApiAtLeast
 import ru.luckycactus.steamroulette.presentation.utils.sp
+import kotlin.properties.Delegates
 
 class GameView : MaterialCardView {
-    var textSize: Float
-        set(value) {
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(
-                tvName,
-                TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
-            )
-            tvName.setTextSize(TypedValue.COMPLEX_UNIT_PX, value)
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(
-                tvName,
-                TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM
-            )
-        }
-        get() = tvName.textSize
+    var defaultTextSize: Float by Delegates.observable(0f) { _, _, _ ->
+        setAutoSizeText(tvName.text)
+    }
     var memoryCacheEnabled = false
 
     var imageReady = false
         private set
-
-    var colorFilter: ColorFilter?
-        get() = ivGame.colorFilter
-        set(value) {
-            ivGame.colorFilter = value
-        }
 
     private lateinit var ivGame: ImageView
     private lateinit var tvName: TextView
@@ -98,7 +82,7 @@ class GameView : MaterialCardView {
             ivGame.clipToOutline = true
         }
         context.withStyledAttributes(attrs, R.styleable.GameView) {
-            textSize = getDimension(R.styleable.GameView_textSize, DEFAULT_TEXT_SIZE)
+            defaultTextSize = getDimension(R.styleable.GameView_textSize, DEFAULT_TEXT_SIZE)
         }
     }
 
@@ -113,11 +97,10 @@ class GameView : MaterialCardView {
             return
 
         val differentAppId = current?.appId != game?.appId
-
         current = game
         if (differentAppId)
             imageReady = false
-        tvName.text = game?.name
+        setAutoSizeText(game?.name)
         placeholder.visibility = View.VISIBLE
         val target = MyTarget(ivGame, listener)
         if (game != null) {
@@ -137,11 +120,25 @@ class GameView : MaterialCardView {
         }
     }
 
+    private fun setAutoSizeText(text: CharSequence?) {
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(
+            tvName,
+            TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
+        )
+        tvName.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultTextSize)
+        tvName.text = text
+        tvName.post {
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(
+                tvName,
+                TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM
+            )
+        }
+    }
+
     fun setUserVisibleHint(visible: Boolean) {
         userVisibleHint = visible
     }
 
-    //todo Грузить hd через wifi, обычную через мобильную сеть
     private fun createRequestBuilder(
         view: GameView,
         game: GameHeader,
@@ -223,21 +220,24 @@ class GameView : MaterialCardView {
             .skipMemoryCache(!memoryCacheEnabled)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
 
-        if (imageType == ImageType.HD) {
-            portrait.onlyRetrieveFromCache(true)
-            val portraitImageThumbnail = portrait.clone()
-            portraitHd.thumbnail(portraitImageThumbnail)
-            headerFirstCache.error(portraitHd)
-            portraitHd.error(portrait)
-        } else {
-            if (imageType == ImageType.HdOrSd) {
+        when (imageType) {
+            ImageType.HD -> {
+                portrait.onlyRetrieveFromCache(true)
+                val portraitImageThumbnail = portrait.clone()
+                portraitHd.thumbnail(portraitImageThumbnail)
+                headerFirstCache.error(portraitHd)
+                portraitHd.error(portrait)
+            }
+            ImageType.HdIfCachedOrSd -> {
                 portraitHd.onlyRetrieveFromCache(true)
                 headerFirstCache.error(portraitHd)
                 portraitHd.error(portrait)
-            } else {
+            }
+            ImageType.SD -> {
                 headerFirstCache.error(portrait)
             }
         }
+
         portrait.error(headerAfterAll)
 
         return headerFirstCache
@@ -261,12 +261,11 @@ class GameView : MaterialCardView {
     }
 
     enum class ImageType {
-        SD, HD, HdOrSd
+        SD, HD, HdIfCachedOrSd
     }
 
     companion object {
         private val headerImageTransformation = MultiTransformation<Bitmap>(
-            //todo calculate blur scale width
             CoverBlurTransformation(25, 100, 0.5f),
             CoverGlareTransformation(
                 BitmapFactory.decodeResource(

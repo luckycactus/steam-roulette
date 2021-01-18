@@ -16,7 +16,7 @@ class GameHeaderViewHolder(
 
     fun bind(
         item: GameDetailsUiModel.Header,
-        disableTransition: Boolean,
+        disableImageTransition: Boolean,
         listener: GameView.Listener?
     ): Unit = with(binding) {
         tvHeaderGameName.text = item.gameHeader.name
@@ -28,9 +28,9 @@ class GameHeaderViewHolder(
         tvReleaseDate.visibility(!item.releaseDate.isNullOrBlank())
         gameView.setGame(
             item.gameHeader,
-            disableTransition,
+            disableImageTransition,
             listener,
-            imageType = GameView.ImageType.HdOrSd,
+            imageType = GameView.ImageType.HdIfCachedOrSd,
             transitionGameId = transitionGameId
         )
     }

@@ -18,9 +18,7 @@ import androidx.transition.Fade
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentGameDetailsBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
@@ -46,6 +44,10 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
 
     private lateinit var tintContext: TintContext
 
+    private var headerIsReady = false
+    private var tintIsReady = false
+    private var transitionStarted = false
+
     override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
         FragmentGameDetailsBinding.inflate(inflater, container, false)
 
@@ -57,11 +59,16 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
 
         setupTint()
 
+        tintIsReady = initialTintColor != 0 || !waitForImage
+
         adapter = GameDetailsAdapter(
             requireArguments().getParcelable<GameHeader>(GameDetailsViewModel.ARG_GAME)!!.appId,
-            waitForImage && savedInstanceState == null,
-            ::startPostponedEnterTransition,
-            ::onCoverChanged,
+            waitForImage,
+            onHeaderReadyForTransition = {
+                headerIsReady = true
+                startTransitionIfNotStartedAndReady()
+            },
+            ::onHeaderImageChanged,
             viewModel
         )
 
@@ -107,6 +114,18 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
         }
     }
 
+    private fun setupTransition() {
+        enterTransition = Fade()
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            duration = DEFAULT_TRANSITION_DURATION
+            setPathMotion(MaterialArcMotion())
+            scrimColor = Color.TRANSPARENT
+            // adding listener (even empty) breaks transition for some reason
+//            addListener((activity as MainActivity).touchSwitchTransitionListener)
+        }
+    }
+
     private fun setupTint() {
         tintContext = TintContext(requireContext(), tintColor = initialTintColor)
 
@@ -118,28 +137,26 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
         }
     }
 
-    private fun onCoverChanged(bitmap: Bitmap?) {
-        if (initialTintColor == 0 || viewModel.resolvedGameHasDifferentId()) {
-            lifecycleScope.launch {
-                val palette = bitmap?.let {
-                    withContext(Dispatchers.Default) {
-                        PaletteUtils.getGameCoverPalette(it).generate()
-                    }
-                }
-                tintContext.updateColor(PaletteUtils.getColorForGameCover(palette))
-            }
+    private fun onHeaderImageChanged(bitmap: Bitmap?) {
+        if (tintContext.tintColor != 0 && viewModel.resolvedGameHasSameId())
+            return
+        if (tintContext.tintColor == 0 && bitmap == null)
+            return
+        lifecycleScope.launch {
+            val palette = PaletteUtils.generateGameCoverPalette(bitmap)
+            tintContext.updateColor(
+                PaletteUtils.getColorForGameCover(palette),
+                animate = transitionStarted
+            )
+            tintIsReady = true
+            startTransitionIfNotStartedAndReady()
         }
     }
 
-    private fun setupTransition() {
-        enterTransition = Fade()
-
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            duration = DEFAULT_TRANSITION_DURATION
-            setPathMotion(MaterialArcMotion())
-            scrimColor = Color.TRANSPARENT
-            // adding listener (even empty) breaks transition for some reason
-//            addListener((activity as MainActivity).touchSwitchTransitionListener)
+    private fun startTransitionIfNotStartedAndReady() {
+        if (!transitionStarted && headerIsReady && tintIsReady) {
+            startPostponedEnterTransition()
+            transitionStarted = true
         }
     }
 

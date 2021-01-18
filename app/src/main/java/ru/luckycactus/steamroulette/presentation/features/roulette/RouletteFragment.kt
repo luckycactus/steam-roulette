@@ -47,7 +47,7 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
 
     private lateinit var tintContext: TintContext
     private val paletteHelper = PalettePageHelper {
-        tintContext.updateColor(it)
+        tintContext.updateColor(it, false)
     }
 
     private val fabClickListener = View.OnClickListener { fab ->
@@ -141,13 +141,13 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
         )
 
         lifecycleScope.launch {
-            viewModel.itemRemoved.collect {
+            viewModel.itemRemovals.collect {
                 rouletteAdapter.notifyItemRemoved(it)
             }
         }
 
         lifecycleScope.launch {
-            viewModel.itemsInserted.collect {
+            viewModel.itemInsertions.collect {
                 rouletteAdapter.notifyItemRangeInserted(it.first, it.second)
             }
         }
@@ -171,7 +171,7 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
     }
 
     private fun setupTint() {
-        tintContext = TintContext(requireContext(), animate = false)
+        tintContext = TintContext(requireContext())
 
         binding.root.background =
             tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)

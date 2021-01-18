@@ -8,10 +8,9 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.widget.EditText
 import androidx.annotation.MainThread
 
-class EditTextWithLabel : EditText {
+class EditTextWithLabel : androidx.appcompat.widget.AppCompatEditText {
     var label: CharSequence? = null
         @MainThread
         set(value) {
@@ -24,20 +23,22 @@ class EditTextWithLabel : EditText {
             setText(text)
         }
 
-    val textWithoutLabel: CharSequence
+    val textWithoutLabel: CharSequence?
         get() {
-            return if (label != null && text.endsWith(label!!)) {
-                text.subSequence(0, length() - labelLength)
-            } else {
-                text
+            return text?.let {
+                if (label != null && it.endsWith(label!!)) {
+                    it.subSequence(0, length() - labelLength)
+                } else {
+                    text
+                }
             }
         }
 
     private val labelLength
         get() = label?.length ?: 0
 
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : super(
         context,
         attrs,
@@ -51,7 +52,7 @@ class EditTextWithLabel : EditText {
 
     override fun onSelectionChanged(selStart: Int, selEnd: Int) {
         //this method is called from superclass constructor, so child class fields are not initialized yet
-        if (label == null || !text.endsWith(label!!)) {
+        if (label == null || text?.endsWith(label!!) == false) {
             super.onSelectionChanged(selStart, selEnd)
             return
         }
@@ -63,10 +64,8 @@ class EditTextWithLabel : EditText {
         }
     }
 
-    override fun onSaveInstanceState(): Parcelable? =
-        SavedState(
-            super.onSaveInstanceState()
-        ).apply {
+    override fun onSaveInstanceState(): Parcelable =
+        SavedState(super.onSaveInstanceState()).apply {
             label = this@EditTextWithLabel.label
         }
 

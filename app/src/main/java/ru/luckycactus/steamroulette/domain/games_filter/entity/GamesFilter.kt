@@ -12,9 +12,7 @@ data class GamesFilter(
     companion object {
         private val all = GamesFilter()
         private val visible = GamesFilter(hidden = false)
-        private val hidden by lazyNonThreadSafe {
-            GamesFilter(hidden = true)
-        }
+        private val hidden = GamesFilter(hidden = true)
 
         fun onlyVisible() = visible
         fun onlyHidden() = hidden

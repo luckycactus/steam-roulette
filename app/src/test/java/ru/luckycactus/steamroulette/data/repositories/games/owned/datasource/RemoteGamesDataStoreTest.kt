@@ -6,7 +6,6 @@ import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -17,7 +16,6 @@ import ru.luckycactus.steamroulette.di.common.MoshiModule
 import ru.luckycactus.steamroulette.domain.games.GetOwnedGamesPrivacyException
 import ru.luckycactus.steamroulette.util.TestData
 import ru.luckycactus.steamroulette.util.getJson
-import ru.luckycactus.steamroulette.util.testCommonNetworkExceptions
 
 
 class RemoteGamesDataSourceTest {
@@ -56,15 +54,6 @@ class RemoteGamesDataSourceTest {
             } returns getJson("json/games/owned_games_response_empty.json").toResponseBody()
 
             remoteGamesDataSource.getAll(TestData.testSteamId).collect()
-        }
-
-    @Test
-    fun `when getAll - while service throws exception - should throw correct common network exceptions`() =
-        runBlockingTest {
-            testCommonNetworkExceptions(
-                { steamApiServiceMock.getOwnedGames(any(), any(), any()) },
-                { remoteGamesDataSource.getAll(TestData.testSteamId) }
-            )
         }
 
     @Test

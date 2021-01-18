@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:parentTag="androidx.cardview.widget.CardView"
     >
@@ -11,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/cover_placeholder"
-        android:foreground="@drawable/cover_glare"
         >
 
         <TextView
@@ -22,7 +20,6 @@
             android:gravity="center"
             android:maxLines="2"
             android:padding="@dimen/spacing_small"
-            app:autoSizeTextType="uniform"
             tools:text="Final Fantasy XIV: A Realm Reborn"
             tools:textSize="@dimen/game_view_roulette_text_size"
             />

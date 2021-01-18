@@ -17,14 +17,14 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 class GameDetailsAdapter constructor(
     // store api can return different id, but we need use old one for working shared element transition
     private val transitionGameId: Int,
-    private val waitForImageReadyForTransition: Boolean,
-    private val onHeaderImageReady: () -> Unit,
+    private val waitForImage: Boolean,
+    private val onHeaderReadyForTransition: () -> Unit,
     private val onHeaderBitmapChanged: (Bitmap?) -> Unit,
     private val gameDetailsViewModel: GameDetailsViewModel
 ) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
     diffCallback
 ) {
-    private var imageReady = false
+    private var headerReady = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameDetailsViewHolder<*> {
         val inflater = parent.layoutInflater
@@ -63,24 +63,25 @@ class GameDetailsAdapter constructor(
         val item = getItem(position)
         when (holder) {
             is GameHeaderViewHolder -> {
-                val shouldWaitForHeader = waitForImageReadyForTransition && !imageReady
+                val waitForImage = waitForImage && !headerReady
 
                 val listener = GameView.Listener {
-                    if (!imageReady) {
-                        imageReady = true
-                        onHeaderImageReady()
-                    }
                     onHeaderBitmapChanged(it)
+                    if (!headerReady) {
+                        headerReady = true
+                        onHeaderReadyForTransition()
+                    }
                 }
 
                 holder.bind(
                     item as GameDetailsUiModel.Header,
-                    shouldWaitForHeader,
+                    waitForImage,
                     listener
                 )
-                if (!shouldWaitForHeader && !imageReady) {
-                    onHeaderImageReady()
-                    imageReady = true
+
+                if (!waitForImage && !headerReady) {
+                    headerReady = true
+                    onHeaderReadyForTransition()
                 }
             }
             is GameShortDescriptionViewHolder -> holder.bind(item as GameDetailsUiModel.ShortDescription)

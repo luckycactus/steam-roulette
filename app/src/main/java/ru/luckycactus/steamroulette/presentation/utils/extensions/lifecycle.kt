@@ -56,7 +56,6 @@ fun <T> LiveData<T>.first(block: (T) -> Unit) {
             block(t)
             removeObserver(this)
         }
-
     })
 }
 

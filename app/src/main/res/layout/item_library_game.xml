@@ -13,12 +13,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:stateListAnimator="@drawable/hidden_games_bottom_card_view_animator"
+        app:cardBackgroundColor="?colorPrimary"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:cardBackgroundColor="?colorPrimary"
         />
 
     <ru.luckycactus.steamroulette.presentation.ui.widget.GameView
@@ -31,25 +31,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.33"
         app:textSize="@dimen/game_view_details_text_size"
-        />
-
-    <ImageView
-        android:id="@+id/hidden"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/spacing_small"
-        android:elevation="2dp"
-        android:rotation="20"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05"
-        app:layout_constraintWidth_percent="0.25"
-        app:srcCompat="@drawable/ic_visibility_off_24dp"
-        app:tint="@color/color_overlay_hide"
         />
 
     <ImageView

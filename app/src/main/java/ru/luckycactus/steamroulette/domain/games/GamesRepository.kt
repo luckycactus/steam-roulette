@@ -13,36 +13,40 @@ interface GamesRepository {
     @Throws(GetOwnedGamesPrivacyException::class)
     suspend fun updateOwnedGames(cachePolicy: CachePolicy)
 
+
     suspend fun getOwnedGamesIds(gamesFilter: GamesFilter, orderById: Boolean = false): List<Int>
 
     suspend fun getOwnedGamesIdsMutable(gamesFilter: GamesFilter, orderById: Boolean = false): MutableList<Int>
 
-    suspend fun getLocalOwnedGameHeaders(gameIds: List<Int>): List<GameHeader>
-
-    suspend fun setLocalOwnedGamesHidden(gameIds: List<Int>, hide: Boolean)
-
-    suspend fun setAllLocalOwnedGamesHidden(hide: Boolean)
-
-    suspend fun setLocalOwnedGamesShown(gameIds: List<Int>, shown: Boolean)
-
-    suspend fun setAllLocalOwnedGamesShown(shown: Boolean)
-
-    suspend fun isUserHasGames(): Boolean
+    suspend fun getOwnedGameHeaders(gameIds: List<Int>): List<GameHeader>
 
     fun observeGamesCount(filter: GamesFilter): Flow<Int>
 
-    suspend fun resetHiddenGames()
-
     fun observeGamesUpdates(): Flow<Long>
-
-    suspend fun clearUser(steamId: SteamId)
 
     fun getLibraryPagingSource(
         filter: GamesFilter,
         nameSearchQuery: String?
     ): PagingSource<Int, LibraryGame>
 
+
+    suspend fun setOwnedGamesHidden(gameIds: List<Int>, hide: Boolean)
+
+    suspend fun setAllOwnedGamesHidden(hide: Boolean)
+
+    suspend fun resetHiddenGames()
+
     suspend fun getOwnedGameHiddenState(appId: Long): Boolean
+
+
+    suspend fun setOwnedGamesShown(gameIds: List<Int>, shown: Boolean)
+
+    suspend fun setAllOwnedGamesShown(shown: Boolean)
+
+
+    suspend fun isUserHasGames(): Boolean
+
+    suspend fun clearUser(steamId: SteamId)
 }
 
 class GetOwnedGamesPrivacyException : Exception()

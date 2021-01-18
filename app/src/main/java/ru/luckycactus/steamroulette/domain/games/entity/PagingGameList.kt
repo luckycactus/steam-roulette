@@ -42,25 +42,25 @@ class PagingGameListImpl constructor(
     override val data: List<GameHeader>
         get() = _list
 
-    override val itemsInsertionsFlow by lazyNonThreadSafe { itemsInsertedChannel.asFlow() }
-    override val itemRemovalsFlow by lazyNonThreadSafe { itemRemovedChannel.asFlow() }
+    override val itemsInsertionsFlow by lazyNonThreadSafe { itemsInsertionsChannel.asFlow() }
+    override val itemRemovalsFlow by lazyNonThreadSafe { itemRemovalsChannel.asFlow() }
     override val topGameFlow: Flow<GameHeader?>
 
     override val coroutineScope = parentScope + Job(parentScope.coroutineContext[Job])
-    private val itemsInsertedChannel = BroadcastChannel<Pair<Int, Int>>(Channel.BUFFERED)
-    private val itemRemovedChannel = BroadcastChannel<Int>(Channel.BUFFERED)
+
+    private val itemsInsertionsChannel = BroadcastChannel<Pair<Int, Int>>(Channel.BUFFERED)
+    private val itemRemovalsChannel = BroadcastChannel<Int>(Channel.BUFFERED)
 
     private val _list = mutableListOf<GameHeader>()
-
     private var nextFetchIndex = 0
     private var fetching = false
-    private val tmpIndicesMap = SparseIntArray(fetchDistance)
+    private val tmpIdToIndexMap = SparseIntArray(fetchDistance)
     private var state = State.NotStarted
 
     init {
         topGameFlow = merge(
-            itemRemovalsFlow.map { },
-            itemsInsertionsFlow.map { }
+            itemRemovalsFlow,
+            itemsInsertionsFlow
         ).map { _list.firstOrNull() }
             .distinctUntilChanged()
             .shareIn(coroutineScope, SharingStarted.Eagerly)
@@ -73,7 +73,7 @@ class PagingGameListImpl constructor(
         checkState(State.NotStarted)
         state = State.Started
         if (ids.isNotEmpty())
-            fetch()
+            launchFetching()
     }
 
     override fun isEmpty() = ids.isEmpty()
@@ -86,13 +86,15 @@ class PagingGameListImpl constructor(
         check(_list.isNotEmpty())
 
         val removedItem = _list.removeAt(0)
-        itemRemovedChannel.offer(0)
-        if (_list.size <= minSize && !fetching && nextFetchIndex < ids.size)
-            fetch()
+        itemRemovalsChannel.offer(0)
+        if (shouldFetch())
+            launchFetching()
         if (isFinished())
             closeChannels()
         return removedItem
     }
+
+    private fun shouldFetch() = _list.size <= minSize && !fetching && nextFetchIndex < ids.size
 
     @MainThread
     override fun peekTop(): GameHeader? {
@@ -108,33 +110,36 @@ class PagingGameListImpl constructor(
     }
 
     @MainThread
-    private fun fetch() {
+    private fun launchFetching() {
         coroutineScope.launch {
-            //if first fetch and fetchDistance <= minSize
-            val fetchDistance = if (nextFetchIndex == 0 && fetchDistance <= minSize)
-                minSize + 1
-            else
-                fetchDistance
-            val fetchEnd = minOf(nextFetchIndex + fetchDistance, ids.size)
+            val fetchDistance = getFetchDistance()
+            val fetchEndIndex = minOf(nextFetchIndex + fetchDistance, ids.size)
             val fetchIds = ids.subList(
                 nextFetchIndex,
-                fetchEnd
+                fetchEndIndex
             )
             fetchIds.forEachIndexed { index, i ->
-                tmpIndicesMap[i] = index
+                tmpIdToIndexMap[i] = index
             }
+            //get and sort games according to order in original list
             val games = gamesFactory(fetchIds)
-                .sortedBy { tmpIndicesMap[it.appId] }
+                .sortedBy { tmpIdToIndexMap[it.appId] }
+            tmpIdToIndexMap.clear()
 
-            tmpIndicesMap.clear()
             if (isActive) {
-                nextFetchIndex = fetchEnd
+                nextFetchIndex = fetchEndIndex
                 _list.addAll(games)
-                itemsInsertedChannel.offer(_list.size - games.size to games.size)
+                itemsInsertionsChannel.offer(_list.size - games.size to games.size)
                 fetching = false
             }
         }
     }
+
+    private fun getFetchDistance() =
+        if (nextFetchIndex == 0 && fetchDistance <= minSize) //if first fetch and fetchDistance <= minSize
+            minSize + 1
+        else
+            fetchDistance
 
     private fun checkState(vararg permittedStates: State) {
         if (state !in permittedStates) {
@@ -148,8 +153,8 @@ class PagingGameListImpl constructor(
     }
 
     private fun closeChannels() {
-        itemRemovedChannel.close()
-        itemsInsertedChannel.close()
+        itemRemovalsChannel.close()
+        itemsInsertionsChannel.close()
     }
 
     private enum class State {

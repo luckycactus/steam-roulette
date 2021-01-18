@@ -4,7 +4,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -14,7 +13,6 @@ import ru.luckycactus.steamroulette.di.common.MoshiModule
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 import ru.luckycactus.steamroulette.util.fakes.FixedLanguageProvider
 import ru.luckycactus.steamroulette.util.getJson
-import ru.luckycactus.steamroulette.util.testCommonNetworkExceptions
 
 class RemoteGameStoreDataSourceTest {
 
@@ -50,14 +48,5 @@ class RemoteGameStoreDataSourceTest {
                 service.getGamesStoreInfo(listOf(961440), any())
             } returns getJson("json/games/game_store_info_response_error.json").toResponseBody()
             val data = dataSource.get(961440)
-        }
-
-    @Test
-    fun `when service throws network errors - get() should throw correct common network exceptions`() =
-        runBlockingTest {
-            testCommonNetworkExceptions(
-                { service.getGamesStoreInfo(any(), any()) },
-                { dataSource.get(1) }
-            )
         }
 }

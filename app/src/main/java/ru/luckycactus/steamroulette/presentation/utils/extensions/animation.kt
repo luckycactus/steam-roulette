@@ -7,6 +7,7 @@ inline fun Animation.listener(
     crossinline onStart: (Animation) -> Unit = {},
     crossinline onRepeat: (Animation) -> Unit = {},
 ) = object : Animation.AnimationListener {
+
     override fun onAnimationStart(animation: Animation) {
         onStart(animation)
     }

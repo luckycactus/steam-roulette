@@ -24,7 +24,9 @@ class RouletteAdapter constructor(
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RouletteViewHolder =
-        RouletteViewHolder(ItemGameCardStackBinding.inflate(parent.layoutInflater, parent, false))
+        RouletteViewHolder(
+            ItemGameCardStackBinding.inflate(parent.layoutInflater, parent, false)
+        )
 
     override fun getItemCount(): Int = items?.size ?: 0
 
@@ -47,7 +49,7 @@ class RouletteAdapter constructor(
                 paletteChangeListener(bindingAdapterPosition)
             } else {
                 val game = this@RouletteViewHolder.game
-                PaletteUtils.getGameCoverPalette(it).generate { palette ->
+                PaletteUtils.getGameCoverPaletteBuilder(it).generate { palette ->
                     if (game == this@RouletteViewHolder.game) {
                         this.palette = palette
                         paletteChangeListener(bindingAdapterPosition)

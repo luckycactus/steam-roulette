@@ -50,41 +50,20 @@ sealed class ContentState {
             message: String,
             title: String? = null,
             buttonText: String? = null
-        ) =
-            Placeholder(
+        ) = Placeholder(
                 message,
-                title?.let {
-                    TitleType.Custom(
-                        it
-                    )
-                }
-                    ?: TitleType.DefaultError,
-                buttonText?.let {
-                    ButtonType.Custom(
-                        it
-                    )
-                }
-                    ?: ButtonType.Default
+                title?.let { TitleType.Custom(it) } ?: TitleType.DefaultError,
+                buttonText?.let { ButtonType.Custom(it) } ?: ButtonType.Default
             )
 
         fun emptyPlaceholder(
             message: String,
             title: String? = null,
             buttonText: String? = null
-        ) =
-            Placeholder(
+        ) = Placeholder(
                 message,
-                title?.let {
-                    TitleType.Custom(
-                        it
-                    )
-                }
-                    ?: TitleType.DefaultEmpty,
-                buttonText?.let {
-                    ButtonType.Custom(
-                        it
-                    )
-                } ?: ButtonType.Default
+                title?.let { TitleType.Custom(it) } ?: TitleType.DefaultEmpty,
+                buttonText?.let { ButtonType.Custom(it) } ?: ButtonType.Default
             )
     }
 }

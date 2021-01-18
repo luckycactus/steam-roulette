@@ -12,12 +12,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.google.android.material.color.MaterialColors
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 import java.util.*
 
 class TintContext(
     context: Context,
-    private val animate: Boolean = true,
     tintColor: Int = Color.TRANSPARENT
 ) {
     val fabBackgroundTint: LiveData<ColorStateList>
@@ -25,6 +23,9 @@ class TintContext(
 
     var tintColor: Int = tintColor
         private set
+
+    private var animator: Animator? = null
+    private var currentTintColor: Int = tintColor
 
     private val colorSurface = MaterialColors.getColor(
         context, R.attr.colorSurface, "colorSurface should be set on theme"
@@ -35,7 +36,7 @@ class TintContext(
         "colorBackground should be set on theme"
     )
 
-    private val colorLiveData = MutableLiveData<Int>(tintColor)
+    private val colorLiveData = MutableLiveData(tintColor)
     private val fabBackgroundTintLiveData = colorLiveData.map {
         ColorStateList.valueOf(
             MaterialColors.layer(
@@ -47,20 +48,38 @@ class TintContext(
     }
 
     private val gradientDrawables = WeakHashMap<GradientDrawable, GradientInfo>(1, 1f)
-    private val animator by lazyNonThreadSafe {
-        TintContextAnimator(this)
-    }
 
-    fun updateColor(color: Int) {
+    fun updateColor(color: Int, animate: Boolean = true) {
+        if (this.tintColor == color)
+            return
+        animator?.cancel()
+        tintColor = color
         if (animate) {
-            animator.updateColor(color)
+            animateColor()
         } else {
-            setColor(color)
+            setCurrentColor(color)
         }
     }
 
-    private fun setColor(color: Int) {
-        tintColor = color
+    private fun animateColor() {
+        animator = ValueAnimator.ofArgb(
+            currentTintColor,
+            tintColor
+        ).apply {
+            duration = 300
+            addUpdateListener {
+                setCurrentColor(it.animatedValue as Int)
+            }
+            doOnEnd {
+                animator = null
+            }
+        }.also {
+            it.start()
+        }
+    }
+
+    private fun setCurrentColor(color: Int) {
+        currentTintColor = color
         colorLiveData.value = color
         gradientDrawables.entries.forEach {
             updateGradientDrawable(it.key, it.value, color)
@@ -85,7 +104,7 @@ class TintContext(
             this.orientation = orientation
             val colors = intArrayOf(staticColor, staticColor)
             gradientDrawables[this] = GradientInfo(colors, staticColor, tintAlpha).also {
-                updateGradientDrawable(this, it, tintColor)
+                updateGradientDrawable(this, it, currentTintColor)
             }
         }
     }
@@ -108,29 +127,4 @@ class TintContext(
         val staticColor: Int,
         val tintAlpha: Float
     )
-
-    private class TintContextAnimator(
-        private val tintContext: TintContext
-    ) {
-        private var targetColor = tintContext.tintColor
-        private var animator: Animator? = null
-
-        fun updateColor(tintColor: Int) {
-            if (targetColor == tintColor)
-                return
-            targetColor = tintColor
-            animator?.cancel()
-            animator = ValueAnimator.ofArgb(tintContext.tintColor, targetColor).apply {
-                duration = 300
-                addUpdateListener {
-                    tintContext.setColor(it.animatedValue as Int)
-                }
-                doOnEnd {
-                    animator = null
-                }
-            }.also {
-                it.start()
-            }
-        }
-    }
 }

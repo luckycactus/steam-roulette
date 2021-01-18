@@ -3,6 +3,8 @@ package ru.luckycactus.steamroulette.presentation.utils.palette
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.palette.graphics.Palette
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object PaletteUtils {
     const val DEFAULT_BG_TINT_ALPHA = 0.65f
@@ -19,9 +21,19 @@ object PaletteUtils {
         return color
     }
 
-    fun getGameCoverPalette(bitmap: Bitmap): Palette.Builder {
+    fun getGameCoverPaletteBuilder(bitmap: Bitmap): Palette.Builder {
         return Palette.from(bitmap)
             .maximumColorCount(24)
 //            .addFilter { rgb, _ -> ColorUtils.calculateLuminance(rgb) > 0.1f }
+    }
+
+    suspend fun generateGameCoverPalette(bitmap: Bitmap?): Palette? {
+        if (bitmap == null)
+            return null
+        val builder = getGameCoverPaletteBuilder(bitmap)
+        return withContext(Dispatchers.Default) {
+            builder.generate()
+        }
+
     }
 }

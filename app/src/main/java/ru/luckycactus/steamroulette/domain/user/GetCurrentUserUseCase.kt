@@ -10,6 +10,5 @@ class GetCurrentUserUseCase @Inject constructor(
     private val userSessionRepository: UserSessionRepository
 ) : UseCase<Unit?, SteamId?>() {
 
-    override fun execute(params: Unit?): SteamId? =
-        userSessionRepository.currentUser
+    override fun execute(params: Unit?): SteamId? = userSessionRepository.currentUser
 }

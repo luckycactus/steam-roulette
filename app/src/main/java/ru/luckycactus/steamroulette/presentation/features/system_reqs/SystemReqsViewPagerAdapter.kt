@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.system_reqs
 
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.luckycactus.steamroulette.databinding.ItemSystemReqsBinding
@@ -28,17 +29,16 @@ class SystemReqsViewPagerAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SystemRequirements): Unit = with(binding) {
-            if (item.minimal != null) {
-                tvMinimumReqs.text = HtmlCompat.fromHtml(item.minimal, 0)
-                tvMinimumReqs.visibility(true)
+            bindReq(item.minimal, tvMinimumReqs)
+            bindReq(item.recommended, tvRecommendedReqs)
+        }
+
+        private fun bindReq(req: String?, textView: TextView) {
+            if (req != null) {
+                textView.text = HtmlCompat.fromHtml(req, 0)
+                textView.visibility(true)
             } else {
-                tvMinimumReqs.visibility(false)
-            }
-            if (item.recommended != null) {
-                tvRecommendedReqs.text = HtmlCompat.fromHtml(item.recommended, 0)
-                tvRecommendedReqs.visibility(true)
-            } else {
-                tvRecommendedReqs.visibility(false)
+                textView.visibility(false)
             }
         }
 

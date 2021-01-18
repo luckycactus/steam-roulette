@@ -55,11 +55,6 @@ class GameScreenshotsViewHolder(
             .show()
     }
 
-    override fun bind(item: GameDetailsUiModel.Screenshots) {
-        this.screenshots = item.screenshots
-        binding.rvMedia.adapter = ScreenshotsAdapter()
-    }
-
     private fun loadFullScreenshot(view: ImageView, screenshot: Screenshot) {
         val thumbnail = GlideApp.with(view)
             .load(screenshot.thumbnail)
@@ -73,11 +68,22 @@ class GameScreenshotsViewHolder(
             .into(view)
     }
 
+    override fun bind(item: GameDetailsUiModel.Screenshots) {
+        this.screenshots = item.screenshots
+        binding.rvMedia.adapter = ScreenshotsAdapter()
+    }
+
     private inner class ScreenshotsAdapter :
         RecyclerView.Adapter<ScreenshotsAdapter.ScreenshotViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            ScreenshotViewHolder(ItemScreenshotBinding.inflate(parent.layoutInflater, parent, false))
+            ScreenshotViewHolder(
+                ItemScreenshotBinding.inflate(
+                    parent.layoutInflater,
+                    parent,
+                    false
+                )
+            )
 
         override fun getItemCount(): Int = screenshots.size
 
@@ -90,10 +96,8 @@ class GameScreenshotsViewHolder(
         ) : RecyclerView.ViewHolder(binding.root) {
 
             init {
-                with(binding) {
-                    ivScreenshot.setOnClickListener {
-                        openScreenshot(bindingAdapterPosition, ivScreenshot)
-                    }
+                binding.ivScreenshot.setOnClickListener {
+                    openScreenshot(bindingAdapterPosition, binding.ivScreenshot)
                 }
             }
 

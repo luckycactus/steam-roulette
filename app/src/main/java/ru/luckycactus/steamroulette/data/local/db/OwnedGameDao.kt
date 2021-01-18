@@ -75,8 +75,8 @@ abstract class OwnedGameDao : BaseDao<OwnedGameRoomEntity>() {
                 sb.append(" AND name LIKE ?")
                 args += "%${it}%"
             }
-            sb.append(" ORDER BY name ASC")
         }
+        sb.append(" ORDER BY name ASC")
     }
 
     @Transaction

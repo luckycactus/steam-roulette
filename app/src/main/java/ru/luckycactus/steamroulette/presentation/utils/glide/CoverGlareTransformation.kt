@@ -11,6 +11,7 @@ import java.security.MessageDigest
 class CoverGlareTransformation(
     private val glare: Bitmap
 ) : BitmapTransformation() {
+
     private val paint = Paint()
 
     override fun transform(
@@ -43,7 +44,7 @@ class CoverGlareTransformation(
     }
 
     companion object {
-        private const val VERSION = 2
+        private const val VERSION = 3
         private const val ID =
             "ru.luckycactus.steamroulette.CoverGlareTransformation.$VERSION"
     }

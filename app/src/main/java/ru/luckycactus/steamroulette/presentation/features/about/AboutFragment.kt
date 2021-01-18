@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -17,9 +18,7 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentAboutBinding
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
-import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
-import ru.luckycactus.steamroulette.presentation.utils.extensions.setDrawableColorFromAttribute
+import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
 class AboutFragment : BaseFragment<FragmentAboutBinding>() {
@@ -41,30 +40,26 @@ class AboutFragment : BaseFragment<FragmentAboutBinding>() {
 
         tvVersion.text = viewModel.version
 
-        tvSourceCode.apply {
-            setDrawableColorFromAttribute(R.attr.colorOnSurface)
-            setOnClickListener {
-                viewModel.onSourceCodeClick()
-            }
+        val colorOnSurface = requireContext().getThemeColorOrThrow(R.attr.colorOnSurface)
+        listOf(tvSourceCode, tvUsedLibraries, tvPrivacyPolicy, tvRateApp).forEach {
+            it.setDrawableColor(colorOnSurface)
         }
 
-        tvUsedLibraries.apply {
-            setDrawableColorFromAttribute(R.attr.colorOnSurface)
-            setOnClickListener {
-                viewModel.onUsedLibrariesClick()
-            }
+        tvSourceCode.setOnClickListener {
+            viewModel.onSourceCodeClick()
         }
 
-        tvPrivacyPolicy.apply {
-            setDrawableColorFromAttribute(R.attr.colorOnSurface)
-            setOnClickListener {
-                viewModel.onPrivacyPolicyClick()
-            }
+        tvUsedLibraries.setOnClickListener {
+            viewModel.onUsedLibrariesClick()
         }
 
         tvRateApp.setOnClickListener {
             analytics.logClick("Review app")
             (activity as MainActivity).reviewApp()
+        }
+
+        tvPrivacyPolicy.setOnClickListener {
+            viewModel.onPrivacyPolicyClick()
         }
 
         contactSteam.setOnClickListener {
@@ -115,6 +110,7 @@ class AboutFragment : BaseFragment<FragmentAboutBinding>() {
             }
         }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupIconDragging() {
         val ivIcon = binding.ivIcon
         ivIcon.setOnTouchListener(

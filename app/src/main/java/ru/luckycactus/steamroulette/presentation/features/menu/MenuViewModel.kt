@@ -32,7 +32,7 @@ class MenuViewModel @ViewModelInject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     observeUserSummary: ObserveUserSummaryUseCase,
-    private val observeUserSummarySyncs: ObserveUserSummarySyncsUseCase,
+    observeUserSummarySyncs: ObserveUserSummarySyncsUseCase,
     private val resourceManager: ResourceManager,
     private val userViewModelDelegate: UserViewModelDelegate,
     private val router: Router,
