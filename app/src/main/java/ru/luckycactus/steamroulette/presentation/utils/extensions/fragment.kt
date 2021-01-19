@@ -1,20 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.utils.extensions
 
+import android.os.Bundle
 import androidx.fragment.app.*
 import com.google.android.material.snackbar.Snackbar
-import kotlin.properties.ReadOnlyProperty
 
-inline fun <reified T> argument(
-    key: String,
-    defValue: T? = null
-): ReadOnlyProperty<Fragment, T> =
-    ReadOnlyProperty { thisRef, _ ->
-        val result = thisRef.arguments?.get(key) ?: defValue
-        if (result != null && result !is T) {
-            throw ClassCastException("Property $key has different class type")
-        }
-        result as T
-    }
+fun Fragment.ensureArgs() = arguments ?: Bundle().also { arguments = it }
 
 inline fun <reified T> Fragment.requireCallback(): T {
     return getCallback() ?: throw ClassCastException("${T::class.java} not implemented")

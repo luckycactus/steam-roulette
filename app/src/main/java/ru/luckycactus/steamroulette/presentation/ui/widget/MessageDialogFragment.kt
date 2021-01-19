@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.annotation.StringRes
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
@@ -14,27 +13,13 @@ import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
 
 class MessageDialogFragment : DialogFragment() {
 
-    private val title: String? by argument(
-        ARG_TITLE
-    )
-    private val message: String by argument(
-        ARG_MESSAGE
-    )
-    private val positive: String? by argument(
-        ARG_POSITIVE
-    )
-    private val negative: String? by argument(
-        ARG_NEGATIVE
-    )
-    private val neutral: String? by argument(
-        ARG_NEUTRAL
-    )
-    private val dismissOnClick: Boolean by argument(
-        ARG_DISMISS_ON_CLICK
-    )
-    private val cancelable: Boolean by argument(
-        ARG_CANCELLABLE
-    )
+    private var title: String? by argument()
+    private var message: String by argument()
+    private var positive: String? by argument()
+    private var negative: String? by argument()
+    private var neutral: String? by argument()
+    private var dismissOnClick: Boolean by argument()
+    private var isCancellable: Boolean by argument()
 
     private val callbacks by lazyNonThreadSafe {
         getCallback<Callbacks>()
@@ -42,7 +27,7 @@ class MessageDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isCancelable = cancelable
+        isCancelable = isCancellable
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
@@ -72,7 +57,7 @@ class MessageDialogFragment : DialogFragment() {
                 }
             }
 
-            isCancelable = this@MessageDialogFragment.cancelable
+            isCancelable = this@MessageDialogFragment.isCancellable
 
             create()
         }
@@ -91,14 +76,6 @@ class MessageDialogFragment : DialogFragment() {
     }
 
     companion object {
-        private const val ARG_TITLE = "ARG_TITLE"
-        private const val ARG_MESSAGE = "ARG_MESSAGE"
-        private const val ARG_POSITIVE = "ARG_POSITIVE"
-        private const val ARG_NEGATIVE = "ARG_NEGATIVE"
-        private const val ARG_NEUTRAL = "ARG_NEUTRAL"
-        private const val ARG_DISMISS_ON_CLICK = "ARG_DISMISS_ON_CLICK"
-        private const val ARG_CANCELLABLE = "ARG_CANCELLABLE"
-
         fun create(
             context: Context,
             title: String? = null,
@@ -114,35 +91,13 @@ class MessageDialogFragment : DialogFragment() {
             dismissOnClick: Boolean = true,
             cancelable: Boolean = true,
         ) = MessageDialogFragment().apply {
-            arguments = bundleOf(
-                ARG_TITLE to getString(
-                    context,
-                    titleResId,
-                    title
-                ),
-                ARG_MESSAGE to getString(
-                    context,
-                    messageResId,
-                    message
-                ),
-                ARG_POSITIVE to getString(
-                    context,
-                    positiveResId,
-                    positiveText
-                ),
-                ARG_NEGATIVE to getString(
-                    context,
-                    negativeResId,
-                    negativeText
-                ),
-                ARG_NEUTRAL to getString(
-                    context,
-                    neutralResId,
-                    neutralText
-                ),
-                ARG_DISMISS_ON_CLICK to dismissOnClick,
-                ARG_CANCELLABLE to cancelable
-            )
+            this.title = getString(context, titleResId, title)
+            this.message = getString(context, messageResId, message)!!
+            this.positive = getString(context, positiveResId, positiveText)
+            this.negative = getString(context, negativeResId, negativeText)
+            this.neutral = getString(context, neutralResId, neutralText)
+            this.dismissOnClick = dismissOnClick
+            this.isCancellable = cancelable
         }
 
         private fun getString(context: Context, resId: Int, text: String?): String? {

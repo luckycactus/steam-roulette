@@ -199,6 +199,7 @@ class GameView : MaterialCardView {
         val headerAfterAll = headerFirstCache.clone()
             .onlyRetrieveFromCache(false)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .skipMemoryCache(!memoryCacheEnabled)
 
         val portraitHd = GlideApp.with(view)
             .asBitmap()

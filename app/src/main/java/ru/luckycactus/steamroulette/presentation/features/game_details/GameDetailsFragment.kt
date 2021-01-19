@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +17,7 @@ import androidx.transition.Fade
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentGameDetailsBinding
@@ -29,6 +29,7 @@ import ru.luckycactus.steamroulette.presentation.utils.DEFAULT_TRANSITION_DURATI
 import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
 import ru.luckycactus.steamroulette.presentation.utils.extensions.doOnApplyWindowInsets
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
+import ru.luckycactus.steamroulette.presentation.utils.extensions.viewLifecycleScope
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 
@@ -39,8 +40,9 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
 
     lateinit var adapter: GameDetailsAdapter
 
-    private val waitForImage: Boolean by argument(ARG_WAIT_FOR_IMAGE)
-    private val initialTintColor: Int by argument(ARG_COLOR)
+    private var waitForImage: Boolean by argument()
+    private var initialTintColor: Int by argument()
+    private var game: GameHeader by argument(GameDetailsViewModel.ARG_GAME)
 
     private lateinit var tintContext: TintContext
 
@@ -112,6 +114,13 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
         observe(viewModel.gameDetails) {
             adapter.submitList(it)
         }
+
+        // to avoid too long pause
+        viewLifecycleScope.launch {
+            delay(200)
+            transitionStarted = true
+            startPostponedEnterTransition()
+        }
     }
 
     private fun setupTransition() {
@@ -161,16 +170,11 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
     }
 
     companion object {
-        private const val ARG_WAIT_FOR_IMAGE = "ARG_WAIT_FOR_IMAGE"
-        private const val ARG_COLOR = "ARG_COLOR"
-
         fun newInstance(game: GameHeader, color: Int, waitForImage: Boolean) =
             GameDetailsFragment().apply {
-                arguments = bundleOf(
-                    GameDetailsViewModel.ARG_GAME to game,
-                    ARG_COLOR to color,
-                    ARG_WAIT_FOR_IMAGE to waitForImage
-                )
+                this.initialTintColor = color
+                this.waitForImage = waitForImage
+                this.game = game
             }
 
     }

@@ -5,7 +5,6 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import ru.luckycactus.steamroulette.databinding.FragmentDetailedDescriptionBinding
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
@@ -15,8 +14,8 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.GlideImageGetter
 
 class DetailedDescriptionFragment : BaseFragment<FragmentDetailedDescriptionBinding>() {
 
-    private val appName: String by argument(ARG_APP_NAME)
-    private val detailedDescription: String by argument(ARG_DETAILED_DESCRIPTION)
+    private var appName: String by argument()
+    private var detailedDescription: String by argument()
 
     override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
         FragmentDetailedDescriptionBinding.inflate(inflater, container, false)
@@ -40,15 +39,10 @@ class DetailedDescriptionFragment : BaseFragment<FragmentDetailedDescriptionBind
     }
 
     companion object {
-        private const val ARG_APP_NAME = "ARG_GAME_ID"
-        private const val ARG_DETAILED_DESCRIPTION = "ARG_DETAILED_DESCRIPTION"
-
         fun newInstance(appName: String, detailedDescription: String) =
             DetailedDescriptionFragment().apply {
-                arguments = bundleOf(
-                    ARG_APP_NAME to appName,
-                    ARG_DETAILED_DESCRIPTION to detailedDescription
-                )
+                this.appName = appName
+                this.detailedDescription = detailedDescription
             }
     }
 }
