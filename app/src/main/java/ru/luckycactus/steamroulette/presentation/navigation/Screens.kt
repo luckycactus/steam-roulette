@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.navigation
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import ru.luckycactus.steamroulette.R
@@ -83,26 +84,33 @@ sealed class Screens : SupportAppScreen() {
                     return intent
             }
             return if (CustomTabsHelper.isCustomTabsSupported(context)) {
-                CustomTabsIntent.Builder().apply {
-                    setToolbarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
-                    setSecondaryToolbarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
-                    setExitAnimations(
-                        context,
-                        R.anim.anim_fragment_pop_enter,
-                        R.anim.anim_fragment_pop_exit
-                    )
-                    setNavigationBarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
-                }.build().intent.apply {
-                    data = Uri.parse(url)
-                }
+                createCustomTabsIntent(context)
             } else {
-                Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                createDefaultIntent()
+            }
+        }
+
+        private fun createCustomTabsIntent(context: Context): Intent {
+            return CustomTabsIntent.Builder().apply {
+                val defaultParams = CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
+                    .setSecondaryToolbarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
+                    .setNavigationBarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
+                    .build()
+                setDefaultColorSchemeParams(defaultParams)
+                setExitAnimations(
+                    context,
+                    R.anim.anim_fragment_pop_enter,
+                    R.anim.anim_fragment_pop_exit
+                )
+            }.build().intent.apply {
+                data = Uri.parse(url)
             }
         }
 
         private fun getSteamAppIntent(context: Context): Intent? {
             if (isAppInstalled(context, "com.valvesoftware.android.steam.community")) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                val intent = createDefaultIntent()
                 with(intent) {
                     flags =
                         Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
@@ -114,5 +122,7 @@ sealed class Screens : SupportAppScreen() {
             }
             return null
         }
+
+        private fun createDefaultIntent() = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     }
 }

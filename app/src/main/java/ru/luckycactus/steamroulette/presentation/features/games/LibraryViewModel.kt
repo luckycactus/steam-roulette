@@ -85,11 +85,10 @@ class LibraryViewModel @ViewModelInject constructor(
         )
 
         games = combine(
+            appliedGamesFilter,
             searchQuery.debounce(300.milliseconds),
-            appliedGamesFilter
-        ) { query, filter ->
-            GetLibraryPagingSourceUseCase.Params(filter, query)
-        }.flatMapLatest {
+            GetLibraryPagingSourceUseCase::Params
+        ).flatMapLatest {
             Pager(
                 PagingConfig(50),
                 pagingSourceFactory = { getLibraryPagingSource(it) }
@@ -99,10 +98,9 @@ class LibraryViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             combine(
                 _libraryFilter.filterNotNull(),
-                _maxHours.filterNotNull()
-            ) { libraryFilter, maxHours ->
-                mapLibraryFilterToGamesFilter(libraryFilter, maxHours)
-            }.collect {
+                _maxHours.filterNotNull(),
+                ::mapLibraryFilterToGamesFilter
+            ).collect {
                 selectedGamesFilter.value = it
             }
         }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
+import ru.luckycactus.steamroulette.domain.games.UpdateOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -54,18 +55,24 @@ class GamesPeriodicUpdater @Inject constructor(
     }
 
     class Work @Inject constructor(
-        private val gamesRepository: GamesRepository,
+        private val updateOwnedGames: UpdateOwnedGamesUseCase,
         private val userSession: UserSession
     ) {
-        suspend fun run(): Result =
-            userSession.currentUser?.let {
-                gamesRepository.updateOwnedGames(CachePolicy.Remote)
-                Result.Success
-            } ?: Result.Failure
+        suspend fun run(): Result {
+            if (userSession.isUserLoggedIn) {
+                return when (updateOwnedGames(UpdateOwnedGamesUseCase.Params(reload = true))) {
+                    UpdateOwnedGamesUseCase.Result.Success -> Result.Success
+                    UpdateOwnedGamesUseCase.Result.Fail.PrivateProfile -> Result.Failure
+                    is UpdateOwnedGamesUseCase.Result.Fail.Error -> Result.Retry
+                }
+            }
+            return Result.Success
+        }
+
     }
 
     enum class Result {
-        Success, Failure
+        Success, Failure, Retry
     }
 
     interface Scheduler {

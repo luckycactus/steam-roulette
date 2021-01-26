@@ -54,6 +54,7 @@ class GamesPeriodicUpdateScheduler @Inject constructor(
             return when (work.run()) {
                 GamesPeriodicUpdater.Result.Success -> Result.success()
                 GamesPeriodicUpdater.Result.Failure -> Result.failure()
+                GamesPeriodicUpdater.Result.Retry -> Result.retry()
             }
         }
     }

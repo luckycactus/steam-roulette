@@ -179,24 +179,28 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            viewModel.onColdStart()
-        }
-
         observeEvent(viewModel.errorMessage) {
             binding.container.showSnackbar(it, Snackbar.LENGTH_LONG)
         }
 
         observeEvent(viewModel.reviewRequest) {
-            MessageDialogFragment.create(
-                this,
-                titleResId = R.string.rate_app_title,
-                messageResId = R.string.rate_app_dialog_message,
-                positiveResId = R.string.rate,
-                negativeResId = R.string.later,
-                neutralResId = R.string.never
-            ).show(supportFragmentManager, TAG_REVIEW_REQUEST)
+            askForReview()
         }
+
+        if (savedInstanceState == null) {
+            viewModel.onColdStart()
+        }
+    }
+
+    private fun askForReview() {
+        MessageDialogFragment.create(
+            this,
+            titleResId = R.string.rate_app_title,
+            messageResId = R.string.rate_app_dialog_message,
+            positiveResId = R.string.rate,
+            negativeResId = R.string.later,
+            neutralResId = R.string.never
+        ).show(supportFragmentManager, TAG_REVIEW_REQUEST)
     }
 
     override fun onResumeFragments() {
