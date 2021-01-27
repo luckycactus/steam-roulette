@@ -17,6 +17,7 @@ import ru.luckycactus.steamroulette.databinding.DialogRouletteFiltersBinding
 import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.extensions.viewLifecycleScope
 
 @AndroidEntryPoint
 class RouletteFiltersDialog : BaseDialogFragment() {
@@ -53,7 +54,7 @@ class RouletteFiltersDialog : BaseDialogFragment() {
         etPlaytime.label = getString(R.string.playtime_hours_label)
 
         if (savedInstanceState == null) {
-            lifecycleScope.launch {
+            viewLifecycleScope.launch {
                 when (viewModel.getCurrentPlaytimeFilter()) {
                     PlaytimeFilter.All -> rbAll
                     PlaytimeFilter.NotPlayed -> rbNotPlayed
@@ -61,7 +62,7 @@ class RouletteFiltersDialog : BaseDialogFragment() {
                 }.isChecked = true
             }
 
-            lifecycleScope.launch {
+            viewLifecycleScope.launch {
                 etPlaytime.setText(viewModel.getCurrentMaxPlaytimeSetting().toString())
             }
         }

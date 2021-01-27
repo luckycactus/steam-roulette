@@ -1,9 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.graphics.Bitmap
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.isActive
 import ru.luckycactus.steamroulette.databinding.ItemGameCardStackBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
@@ -13,6 +17,7 @@ import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import kotlin.math.absoluteValue
 
 class RouletteAdapter constructor(
+    private val viewLifecycle: Lifecycle,
     private val onGameClick: (GameHeader, List<View>, Boolean) -> Unit,
     private val paletteChangeListener: (Int) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
@@ -48,12 +53,18 @@ class RouletteAdapter constructor(
             if (it == null) {
                 paletteChangeListener(bindingAdapterPosition)
             } else {
-                val game = this@RouletteViewHolder.game
-                PaletteUtils.getGameCoverPaletteBuilder(it).generate { palette ->
-                    if (game == this@RouletteViewHolder.game) {
-                        this.palette = palette
+                generatePaletteAndCallListenerAsynchronously(it)
+            }
+        }
+
+        private fun generatePaletteAndCallListenerAsynchronously(it: Bitmap?) {
+            val game = this@RouletteViewHolder.game
+            viewLifecycle.coroutineScope.launchWhenCreated {
+                val palette = PaletteUtils.generateGameCoverPalette(it)
+                if (game == this@RouletteViewHolder.game) {
+                    this@RouletteViewHolder.palette = palette
+                    if (isActive)
                         paletteChangeListener(bindingAdapterPosition)
-                    }
                 }
             }
         }

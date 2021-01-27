@@ -15,7 +15,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.GridLayoutManager
@@ -68,7 +67,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFra
 
     private lateinit var placeholderTransition: Transition
 
-    private var observingGames = false
+    private var gamesObservationPostponed = false
 
     private val viewModel: LibraryViewModel by viewModels()
 
@@ -227,6 +226,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFra
         if (savedInstanceState != null) {
             observeGames()
         } else {
+            gamesObservationPostponed = true
             dataLoadingViewHolder.showLoading()
         }
 
@@ -241,7 +241,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFra
             ContentState.ButtonType.None
         )
         var prevItemCount = -1
-        lifecycleScope.launch {
+        viewLifecycleScope.launch {
             adapter.loadStateFlow.collectLatest {
                 if (prevItemCount != adapter.itemCount) {
                     TransitionManager.beginDelayedTransition(
@@ -308,24 +308,33 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFra
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        gamesObservationPostponed = false
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        if (enter) {
+            if (nextAnim != 0) {
+                val anim = AnimationUtils.loadAnimation(requireContext(), nextAnim)
+                anim?.listener(onEnd = { observeGames() })
+                return anim
+            } else {
+                observeGames()
+            }
+        }
+        return super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
     private fun observeGames() {
-        if (!observingGames) {
-            lifecycleScope.launch {
+        if (gamesObservationPostponed) {
+            viewLifecycleScope.launch {
                 viewModel.games.collectLatest {
                     adapter.submitData(it)
                 }
             }
-            observingGames = true
+            gamesObservationPostponed = false
         }
-    }
-
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        if (enter && nextAnim != 0) {
-            val anim = AnimationUtils.loadAnimation(requireContext(), nextAnim)
-            anim?.listener(onEnd = { observeGames() })
-            return anim
-        }
-        return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {

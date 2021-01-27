@@ -136,9 +136,9 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
                     if (nextFragment is LoginFragment || nextFragment is RouletteFragment) {
                         fragmentTransaction.setCustomAnimations(
                             R.anim.fragment_fade_in,
-                            R.anim.fragment_fade_exit,
+                            R.anim.fragment_fade_out,
                             R.anim.fragment_fade_in,
-                            R.anim.fragment_fade_exit
+                            R.anim.fragment_fade_out
                         )
                     } else if (nextFragment !is GameDetailsFragment) {
                         fragmentTransaction.setCustomAnimations(

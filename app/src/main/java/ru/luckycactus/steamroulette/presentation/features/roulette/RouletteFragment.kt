@@ -128,7 +128,7 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
         }
         with(rvRoulette) {
             layoutManager = CardStackLayoutManager()
-            rouletteAdapter = RouletteAdapter(::onGameClick, ::onPaletteReady)
+            rouletteAdapter = RouletteAdapter(viewLifecycle, ::onGameClick, ::onPaletteReady)
             adapter = rouletteAdapter
             itemAnimator = null
         }
@@ -140,13 +140,13 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
             viewModel::onRetryClick
         )
 
-        lifecycleScope.launch {
+        viewLifecycleScope.launch {
             viewModel.itemRemovals.collect {
                 rouletteAdapter.notifyItemRemoved(it)
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleScope.launch {
             viewModel.itemInsertions.collect {
                 rouletteAdapter.notifyItemRangeInserted(it.first, it.second)
             }
@@ -154,7 +154,7 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
 
         observe(viewModel.games) {
             rouletteAdapter.items = it
-            lifecycleScope.launch {
+            viewLifecycleScope.launch {
                 delay(100)
                 updatePaletteHelper()
             }
@@ -197,11 +197,8 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
     }
 
     private fun onPaletteReady(position: Int) {
-        // method can be invoked asynchronously from adapter when view is already destroyed
-        if (viewLifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
-            if (position in 0..1) {
-                updatePaletteHelper()
-            }
+        if (position in 0..1) {
+            updatePaletteHelper()
         }
     }
 

@@ -10,14 +10,13 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.*
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.transition.Fade
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentGameDetailsBinding
@@ -32,6 +31,7 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
 import ru.luckycactus.steamroulette.presentation.utils.extensions.viewLifecycleScope
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
@@ -56,7 +56,7 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         super.onViewCreated(view, savedInstanceState)
 
-        postponeEnterTransition()
+        postponeEnterTransition(200, TimeUnit.MILLISECONDS)
         setupTransition()
 
         setupTint()
@@ -73,6 +73,8 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
             ::onHeaderImageChanged,
             viewModel
         )
+        // we need to get scroll position to set bg translation
+        adapter.stateRestorationPolicy = PREVENT_WHEN_EMPTY
 
         with(rvGameDetails) {
             this.adapter = this@GameDetailsFragment.adapter
@@ -101,9 +103,13 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
                 rvGameDetails.updatePadding(bottom = rvGameDetails.paddingBottom + fabBack.height)
         }
 
+        rvGameDetails.doOnLayout {
+            bgTint.translationY = -rvGameDetails.computeVerticalScrollOffset().toFloat()
+        }
+
         rvGameDetails.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                bgTint.translationY += -dy
+                bgTint.translationY = minOf(0f, bgTint.translationY - dy)
             }
         })
 
@@ -113,13 +119,6 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
 
         observe(viewModel.gameDetails) {
             adapter.submitList(it)
-        }
-
-        // to avoid too long pause
-        viewLifecycleScope.launch {
-            delay(200)
-            transitionStarted = true
-            startPostponedEnterTransition()
         }
     }
 
@@ -151,7 +150,7 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
             return
         if (tintContext.tintColor == 0 && bitmap == null)
             return
-        lifecycleScope.launch {
+        viewLifecycleScope.launch {
             val palette = PaletteUtils.generateGameCoverPalette(bitmap)
             tintContext.updateColor(
                 PaletteUtils.getColorForGameCover(palette),

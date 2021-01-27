@@ -82,7 +82,7 @@ class AboutFragment : BaseFragment<FragmentAboutBinding>() {
             )
         }
 
-        lifecycleScope.launch {
+        viewLifecycleScope.launch {
             delay(100)
             ivIcon.performClick()
         }

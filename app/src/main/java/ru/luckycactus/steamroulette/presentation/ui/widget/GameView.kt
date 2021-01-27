@@ -244,8 +244,10 @@ class GameView : MaterialCardView {
         return headerFirstCache
     }
 
-    private class MyTarget(view: ImageView, private val listener: Listener?) :
-        BitmapImageViewTarget(view) {
+    private class MyTarget(
+        view: ImageView,
+        private val listener: Listener?
+    ) : BitmapImageViewTarget(view) {
         override fun onLoadFailed(errorDrawable: Drawable?) {
             super.onLoadFailed(errorDrawable)
             listener?.onLoadFinished(null)
