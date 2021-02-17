@@ -1,11 +1,9 @@
 package ru.luckycactus.steamroulette.data.repositories.library
 
 import android.content.SharedPreferences
-import androidx.core.content.edit
-import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.data.core.intMultiPref
 import ru.luckycactus.steamroulette.domain.library.LibrarySettingsRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
-import ru.luckycactus.steamroulette.presentation.utils.AppUtils.prefKey
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -14,15 +12,12 @@ class LibrarySettingsRepositoryImpl @Inject constructor(
     private val userSession: UserSession
 ) : LibrarySettingsRepository {
 
+    private val spanCountMultiPref by prefs.intMultiPref("span-count")
+
     override fun getScale(default: Int) =
-        prefs.getInt(spanCountPrefKey(userSession.requireCurrentUser()), default)
+        spanCountMultiPref[userSession.requireCurrentUser().as64(), default]
 
     override fun saveScale(scale: Int) {
-        prefs.edit {
-            putInt(spanCountPrefKey(userSession.requireCurrentUser()), scale)
-        }
+        spanCountMultiPref[userSession.requireCurrentUser().as64()] = scale
     }
-
-    private fun spanCountPrefKey(steamId: SteamId) =
-        prefKey("span-count", steamId)
 }

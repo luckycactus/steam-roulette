@@ -14,9 +14,9 @@ class AppReviewRepositoryImpl @Inject constructor(
     @Named("app-review") private val prefs: SharedPreferences
 ) : AppReviewRepository {
 
-    override var appRated: Boolean by prefs.boolean("app_rated", false)
+    override var appRated: Boolean by prefs.boolean(false, "app_rated")
 
-    override var launchCount: Int by prefs.int("launch_count", 0)
+    override var launchCount: Int by prefs.int(0, "launch_count")
 
     override fun resetLaunchesSynchronously() {
         prefs.edit(commit = true) {
@@ -24,9 +24,9 @@ class AppReviewRepositoryImpl @Inject constructor(
         }
     }
 
-    override var lastRequestTime: Long by prefs.long("last_request", 0)
+    override var lastRequestTime: Long by prefs.long(0, "last_request")
 
-    override var reviewRequestsEnabled: Boolean by prefs.boolean("requests_enabled", true)
+    override var reviewRequestsEnabled: Boolean by prefs.boolean(true, "requests_enabled")
 
-    override fun observeRatedState() = prefs.booleanFlow("app_rated", false)
+    override fun observeRatedState() = prefs.booleanFlow(false, "app_rated")
 }

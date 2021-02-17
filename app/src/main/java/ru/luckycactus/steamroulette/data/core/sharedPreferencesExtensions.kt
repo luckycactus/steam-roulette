@@ -3,18 +3,20 @@ package ru.luckycactus.steamroulette.data.core
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.cancellable
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 private val compositeListeners = Collections.synchronizedMap(
     WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
 )
+
+private val moshi = Moshi.Builder().build()
 
 inline fun SharedPreferences.Editor.edit(
     commit: Boolean = false,
@@ -27,174 +29,129 @@ inline fun SharedPreferences.Editor.edit(
         apply()
 }
 
-class IntPreference(
+fun SharedPreferences.int(default: Int = 0, key: String?) =
+    PreferenceDelegate(Int::class.java, this, key, default)
+
+fun SharedPreferences.long(default: Long = 0, key: String?) =
+    PreferenceDelegate(Long::class.java, this, key, default)
+
+fun SharedPreferences.float(default: Float = 0f, key: String?) =
+    PreferenceDelegate(Float::class.java, this, key, default)
+
+fun SharedPreferences.boolean(default: Boolean = false, key: String?) =
+    PreferenceDelegate(Boolean::class.java, this, key, default)
+
+fun SharedPreferences.string(default: String = "", key: String?) =
+    PreferenceDelegate(String::class.java, this, key, default)
+
+inline fun <reified T> SharedPreferences.type(default: T, key: String?) =
+    PreferenceDelegate(T::class.java, this, key, default)
+
+
+fun SharedPreferences.intLiveData(default: Int, key: String) =
+    liveData(Int::class.java, key, default)
+
+fun SharedPreferences.longLiveData(default: Long, key: String) =
+    liveData(Long::class.java, key, default)
+
+fun SharedPreferences.floatLiveData(default: Float, key: String) =
+    liveData(Float::class.java, key, default)
+
+fun SharedPreferences.booleanLiveData(default: Boolean, key: String) =
+    liveData(Boolean::class.java, key, default)
+
+fun SharedPreferences.stringLiveData(default: String, key: String): LiveData<String> =
+    liveData(String::class.java, key, default)
+
+fun <T : Any> SharedPreferences.typeLiveData(
+    clazz: Class<T>,
+    default: T,
+    key: String
+): LiveData<T> = liveData(clazz, key, default)
+
+
+fun SharedPreferences.intFlow(default: Int, key: String) =
+    flow(Int::class.java, key, default)
+
+fun SharedPreferences.longFlow(default: Long, key: String) =
+    flow(Long::class.java, key, default)
+
+fun SharedPreferences.floatFlow(default: Float, key: String) =
+    flow(Float::class.java, key, default)
+
+fun SharedPreferences.booleanFlow(default: Boolean, key: String) =
+    flow(Boolean::class.java, key, default)
+
+fun SharedPreferences.stringFlow(default: String, key: String) =
+    flow(String::class.java, key, default)
+
+fun <T : Any> SharedPreferences.typeFlow(clazz: Class<T>, default: T, key: String) =
+    flow(clazz, key, default)
+
+
+fun SharedPreferences.intMultiPref(mapKey: String?) =
+    MultiPreferenceDelegate(mapKey) { key ->
+        MultiPreference(Int::class.java, this, key)
+    }
+
+fun SharedPreferences.longMultiPref(mapKey: String?) =
+    MultiPreferenceDelegate(mapKey) { key ->
+        MultiPreference(Long::class.java, this, key)
+    }
+
+fun SharedPreferences.floatMultiPref(mapKey: String?) =
+    MultiPreferenceDelegate(mapKey) { key ->
+        MultiPreference(Float::class.java, this, key)
+    }
+
+fun SharedPreferences.booleanMultiPref(mapKey: String?) =
+    MultiPreferenceDelegate(mapKey) { key ->
+        MultiPreference(Boolean::class.java, this, key)
+    }
+
+fun SharedPreferences.stringMultiPref(mapKey: String?) =
+    MultiPreferenceDelegate(mapKey) { key ->
+        MultiPreference(String::class.java, this, key)
+    }
+
+inline fun <reified T : Any> SharedPreferences.typeMultiPref(mapKey: String?) =
+    MultiPreferenceDelegate(mapKey) { key ->
+        MultiPreference(T::class.java, this, key)
+    }
+
+class PreferenceDelegate<T> constructor(
+    private val clazz: Class<T>,
     private val prefs: SharedPreferences,
-    private val key: String,
-    private val defaultValue: Int
-) : ReadWriteProperty<Any, Int> {
+    private val key: String? = null,
+    private val default: T
+) : ReadWriteProperty<Any, T> {
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
-        prefs.edit { putInt(key, value) }
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        prefs.set(clazz, key(property), value)
     }
 
-    override fun getValue(thisRef: Any, property: KProperty<*>): Int {
-        return prefs.getInt(key, defaultValue)
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        return prefs.get(clazz, key(property), default)
     }
+
+    private fun key(property: KProperty<*>) = key ?: property.name
 }
-
-class LongPreference(
-    private val prefs: SharedPreferences,
-    private val key: String,
-    private val defaultValue: Long
-) : ReadWriteProperty<Any, Long> {
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Long) {
-        prefs.edit { putLong(key, value) }
-    }
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): Long {
-        return prefs.getLong(key, defaultValue)
-    }
-}
-
-class BooleanPreference(
-    private val prefs: SharedPreferences,
-    private val key: String,
-    private val defaultValue: Boolean
-) : ReadWriteProperty<Any, Boolean> {
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Boolean) {
-        prefs.edit { putBoolean(key, value) }
-    }
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): Boolean {
-        return prefs.getBoolean(key, defaultValue)
-    }
-}
-
-class FloatPreference(
-    private val prefs: SharedPreferences,
-    private val key: String,
-    private val defaultValue: Float
-) : ReadWriteProperty<Any, Float> {
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float) {
-        prefs.edit { putFloat(key, value) }
-    }
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): Float {
-        return prefs.getFloat(key, defaultValue)
-    }
-}
-
-class StringPreference(
-    private val prefs: SharedPreferences,
-    private val key: String,
-    private val defaultValue: String?
-) : ReadWriteProperty<Any, String?> {
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
-        prefs.edit { putString(key, value) }
-    }
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): String? {
-        return prefs.getString(key, defaultValue)
-    }
-}
-
-
-fun SharedPreferences.int(key: String, defValue: Int = 0) =
-    IntPreference(this, key, defValue)
-
-fun SharedPreferences.long(key: String, defValue: Long = 0) =
-    LongPreference(this, key, defValue)
-
-fun SharedPreferences.float(key: String, defValue: Float = 0f) =
-    FloatPreference(this, key, defValue)
-
-fun SharedPreferences.boolean(key: String, defValue: Boolean = false) =
-    BooleanPreference(this, key, defValue)
-
-fun SharedPreferences.string(key: String, defValue: String? = null) =
-    StringPreference(this, key, defValue)
-
-
-fun SharedPreferences.intLiveData(key: String, defValue: Int) =
-    liveData(key, IntPreference(this, key, defValue))
-
-fun SharedPreferences.longLiveData(key: String, defValue: Long) =
-    liveData(key, LongPreference(this, key, defValue))
-
-fun SharedPreferences.floatLiveData(key: String, defValue: Float) =
-    liveData(key, FloatPreference(this, key, defValue))
-
-fun SharedPreferences.booleanLiveData(key: String, defValue: Boolean) =
-    liveData(key, BooleanPreference(this, key, defValue))
-
-fun SharedPreferences.stringLiveData(key: String, defValue: String?): LiveData<String?> =
-    liveData(key, StringPreference(this, key, defValue))
-
-
-fun SharedPreferences.intFlow(key: String, defValue: Int) =
-    flow(key, IntPreference(this, key, defValue))
-
-fun SharedPreferences.longFlow(key: String, defValue: Long) =
-    flow(key, LongPreference(this, key, defValue))
-
-fun SharedPreferences.floatFlow(key: String, defValue: Float) =
-    flow(key, FloatPreference(this, key, defValue)).cancellable()
-
-fun SharedPreferences.booleanFlow(key: String, defValue: Boolean) =
-    flow(key, BooleanPreference(this, key, defValue))
-
-fun SharedPreferences.stringFlow(key: String, defValue: String?): Flow<String?> =
-    flow(key, StringPreference(this, key, defValue))
-
-
-private typealias PrefChangeListener = () -> Unit
-
-private fun SharedPreferences.getCompositeListener() =
-    compositeListeners.getOrPut(this) {
-        CompositePreferenceChangeListener().also {
-            registerOnSharedPreferenceChangeListener(it)
-        }
-    }
 
 private fun <T> SharedPreferences.liveData(
+    clazz: Class<T>,
     key: String,
-    delegate: ReadWriteProperty<Any, T>
-): LiveData<T> =
-    SharedPreferenceLiveData(
-        this,
-        key,
-        delegate
-    )
-
-private fun <T> SharedPreferences.flow(
-    key: String,
-    delegate: ReadWriteProperty<Any, T>
-) = callbackFlow {
-    val prefHolder = object : Any() {
-        val prefValue by delegate
-    }
-    val compositeListener = getCompositeListener()
-    val listener = {
-        offer(prefHolder.prefValue)
-        Unit
-    }
-    listener.invoke()
-    compositeListener.addListener(key, listener)
-    awaitClose { compositeListener.removeListener(key, listener) }
-}
+    default: T
+): LiveData<T> = SharedPreferenceLiveData(clazz, this, key, default)
 
 private class SharedPreferenceLiveData<T>(
+    clazz: Class<T>,
     prefs: SharedPreferences,
     private val key: String,
-    delegate: ReadWriteProperty<Any, T>
+    default: T
 ) : LiveData<T>() {
 
     private val compositeListener = prefs.getCompositeListener()
-    private val prefValue by delegate
+    private val prefValue by PreferenceDelegate(clazz, prefs, key, default)
     private val listener = { updateValue() }
 
     private var firstTime = true
@@ -224,6 +181,86 @@ private class SharedPreferenceLiveData<T>(
     }
 }
 
+private fun <T> SharedPreferences.flow(
+    clazz: Class<T>,
+    key: String,
+    default: T,
+) = callbackFlow {
+    val prefHolder = object : Any() {
+        val prefValue by PreferenceDelegate(clazz, this@flow, key, default)
+    }
+    val compositeListener = getCompositeListener()
+    val listener = {
+        offer(prefHolder.prefValue)
+        Unit
+    }
+    listener.invoke()
+    compositeListener.addListener(key, listener)
+    awaitClose { compositeListener.removeListener(key, listener) }
+}
+
+class MultiPreferenceDelegate<T>(
+    private val multiKey: String? = null,
+    private val createMultiPreference: (key: String) -> MultiPreference<T>
+) : ReadOnlyProperty<Any, MultiPreference<T>> {
+
+    private var value: MultiPreference<T>? = null
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): MultiPreference<T> {
+        var value = this.value
+        if (value == null) {
+            val key = multiKey ?: property.name
+            value = createMultiPreference(key)
+            this.value = value
+        }
+        return value
+    }
+}
+
+class MultiPreference<T>(
+    private val clazz: Class<T>,
+    private val prefs: SharedPreferences,
+    private val mapKey: String
+) {
+    operator fun set(key: String, value: T) {
+        prefs.set(clazz, keyFor(key), value)
+    }
+
+    operator fun get(key: String, default: T): T {
+        return prefs.get(clazz, keyFor(key), default)
+    }
+
+    fun remove(key: String) {
+        prefs.edit {
+            remove(key)
+        }
+    }
+
+    fun flow(key: String, default: T) =
+        prefs.flow(clazz, key, default)
+
+    operator fun set(key: Any, value: T) = set(key.toString(), value)
+
+    operator fun get(key: Any, default: T): T = get(key.toString(), default)
+
+    fun remove(key: Any) = remove(key.toString())
+
+    fun flow(key: Any, default: T) = flow(key.toString(), default)
+
+    fun keyFor(entryKey: String) = "$mapKey-$entryKey"
+
+    fun keyFor(entryKey: Any) = keyFor(entryKey.toString())
+}
+
+private typealias PrefChangeListener = () -> Unit
+
+private fun SharedPreferences.getCompositeListener() =
+    compositeListeners.getOrPut(this) {
+        CompositePreferenceChangeListener().also {
+            registerOnSharedPreferenceChangeListener(it)
+        }
+    }
+
 private class CompositePreferenceChangeListener :
     SharedPreferences.OnSharedPreferenceChangeListener {
     val keyListenersMultimap = ConcurrentHashMap<String, MutableSet<PrefChangeListener>>()
@@ -248,4 +285,32 @@ private class CompositePreferenceChangeListener :
     }
 
     private fun getListenersSetForKey(key: String) = keyListenersMultimap[key]
+}
+
+private fun <T> SharedPreferences.get(clazz: Class<T>, key: String, default: T?): T {
+    return when (clazz) {
+        Boolean::class.java -> getBoolean(key, default as Boolean)
+        Int::class.java -> getInt(key, default as Int)
+        Float::class.java -> getFloat(key, default as Float)
+        Long::class.java -> getLong(key, default as Long)
+        String::class.java -> getString(key, default as String?)
+        else -> getString(key, null)?.let { moshi.adapter(clazz).fromJson(it) } ?: default
+    } as T
+}
+
+private fun <T> SharedPreferences.set(clazz: Class<T>, key: String, value: T) {
+    with(edit()) {
+        when (clazz) {
+            Boolean::class.java -> putBoolean(key, value as Boolean)
+            Int::class.java -> putInt(key, value as Int)
+            Float::class.java -> putFloat(key, value as Float)
+            Long::class.java -> putLong(key, value as Long)
+            String::class.java -> putString(key, value as String)
+            else -> {
+                val json = value?.let { moshi.adapter(clazz).toJson(it) }
+                putString(key, json)
+            }
+        }
+        apply()
+    }
 }

@@ -2,9 +2,9 @@ package ru.luckycactus.steamroulette.domain.app.migrations
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import ru.luckycactus.steamroulette.data.core.intMultiPref
 import ru.luckycactus.steamroulette.data.local.db.AppDatabase
 import ru.luckycactus.steamroulette.data.local.db.CacheInfoRoomEntity
-import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games_filter.RouletteFilterRepository
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
@@ -21,6 +21,10 @@ class AppMigration12to13 @Inject constructor(
     private val db: AppDatabase
 ) : AppMigration {
 
+    private val oldFilterTypeMultiPref by roulettePrefs.intMultiPref("playTimeFilter")
+    private val oldMaxHoursMultiPref by roulettePrefs.intMultiPref("maximumPlayTime")
+    private val newMaxHoursMultiPref by roulettePrefs.intMultiPref("filter-max-hours")
+
     override suspend fun migrate() {
         migrateRouletteFilter()
         migrateCacheHelper()
@@ -29,8 +33,8 @@ class AppMigration12to13 @Inject constructor(
     private suspend fun migrateRouletteFilter() {
         val steamId = getCurrentUser() ?: return
 
-        val filterType = roulettePrefs.getInt(playTimeKey(steamId), -1)
-        val maxHours = roulettePrefs.getInt(maximumPlayTimeKey(steamId), -1)
+        val filterType = oldFilterTypeMultiPref[steamId.as64(), -1]
+        val maxHours = oldMaxHoursMultiPref[steamId.as64(), -1]
 
         val playTimeFilter = when (filterType) {
             0 -> PlaytimeFilter.All
@@ -43,10 +47,10 @@ class AppMigration12to13 @Inject constructor(
         }
         roulettePrefs.edit {
             if (maxHours >= 0) {
-                putInt("filter-max-hours-${steamId.as64()}", maxHours)
+                putInt(newMaxHoursMultiPref.keyFor(steamId.as64()), maxHours)
             }
-            remove(playTimeKey(steamId))
-            remove(maximumPlayTimeKey(steamId))
+            remove(oldFilterTypeMultiPref.keyFor(steamId.as64()))
+            remove(oldMaxHoursMultiPref.keyFor(steamId.as64()))
         }
     }
 
@@ -57,7 +61,4 @@ class AppMigration12to13 @Inject constructor(
         db.cacheInfoDao().insert(items)
         cacheHelperPrefs.edit { clear() }
     }
-
-    private fun playTimeKey(steamId: SteamId) = "playTimeFilter-${steamId.as64()}"
-    private fun maximumPlayTimeKey(steamId: SteamId) = "maximumPlayTime-${steamId.as64()}"
 }

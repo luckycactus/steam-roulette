@@ -27,9 +27,4 @@ class LocalUserDataSource @Inject constructor(
 
     override fun observeSummary(steamId: SteamId): Flow<UserSummaryEntity> =
         db.userSummaryDao().observe(steamId.as64()).distinctUntilChanged().filterNotNull()
-
-    companion object {
-        const val CURRENT_USER_KEY = "signed_user_key"
-        const val CURRENT_USER_DEFAULT_VALUE = 0L
-    }
 }

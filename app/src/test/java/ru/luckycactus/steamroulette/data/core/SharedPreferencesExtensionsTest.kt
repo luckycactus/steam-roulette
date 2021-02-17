@@ -23,6 +23,8 @@ import kotlin.properties.ReadWriteProperty
 @RunWith(AndroidJUnit4::class)
 class SharedPreferencesExtensionsTest {
 
+    //todo test customtypes and multiprefs
+
     lateinit var prefs: SharedPreferences
     private val key = "test"
 
@@ -39,50 +41,50 @@ class SharedPreferencesExtensionsTest {
 
     @Test
     fun testIntPreference() = testPreference(
-        prefs.int(key, -1),
-        prefs.intFlow(key, -1),
-        prefs.intLiveData(key, -1),
+        prefs.int(-1, key),
+        prefs.intFlow(-1, key),
+        prefs.intLiveData(-1, key),
         listOf(-1, 2, 0)
     )
 
     @Test
     fun testLongPreference() = testPreference(
-        prefs.long(key, -1L),
-        prefs.longFlow(key, -1L),
-        prefs.longLiveData(key, -1),
+        prefs.long(-1L, key),
+        prefs.longFlow(-1L, key),
+        prefs.longLiveData(-1, key),
         listOf(-1L, 2L, 0)
     )
 
     @Test
     fun testFloatPreference() = testPreference(
-        prefs.float(key, -1.5f),
-        prefs.floatFlow(key, -1.5f),
-        prefs.floatLiveData(key, -1.5f),
+        prefs.float(-1.5f, key),
+        prefs.floatFlow(-1.5f, key),
+        prefs.floatLiveData(-1.5f, key),
         listOf(-1.5f, 2.345f, 0f)
     )
 
     @Test
     fun testBooleanPreference() = testPreference(
-        prefs.boolean(key, true),
-        prefs.booleanFlow(key, true),
-        prefs.booleanLiveData(key, true),
+        prefs.boolean(true, key),
+        prefs.booleanFlow(true, key),
+        prefs.booleanLiveData(true, key),
         listOf(true, false)
     )
 
     @Test
     fun testStringPreference() = testPreference(
-        prefs.string(key, "default"),
-        prefs.stringFlow(key, "default"),
-        prefs.stringLiveData(key, "default"),
+        prefs.string("default", key),
+        prefs.stringFlow("default", key),
+        prefs.stringLiveData("default", key),
         listOf("default", "1")
     )
 
     @Test
     fun testStringPreferenceNullDefault() = testPreference(
-        prefs.string(key, null),
-        prefs.stringFlow(key, null),
-        prefs.stringLiveData(key, null),
-        listOf(null, "1")
+        prefs.string("null", key),
+        prefs.stringFlow("null", key),
+        prefs.stringLiveData("null", key),
+        listOf("null", "1")
     )
 
     private fun <T> testPreference(
