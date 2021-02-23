@@ -1,7 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette_options
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
@@ -11,8 +11,10 @@ import ru.luckycactus.steamroulette.domain.games_filter.SaveRouletteFilterUseCas
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
+import javax.inject.Inject
 
-class RouletteFiltersViewModel @ViewModelInject constructor(
+@HiltViewModel
+class RouletteFiltersViewModel @Inject constructor(
     private val observeRouletteFilter: ObserveRouletteFilterUseCase,
     private val observeRouletteMaxHours: ObserveRouletteMaxHoursUseCase,
     private val saveRouletteFilter: SaveRouletteFilterUseCase,

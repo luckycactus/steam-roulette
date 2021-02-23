@@ -1,11 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.text.format.DateUtils
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -25,10 +25,11 @@ import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.utils.extensions.combine
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
-class MenuViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MenuViewModel @Inject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     observeUserSummary: ObserveUserSummaryUseCase,

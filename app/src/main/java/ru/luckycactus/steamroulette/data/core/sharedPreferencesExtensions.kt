@@ -8,6 +8,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -204,16 +205,20 @@ class MultiPreferenceDelegate<T>(
     private val createMultiPreference: (key: String) -> MultiPreference<T>
 ) : ReadOnlyProperty<Any, MultiPreference<T>> {
 
-    private var value: MultiPreference<T>? = null
+    private var valueRef = AtomicReference<MultiPreference<T>>()
 
     override fun getValue(thisRef: Any, property: KProperty<*>): MultiPreference<T> {
-        var value = this.value
-        if (value == null) {
+        while (true) {
+            val existing = valueRef.get()
+            if (existing != null) {
+                return existing
+            }
             val key = multiKey ?: property.name
-            value = createMultiPreference(key)
-            this.value = value
+            val newValue = createMultiPreference(key)
+            if (valueRef.compareAndSet(null, newValue)) {
+                return newValue
+            }
         }
-        return value
     }
 }
 

@@ -1,9 +1,9 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,8 +28,10 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
-class MainViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     observeCurrentUser: ObserveCurrentUserSteamIdUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
     private val fetchUserSummary: FetchUserSummaryUseCase,
