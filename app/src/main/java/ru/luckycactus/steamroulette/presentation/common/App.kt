@@ -3,8 +3,10 @@ package ru.luckycactus.steamroulette.presentation.common
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import ru.luckycactus.steamroulette.BuildConfig
+import ru.luckycactus.steamroulette.data.core.SharedPreferencesConfig
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.app.SystemLanguageSynchronizer
@@ -31,6 +33,9 @@ open class App : Application(), Configuration.Provider {
     @Inject
     lateinit var migrateApp: MigrateAppUseCase
 
+    @Inject
+    lateinit var moshi: Moshi
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -42,6 +47,8 @@ open class App : Application(), Configuration.Provider {
         if (!appReviewManager.isRated()) {
             Thread.setDefaultUncaughtExceptionHandler(AppReviewExceptionsHandler(appReviewManager))
         }
+
+        SharedPreferencesConfig.moshi = moshi
 
         systemLanguageSynchronizer.start()
         gamesPeriodicUpdater.start()

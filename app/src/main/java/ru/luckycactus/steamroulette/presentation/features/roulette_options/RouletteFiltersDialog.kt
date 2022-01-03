@@ -54,7 +54,7 @@ class RouletteFiltersDialog : BaseDialogFragment() {
         etPlaytime.label = getString(R.string.playtime_hours_label)
 
         if (savedInstanceState == null) {
-            viewLifecycleScope.launch {
+            lifecycleScope.launch {
                 when (viewModel.getCurrentPlaytimeFilter()) {
                     PlaytimeFilter.All -> rbAll
                     PlaytimeFilter.NotPlayed -> rbNotPlayed
@@ -62,7 +62,7 @@ class RouletteFiltersDialog : BaseDialogFragment() {
                 }.isChecked = true
             }
 
-            viewLifecycleScope.launch {
+            lifecycleScope.launch {
                 etPlaytime.setText(viewModel.getCurrentMaxPlaytimeSetting().toString())
             }
         }
