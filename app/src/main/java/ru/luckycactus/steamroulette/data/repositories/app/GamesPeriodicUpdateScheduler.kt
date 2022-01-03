@@ -1,9 +1,10 @@
 package ru.luckycactus.steamroulette.data.repositories.app
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.*
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import java.util.concurrent.TimeUnit
@@ -42,7 +43,8 @@ class GamesPeriodicUpdateScheduler @Inject constructor(
         WorkManager.getInstance(context).cancelUniqueWork(workName)
     }
 
-    class Worker @WorkerInject constructor(
+    @HiltWorker
+    class Worker @AssistedInject constructor(
         @Assisted appContext: Context,
         @Assisted params: WorkerParameters
     ) : CoroutineWorker(appContext, params) {

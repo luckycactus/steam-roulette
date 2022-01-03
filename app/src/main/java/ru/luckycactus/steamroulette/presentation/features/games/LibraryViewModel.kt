@@ -1,12 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.games
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,10 +26,12 @@ import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getPlaytimeFilterShortDescription
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 import kotlin.time.milliseconds
 
-class LibraryViewModel @ViewModelInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
+@HiltViewModel
+class LibraryViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val getLibraryPagingSource: GetLibraryPagingSourceUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val setAllGamesHidden: SetAllGamesHiddenUseCase,

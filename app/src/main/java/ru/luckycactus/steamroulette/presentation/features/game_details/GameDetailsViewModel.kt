@@ -1,11 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
@@ -21,12 +21,13 @@ import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
-import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
-class GameDetailsViewModel @ViewModelInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
+@HiltViewModel
+class GameDetailsViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase,

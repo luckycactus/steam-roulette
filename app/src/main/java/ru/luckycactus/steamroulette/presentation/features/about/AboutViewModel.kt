@@ -1,14 +1,16 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.asLiveData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
-class AboutViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AboutViewModel @Inject constructor(
     appRepository: AppRepository,
     appReviewManager: AppReviewManager,
     private val router: Router
