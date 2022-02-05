@@ -5,6 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,14 +31,13 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
-@HiltViewModel
-class MenuViewModel @Inject constructor(
+class MenuViewModel @AssistedInject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     observeUserSummary: ObserveUserSummaryUseCase,
     observeUserSummarySyncs: ObserveUserSummarySyncsUseCase,
     private val resourceManager: ResourceManager,
-    private val userViewModelDelegate: UserViewModelDelegate,
+    @Assisted private val userViewModelDelegate: UserViewModelDelegate,
     private val router: Router,
     private val clock: Clock
 ) : BaseViewModel() {
@@ -103,6 +105,11 @@ class MenuViewModel @Inject constructor(
 
     private fun close() {
         _closeAction.value = Unit
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(userViewModelDelegate: UserViewModelDelegate): MenuViewModel
     }
 
     companion object {

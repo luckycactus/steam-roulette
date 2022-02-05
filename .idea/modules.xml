@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/steam-roulette.iml" filepath="$PROJECT_DIR$/steam-roulette.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/steam-roulette.iml" filepath="$PROJECT_DIR$/.idea/modules/steam-roulette.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/steam-roulette.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/steam-roulette.app.iml" />
     </modules>
   </component>

@@ -17,8 +17,6 @@ private val compositeListeners = Collections.synchronizedMap(
     WeakHashMap<SharedPreferences, CompositePreferenceChangeListener>()
 )
 
-private val moshi = Moshi.Builder().build()
-
 inline fun SharedPreferences.Editor.edit(
     commit: Boolean = false,
     block: SharedPreferences.Editor.() -> Unit
@@ -237,12 +235,12 @@ class MultiPreference<T>(
 
     fun remove(key: String) {
         prefs.edit {
-            remove(key)
+            remove(keyFor(key))
         }
     }
 
     fun flow(key: String, default: T) =
-        prefs.flow(clazz, key, default)
+        prefs.flow(clazz, keyFor(key), default)
 
     operator fun set(key: Any, value: T) = set(key.toString(), value)
 
@@ -299,7 +297,7 @@ private fun <T> SharedPreferences.get(clazz: Class<T>, key: String, default: T?)
         Float::class.java -> getFloat(key, default as Float)
         Long::class.java -> getLong(key, default as Long)
         String::class.java -> getString(key, default as String?)
-        else -> getString(key, null)?.let { moshi.adapter(clazz).fromJson(it) } ?: default
+        else -> getString(key, null)?.let { SharedPreferencesConfig.moshi.adapter(clazz).fromJson(it) } ?: default
     } as T
 }
 
@@ -312,7 +310,7 @@ private fun <T> SharedPreferences.set(clazz: Class<T>, key: String, value: T) {
             Long::class.java -> putLong(key, value as Long)
             String::class.java -> putString(key, value as String)
             else -> {
-                val json = value?.let { moshi.adapter(clazz).toJson(it) }
+                val json = value?.let { SharedPreferencesConfig.moshi.adapter(clazz).toJson(it) }
                 putString(key, json)
             }
         }

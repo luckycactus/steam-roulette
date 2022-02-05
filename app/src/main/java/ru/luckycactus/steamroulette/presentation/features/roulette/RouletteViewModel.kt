@@ -1,7 +1,9 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import androidx.lifecycle.*
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -22,11 +24,9 @@ import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDele
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
-import javax.inject.Inject
 
-@HiltViewModel
-class RouletteViewModel @Inject constructor(
-    private val userViewModelDelegate: UserViewModelDelegate,
+class RouletteViewModel @AssistedInject constructor(
+    @Assisted private val userViewModelDelegate: UserViewModelDelegate,
     private val getOwnedGamesPagingList: GetOwnedGamesPagingListUseCase,
     observeRouletteFilter: ObserveRouletteFilterUseCase,
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
@@ -273,5 +273,10 @@ class RouletteViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(userViewModelDelegate: UserViewModelDelegate): RouletteViewModel
     }
 }

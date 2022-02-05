@@ -1,10 +1,10 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
-import androidx.hilt.Assisted
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GameDetailsViewModel @Inject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase,

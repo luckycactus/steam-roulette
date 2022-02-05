@@ -30,11 +30,17 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 import ru.luckycactus.steamroulette.presentation.utils.palette.PalettePageHelper
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
+import javax.inject.Inject
 import kotlin.math.abs
 
 @AndroidEntryPoint
 class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
-    private val viewModel: RouletteViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: RouletteViewModel.Factory
+
+    private val viewModel: RouletteViewModel by assistedViewModel {
+        viewModelFactory.create((activity as MainActivity).viewModel) // todo refactor
+    }
 
     private lateinit var fabs: List<FloatingActionButton>
 

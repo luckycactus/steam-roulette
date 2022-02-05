@@ -11,18 +11,26 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentMenuBinding
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
+import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
+import ru.luckycactus.steamroulette.presentation.utils.extensions.assistedViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
 import ru.luckycactus.steamroulette.presentation.utils.extensions.setDrawableColorFromAttribute
 import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MenuFragment : BaseBottomSheetDialogFragment<FragmentMenuBinding>(),
     MessageDialogFragment.Callbacks {
 
-    private val viewModel: MenuViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: MenuViewModel.Factory
+
+    private val viewModel: MenuViewModel by assistedViewModel {
+        viewModelFactory.create((activity as MainActivity).viewModel) // todo refactor
+    }
 
     override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
         FragmentMenuBinding.inflate(inflater, container, false)

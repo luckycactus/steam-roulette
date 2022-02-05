@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.games
 
-import androidx.hilt.Assisted
 import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -32,7 +31,7 @@ import kotlin.time.milliseconds
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val getLibraryPagingSource: GetLibraryPagingSourceUseCase,
     private val setGamesHidden: SetGamesHiddenUseCase,
     private val setAllGamesHidden: SetAllGamesHiddenUseCase,
