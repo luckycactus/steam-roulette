@@ -2,15 +2,13 @@ package ru.luckycactus.steamroulette.presentation.features.about
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,12 +19,11 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
-class AboutFragment : BaseFragment<FragmentAboutBinding>() {
+class AboutFragment : BaseFragment(R.layout.fragment_about) {
+
+    private val binding by viewBinding(FragmentAboutBinding::bind)
 
     private val viewModel: AboutViewModel by viewModels()
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentAboutBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         super.onViewCreated(view, savedInstanceState)

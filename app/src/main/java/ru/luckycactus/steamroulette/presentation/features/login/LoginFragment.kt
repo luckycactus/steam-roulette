@@ -1,12 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.login
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentLoginBinding
@@ -15,12 +14,11 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
-class LoginFragment : BaseFragment<FragmentLoginBinding>() {
+class LoginFragment : BaseFragment(R.layout.fragment_login) {
+
+    private val binding by viewBinding(FragmentLoginBinding::bind)
 
     private val viewModel: LoginViewModel by viewModels()
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentLoginBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         root.doOnApplyWindowInsets { view, insets, initialPadding ->

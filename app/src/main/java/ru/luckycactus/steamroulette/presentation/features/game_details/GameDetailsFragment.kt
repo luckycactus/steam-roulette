@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.transition.Fade
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentDetailedDescriptionBinding
 import ru.luckycactus.steamroulette.databinding.FragmentGameDetailsBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
@@ -34,7 +36,9 @@ import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
-class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
+class GameDetailsFragment : BaseFragment(R.layout.fragment_game_details) {
+
+    private val binding by viewBinding(FragmentGameDetailsBinding::bind)
 
     private val viewModel: GameDetailsViewModel by viewModels()
 
@@ -49,9 +53,6 @@ class GameDetailsFragment : BaseFragment<FragmentGameDetailsBinding>() {
     private var headerIsReady = false
     private var tintIsReady = false
     private var transitionStarted = false
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentGameDetailsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         super.onViewCreated(view, savedInstanceState)

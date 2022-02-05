@@ -2,13 +2,13 @@ package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -34,7 +34,10 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 @AndroidEntryPoint
-class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
+class RouletteFragment : BaseFragment(R.layout.fragment_roulette) {
+
+    private val binding by viewBinding(FragmentRouletteBinding::bind)
+
     @Inject
     lateinit var viewModelFactory: RouletteViewModel.Factory
 
@@ -65,9 +68,6 @@ class RouletteFragment : BaseFragment<FragmentRouletteBinding>() {
             }
         }
     }
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentRouletteBinding.inflate(inflater, container, false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

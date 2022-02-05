@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import androidx.core.view.doOnLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.databinding.FragmentGameDetailsBinding
 import ru.luckycactus.steamroulette.databinding.FragmentLibraryFilterBinding
 import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteFiltersDialog
@@ -26,16 +28,15 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
 
 
 @AndroidEntryPoint
-class LibraryFilterFragment : BaseFragment<FragmentLibraryFilterBinding>() {
+class LibraryFilterFragment : BaseFragment(R.layout.fragment_library_filter) {
+
+    private val binding by viewBinding(FragmentLibraryFilterBinding::bind)
 
     private val viewModel: LibraryViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
     private lateinit var behavior: BottomSheetBehavior<*>
 
     override val logScreenName: Nothing? = null
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentLibraryFilterBinding.inflate(inflater, container, false)
 
     // it should be onActivityCreated and not onViewCreated, because we need behaviour, but
     // in onViewCreated fragment isn't added into hierarchy yet

@@ -2,23 +2,22 @@ package ru.luckycactus.steamroulette.presentation.features.detailed_description
 
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
+import by.kirich1409.viewbindingdelegate.viewBinding
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentDetailedDescriptionBinding
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
 import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideImageGetter
 
-class DetailedDescriptionFragment : BaseFragment<FragmentDetailedDescriptionBinding>() {
+class DetailedDescriptionFragment : BaseFragment(R.layout.fragment_detailed_description) {
+
+    private val binding by viewBinding(FragmentDetailedDescriptionBinding::bind)
 
     private var appName: String by argument()
     private var detailedDescription: String by argument()
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentDetailedDescriptionBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         super.onViewCreated(view, savedInstanceState)

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,8 +22,10 @@ import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MenuFragment : BaseBottomSheetDialogFragment<FragmentMenuBinding>(),
+class MenuFragment : BaseBottomSheetDialogFragment(),
     MessageDialogFragment.Callbacks {
+
+    private val binding by viewBinding(FragmentMenuBinding::bind)
 
     @Inject
     lateinit var viewModelFactory: MenuViewModel.Factory
@@ -32,8 +34,13 @@ class MenuFragment : BaseBottomSheetDialogFragment<FragmentMenuBinding>(),
         viewModelFactory.create((activity as MainActivity).viewModel) // todo refactor
     }
 
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentMenuBinding.inflate(inflater, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_menu, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         listOf(tvExit, tvAbout).forEach {

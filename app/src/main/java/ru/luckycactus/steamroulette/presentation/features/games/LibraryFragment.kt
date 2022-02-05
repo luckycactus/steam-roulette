@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Fade
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -44,7 +45,9 @@ import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
-class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFragment.Callbacks {
+class LibraryFragment : BaseFragment(R.layout.fragment_library_filter), MessageDialogFragment.Callbacks {
+
+    private val binding by viewBinding(FragmentLibraryBinding::bind)
 
     private lateinit var adapter: LibraryAdapter
     private lateinit var layoutManager: GridLayoutManager
@@ -84,9 +87,6 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(), MessageDialogFra
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentLibraryBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         filterSheetView = view.findViewById(R.id.filterSheet)

@@ -1,13 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentAppLibrariesBinding
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
@@ -15,11 +15,11 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPa
 import ru.luckycactus.steamroulette.presentation.utils.extensions.viewLifecycleScope
 
 @AndroidEntryPoint
-class AppLibrariesFragment : BaseFragment<FragmentAppLibrariesBinding>() {
-    private val viewModel: AppLibrariesViewModel by viewModels()
+class AppLibrariesFragment : BaseFragment(R.layout.fragment_app_libraries) {
 
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
-        FragmentAppLibrariesBinding.inflate(inflater, container, false)
+    private val binding by viewBinding(FragmentAppLibrariesBinding::bind)
+
+    private val viewModel: AppLibrariesViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         super.onViewCreated(view, savedInstanceState)

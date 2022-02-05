@@ -1,11 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.ui.base
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import androidx.viewbinding.ViewBinding
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -13,12 +9,15 @@ import dagger.hilt.components.SingletonComponent
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 
-abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
+abstract class BaseFragment : Fragment {
+
+    constructor() : super()
+
+    constructor(@LayoutRes contentLayoutId: Int): super(contentLayoutId)
 
     protected val analytics: AnalyticsHelper
 
-    protected val binding: Binding get() = _binding!!
-    private var _binding: Binding? = null
+    open val logScreenName: String? = this::class.simpleName
 
     init {
         val entryPoint = EntryPointAccessors.fromApplication(
@@ -27,24 +26,6 @@ abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
         )
         analytics = entryPoint.analytics()
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = inflateViewBinding(inflater, container)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    protected abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): Binding
-
-    open val logScreenName: String? = this::class.simpleName
 
     override fun onResume() {
         super.onResume()
