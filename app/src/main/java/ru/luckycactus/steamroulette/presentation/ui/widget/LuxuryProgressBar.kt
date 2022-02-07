@@ -16,7 +16,7 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.getThemeColorO
 class LuxuryProgressBar : View {
 
     private var radius: Int = 0
-    private var paint: Paint? = null
+    private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var arcCount: Int = 0
     private var arcAngle: Float = 0.toFloat()
     private var arcSpace: Float = 0.toFloat()
@@ -30,6 +30,12 @@ class LuxuryProgressBar : View {
     private var currentProgressTime: Float = 0.toFloat()
     private var currentState = STATE_GROWTH
     private val stateDurations = IntArray(STATE_COUNT)
+
+    var color: Int
+        get() = paint.color
+        set(value) {
+            paint.color = value
+        }
 
     //todo implement wrapcontent
 
@@ -51,7 +57,7 @@ class LuxuryProgressBar : View {
 
     private fun init(context: Context, attrs: AttributeSet?) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.LuxuryProgressBar)
-        val color = a.getColor(
+        color = a.getColor(
             R.styleable.LuxuryProgressBar_progressColor,
             context.getThemeColorOrThrow(R.attr.colorAccent)
         )
@@ -66,11 +72,11 @@ class LuxuryProgressBar : View {
             a.getInt(R.styleable.LuxuryProgressBar_decreasingDuration, 300)
         a.recycle()
 
-        paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint!!.style = Paint.Style.STROKE
-        paint!!.strokeCap = Paint.Cap.ROUND
-        paint!!.color = color
-        paint!!.strokeWidth = strokeWidth.toFloat()
+        paint.apply {
+            style = Paint.Style.STROKE
+            strokeCap = Paint.Cap.ROUND
+            this.strokeWidth = strokeWidth.toFloat()
+        }
 
         arcAngle = 360f / (arcCount * 2)
         arcSpace = (360f - arcCount * arcAngle) / arcCount

@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -24,22 +26,19 @@ class LoginViewModel @Inject constructor(
     private val router: Router,
     private val analytics: AnalyticsHelper
 ) : BaseViewModel() {
-    val progressState: LiveData<Boolean>
-        get() = _progressState
 
-    val loginButtonAvailableState: LiveData<Boolean>
-        get() = _loginButtonAvailableState
+    private val _state = MutableStateFlow(UiState())
+    val state = _state.asStateFlow()
 
-    val errorState: LiveData<String>
-        get() = _errorState
-
-    private val _progressState = MutableLiveData(false)
-    private val _loginButtonAvailableState = MutableLiveData(false)
-    private val _errorState = MutableLiveData<String>()
+    private val _errorMessages = Channel<String>(capacity = Channel.UNLIMITED)
+    val errorMessages: Flow<String>
+        get() = _errorMessages.receiveAsFlow()
 
     fun onSteamIdConfirmed(id: String) {
         viewModelScope.launch {
-            _progressState.value = true
+            _state.update {
+                it.copy(isLoading = true)
+            }
             login(id.trim()).let {
                 when (it) {
                     is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
@@ -47,16 +46,23 @@ class LoginViewModel @Inject constructor(
                 }
                 analytics.logLoginAttempt(it)
             }
-            _progressState.value = false
+            _state.update {
+                it.copy(isLoading = false)
+            }
         }
     }
 
     fun onSteamIdInputChanged(userId: String) {
-        _loginButtonAvailableState.value = validateSteamIdInput(userId.trim())
+        _state.update {
+            it.copy(
+                steamIdInput = userId,
+                loginButtonEnabled = validateSteamIdInput(userId.trim())
+            )
+        }
     }
 
     private fun renderFail(fail: LoginUseCase.Result.Fail) {
-        _errorState.value = with(resourceManager) {
+        val message = with(resourceManager) {
             when (fail) {
                 LoginUseCase.Result.Fail.InvalidSteamIdFormat ->
                     getString(R.string.error_invalid_steamid_format)
@@ -70,5 +76,12 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+        _errorMessages.trySend(message)
     }
+
+    data class UiState(
+        val steamIdInput: String = "",
+        val loginButtonEnabled: Boolean = false,
+        val isLoading: Boolean = false
+    )
 }

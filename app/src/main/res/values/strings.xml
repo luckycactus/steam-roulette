@@ -91,5 +91,5 @@
     <string name="you_have_n_games">You have %1$s</string>
     <string name="change_scale">Change scale</string>
     <string name="library_search_hint">Game title</string>
-    <string name="login_privacy_hint">You should set <b>Game details</b> to public and uncheck <b>Always keep my total playtime private</b> option in your Steam profile\'s <b>Privacy Settings</b> for the app to work</string>
+    <string name="login_privacy_hint"><![CDATA[You should set <b>Game details</b> to public and uncheck <b>Always keep my total playtime private</b> option in your Steam profile\'s <b>Privacy Settings</b> for the app to work]]></string>
 </resources>
