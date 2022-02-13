@@ -1,7 +1,8 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
@@ -16,9 +17,22 @@ class AboutViewModel @Inject constructor(
     private val router: Router
 ) : BaseViewModel() {
 
-    val version: String = "${appRepository.currentVersionName} (${appRepository.currentVersion})"
+    private val _state = MutableStateFlow(
+        UiState(
+            version = "${appRepository.currentVersionName} (${appRepository.currentVersion})"
+        )
+    )
+    val state = _state.asStateFlow()
 
-    val appRated = appReviewManager.observeRatedState().asLiveData()
+    init {
+        appReviewManager.observeRatedState()
+            .onEach { rated ->
+                _state.update {
+                    it.copy(appRated = rated)
+                }
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun onSourceCodeClick() {
         router.navigateTo(
@@ -38,13 +52,13 @@ class AboutViewModel @Inject constructor(
         router.navigateTo(Screens.ExternalBrowserFlow(DEV_STEAM_PROFILE_URL))
     }
 
-    fun contactDevViaTelegram() {
-        router.navigateTo(Screens.ExternalBrowserFlow(DEV_TELEGRAM_URL))
-    }
+    data class UiState(
+        val version: String = "",
+        val appRated: Boolean = false
+    )
 
     companion object {
         private const val DEV_STEAM_PROFILE_URL = "https://steamcommunity.com/id/luckycactus"
-        private const val DEV_TELEGRAM_URL = "https://t.me/luckycactus"
         private const val SOURCE_URL = "https://github.com/luckycactus/steam-roulette"
         private const val PRIVACY_POLICY_URL = "$SOURCE_URL/blob/master/PRIVACY_POLICY.md"
     }
