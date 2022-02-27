@@ -1,19 +1,13 @@
 package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.text.format.DateUtils
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.Clock
@@ -23,45 +17,30 @@ import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
-import ru.luckycactus.steamroulette.domain.user.ObserveUserSummarySyncsUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
+import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
 class MenuViewModel @AssistedInject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
     observeOwnedGamesSyncsUseCase: ObserveOwnedGamesSyncsUseCase,
     observeUserSummary: ObserveUserSummaryUseCase,
-    observeUserSummarySyncs: ObserveUserSummarySyncsUseCase,
     private val resourceManager: ResourceManager,
     @Assisted private val userViewModelDelegate: UserViewModelDelegate,
     private val router: Router,
     private val clock: Clock
 ) : BaseViewModel() {
 
-    val userSummary = observeUserSummary().asLiveData()
-    val gameCount: LiveData<Int> = observeOwnedGamesCount(GamesFilter.all()).asLiveData()
-    val gamesLastUpdate: LiveData<String>
-    val refreshProfileState: LiveData<Boolean>
-    val closeAction: LiveData<Unit>
-        get() = _closeAction
-    val userSummaryLastSync
-        get() = userSummarySyncs.value
+    val state: StateFlow<UiState?>
 
-    private val _closeAction = MutableLiveData<Unit>()
-    private val userSummarySyncs =
-        observeUserSummarySyncs().stateIn(viewModelScope, SharingStarted.Eagerly, 0)
-
-    fun refreshProfile() {
-        userViewModelDelegate.fetchUserAndGames()
-        closeWithDelay()
-    }
+    private val _closeAction = Channel<Unit>(capacity = Channel.BUFFERED)
+    val closeAction = _closeAction.receiveAsFlow()
 
     init {
-        gamesLastUpdate = observeOwnedGamesSyncsUseCase()
+        val gamesLastUpdate = observeOwnedGamesSyncsUseCase()
             .map {
                 val ago = if (it <= 0)
                     resourceManager.getString(R.string.last_sync_never)
@@ -72,14 +51,27 @@ class MenuViewModel @AssistedInject constructor(
                         DateUtils.MINUTE_IN_MILLIS
                     )
                 resourceManager.getString(R.string.games_last_sync, ago)
-            }.asLiveData()
+            }
 
-        refreshProfileState = combine(
+        val refreshProfileState = combine(
             userViewModelDelegate.fetchUserSummaryState,
             userViewModelDelegate.fetchGamesState
         ) { userState, gamesState ->
             userState || (gamesState is RequestState.Loading)
-        }.asLiveData()
+        }
+
+        state = combine(
+            observeUserSummary(),
+            observeOwnedGamesCount(GamesFilter.all()),
+            gamesLastUpdate,
+            refreshProfileState,
+            ::UiState
+        ).stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    }
+
+    fun refreshProfile() {
+        userViewModelDelegate.fetchUserAndGames()
+        closeWithDelay()
     }
 
     fun onAboutClick() {
@@ -104,13 +96,20 @@ class MenuViewModel @AssistedInject constructor(
     }
 
     private fun close() {
-        _closeAction.value = Unit
+        _closeAction.trySend(Unit)
     }
 
     @AssistedFactory
     interface Factory {
         fun create(userViewModelDelegate: UserViewModelDelegate): MenuViewModel
     }
+
+    data class UiState(
+        val userSummary: UserSummary,
+        val gamesCount: Int,
+        val gamesLastUpdate: String,
+        val refreshState: Boolean,
+    )
 
     companion object {
         private const val CLOSE_DELAY = 300L

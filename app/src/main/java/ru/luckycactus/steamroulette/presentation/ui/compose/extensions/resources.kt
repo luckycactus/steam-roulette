@@ -3,6 +3,8 @@ package ru.luckycactus.steamroulette.presentation.ui.compose.extensions
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.annotation.DrawableRes
+import androidx.annotation.PluralsRes
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
@@ -25,4 +27,10 @@ fun adaptiveIconResource(@DrawableRes id: Int): ImageBitmap {
         drawable.draw(canvas)
         bitmap.asImageBitmap()
     }
+}
+
+@Composable
+fun quantityStringResource(@PluralsRes id: Int, quantity: Int, vararg args: Any): String {
+    val res = LocalContext.current.resources
+    return res.getQuantityString(id, quantity, *args)
 }

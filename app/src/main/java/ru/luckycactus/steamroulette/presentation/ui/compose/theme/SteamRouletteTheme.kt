@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.ui.compose.theme
 
 import android.content.Context
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ fun SteamRouletteTheme(
         // content color to be more appropriate to the theme background
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colors.onBackground,
+            LocalContentAlpha provides 1.0f, //todo compose
             content = content
         )
     }

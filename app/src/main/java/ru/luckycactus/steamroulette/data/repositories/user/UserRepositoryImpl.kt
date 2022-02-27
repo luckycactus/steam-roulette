@@ -47,9 +47,6 @@ class UserRepositoryImpl @Inject constructor(
         createUserSummaryNBR(steamId).invalidateCache()
     }
 
-    override fun observeSummaryUpdates(): Flow<Long> =
-        createUserSummaryNBR(currentUser).observeCacheUpdates()
-
     private fun createUserSummaryNBR(
         steamId: SteamId
     ): FullCacheNbr<UserSummaryEntity, UserSummary> {

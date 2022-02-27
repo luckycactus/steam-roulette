@@ -8,11 +8,14 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -21,10 +24,10 @@ import ru.luckycactus.steamroulette.R
 @Composable
 fun MenuItem(
     text: String,
-    icon: Painter,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    extraIcon: Painter? = null,
+    withChevron: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
     textStyle: TextStyle = MaterialTheme.typography.body2
 ) {
@@ -39,7 +42,7 @@ fun MenuItem(
                 .padding(horizontal = dimensionResource(id = R.dimen.default_activity_margin)),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(painter = icon, contentDescription = null)
+            Icon(imageVector = icon, contentDescription = null)
 
             Text(
                 text,
@@ -49,10 +52,10 @@ fun MenuItem(
                 style = textStyle
             )
 
-            if (extraIcon != null) {
+            if (withChevron) {
                 Icon(
                     modifier = Modifier.padding(start = dimensionResource(id = R.dimen.default_activity_margin)),
-                    painter = extraIcon,
+                    imageVector = Icons.Default.ChevronRight,
                     contentDescription = null
                 )
             }

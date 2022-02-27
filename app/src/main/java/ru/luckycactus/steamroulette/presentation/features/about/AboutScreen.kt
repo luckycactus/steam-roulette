@@ -15,6 +15,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,11 +25,13 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -102,20 +107,20 @@ private fun AboutScreenContent(
         AboutItem(
             modifier = Modifier.padding(top = 28.dp),
             text = stringResource(id = R.string.show_app_source_code),
-            icon = painterResource(id = R.drawable.ic_github),
+            icon = ImageVector.vectorResource(id = R.drawable.ic_github),
             onClick = onSourceCodeClick
         )
 
         AboutItem(
             text = stringResource(id = R.string.open_source_libraries),
-            icon = painterResource(id = R.drawable.ic_layers_black_24dp),
-            extraIcon = painterResource(id = R.drawable.ic_chevron_right),
+            icon = Icons.Default.Layers,
+            withChevron = true,
             onClick = onLibrariesClick
         )
 
         AboutItem(
             text = stringResource(id = R.string.privacy_policy),
-            icon = painterResource(id = R.drawable.ic_security_24dp),
+            icon = Icons.Default.Security,
             onClick = onPrivacyPolicyClick
         )
 
@@ -124,7 +129,7 @@ private fun AboutScreenContent(
         )
         AboutItem(
             text = stringResource(id = R.string.rate_app_title),
-            icon = painterResource(id = R.drawable.ic_baseline_thumb_up_24),
+            icon = Icons.Default.ThumbUp,
             backgroundColor = rateItemBackgroundColor,
             onClick = onRateClick
         )
@@ -238,17 +243,17 @@ private fun AppLogo(
 @Composable
 fun AboutItem(
     text: String,
-    icon: Painter,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    extraIcon: Painter? = null,
+    withChevron: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface
 ) {
     MenuItem(
         modifier = modifier,
         text = text,
         icon = icon,
-        extraIcon = extraIcon,
+        withChevron = withChevron,
         onClick = onClick,
         textStyle = MaterialTheme.typography.body1,
         backgroundColor = backgroundColor
