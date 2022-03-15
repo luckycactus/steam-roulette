@@ -28,9 +28,11 @@ import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.user.entity.CommunityVisibleState
 import ru.luckycactus.steamroulette.domain.user.entity.PersonaState
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
+import ru.luckycactus.steamroulette.presentation.ui.compose.Dimens
 import ru.luckycactus.steamroulette.presentation.ui.compose.extensions.quantityStringResource
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
 import ru.luckycactus.steamroulette.presentation.ui.compose.widget.ProgressBar
+import ru.luckycactus.steamroulette.presentation.ui.compose.widget.SteamRouletteDivider
 import ru.luckycactus.steamroulette.presentation.ui.widget.compose.MenuItem
 
 @Composable
@@ -73,14 +75,9 @@ private fun MenuScreenContent(
                 onRefreshClick
             )
 
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_normal)))
+            Spacer(modifier = Modifier.height(Dimens.spacingSmall))
 
-            Divider(
-                color = colorResource(id = R.color.divider),
-                thickness = with(LocalDensity.current) { 1.toDp() }
-            )
-
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_small)))
+            SteamRouletteDivider()
 
             MenuItem(
                 text = stringResource(id = R.string.my_steam_library),

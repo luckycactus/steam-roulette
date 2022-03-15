@@ -14,15 +14,6 @@
         <attr name="decreasingDuration" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="PreferenceView">
-        <attr name="prefTitle" format="string" />
-        <attr name="prefValue" format="string" />
-        <attr name="type" format="enum">
-            <enum name="dropdown" value="0" />
-            <enum name="forward" value="1" />
-        </attr>
-    </declare-styleable>
-
     <declare-styleable name="GameView">
         <attr name="textSize" format="dimension" />
     </declare-styleable>
