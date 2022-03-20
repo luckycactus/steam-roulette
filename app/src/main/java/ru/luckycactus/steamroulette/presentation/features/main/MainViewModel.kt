@@ -97,8 +97,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onGameClick(game: GameHeader, color: Int, waitForImage: Boolean) {
-        router.navigateTo(Screens.GameDetails(game, color, waitForImage))
+    fun onGameClick(game: GameHeader, color: Int) {
+        router.navigateTo(Screens.GameDetails(game, color))
     }
 
     fun onAppReviewed() {

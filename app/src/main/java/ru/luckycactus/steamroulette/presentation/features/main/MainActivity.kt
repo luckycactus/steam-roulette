@@ -56,8 +56,6 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
 
     private lateinit var binding: ActivityMainBinding
 
-    private var sharedViews: List<View>? = null
-
     private var runningTransitions = 0
     val touchSwitchTransitionListener = object : TransitionListenerAdapter() {
         override fun onTransitionEnd(transition: Transition) {
@@ -118,15 +116,6 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
                 when (nextFragment) {
                     is LoginFragment -> {
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                    }
-                    is GameDetailsFragment -> {
-                        sharedViews?.forEach {
-                            fragmentTransaction.addSharedElement(
-                                it,
-                                ViewCompat.getTransitionName(it)!!
-                            )
-                        }
-                        sharedViews = null
                     }
                     is RouletteFragment -> {
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
@@ -250,12 +239,9 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
 
     fun onGameClick(
         game: GameHeader,
-        sharedViews: List<View>,
-        waitForImage: Boolean,
         color: Int = Color.TRANSPARENT
     ) {
-        this.sharedViews = sharedViews
-        viewModel.onGameClick(game, color, waitForImage)
+        viewModel.onGameClick(game, color)
     }
 
     fun reviewApp() {

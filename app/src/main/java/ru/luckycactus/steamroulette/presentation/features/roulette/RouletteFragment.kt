@@ -225,7 +225,7 @@ class RouletteFragment : BaseFragment(R.layout.fragment_roulette) {
         viewModel.onHiddenChanged(hidden)
     }
 
-    private fun onGameClick(game: GameHeader, sharedViews: List<View>, imageIsReady: Boolean) {
+    private fun onGameClick(game: GameHeader) {
         reenterTransition = createExitTransition().apply {
             binding.rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.let { topItemView ->
                 fade {
@@ -251,12 +251,7 @@ class RouletteFragment : BaseFragment(R.layout.fragment_roulette) {
                 exitTransition = null
             }
         }
-        (activity as MainActivity).onGameClick(
-            game,
-            sharedViews,
-            imageIsReady,
-            tintContext.tintColor
-        )
+        (activity as MainActivity).onGameClick(game, tintContext.tintColor)
     }
 
     private fun createExitTransition() = transitionSet {

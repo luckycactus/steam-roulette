@@ -14,9 +14,7 @@
         android:id="@+id/gameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="0dp"
-        app:textSize="36sp"
-        />
+        android:elevation="0dp" />
 
     <ImageView
         android:id="@+id/overlayHide"

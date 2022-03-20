@@ -234,7 +234,7 @@ class LibraryViewModel @Inject constructor(
     }
 
     fun onGameSelectionChanged(appId: Long, selected: Boolean) {
-        gameSelectionChangedChannel.offer(appId to selected)
+        gameSelectionChangedChannel.trySend(appId to selected)
     }
 
     fun onSearchStateChanged(opened: Boolean) {

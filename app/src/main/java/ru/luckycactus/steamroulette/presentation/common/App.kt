@@ -3,6 +3,9 @@ package ru.luckycactus.steamroulette.presentation.common
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.util.DebugLogger
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import ru.luckycactus.steamroulette.BuildConfig
@@ -16,7 +19,7 @@ import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import timber.log.Timber
 import javax.inject.Inject
 
-open class App : Application(), Configuration.Provider {
+open class App : Application(), Configuration.Provider, ImageLoaderFactory {
 
     @Inject
     lateinit var systemLanguageSynchronizer: SystemLanguageSynchronizer
@@ -67,4 +70,14 @@ open class App : Application(), Configuration.Provider {
     override fun getWorkManagerConfiguration() = Configuration.Builder()
         .setWorkerFactory(workerFactory)
         .build()
+
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this)
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    logger(DebugLogger())
+                }
+            }
+            .build()
+    }
 }

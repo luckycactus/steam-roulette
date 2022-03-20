@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="image_shared_element_transition" translatable="false">image_transition_%d</string>
-    <string name="cardview_shared_element_transition" translatable="false">cardview_transition_%d</string>
-</resources>

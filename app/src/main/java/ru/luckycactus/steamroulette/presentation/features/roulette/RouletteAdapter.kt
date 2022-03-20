@@ -1,8 +1,8 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
 import android.graphics.Bitmap
-import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import androidx.palette.graphics.Palette
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.isActive
 import ru.luckycactus.steamroulette.databinding.ItemGameCardStackBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
+import ru.luckycactus.steamroulette.presentation.ui.compose.widget.GameCardImageType
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
@@ -18,7 +18,7 @@ import kotlin.math.absoluteValue
 
 class RouletteAdapter constructor(
     private val viewLifecycle: Lifecycle,
-    private val onGameClick: (GameHeader, List<View>, Boolean) -> Unit,
+    private val onGameClick: (GameHeader) -> Unit,
     private val paletteChangeListener: (Int) -> Unit
 ) : RecyclerView.Adapter<RouletteAdapter.RouletteViewHolder>() {
 
@@ -49,14 +49,6 @@ class RouletteAdapter constructor(
         var palette: Palette? = null
             private set
 
-        private val imageRequestListener = GameView.Listener {
-            if (it == null) {
-                paletteChangeListener(bindingAdapterPosition)
-            } else {
-                generatePaletteAndCallListenerAsynchronously(it)
-            }
-        }
-
         private fun generatePaletteAndCallListenerAsynchronously(it: Bitmap?) {
             val game = this@RouletteViewHolder.game
             viewLifecycle.coroutineScope.launchWhenCreated {
@@ -71,12 +63,13 @@ class RouletteAdapter constructor(
 
         init {
             itemView.setOnClickListener {
-                onGameClick(
-                    game,
-                    listOf(binding.gameView),
-                    binding.gameView.imageReady
-                )
+                onGameClick(game)
             }
+            binding.gameView.onBitmapReady = {
+                generatePaletteAndCallListenerAsynchronously(it)
+            }
+            binding.gameView.defaultTextSize = 36.sp
+            binding.gameView.imageType = GameCardImageType.HD
         }
 
         fun bind(game: GameHeader) {
@@ -84,12 +77,7 @@ class RouletteAdapter constructor(
                 this.palette = null
             this.game = game
             setVisibleHint(bindingAdapterPosition == 0)
-            binding.gameView.setGame(
-                game,
-                false,
-                imageRequestListener,
-                imageType = GameView.ImageType.HD
-            )
+            binding.gameView.game = game
         }
 
         override fun onSwipeProgress(progress: Float, threshold: Float) {
@@ -98,8 +86,9 @@ class RouletteAdapter constructor(
             //itemView.overlayNext.alpha = thresholdedProgress.coerceAtLeast(0f).absoluteValue
         }
 
+        // todo compose
         override fun setVisibleHint(visible: Boolean) {
-            binding.gameView.setUserVisibleHint(visible)
+//            binding.gameView.setUserVisibleHint(visible)
         }
     }
 }

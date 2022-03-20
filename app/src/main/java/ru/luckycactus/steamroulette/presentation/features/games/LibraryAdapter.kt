@@ -1,22 +1,20 @@
 package ru.luckycactus.steamroulette.presentation.features.games
 
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
+import androidx.compose.ui.unit.sp
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.ItemLibraryGameBinding
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
-import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
+import ru.luckycactus.steamroulette.presentation.ui.compose.widget.GameCardImageType
 import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 
 class LibraryAdapter(
-    private val onGameClick: (LibraryGame, List<View>, Boolean) -> Unit
+    private val onGameClick: (LibraryGame) -> Unit
 ) : PagingDataAdapter<LibraryGame, LibraryAdapter.GameViewHolder>(diffCallback) {
 
     var tracker: SelectionTracker<Long>? = null
@@ -48,17 +46,12 @@ class LibraryAdapter(
         init {
             with(binding) {
                 gameView.memoryCacheEnabled = true
+                gameView.imageType = GameCardImageType.SD
+                gameView.defaultTextSize = 16.sp
                 itemView.setOnClickListener {
                     game?.let { game ->
                         if (tracker == null || tracker?.selection?.size() == 0) {
-                            ViewCompat.setTransitionName(
-                                root,
-                                itemView.context.getString(
-                                    R.string.cardview_shared_element_transition,
-                                    game.header.appId
-                                )
-                            )
-                            onGameClick(game, listOf(root), gameView.imageReady)
+                            onGameClick(game)
                         }
                     }
                 }
@@ -67,11 +60,7 @@ class LibraryAdapter(
 
         fun bind(game: LibraryGame?, selected: Boolean): Unit = with(binding) {
             this@GameViewHolder.game = game
-            gameView.setGame(
-                game?.header,
-                transitionGameId = null,
-                imageType = GameView.ImageType.SD
-            )
+            gameView.game = game?.header
             gameView.isSelected = selected
             cardViewBottom.isSelected = selected
             checkbox.isSelected = selected

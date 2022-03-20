@@ -11,27 +11,21 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.*
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsViewModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
-import ru.luckycactus.steamroulette.presentation.ui.widget.GameView
 import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
 
 class GameDetailsAdapter constructor(
-    // store api can return different id, but we need use old one for working shared element transition
-    private val transitionGameId: Int,
-    private val waitForImage: Boolean,
-    private val onHeaderReadyForTransition: () -> Unit,
     private val onHeaderBitmapChanged: (Bitmap?) -> Unit,
     private val gameDetailsViewModel: GameDetailsViewModel
 ) : ListAdapter<GameDetailsUiModel, GameDetailsViewHolder<*>>(
     diffCallback
 ) {
-    private var headerReady = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameDetailsViewHolder<*> {
         val inflater = parent.layoutInflater
         return when (viewType) {
             R.layout.item_game_details_header -> GameHeaderViewHolder(
                 ItemGameDetailsHeaderBinding.inflate(inflater, parent, false),
-                transitionGameId
+                onHeaderBitmapChanged
             )
             R.layout.item_game_details_short_description -> GameShortDescriptionViewHolder(
                 ItemGameDetailsShortDescriptionBinding.inflate(inflater, parent, false),
@@ -62,28 +56,7 @@ class GameDetailsAdapter constructor(
     override fun onBindViewHolder(holder: GameDetailsViewHolder<*>, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is GameHeaderViewHolder -> {
-                val waitForImage = waitForImage && !headerReady
-
-                val listener = GameView.Listener {
-                    onHeaderBitmapChanged(it)
-                    if (!headerReady) {
-                        headerReady = true
-                        onHeaderReadyForTransition()
-                    }
-                }
-
-                holder.bind(
-                    item as GameDetailsUiModel.Header,
-                    waitForImage,
-                    listener
-                )
-
-                if (!waitForImage && !headerReady) {
-                    headerReady = true
-                    onHeaderReadyForTransition()
-                }
-            }
+            is GameHeaderViewHolder -> holder.bind(item as GameDetailsUiModel.Header)
             is GameShortDescriptionViewHolder -> holder.bind(item as GameDetailsUiModel.ShortDescription)
             is GameLinksViewHolder -> holder.bind(item as GameDetailsUiModel.Links)
             is GameLanguagesViewHolder -> holder.bind(item as GameDetailsUiModel.Languages)
@@ -121,7 +94,6 @@ class GameDetailsAdapter constructor(
             ): Boolean {
                 return oldItem == newItem
             }
-
         }
     }
 }

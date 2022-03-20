@@ -14,12 +14,10 @@
     <ru.luckycactus.steamroulette.presentation.ui.widget.GameView
         android:id="@+id/gameView"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="2:3"
+        android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.33"
-        app:textSize="@dimen/game_view_details_text_size"
         />
 
     <TextView

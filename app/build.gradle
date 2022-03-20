@@ -165,8 +165,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
     implementation 'com.github.stfalcon:stfalcon-imageviewer:1.0.0'
 
-    implementation("io.coil-kt:coil:1.4.0")
-    implementation("io.coil-kt:coil-compose:1.4.0")
+    implementation("io.coil-kt:coil:2.0.0-rc1")
+    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
 
     implementation "androidx.browser:browser:1.4.0"
 

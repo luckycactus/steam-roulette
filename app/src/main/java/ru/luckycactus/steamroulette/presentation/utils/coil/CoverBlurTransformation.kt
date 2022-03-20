@@ -1,23 +1,24 @@
-package ru.luckycactus.steamroulette.presentation.utils.glide
+package ru.luckycactus.steamroulette.presentation.utils.coil
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Paint
 import androidx.core.graphics.applyCanvas
+import androidx.core.graphics.createBitmap
 import androidx.core.graphics.withScale
-import com.bumptech.glide.load.Key
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import jp.wasabeef.glide.transformations.BitmapTransformation
+import coil.size.Size
+import coil.size.pxOrElse
+import coil.transform.Transformation
 import jp.wasabeef.glide.transformations.internal.FastBlur
 import jp.wasabeef.glide.transformations.internal.RSBlur
 import jp.wasabeef.glide.transformations.internal.SupportRSBlur
-import java.security.MessageDigest
 
 class CoverBlurTransformation(
+    private val context: Context,
     private val radius: Int,
     private val blurBackgroundWidth: Int,
     private val bias: Float
-) : BitmapTransformation() {
+) : Transformation {
 
     private val paint = Paint()
 
@@ -26,38 +27,38 @@ class CoverBlurTransformation(
         check(!(radius <= 0 || radius > 25)) { "radius should be in (0,25] range" }
     }
 
-    override fun transform(
-        context: Context,
-        pool: BitmapPool,
-        toTransform: Bitmap,
-        outWidth: Int,
-        outHeight: Int
-    ): Bitmap {
-        if (toTransform.width < toTransform.height)
-            return toTransform
+    override suspend fun transform(input: Bitmap, size: Size): Bitmap {
+        if (input.width < input.height)
+            return input
 
-        val aspectRatio = outWidth / outHeight.toFloat()
-        val width = toTransform.width.toFloat()
+        val dstWidth = size.width.pxOrElse { input.width }
+        val dstHeight = size.height.pxOrElse { input.height }
+
+        val aspectRatio = dstWidth.toFloat() / dstHeight
+        val width = input.width.toFloat()
         val height = width / aspectRatio
         val sampling = width / blurBackgroundWidth
         val blurBackgroundHeight = (height / sampling).toInt()
 
-        var blurBitmap =
-            pool.get(blurBackgroundWidth, blurBackgroundHeight, Bitmap.Config.ARGB_8888)
-                .apply {
-                    density = toTransform.density
-                }
+        var blurBitmap = createBitmap(
+            blurBackgroundWidth,
+            blurBackgroundHeight,
+            Bitmap.Config.ARGB_8888,
+            hasAlpha = false
+        ).apply {
+            density = input.density
+        }
 
         blurBitmap.applyCanvas {
-            density = toTransform.density
-            scale(1f, height / toTransform.height)
+            density = input.density
+            scale(1f, height / input.height)
             scale(1f / sampling, 1f / sampling)
-            drawBitmap(toTransform, 0f, 0f, paint)
+            drawBitmap(input, 0f, 0f, paint)
         }
 
         blurBitmap = blur(blurBitmap, context)
 
-        val result = pool.get(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
+        val result = createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888, hasAlpha = false)
         result.applyCanvas {
             withScale(
                 width / blurBackgroundWidth,
@@ -66,11 +67,13 @@ class CoverBlurTransformation(
                 drawBitmap(blurBitmap, 0f, 0f, paint)
             }
 
-            val y = (height - toTransform.height) * bias
+            val y = (height - input.height) * bias
             translate(0f, y)
-            drawBitmap(toTransform, 0f, 0f, paint)
+            drawBitmap(input, 0f, 0f, paint)
         }
-        pool.put(blurBitmap)
+
+        blurBitmap.recycle()
+
         return result
     }
 
@@ -85,13 +88,8 @@ class CoverBlurTransformation(
         RSBlur.blur(context, blurBitmap, radius)
     }
 
-    override fun updateDiskCacheKey(messageDigest: MessageDigest) {
-        messageDigest.update(
-            ("${ID}_${radius}_${blurBackgroundWidth}_${bias.toRawBits()}").toByteArray(
-                Key.CHARSET
-            )
-        )
-    }
+    override val cacheKey: String
+        get() = "${ID}_${radius}_${blurBackgroundWidth}_${bias.toRawBits()}"
 
     override fun equals(other: Any?): Boolean {
         return other is CoverBlurTransformation

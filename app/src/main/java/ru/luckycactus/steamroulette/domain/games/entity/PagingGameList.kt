@@ -86,7 +86,7 @@ class PagingGameListImpl constructor(
         check(_list.isNotEmpty())
 
         val removedItem = _list.removeAt(0)
-        itemRemovalsChannel.offer(0)
+        itemRemovalsChannel.trySend(0)
         if (shouldFetch())
             launchFetching()
         if (isFinished())
@@ -129,7 +129,7 @@ class PagingGameListImpl constructor(
             if (isActive) {
                 nextFetchIndex = fetchEndIndex
                 _list.addAll(games)
-                itemsInsertionsChannel.offer(_list.size - games.size to games.size)
+                itemsInsertionsChannel.trySend(_list.size - games.size to games.size)
                 fetching = false
             }
         }

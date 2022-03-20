@@ -34,11 +34,10 @@ sealed class Screens : SupportAppScreen() {
 
     data class GameDetails(
         val game: GameHeader,
-        val color: Int,
-        val waitForImage: Boolean
+        val color: Int
     ) : Screens() {
         override fun getFragment(): Fragment =
-            GameDetailsFragment.newInstance(game, color, waitForImage)
+            GameDetailsFragment.newInstance(game, color)
     }
 
     data class SystemReqs(

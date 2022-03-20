@@ -233,7 +233,6 @@ class LibraryFragment : BaseFragment(R.layout.fragment_library_filter), MessageD
         placeholderTransition = Fade().apply {
             addTarget(R.id.rvGames)
             addTarget(R.id.progress)
-            addTarget(R.id.placeholder)
         }
         val emptyPlaceholder = ContentState.Placeholder(
             getString(R.string.error_filtered_games_not_found),
@@ -519,14 +518,14 @@ class LibraryFragment : BaseFragment(R.layout.fragment_library_filter), MessageD
         ).show(childFragmentManager, CONFIRM_CLEAR_DIALOG_TAG)
     }
 
-    private fun onGameClick(game: LibraryGame, sharedViews: List<View>, imageIsReady: Boolean) {
+    private fun onGameClick(game: LibraryGame) {
         reenterTransition = createExitTransition()
         exitTransition = createExitTransition().apply {
             doOnEnd {
                 exitTransition = null
             }
         }
-        (activity as MainActivity).onGameClick(game.header, sharedViews, imageIsReady)
+        (activity as MainActivity).onGameClick(game.header)
     }
 
     private fun onNavigationIconClick(view: View) {

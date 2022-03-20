@@ -7,7 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 
 @Composable
@@ -18,7 +18,7 @@ fun <T> Flow<T>.observeWithLifecycle(
 ) {
     LaunchedEffect(lifecycleOwner) {
         launch {
-            flowWithLifecycle(lifecycleOwner.lifecycle, minActiveState).collect(action)
+            flowWithLifecycle(lifecycleOwner.lifecycle, minActiveState).collect(FlowCollector(action))
         }
     }
 }

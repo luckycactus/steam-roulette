@@ -190,7 +190,7 @@ private fun <T> SharedPreferences.flow(
     }
     val compositeListener = getCompositeListener()
     val listener = {
-        offer(prefHolder.prefValue)
+        trySend(prefHolder.prefValue)
         Unit
     }
     listener.invoke()
