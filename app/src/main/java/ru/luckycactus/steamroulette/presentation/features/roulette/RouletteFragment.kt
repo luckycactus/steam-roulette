@@ -227,21 +227,6 @@ class RouletteFragment : BaseFragment(R.layout.fragment_roulette) {
 
     private fun onGameClick(game: GameHeader) {
         reenterTransition = createExitTransition().apply {
-            binding.rvRoulette.findViewHolderForAdapterPosition(0)?.itemView?.let { topItemView ->
-                fade {
-                    addTarget(topItemView)
-                }
-                if (binding.rvRoulette.childCount > 1) {
-                    fade {
-                        binding.rvRoulette.forEach {
-                            if (it != topItemView)
-                                addTarget(it)
-                        }
-                        startDelay = DEFAULT_TRANSITION_DURATION
-                        duration = 0
-                    }
-                }
-            }
             doOnEnd {
                 reenterTransition = null
             }

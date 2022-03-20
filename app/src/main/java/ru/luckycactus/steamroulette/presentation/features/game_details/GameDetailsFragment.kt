@@ -1,7 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
@@ -13,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.transition.Fade
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.transition.MaterialArcMotion
-import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
@@ -23,7 +20,6 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.features.game_details.adapter.GameDetailsAdapter
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
-import ru.luckycactus.steamroulette.presentation.utils.DEFAULT_TRANSITION_DURATION
 import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
 import ru.luckycactus.steamroulette.presentation.utils.extensions.doOnApplyWindowInsets
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
@@ -114,14 +110,6 @@ class GameDetailsFragment : BaseFragment(R.layout.fragment_game_details) {
 
     private fun setupTransition() {
         enterTransition = Fade()
-
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            duration = DEFAULT_TRANSITION_DURATION
-            setPathMotion(MaterialArcMotion())
-            scrimColor = Color.TRANSPARENT
-            // adding listener (even empty) breaks transition for some reason
-//            addListener((activity as MainActivity).touchSwitchTransitionListener)
-        }
     }
 
     private fun setupTint() {
@@ -164,6 +152,5 @@ class GameDetailsFragment : BaseFragment(R.layout.fragment_game_details) {
                 this.initialTintColor = color
                 this.game = game
             }
-
     }
 }
