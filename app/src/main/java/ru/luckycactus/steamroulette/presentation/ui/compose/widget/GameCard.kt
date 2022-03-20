@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
@@ -26,6 +27,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils.libraryPort
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils.libraryPortraitImageHD
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.ui.compose.Dimens
+import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
 import ru.luckycactus.steamroulette.presentation.utils.coil.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.coil.CoverGlareTransformation
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
@@ -173,4 +175,12 @@ private val headerImageTransformations by lazyNonThreadSafe {
 
 enum class GameCardImageType {
     SD, HD, HdIfCachedOrSd
+}
+
+@Composable
+@Preview
+fun GameCardPreview() {
+    SteamRouletteTheme {
+        GameCard(game = GameHeader(123, "Final Fantasy XIV"))
+    }
 }

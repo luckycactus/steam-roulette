@@ -7,12 +7,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.doOnNextLayout
-import androidx.core.view.forEach
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentRouletteBinding
@@ -25,11 +23,13 @@ import ru.luckycactus.steamroulette.presentation.ui.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackLayoutManager
 import ru.luckycactus.steamroulette.presentation.ui.widget.card_stack.CardStackTouchHelperCallback
 import ru.luckycactus.steamroulette.presentation.ui.widget.touchhelper.ItemTouchHelper
-import ru.luckycactus.steamroulette.presentation.utils.*
+import ru.luckycactus.steamroulette.presentation.utils.doOnEnd
 import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 import ru.luckycactus.steamroulette.presentation.utils.palette.PalettePageHelper
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
+import ru.luckycactus.steamroulette.presentation.utils.slide
+import ru.luckycactus.steamroulette.presentation.utils.transitionSet
 import javax.inject.Inject
 import kotlin.math.abs
 
