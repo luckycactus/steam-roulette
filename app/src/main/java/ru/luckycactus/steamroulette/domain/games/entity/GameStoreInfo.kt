@@ -62,11 +62,12 @@ data class GameGenre(
     val description: String
 )
 
+@Parcelize
 data class Screenshot(
     val id: Int,
     val thumbnail: String,
     val full: String
-)
+): Parcelable
 
 data class ReleaseDateInfo(
     val comingSoon: Boolean = false,

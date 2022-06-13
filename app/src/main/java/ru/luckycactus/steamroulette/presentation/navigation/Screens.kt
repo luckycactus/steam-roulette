@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.navigation
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Parcelable
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import ru.luckycactus.steamroulette.presentation.features.about.AppLibrariesFrag
 import ru.luckycactus.steamroulette.presentation.features.detailed_description.DetailedDescriptionFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.games.LibraryFragment
+import ru.luckycactus.steamroulette.presentation.features.imageview.ImageGalleryPagerFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqsFragment
@@ -69,6 +71,17 @@ sealed class Screens : SupportAppScreen() {
 
     object HiddenGames : Screens() {
         override fun getFragment(): Fragment = LibraryFragment.newInstance(true)
+    }
+
+    data class ImageViewer<T: Parcelable>(
+        val items: List<T>,
+        val index: Int,
+        val url: (T) -> String,
+        val thumbnail: (T) -> String?
+    ): Screens() {
+        override fun getFragment(): Fragment {
+            return ImageGalleryPagerFragment.newInstance(items, index, url, thumbnail)
+        }
     }
 
     data class ExternalBrowserFlow(
