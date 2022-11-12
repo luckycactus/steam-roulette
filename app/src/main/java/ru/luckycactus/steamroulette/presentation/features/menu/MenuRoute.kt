@@ -37,14 +37,14 @@ import ru.luckycactus.steamroulette.presentation.ui.compose.widget.SteamRoulette
 import ru.luckycactus.steamroulette.presentation.ui.widget.compose.MenuItem
 
 @Composable
-fun MenuScreen(
+fun MenuRoute(
     viewModel: MenuViewModel,
     onExitClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     if (state != null) {
-        MenuScreenContent(
+        MenuScreen(
             state!!,
             viewModel::refreshProfile,
             viewModel::onLibraryClick,
@@ -55,7 +55,7 @@ fun MenuScreen(
 }
 
 @Composable
-private fun MenuScreenContent(
+private fun MenuScreen(
     state: MenuViewModel.UiState,
     onRefreshClick: () -> Unit,
     onLibraryClick: () -> Unit,
@@ -207,7 +207,7 @@ fun MenuScreenPreview() {
         false
     )
     SteamRouletteTheme {
-        MenuScreenContent(state, {}, {}, {}, {})
+        MenuScreen(state, {}, {}, {}, {})
     }
 }
 

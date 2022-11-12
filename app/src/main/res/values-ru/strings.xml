@@ -60,7 +60,7 @@
     <string name="playtime_hours_label">часа(ов)</string>
     <string name="coming_soon">Скоро</string>
     <string name="game_details_description">Описание</string>
-    <string name="fail_steam_store_info">Для этой игры недоступна информация из магазина Steam</string>
+    <string name="fail_steam_store_info">Не удалось получить информацию из магазина Steam. Возможно, игра недоступна в вашей стране</string>
     <string name="button_steam_store">Магазин Steam</string>
     <string name="button_community_hub">Центр сообщества</string>
     <string name="game_details_languages">Языки</string>

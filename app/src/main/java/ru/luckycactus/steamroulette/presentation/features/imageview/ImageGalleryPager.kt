@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -20,7 +19,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
 import coil.compose.SubcomposeAsyncImage
@@ -44,22 +42,41 @@ fun <T> ImageGalleryPager(
     items: List<T>,
     initialPage: Int,
     imageUrl: (T) -> String,
-    thumbnailUrl: ((T) -> String?)?,
+    thumbnailUrl: (T) -> String?,
     modifier: Modifier = Modifier
 ) {
-    HorizontalPager(
-        count = items.size,
-        state = rememberPagerState(initialPage),
-        itemSpacing = Dimens.spacingNormal,
+    //var offsetY by remember { mutableStateOf(0f) }
+    //var dragInProgress by remember { mutableStateOf(false) }
+    BoxWithConstraints(
         modifier = modifier
             .background(Color.Black)
-    ) { page ->
-        val item = items[page]
-        ZoomableImage(
-            url = imageUrl(item),
-            thumbnail = thumbnailUrl?.invoke(item),
-            modifier = Modifier.fillMaxSize()
-        )
+//            .pointerInput(Unit) {
+//                detectDragGestures(
+//                    onDragEnd = { dragInProgress = false }
+//                ) { change, dragAmount ->
+//                    dragInProgress = dragInProgress || abs(dragAmount.y) > abs(dragAmount.x)
+//                    if (dragInProgress) {
+//                        offsetY += dragAmount.y
+//                        change.consume()
+//                    }
+//                }
+//            }
+    ) {
+        HorizontalPager(
+            count = items.size,
+            state = rememberPagerState(initialPage),
+            itemSpacing = Dimens.spacingNormal,
+            //userScrollEnabled = !dragInProgress,
+//            modifier = Modifier
+//                .offset { IntOffset(x = 0, y = offsetY.roundToInt()) }
+            ) { page ->
+            val item = items[page]
+            ZoomableImage(
+                url = imageUrl(item),
+                thumbnail = thumbnailUrl(item),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 

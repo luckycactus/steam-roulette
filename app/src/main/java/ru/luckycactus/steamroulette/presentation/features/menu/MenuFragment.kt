@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -40,12 +39,10 @@ class MenuFragment : BaseBottomSheetDialogFragment(),
         return ComposeView(requireContext()).apply {
             setContent {
                 SteamRouletteTheme {
-                    ProvideWindowInsets {
-                        MenuScreen(
-                            viewModel = viewModel,
-                            onExitClick = this@MenuFragment::showExitDialog
-                        )
-                    }
+                    MenuRoute(
+                        viewModel = viewModel,
+                        onExitClick = this@MenuFragment::showExitDialog
+                    )
                 }
             }
         }

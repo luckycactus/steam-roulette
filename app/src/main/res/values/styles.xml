@@ -7,10 +7,6 @@
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
-    <style name="GameDetailsButtonTheme" parent="BaseAppTheme">
-        <item name="colorPrimary">@color/color_game_details_button</item>
-    </style>
-
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
         <item name="closeItemLayout">@layout/layout_action_mode_close_item</item>
     </style>
@@ -52,42 +48,12 @@
 
     <style name="Widget.App.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton"></style>
 
-    <style name="Widget.App.GameDetailsHeadline" parent="Widget.MaterialComponents.TextView">
-        <item name="android:paddingBottom">@dimen/spacing_small</item>
-        <item name="android:paddingTop">@dimen/spacing_small</item>
-        <item name="android:layout_marginBottom">@dimen/spacing_small</item>
-    </style>
-
-    <style name="Widget.App.MetacriticScoreTextView" parent="Widget.MaterialComponents.TextView">
-        <item name="android:background">@drawable/background_metacritic_score</item>
-        <item name="android:gravity">center</item>
-        <item name="android:includeFontPadding">false</item>
-        <item name="android:padding">@dimen/spacing_small</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">30sp</item>
-    </style>
-
     <style name="Widget.App.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/btn_stroke_color_selector</item>
     </style>
 
     <style name="Widget.App.CompoundButton.RadioButton.Dialog">
         <item name="android:textAppearance">?textAppearanceBody2</item>
-    </style>
-
-    <style name="Widget.App.GameDetailsPlatformIcon" parent="">
-        <item name="android:layout_width">@dimen/game_details_platform_icon_size</item>
-        <item name="android:layout_height">@dimen/game_details_platform_icon_size</item>
-        <item name="android:tint">@color/platforms_icon_tint</item>
-    </style>
-
-    <style name="GameDetailsItem">
-        <item name="android:paddingBottom">@dimen/spacing_small</item>
-    </style>
-
-    <style name="GameDetailsItem.NoTitle">
-        <item name="android:paddingBottom">@dimen/spacing_small</item>
-        <item name="android:paddingTop">@dimen/spacing_small</item>
     </style>
 
     <style name="MenuItemTextView" parent="Widget.MaterialComponents.Button.TextButton">
@@ -105,11 +71,6 @@
     <style name="AboutItemTextView" parent="MenuItemTextView">
         <item name="android:background">@drawable/surface_selectable_item_background</item>
         <item name="android:textAppearance">?textAppearanceBody1</item>
-    </style>
-
-    <style name="Widget.App.Button.GameDetailsLinkButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:maxLines">2</item>
-        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="AboutContactButton">

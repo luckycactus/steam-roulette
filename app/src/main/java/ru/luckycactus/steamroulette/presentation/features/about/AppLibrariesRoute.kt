@@ -2,10 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.about
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.statusBarsHeight
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.domain.about.entity.LicenseType
@@ -28,16 +24,16 @@ import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteT
 
 //todo compose alpha
 @Composable
-fun AppLibrariesScreen(
+fun AppLibrariesRoute(
     viewModel: AppLibrariesViewModel,
     onBackClick: () -> Unit,
 ) {
     val libraries by viewModel.libraries.collectAsState()
-    AppLibrariesContent(libraries, onBackClick, viewModel::onLibraryClick)
+    AppLibrariesScreen(libraries, onBackClick, viewModel::onLibraryClick)
 }
 
 @Composable
-fun AppLibrariesContent(
+fun AppLibrariesScreen(
     libraries: List<AppLibrary>,
     onBackClick: () -> Unit,
     onLibraryClick: (AppLibrary) -> Unit
@@ -50,7 +46,7 @@ fun AppLibrariesContent(
                 Spacer(
                     modifier = Modifier
                         .background(MaterialTheme.colors.primarySurface)
-                        .statusBarsHeight()
+                        .windowInsetsTopHeight(WindowInsets.statusBars)
                         .fillMaxWidth()
                 )
             }
@@ -121,6 +117,6 @@ fun AppLibrariesContentPreview() {
         val libraries = listOf(
             AppLibrary("Google", "Material Components", "", LicenseType.Apache2)
         )
-        AppLibrariesContent(libraries, { }, { })
+        AppLibrariesScreen(libraries, { }, { })
     }
 }

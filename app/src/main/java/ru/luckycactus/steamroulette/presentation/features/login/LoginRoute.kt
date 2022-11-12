@@ -19,8 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.insets.imePadding
-import com.google.accompanist.insets.systemBarsPadding
 import com.google.android.material.composethemeadapter.MdcTheme
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.presentation.ui.compose.extensions.annotatedStringResource
@@ -28,7 +26,7 @@ import ru.luckycactus.steamroulette.presentation.ui.compose.extensions.observeWi
 import ru.luckycactus.steamroulette.presentation.ui.compose.widget.ProgressBar
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, onHintClick: () -> Unit) {
+fun LoginRoute(viewModel: LoginViewModel, onHintClick: () -> Unit) {
     Box(
         modifier = Modifier
             .background(MaterialTheme.colors.background)

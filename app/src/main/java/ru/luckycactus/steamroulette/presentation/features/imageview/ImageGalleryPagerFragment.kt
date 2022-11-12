@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
-import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
@@ -28,9 +27,7 @@ class ImageGalleryPagerFragment: BaseFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 SteamRouletteTheme {
-                    ProvideWindowInsets {
-                        ImageGalleryPager(items, index, url, thumbnail)
-                    }
+                    ImageGalleryPager(items, index, url, thumbnail)
                 }
             }
         }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.style.TextAlign
 import com.google.android.material.composethemeadapter.createMdcTheme
 
 @Composable
@@ -27,9 +28,18 @@ fun SteamRouletteTheme(
         )
     }
 
+    val typography = themeParams.typography?.let {
+        it.copy(
+            button = it.button.copy(
+                textAlign = TextAlign.Center,
+                fontFeatureSettings = "c2sc, smcp"
+            )
+        )
+    } ?: MaterialTheme.typography
+
     MaterialTheme(
         colors = themeParams.colors ?: MaterialTheme.colors,
-        typography = themeParams.typography ?: MaterialTheme.typography,
+        typography = typography,
         shapes = themeParams.shapes ?: MaterialTheme.shapes,
     ) {
         // We update the LocalContentColor to match our onBackground. This allows the default

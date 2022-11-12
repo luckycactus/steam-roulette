@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.R
@@ -24,12 +23,10 @@ class LoginFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 MdcTheme {
-                    ProvideWindowInsets {
-                        LoginScreen(
-                            viewModel = viewModel(),
-                            this@LoginFragment::showHelpDialog
-                        )
-                    }
+                    LoginRoute(
+                        viewModel = viewModel(),
+                        this@LoginFragment::showHelpDialog
+                    )
                 }
             }
         }

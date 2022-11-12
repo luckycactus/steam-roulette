@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
@@ -24,12 +23,10 @@ class AppLibrariesFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 SteamRouletteTheme {
-                    ProvideWindowInsets {
-                        AppLibrariesScreen(
-                            viewModel = viewModel,
-                            onBackClick = { requireActivity().onBackPressed() }
-                        )
-                    }
+                    AppLibrariesRoute(
+                        viewModel = viewModel,
+                        onBackClick = { requireActivity().onBackPressed() }
+                    )
                 }
             }
         }

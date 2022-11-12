@@ -3,13 +3,17 @@ package ru.luckycactus.steamroulette.presentation.ui.compose.widget
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,11 +69,13 @@ fun GameCard(
                 .padding(Dimens.spacingSmall)
         )
 
-        Image(
-            painter = rememberCoverPainter(game, imageType, enableMemoryCache, onBitmapReady),
-            contentDescription = null,
-            Modifier.fillMaxSize()
-        )
+        if (!LocalInspectionMode.current) {
+            Image(
+                painter = rememberCoverPainter(game, imageType, enableMemoryCache, onBitmapReady),
+                contentDescription = null,
+                Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -81,56 +87,68 @@ private fun rememberCoverPainter(
     onBitmapReady: ((Bitmap) -> Unit)?
 ): AsyncImagePainter {
 
-        val painter = when (imageType) {
-            GameCardImageType.HD -> {
-                rememberAsyncImagePainter(
-                    model = imageRequest(libraryPortraitImageHD(game.appId), enableMemoryCache),
-                    placeholder = rememberAsyncImagePainter(
-                        model = imageRequest(libraryPortraitImage(game.appId), enableMemoryCache, enableNetwork = false)
+    val painter = when (imageType) {
+        GameCardImageType.HD -> {
+            rememberAsyncImagePainter(
+                model = imageRequest(libraryPortraitImageHD(game.appId), enableMemoryCache),
+                placeholder = rememberAsyncImagePainter(
+                    model = imageRequest(
+                        libraryPortraitImage(game.appId),
+                        enableMemoryCache,
+                        enableNetwork = false
+                    )
+                ),
+                error = rememberAsyncImagePainter(
+                    model = imageRequest(
+                        libraryPortraitImage(game.appId),
+                        enableMemoryCache,
+                        enableNetwork = false
                     ),
                     error = rememberAsyncImagePainter(
-                        model = imageRequest(libraryPortraitImage(game.appId), enableMemoryCache, enableNetwork = false),
-                        error = rememberAsyncImagePainter(
-                            model = imageRequest(headerImage(game.appId), enableMemoryCache)
-                        )
+                        model = imageRequest(headerImage(game.appId), enableMemoryCache)
                     )
                 )
-            }
-            GameCardImageType.HdIfCachedOrSd -> {
-                rememberAsyncImagePainter(
-                    model = imageRequest(libraryPortraitImageHD(game.appId), enableMemoryCache, enableNetwork = false),
-                    error = rememberAsyncImagePainter(
-                        model = imageRequest(libraryPortraitImage(game.appId), enableMemoryCache),
-                        error = rememberAsyncImagePainter(
-                            model = imageRequest(headerImage(game.appId), enableMemoryCache)
-                        )
-                    )
-                )
-            }
-            GameCardImageType.SD -> {
-                rememberAsyncImagePainter(
+            )
+        }
+        GameCardImageType.HdIfCachedOrSd -> {
+            rememberAsyncImagePainter(
+                model = imageRequest(
+                    libraryPortraitImageHD(game.appId),
+                    enableMemoryCache,
+                    enableNetwork = false
+                ),
+                error = rememberAsyncImagePainter(
                     model = imageRequest(libraryPortraitImage(game.appId), enableMemoryCache),
                     error = rememberAsyncImagePainter(
                         model = imageRequest(headerImage(game.appId), enableMemoryCache)
                     )
                 )
-            }
-
+            )
+        }
+        GameCardImageType.SD -> {
+            rememberAsyncImagePainter(
+                model = imageRequest(libraryPortraitImage(game.appId), enableMemoryCache),
+                error = rememberAsyncImagePainter(
+                    model = imageRequest(headerImage(game.appId), enableMemoryCache)
+                )
+            )
         }
 
-        val result = rememberAsyncImagePainter(
-            model = imageRequest(headerImage(game.appId), enableMemoryCache, enableNetwork = false),
-            error = painter,
-        )
+    }
 
-        val state = rememberCurrentAsyncImagePainterState(painter = result)
-        if (state is AsyncImagePainter.State.Success) {
-            LaunchedEffect(state) {
-                onBitmapReady?.invoke(state.result.drawable.toBitmap())
-            }
+    val result = rememberAsyncImagePainter(
+        model = imageRequest(headerImage(game.appId), enableMemoryCache, enableNetwork = false),
+        error = painter,
+    )
+
+    val state = rememberCurrentAsyncImagePainterState(painter = result)
+    if (state is AsyncImagePainter.State.Success) {
+        LaunchedEffect(state) {
+            onBitmapReady?.invoke(state.result.drawable.toBitmap())
         }
+    }
 
-        return result
+    return result
 }
 
 @Composable

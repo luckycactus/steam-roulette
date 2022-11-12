@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Gravity
@@ -54,9 +55,9 @@ class RouletteFragment : BaseFragment(R.layout.fragment_roulette) {
     private lateinit var itemTouchHelper: ItemTouchHelper
 
 
-    private lateinit var tintContext: TintContext
+    //private lateinit var tintContext: TintContext
     private val paletteHelper = PalettePageHelper {
-        tintContext.updateColor(it, false)
+        //tintContext.updateColor(it, false)
     }
 
     private val fabClickListener = View.OnClickListener { fab ->
@@ -177,16 +178,16 @@ class RouletteFragment : BaseFragment(R.layout.fragment_roulette) {
     }
 
     private fun setupTint() {
-        tintContext = TintContext(requireContext())
+        //tintContext = TintContext()
 
-        binding.root.background =
-            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
+//        binding.root.background =
+//            tintContext.createTintedBackgroundGradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM)
 
-        observe(tintContext.fabBackgroundTint) { colorStateList ->
-            fabs.forEach {
-                it.backgroundTintList = colorStateList
-            }
-        }
+//        observe(tintContext.fabBackgroundTint) { colorStateList ->
+//            fabs.forEach {
+//                it.backgroundTintList = colorStateList
+//            }
+//        }
     }
 
     private fun updatePaletteHelper(resetProgress: Boolean = false) {
@@ -226,17 +227,17 @@ class RouletteFragment : BaseFragment(R.layout.fragment_roulette) {
     }
 
     private fun onGameClick(game: GameHeader) {
-        reenterTransition = createExitTransition().apply {
-            doOnEnd {
-                reenterTransition = null
-            }
-        }
-        exitTransition = createExitTransition().apply {
-            doOnEnd {
-                exitTransition = null
-            }
-        }
-        (activity as MainActivity).onGameClick(game, tintContext.tintColor)
+//        reenterTransition = createExitTransition().apply {
+//            doOnEnd {
+//                reenterTransition = null
+//            }
+//        }
+//        exitTransition = createExitTransition().apply {
+//            doOnEnd {
+//                exitTransition = null
+//            }
+//        }
+        (activity as MainActivity).onGameClick(game, Color.TRANSPARENT) // todo compose
     }
 
     private fun createExitTransition() = transitionSet {

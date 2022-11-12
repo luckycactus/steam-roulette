@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -35,7 +34,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.google.accompanist.insets.statusBarsHeight
 import com.google.android.material.composethemeadapter.MdcTheme
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -46,13 +44,13 @@ import ru.luckycactus.steamroulette.presentation.ui.compose.extensions.toIntOffs
 import ru.luckycactus.steamroulette.presentation.ui.widget.compose.MenuItem
 
 @Composable
-fun AboutScreen(
+fun AboutRoute(
     viewModel: AboutViewModel,
     onBackClick: () -> Unit,
     onRateClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-    AboutScreenContent(
+    AboutScreen(
         version = state.version,
         appRated = state.appRated,
         onBackClick = onBackClick,
@@ -65,7 +63,7 @@ fun AboutScreen(
 }
 
 @Composable
-private fun AboutScreenContent(
+private fun AboutScreen(
     version: String,
     appRated: Boolean,
     onBackClick: () -> Unit = {},
@@ -85,7 +83,7 @@ private fun AboutScreenContent(
         Spacer(
             Modifier
                 .background(MaterialTheme.colors.primarySurface)
-                .statusBarsHeight()
+                .windowInsetsTopHeight(WindowInsets.statusBars)
                 .fillMaxWidth()
         )
 
@@ -192,6 +190,7 @@ private fun AppLogo(
         )
     }
 
+    // todo compose
     fun animateClick() {
         coroutineScope.launch {
             scale.animateTo(LOGO_CLICK_SCALE, clickAnimationSpec) {
@@ -264,7 +263,7 @@ fun AboutItem(
 @Composable
 fun AboutScreenPreview() {
     MdcTheme {
-        AboutScreenContent("1.2.0 (8)", appRated = false)
+        AboutScreen("1.2.0 (8)", appRated = false)
     }
 }
 

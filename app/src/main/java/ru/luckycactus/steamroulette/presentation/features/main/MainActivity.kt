@@ -9,7 +9,6 @@ import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +21,6 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.ActivityMainBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.common.App
-import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
@@ -129,7 +127,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
                             R.anim.fragment_fade_in,
                             R.anim.fragment_fade_out
                         )
-                    } else if (nextFragment !is GameDetailsFragment) {
+                    } else /*if (nextFragment !is GameDetailsFragment)*/ {
                         fragmentTransaction.setCustomAnimations(
                             R.anim.anim_fragment_enter,
                             R.anim.anim_fragment_exit,

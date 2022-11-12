@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseBottomSheetDialogFragment
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
@@ -28,9 +27,7 @@ class RouletteOptionsFragment : BaseBottomSheetDialogFragment(),
         return ComposeView(requireContext()).apply {
             setContent {
                 SteamRouletteTheme {
-                    ProvideWindowInsets {
-                        RouletteOptionsScreen(viewModel, ::onPlaytimeClick)
-                    }
+                    RouletteOptionsScreen(viewModel, ::onPlaytimeClick)
                 }
             }
         }

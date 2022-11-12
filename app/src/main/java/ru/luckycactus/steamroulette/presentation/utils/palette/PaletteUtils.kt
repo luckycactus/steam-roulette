@@ -7,9 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object PaletteUtils {
-    const val DEFAULT_BG_TINT_ALPHA = 0.65f
-    const val DEFAULT_CONTROLS_TINT_ALPHA = 0.2f
-
     fun getColorForGameCover(palette: Palette?): Int {
         if (palette == null)
             return Color.TRANSPARENT
