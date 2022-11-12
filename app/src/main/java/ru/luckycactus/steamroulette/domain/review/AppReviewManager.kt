@@ -3,8 +3,8 @@ package ru.luckycactus.steamroulette.domain.review
 import ru.luckycactus.steamroulette.domain.core.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.days
-import kotlin.time.milliseconds
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 class AppReviewManager @Inject constructor(

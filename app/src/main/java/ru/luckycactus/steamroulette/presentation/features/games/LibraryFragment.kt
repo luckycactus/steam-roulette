@@ -128,14 +128,14 @@ class LibraryFragment : BaseFragment(R.layout.fragment_library_filter), MessageD
             changeScaleMenuItem = menu.findItem(R.id.action_change_scale)
             searchMenuItem = menu.findItem(R.id.action_search).apply {
                 setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-                    override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                    override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                         // searchMenuItem.isActionViewExpanded changes after callback, so we postpone method call
                         viewModel.onSearchStateChanged(true)
                         post { updateOnBackPressedCallbackEnabled() }
                         return true
                     }
 
-                    override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                    override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                         viewModel.onSearchStateChanged(false)
                         post { updateOnBackPressedCallbackEnabled() }
                         return true

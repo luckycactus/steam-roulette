@@ -13,7 +13,7 @@ import ru.luckycactus.steamroulette.domain.user.UserRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import javax.inject.Inject
-import kotlin.time.days
+import kotlin.time.Duration.Companion.days
 
 @Reusable
 class UserRepositoryImpl @Inject constructor(

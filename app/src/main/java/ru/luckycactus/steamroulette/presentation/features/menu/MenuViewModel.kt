@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.presentation.features.menu
 
 import android.text.format.DateUtils
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,7 +23,6 @@ import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.terrakok.cicerone.Router
 
 class MenuViewModel @AssistedInject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,
@@ -75,12 +75,12 @@ class MenuViewModel @AssistedInject constructor(
     }
 
     fun onAboutClick() {
-        router.navigateTo(Screens.About)
+        router.navigateTo(Screens.About())
         close()
     }
 
     fun onLibraryClick() {
-        router.navigateTo(Screens.Library)
+        router.navigateTo(Screens.Library())
         close()
     }
 

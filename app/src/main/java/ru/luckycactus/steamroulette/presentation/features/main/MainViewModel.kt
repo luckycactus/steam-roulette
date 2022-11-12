@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +28,6 @@ import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @HiltViewModel
@@ -85,7 +85,7 @@ class MainViewModel @Inject constructor(
         //clearImageCache()
         viewModelScope.launch {
             getCurrentUser().let {
-                val screen = if (it != null) Screens.Roulette else Screens.Login
+                val screen = if (it != null) Screens.Roulette() else Screens.Login()
                 router.newRootScreen(screen)
                 if (it != null) {
                     if (appReviewManager.shouldRequestForReview()) {
@@ -116,7 +116,7 @@ class MainViewModel @Inject constructor(
     override fun logout() {
         viewModelScope.launch {
             cancelAndJoinUserScope()
-            router.newRootScreen(Screens.Login)
+            router.newRootScreen(Screens.Login())
             appScope.launch {
                 analytics.setUserIsLoggingOut()
                 logoutUser()

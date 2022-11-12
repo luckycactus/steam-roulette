@@ -1,19 +1,17 @@
 package ru.luckycactus.steamroulette.domain.app
 
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import ru.luckycactus.steamroulette.di.AppCoScope
-import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games.UpdateOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
-import kotlin.time.days
+import kotlin.time.Duration.Companion.days
 
 @Singleton
 class GamesPeriodicUpdater @Inject constructor(

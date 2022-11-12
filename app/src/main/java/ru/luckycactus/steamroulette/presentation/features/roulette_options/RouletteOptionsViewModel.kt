@@ -3,6 +3,7 @@ package ru.luckycactus.steamroulette.presentation.features.roulette_options
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -13,7 +14,6 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getPlaytimeFilterDescription
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,7 +40,7 @@ class RouletteOptionsViewModel @Inject constructor(
     }
 
     fun onHiddenGamesClick() {
-        router.navigateTo(Screens.HiddenGames)
+        router.navigateTo(Screens.HiddenGames())
         close()
     }
 

@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.login
 
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -13,7 +14,6 @@ import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,7 +39,7 @@ class LoginViewModel @Inject constructor(
             }
             login(id.trim()).let {
                 when (it) {
-                    is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
+                    is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette())
                     is LoginUseCase.Result.Fail -> renderFail(it)
                 }
                 analytics.logLoginAttempt(it)

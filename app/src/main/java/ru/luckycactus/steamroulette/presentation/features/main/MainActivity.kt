@@ -14,6 +14,9 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
+import com.github.terrakok.cicerone.*
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -29,13 +32,6 @@ import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.PlayUtils
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.extensions.showSnackbar
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.android.support.SupportAppScreen
-import ru.terrakok.cicerone.commands.Command
-import ru.terrakok.cicerone.commands.Forward
-import ru.terrakok.cicerone.commands.Replace
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -65,97 +61,42 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
         }
     }
 
-    private val navigator =
-        object : SupportAppNavigator(this, supportFragmentManager, R.id.container) {
-            // "replace" changed to "hide" + "add"
-            override fun fragmentForward(command: Forward) {
-                val screen = command.screen as SupportAppScreen
+    private val navigator = object : AppNavigator(this, R.id.container, supportFragmentManager) {
 
-                val fragmentParams = screen.fragmentParams
-                val fragment = if (fragmentParams == null) createFragment(screen) else null
-
-                val fragmentTransaction = fragmentManager.beginTransaction()
-
-                val currentFragment = fragmentManager.findFragmentById(containerId)
-                setupFragmentTransaction(
-                    command,
-                    currentFragment,
-                    fragment,
-                    fragmentTransaction
-                )
-
-                if (currentFragment != null) {
-                    fragmentTransaction.hide(currentFragment)
+        override fun setupFragmentTransaction(
+            screen: FragmentScreen,
+            fragmentTransaction: FragmentTransaction,
+            currentFragment: Fragment?,
+            nextFragment: Fragment
+        ) {
+            fragmentTransaction.setReorderingAllowed(true)
+            when (nextFragment) {
+                is LoginFragment -> {
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
                 }
-
-                if (fragmentParams != null) {
-                    fragmentTransaction.add(
-                        containerId,
-                        fragmentParams.fragmentClass,
-                        fragmentParams.arguments
+                is RouletteFragment -> {
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                }
+            }
+            if (currentFragment != null) {
+                if (nextFragment is LoginFragment || nextFragment is RouletteFragment) {
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out,
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
                     )
-                } else {
-                    fragmentTransaction.add(containerId, fragment!!)
-                }
-
-                fragmentTransaction
-                    .addToBackStack(screen.screenKey)
-                    .commit()
-                localStackCopy.add(screen.screenKey)
-            }
-
-            override fun setupFragmentTransaction(
-                command: Command,
-                currentFragment: Fragment?,
-                nextFragment: Fragment?,
-                fragmentTransaction: FragmentTransaction
-            ) {
-                fragmentTransaction.setReorderingAllowed(true)
-                when (nextFragment) {
-                    is LoginFragment -> {
-                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                    }
-                    is RouletteFragment -> {
-                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-                    }
-                }
-                if (currentFragment != null) {
-                    if (nextFragment is LoginFragment || nextFragment is RouletteFragment) {
-                        fragmentTransaction.setCustomAnimations(
-                            R.anim.fragment_fade_in,
-                            R.anim.fragment_fade_out,
-                            R.anim.fragment_fade_in,
-                            R.anim.fragment_fade_out
-                        )
-                    } else /*if (nextFragment !is GameDetailsFragment)*/ {
-                        fragmentTransaction.setCustomAnimations(
-                            R.anim.anim_fragment_enter,
-                            R.anim.anim_fragment_exit,
-                            R.anim.anim_fragment_pop_enter,
-                            R.anim.anim_fragment_pop_exit
-                        )
-                    }
-                }
-            }
-
-            override fun createStartActivityOptions(
-                command: Command,
-                activityIntent: Intent
-            ): Bundle? {
-                val screen = when (command) {
-                    is Forward -> command.screen
-                    is Replace -> command.screen
-                    else -> null
-                }
-                return if (screen is Screens.ExternalBrowserFlow) {
-                    ActivityOptionsCompat.makeCustomAnimation(
-                        App.getInstance(),
+                } else /*if (nextFragment !is GameDetailsFragment)*/ {
+                    fragmentTransaction.setCustomAnimations(
                         R.anim.anim_fragment_enter,
-                        R.anim.anim_fragment_exit
-                    ).toBundle()
-                } else null
+                        R.anim.anim_fragment_exit,
+                        R.anim.anim_fragment_pop_enter,
+                        R.anim.anim_fragment_pop_exit
+                    )
+                }
             }
         }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

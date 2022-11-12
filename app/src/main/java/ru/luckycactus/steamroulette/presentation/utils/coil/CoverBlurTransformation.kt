@@ -11,7 +11,6 @@ import coil.size.pxOrElse
 import coil.transform.Transformation
 import jp.wasabeef.glide.transformations.internal.FastBlur
 import jp.wasabeef.glide.transformations.internal.RSBlur
-import jp.wasabeef.glide.transformations.internal.SupportRSBlur
 
 class CoverBlurTransformation(
     private val context: Context,
@@ -83,10 +82,11 @@ class CoverBlurTransformation(
     ) = try {
         FastBlur.blur(blurBitmap, radius, true)
     } catch (e: RuntimeException) {
-        SupportRSBlur.blur(context, blurBitmap, radius)
-    } catch (e: NoClassDefFoundError) {
         RSBlur.blur(context, blurBitmap, radius)
-    }
+    } /*catch (e: NoClassDefFoundError) {
+        // todo
+        //SupportRSBlur.blur(context, blurBitmap, radius)
+    }*/
 
     override val cacheKey: String
         get() = "${ID}_${radius}_${blurBackgroundWidth}_${bias.toRawBits()}"

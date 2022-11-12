@@ -14,7 +14,7 @@ import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.user.entity.UserSession
 import javax.inject.Inject
-import kotlin.time.days
+import kotlin.time.Duration.Companion.days
 
 @Reusable
 class GamesRepositoryImpl @Inject constructor(
