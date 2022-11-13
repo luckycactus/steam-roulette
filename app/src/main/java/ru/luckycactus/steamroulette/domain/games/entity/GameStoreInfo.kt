@@ -34,7 +34,7 @@ data class PlatformsAvailability(
 @Parcelize
 data class SystemRequirements(
     val platform: Platform,
-    val minimal: String?,
+    val minimum: String?,
     val recommended: String?
 ) : Parcelable {
 

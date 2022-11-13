@@ -122,7 +122,7 @@ dependencies {
     implementation 'com.google.android.material:compose-theme-adapter:1.1.21'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
-    implementation "com.google.accompanist:accompanist-pager:0.24.9-beta"
+    implementation "com.google.accompanist:accompanist-pager:0.27.0"
 
     implementation 'androidx.appcompat:appcompat:1.4.1'
 
@@ -151,7 +151,7 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.4.0'
 
-    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.3'
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.6'
 
     implementation 'androidx.palette:palette-ktx:1.0.0'
 

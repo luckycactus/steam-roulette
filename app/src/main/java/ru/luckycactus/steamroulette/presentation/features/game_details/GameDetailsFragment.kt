@@ -31,7 +31,7 @@ class GameDetailsFragment : BaseFragment() {
                 SteamRouletteTheme {
                     GameDetailsRoute(
                         viewModel = viewModel,
-                        Color(initialTintColor),
+                        tintColor = Color(initialTintColor),
                         onBackPressed = { requireActivity().onBackPressed() }
                     )
                 }

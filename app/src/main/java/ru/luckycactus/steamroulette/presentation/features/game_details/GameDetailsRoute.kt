@@ -140,7 +140,6 @@ private fun GameDetailsFab(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun GameDetailsContent(
     requestedId: Int,
@@ -210,7 +209,7 @@ private fun GameDetailsContent(
                     GameDetailsScreenshots(gameDetails.screenshots, onScreenshotClick)
                 }
             }
-            if (gameDetails.shortDescription != null) {
+            if (gameDetails.shortDescription?.isEmpty() == false) {
                 item {
                     GameDetailsShortDescription(
                         gameDetails.shortDescription,

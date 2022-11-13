@@ -21,6 +21,7 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.about.entity.AppLibrary
 import ru.luckycactus.steamroulette.domain.about.entity.LicenseType
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
+import ru.luckycactus.steamroulette.presentation.ui.compose.widget.SteamRouletteAppBar
 
 //todo compose alpha
 @Composable
@@ -52,23 +53,9 @@ fun AppLibrariesScreen(
             }
 
             item {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.open_source_libraries),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    elevation = 0.dp, // todo compose
-                    navigationIcon = {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-                    }
+                SteamRouletteAppBar(
+                    title = stringResource(id = R.string.open_source_libraries),
+                    onNavigationIconClick = onBackClick
                 )
             }
 
