@@ -1,9 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.features.games
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.doOnLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -14,7 +12,6 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.R
-import ru.luckycactus.steamroulette.databinding.FragmentGameDetailsBinding
 import ru.luckycactus.steamroulette.databinding.FragmentLibraryFilterBinding
 import ru.luckycactus.steamroulette.domain.common.Consts
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteFiltersDialog

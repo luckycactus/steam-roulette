@@ -440,22 +440,27 @@ private fun GameDetailsShortDescription(
                 Spacer(modifier = Modifier.height(Dimens.spacingNormal))
 
                 Row(
-                    Modifier
-                        .height(IntrinsicSize.Min)
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .heightIn(min = 48.dp)
                         .padding(horizontal = Dimens.defaultActivityMargin)
                 ) {
                     ageResource?.let {
                         Image(
                             painterResource(id = ageResource),
                             contentDescription = null,
-                            Modifier.fillMaxHeight(),
+                            Modifier.height(48.dp),
                             contentScale = ContentScale.FillHeight
                         )
                         Spacer(modifier = Modifier.width(Dimens.defaultActivityMargin))
                     }
 
                     description.metacriticInfo?.let {
-                        Row(Modifier.clickable(onClick = onMetacriticClick)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable(onClick = onMetacriticClick)
+                                .fillMaxHeight()
+                        ) {
                             Image(
                                 painter = painterResource(id = R.drawable.metacritic_logo_no_text),
                                 contentDescription = null,
@@ -471,6 +476,7 @@ private fun GameDetailsShortDescription(
                                 color = Color.White,
                                 fontSize = 30.sp,
                                 modifier = Modifier
+                                    .fillMaxHeight()
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(Color(description.metacriticInfo.color))
                                     .padding(Dimens.spacingSmall)
