@@ -14,8 +14,6 @@ import ru.luckycactus.steamroulette.domain.analytics.Analytics
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.core.usecase.Result
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.UpdateOwnedGamesUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.login.LogoutUserUseCase
@@ -33,7 +31,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     observeCurrentUser: ObserveCurrentUserSteamIdUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
-    private val fetchUserSummary: FetchUserSummaryUseCase,
+    private val fetchUserSummaryUseCase: FetchUserSummaryUseCase,
     private val updateOwnedGames: UpdateOwnedGamesUseCase,
     private val logoutUser: LogoutUserUseCase,
     private val resourceManager: ResourceManager,
@@ -168,7 +166,7 @@ class MainViewModel @Inject constructor(
 
     private suspend fun fetchGames(reload: Boolean): RequestState<Unit> {
         _fetchGamesState.value = RequestState.Loading
-        return when (val result = updateOwnedGames(UpdateOwnedGamesUseCase.Params(reload))) {
+        return when (val result = updateOwnedGames(reload)) {
             is UpdateOwnedGamesUseCase.Result.Success -> {
                 RequestState.success.also { _fetchGamesState.value = it }
             }
@@ -190,14 +188,11 @@ class MainViewModel @Inject constructor(
 
     private suspend fun fetchUserSummary(reload: Boolean): RequestState<Unit> {
         _fetchUserSummaryState.value = true
-        val result = fetchUserSummary(FetchUserSummaryUseCase.Params(reload))
-        return when (result) {
-            is Result.Success -> RequestState.success
-            is Result.Error -> RequestState.Error(
-                resourceManager.getCommonErrorDescription(result.cause)
-            )
-        }.also {
-            _fetchUserSummaryState.value = false
-        }
+        val result = fetchUserSummaryUseCase(reload)
+        return result.map { RequestState.success }
+            .getOrElse { RequestState.Error(resourceManager.getCommonErrorDescription(it)) }
+            .also {
+                _fetchUserSummaryState.value = false
+            }
     }
 }

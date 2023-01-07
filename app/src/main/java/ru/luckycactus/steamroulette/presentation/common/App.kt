@@ -13,7 +13,6 @@ import ru.luckycactus.steamroulette.data.core.SharedPreferencesConfig
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import ru.luckycactus.steamroulette.domain.app.MigrateAppUseCase
 import ru.luckycactus.steamroulette.domain.app.SystemLanguageSynchronizer
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.review.AppReviewExceptionsHandler
 import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import timber.log.Timber

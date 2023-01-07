@@ -4,7 +4,6 @@ import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.common.SteamId
 import ru.luckycactus.steamroulette.domain.common.SteamId.Format
 import ru.luckycactus.steamroulette.domain.common.SteamId.VanityUrlFormat
-import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.user.GetUserSummaryUseCase
 import ru.luckycactus.steamroulette.domain.user.UserSessionRepository
 import ru.luckycactus.steamroulette.domain.user.entity.UserSummary
@@ -14,9 +13,8 @@ class LoginUseCase @Inject constructor(
     private val getUserSummaryUseCase: GetUserSummaryUseCase,
     private val userSessionRepository: UserSessionRepository,
     private val loginRepository: LoginRepository,
-) : SuspendUseCase<String, LoginUseCase.Result>() {
-
-    override suspend fun execute(params: String): Result {
+) {
+    suspend operator fun invoke(params: String): Result {
         return Impl().execute(params)
     }
 
@@ -79,8 +77,7 @@ class LoginUseCase @Inject constructor(
 
         private suspend fun login(steamId: SteamId) =
             when (
-                val userResult =
-                    getUserSummaryUseCase(GetUserSummaryUseCase.Params(steamId, true))
+                val userResult = getUserSummaryUseCase(steamId, true)
             ) {
                 is GetUserSummaryUseCase.Result.Fail -> getUserFail(userResult)
                 is GetUserSummaryUseCase.Result.Success -> {

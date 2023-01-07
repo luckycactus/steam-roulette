@@ -112,12 +112,7 @@ class GameDetailsViewModel @Inject constructor(
         renderLoading()
         viewModelScope.launch {
             val cachePolicy = if (tryCache) CachePolicy.CacheOrRemote else CachePolicy.Remote
-            val result = getGameStoreInfo(
-                GetGameStoreInfoUseCase.Params(
-                    requestedGame.appId,
-                    cachePolicy
-                )
-            )
+            val result = getGameStoreInfo(requestedGame.appId, cachePolicy)
             when (result) {
                 is GetGameStoreInfoUseCase.Result.Success -> renderSuccess(result)
                 is GetGameStoreInfoUseCase.Result.Fail -> renderError(result)

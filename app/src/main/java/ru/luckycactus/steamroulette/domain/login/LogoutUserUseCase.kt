@@ -3,7 +3,6 @@ package ru.luckycactus.steamroulette.domain.login
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
-import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.GamesRepository
 import ru.luckycactus.steamroulette.domain.games.RouletteRepository
 import ru.luckycactus.steamroulette.domain.games_filter.LibraryFilterRepository
@@ -20,9 +19,9 @@ class LogoutUserUseCase @Inject constructor(
     private val libraryFiltersRepository: LibraryFilterRepository,
     private val rouletteRepository: RouletteRepository,
     private val imageCacheCleaner: ImageCacheCleaner
-) : SuspendUseCase<Unit, Unit>() {
+) {
 
-    override suspend fun execute(params: Unit) {
+    suspend operator fun invoke() {
         userSessionRepository.currentUser?.let {
             coroutineScope {
                 launch { gamesRepository.clearUser(it) }

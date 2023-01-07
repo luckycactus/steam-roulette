@@ -15,7 +15,6 @@ import ru.luckycactus.steamroulette.domain.analytics.Analytics
 import ru.luckycactus.steamroulette.domain.analytics.Events
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
@@ -137,11 +136,9 @@ class RouletteViewModel @AssistedInject constructor(
         if (game != null) {
             appScope.launch {
                 if (game.appId == firstPreviouslyShownGameId) {
-                    setAllGamesShown(SetAllGamesShownUseCase.Params(false))
+                    setAllGamesShown(false)
                 }
-                setGamesShown(
-                    SetGamesShownUseCase.Params(listOf(game.appId), true)
-                )
+                setGamesShown(listOf(game.appId), true)
             }
         }
     }
@@ -149,12 +146,7 @@ class RouletteViewModel @AssistedInject constructor(
     private fun hideGame(game: GameHeader) {
         appScope.launch {
             gameWasHidden = true
-            setGamesHidden(
-                SetGamesHiddenUseCase.Params(
-                    listOf(game.appId),
-                    true
-                )
-            )
+            setGamesHidden(listOf(game.appId), true)
         }
     }
 
@@ -191,12 +183,7 @@ class RouletteViewModel @AssistedInject constructor(
         getPagingListJob = viewModelScope.launch {
             _contentState.value = ContentState.Loading
 
-            val result = getOwnedGamesPagingList(
-                GetOwnedGamesPagingListUseCase.Params(
-                    filter,
-                    viewModelScope
-                )
-            )
+            val result = getOwnedGamesPagingList(filter, viewModelScope)
 
             if (!isActive) return@launch
 

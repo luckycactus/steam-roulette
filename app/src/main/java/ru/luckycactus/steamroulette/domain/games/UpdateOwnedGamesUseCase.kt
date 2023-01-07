@@ -2,16 +2,14 @@ package ru.luckycactus.steamroulette.domain.games
 
 import kotlinx.coroutines.CancellationException
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
-import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import javax.inject.Inject
 
 class UpdateOwnedGamesUseCase @Inject constructor(
     private val gamesRepository: GamesRepository
-) : SuspendUseCase<UpdateOwnedGamesUseCase.Params, UpdateOwnedGamesUseCase.Result>() {
-
-    override suspend fun execute(params: Params): Result {
+) {
+    suspend operator fun invoke(reload: Boolean): Result {
         return try {
-            val cachePolicy = if (params.reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
+            val cachePolicy = if (reload) CachePolicy.Remote else CachePolicy.CacheOrRemote
             gamesRepository.updateOwnedGames(cachePolicy)
             Result.Success
         } catch (e: GetOwnedGamesPrivacyException) {
@@ -22,10 +20,6 @@ class UpdateOwnedGamesUseCase @Inject constructor(
             Result.Fail.Error(e)
         }
     }
-
-    data class Params(
-        val reload: Boolean
-    )
 
     sealed class Result {
         object Success : Result()

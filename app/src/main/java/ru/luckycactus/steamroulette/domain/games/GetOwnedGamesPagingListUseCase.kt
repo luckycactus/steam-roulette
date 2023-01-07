@@ -2,9 +2,7 @@ package ru.luckycactus.steamroulette.domain.games
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import ru.luckycactus.steamroulette.domain.core.usecase.SuspendUseCase
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameList
 import ru.luckycactus.steamroulette.domain.games.entity.PagingGameListImpl
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
@@ -16,12 +14,16 @@ import javax.inject.Inject
 class GetOwnedGamesPagingListUseCase @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val rouletteRepository: RouletteRepository
-) : SuspendUseCase<GetOwnedGamesPagingListUseCase.Params, GetOwnedGamesPagingListUseCase.Result>() {
+) {
 
-    override suspend fun execute(params: Params): Result = Impl(params).execute()
+    suspend operator fun invoke(
+        filter: GamesFilter,
+        parentScope: CoroutineScope
+    ): Result = Impl(filter, parentScope).execute()
 
     private inner class Impl(
-        private val params: Params
+        val filter: GamesFilter,
+        val parentScope: CoroutineScope
     ) {
         private var topGameId: Int? = null
         private var topGameFound = false
@@ -57,7 +59,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                     gameIds,
                     5,
                     20,
-                    params.parentScope
+                    parentScope
                 )
 
                 setupLastTopGameUpdates(pagingList)
@@ -75,7 +77,7 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
                 GamesFilter(
                     hidden = false,
                     shown = shown,
-                    playtime = params.filter.playtime
+                    playtime = filter.playtime
                 ),
                 topGameId != null && !topGameFound
             )
@@ -102,10 +104,6 @@ class GetOwnedGamesPagingListUseCase @Inject constructor(
 
     }
 
-    data class Params(
-        val filter: GamesFilter,
-        val parentScope: CoroutineScope
-    )
 
     sealed class Result {
 

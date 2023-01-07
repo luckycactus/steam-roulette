@@ -6,7 +6,7 @@ import ru.luckycactus.steamroulette.data.core.ApiException
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
 
-fun ResourceManager.getCommonErrorDescription(e: Exception): String {
+fun ResourceManager.getCommonErrorDescription(e: Throwable): String {
     return getString(
         when (e) {
             is ApiException -> R.string.error_steam_api_unavailable

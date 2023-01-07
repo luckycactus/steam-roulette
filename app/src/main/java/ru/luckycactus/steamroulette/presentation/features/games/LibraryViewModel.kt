@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.*
 import ru.luckycactus.steamroulette.domain.games.entity.LibraryGame
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveLibraryFilterUseCase
@@ -88,11 +87,11 @@ class LibraryViewModel @Inject constructor(
         games = combine(
             appliedGamesFilter,
             searchQuery.debounce(300.milliseconds),
-            GetLibraryPagingSourceUseCase::Params
-        ).flatMapLatest {
+            { filter, query -> filter to query } // todo
+        ).flatMapLatest { (filter, query) ->
             Pager(
                 PagingConfig(50),
-                pagingSourceFactory = { getLibraryPagingSource(it) }
+                pagingSourceFactory = { getLibraryPagingSource(filter, query) }
             ).flow
         }.cachedIn(viewModelScope)
 
@@ -193,17 +192,13 @@ class LibraryViewModel @Inject constructor(
 
     fun hide(selection: List<Int>, hide: Boolean) {
         viewModelScope.launch {
-            setGamesHidden(
-                SetGamesHiddenUseCase.Params(selection, hide)
-            )
+            setGamesHidden(selection, hide)
         }
     }
 
     fun clearAllHidden() {
         viewModelScope.launch {
-            setAllGamesHidden(
-                SetAllGamesHiddenUseCase.Params(false)
-            )
+            setAllGamesHidden(hide = false)
         }
     }
 

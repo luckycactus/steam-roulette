@@ -14,7 +14,6 @@ import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesCountUseCase
 import ru.luckycactus.steamroulette.domain.games.ObserveOwnedGamesSyncsUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter

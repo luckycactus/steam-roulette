@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteMaxHoursUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.SaveRouletteFilterUseCase

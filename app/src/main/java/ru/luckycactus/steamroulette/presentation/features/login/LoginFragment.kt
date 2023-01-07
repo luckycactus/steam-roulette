@@ -39,7 +39,7 @@ class LoginFragment : BaseFragment() {
             titleResId = R.string.supported_steamid_formats,
             messageResId = R.string.steamid_help
         ).show(childFragmentManager, null)
-        analyticsNew.track(Events.Click("Login help"))
+        analytics.track(Events.Click("Login help"))
     }
 
     companion object {

@@ -16,7 +16,7 @@ abstract class BaseFragment : Fragment {
 
     constructor(@LayoutRes contentLayoutId: Int): super(contentLayoutId)
 
-    protected val analyticsNew: Analytics
+    protected val analytics: Analytics
 
     open val logScreenName: String? = this::class.simpleName
 
@@ -25,7 +25,7 @@ abstract class BaseFragment : Fragment {
             App.getInstance(),
             BaseFragmentEntryPoint::class.java
         )
-        analyticsNew = entryPoint.analytics()
+        analytics = entryPoint.analytics()
     }
 
     override fun onResume() {
@@ -44,7 +44,7 @@ abstract class BaseFragment : Fragment {
             && !isHidden
             && view?.visibility == View.VISIBLE
         ) {
-            analyticsNew.trackScreen(logScreenName)
+            analytics.trackScreen(logScreenName)
         }
     }
 

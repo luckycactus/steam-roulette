@@ -13,7 +13,6 @@ import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.di.AppCoScope
 import ru.luckycactus.steamroulette.domain.analytics.Analytics
 import ru.luckycactus.steamroulette.domain.analytics.SelectContentEvent
-import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveLibraryFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter

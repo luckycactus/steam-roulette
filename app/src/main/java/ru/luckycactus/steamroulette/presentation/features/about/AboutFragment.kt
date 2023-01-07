@@ -27,7 +27,7 @@ class AboutFragment : BaseFragment() {
                         viewModel = viewModel(),
                         onBackClick = { requireActivity().onBackPressed() },
                         onRateClick = {
-                            analyticsNew.track(Events.Click("Review app"))
+                            analytics.track(Events.Click("Review app"))
                             (activity as MainActivity).reviewApp()
                         }
                     )

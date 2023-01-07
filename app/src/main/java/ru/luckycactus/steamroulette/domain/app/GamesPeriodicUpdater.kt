@@ -58,7 +58,7 @@ class GamesPeriodicUpdater @Inject constructor(
     ) {
         suspend fun run(): Result {
             if (userSession.isUserLoggedIn) {
-                return when (updateOwnedGames(UpdateOwnedGamesUseCase.Params(reload = true))) {
+                return when (updateOwnedGames(reload = true)) {
                     UpdateOwnedGamesUseCase.Result.Success -> Result.Success
                     UpdateOwnedGamesUseCase.Result.Fail.PrivateProfile -> Result.Failure
                     is UpdateOwnedGamesUseCase.Result.Fail.Error -> Result.Retry
