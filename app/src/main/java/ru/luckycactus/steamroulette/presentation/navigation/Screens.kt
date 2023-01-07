@@ -147,6 +147,7 @@ private fun createAnimationsOptions(): Bundle? {
     ).toBundle()
 }
 
+// todo compose need only for "forward"
 // override default clearContainer value to false
 interface FragmentScreen : com.github.terrakok.cicerone.androidx.FragmentScreen {
     override val clearContainer: Boolean get() = false

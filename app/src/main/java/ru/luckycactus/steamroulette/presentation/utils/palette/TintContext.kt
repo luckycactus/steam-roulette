@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.utils.palette
 
+import android.util.Log
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.material.MaterialTheme
@@ -8,7 +9,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import ru.luckycactus.steamroulette.presentation.utils.extensions.compositeOver
+import ru.luckycactus.steamroulette.presentation.ui.compose.extensions.compositeOver
 
 class TintContext(
     initialTintColor: Color = Color.Transparent,

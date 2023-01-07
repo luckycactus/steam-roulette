@@ -183,7 +183,7 @@ class LibraryViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _spanCount.value = getLibraryScale(SPAN_COUNT_SMALL)
+            _spanCount.value = getLibraryScale(SPAN_COUNT_SMALL)!!
         }
     }
 

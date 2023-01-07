@@ -22,7 +22,9 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.utils.extensions.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
+import ru.luckycactus.steamroulette.presentation.ui.compose.widget.SwipeDirection
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
+import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 
 class RouletteViewModel @AssistedInject constructor(
@@ -34,20 +36,16 @@ class RouletteViewModel @AssistedInject constructor(
     private val setGamesShown: SetGamesShownUseCase,
     private val setAllGamesShown: SetAllGamesShownUseCase,
     private val resourceManager: ResourceManager,
-    @AppCoScope private val appScope: CoroutineScope
+    @AppCoScope private val appScope: CoroutineScope,
+    private val analytics: AnalyticsHelper
 ) : BaseViewModel() {
 
     val games: LiveData<List<GameHeader>?>
-    val itemRemovals: Flow<Int>
-    val itemInsertions: Flow<Pair<Int, Int>>
     val contentState: LiveData<ContentState>
         get() = _contentState.distinctUntilChanged()
-    val controlsAvailable: LiveData<Boolean>
-        get() = _controlsAvailable.distinctUntilChanged()
 
     private val _gamesPagingList = MutableStateFlow<PagingGameList?>(null)
     private val _contentState = MutableLiveData<ContentState>()
-    private val _controlsAvailable = MutableLiveData(true)
     private val gamesFilter: StateFlow<GamesFilter?>
     private val topGame: Flow<GameHeader?>
 
@@ -90,12 +88,6 @@ class RouletteViewModel @AssistedInject constructor(
 
         games = _gamesPagingList.map { it?.data }.asLiveData()
 
-        itemInsertions = _gamesPagingList
-            .flatMapLatest { it?.itemsInsertionsFlow ?: emptyFlow() }
-
-        itemRemovals = _gamesPagingList
-            .flatMapLatest { it?.itemRemovalsFlow ?: emptyFlow() }
-
         topGame = _gamesPagingList
             .flatMapLatest { it?.topGameFlow ?: emptyFlow() }
 
@@ -105,6 +97,12 @@ class RouletteViewModel @AssistedInject constructor(
     }
 
     fun onGameSwiped(hide: Boolean) {
+        if (hide) {
+            analytics.logSelectContent("Game swipe", "left")
+        } else {
+            analytics.logSelectContent("Game swipe", "right")
+        }
+
         _gamesPagingList.value?.let {
             if (!it.isEmpty()) {
                 val game = it.removeTop()
@@ -124,7 +122,6 @@ class RouletteViewModel @AssistedInject constructor(
                 }
             }
         }
-        _controlsAvailable.value = true
     }
 
     fun onRetryClick() {
@@ -133,10 +130,6 @@ class RouletteViewModel @AssistedInject constructor(
         } else {
             userViewModelDelegate.fetchGames()
         }
-    }
-
-    fun onSwipeProgress(progress: Float) {
-        _controlsAvailable.value = (progress == 0f)
     }
 
     fun onHiddenChanged(hidden: Boolean) {

@@ -2,6 +2,7 @@ package ru.luckycactus.steamroulette.domain.games.entity
 
 import android.util.SparseIntArray
 import androidx.annotation.MainThread
+import androidx.compose.runtime.mutableStateListOf
 import androidx.core.util.set
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -51,7 +52,7 @@ class PagingGameListImpl constructor(
     private val itemsInsertionsChannel = BroadcastChannel<Pair<Int, Int>>(Channel.BUFFERED)
     private val itemRemovalsChannel = BroadcastChannel<Int>(Channel.BUFFERED)
 
-    private val _list = mutableListOf<GameHeader>()
+    private val _list = mutableStateListOf<GameHeader>()
     private var nextFetchIndex = 0
     private var fetching = false
     private val tmpIdToIndexMap = SparseIntArray(fetchDistance)
