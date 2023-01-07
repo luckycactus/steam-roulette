@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
@@ -8,13 +7,13 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
-import com.github.terrakok.cicerone.*
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.google.android.material.snackbar.Snackbar
@@ -22,13 +21,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.ActivityMainBinding
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
+import ru.luckycactus.steamroulette.domain.analytics.Events
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
-import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.PlayUtils
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.extensions.showSnackbar
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
     lateinit var router: Router
 
     @Inject
-    lateinit var analytics: AnalyticsHelper
+    lateinit var analytics: Analytics
 
     val viewModel: MainViewModel by viewModels()
 
@@ -158,19 +156,19 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
         when (dialog.tag) {
             TAG_REVIEW_REQUEST -> when (result) {
                 MessageDialogFragment.Result.Positive -> {
-                    analytics.logSelectContent("Review request", "Accepted")
+                    analytics.track(Events.ReviewRequestResult(Events.ReviewRequestOption.ACCEPT))
                     reviewApp()
                 }
                 MessageDialogFragment.Result.Neutral -> {
-                    analytics.logSelectContent("Review request", "Disabled")
+                    analytics.track(Events.ReviewRequestResult(Events.ReviewRequestOption.DISABLE))
                     viewModel.disableAppReview()
                 }
                 MessageDialogFragment.Result.Negative -> {
-                    analytics.logSelectContent("Review request", "Delayed")
+                    analytics.track(Events.ReviewRequestResult(Events.ReviewRequestOption.DELAY))
                     viewModel.delayAppReview()
                 }
                 MessageDialogFragment.Result.Cancel -> {
-                    analytics.logSelectContent("Review request", "Cancelled")
+                    analytics.track(Events.ReviewRequestResult(Events.ReviewRequestOption.CANCEL))
                 }
             }
         }

@@ -7,12 +7,13 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
+import ru.luckycactus.steamroulette.domain.analytics.Events
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.login.LoginUseCase
 import ru.luckycactus.steamroulette.domain.login.ValidateSteamIdInputUseCase
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ class LoginViewModel @Inject constructor(
     private val login: LoginUseCase,
     private val resourceManager: ResourceManager,
     private val router: Router,
-    private val analytics: AnalyticsHelper
+    private val analytics: Analytics
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(UiState())
@@ -42,7 +43,7 @@ class LoginViewModel @Inject constructor(
                     is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette())
                     is LoginUseCase.Result.Fail -> renderFail(it)
                 }
-                analytics.logLoginAttempt(it)
+                analytics.track(Events.AttemptLogin(it))
             }
             _state.update {
                 it.copy(isLoading = false)

@@ -1,8 +1,6 @@
-package ru.luckycactus.steamroulette.presentation.utils
+package ru.luckycactus.steamroulette.presentation.analytics
 
 import android.content.Context
-import android.view.View
-import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.analytics.FirebaseAnalytics.Param
@@ -13,32 +11,33 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.BuildConfig
 import ru.luckycactus.steamroulette.di.AppCoScope
-import ru.luckycactus.steamroulette.domain.common.SteamId
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
+import ru.luckycactus.steamroulette.domain.analytics.SelectContentEvent
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveLibraryFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.ObserveRouletteFilterUseCase
 import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.games_filter.entity.PlaytimeFilter
-import ru.luckycactus.steamroulette.domain.login.LoginUseCase
 import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FirebaseAnalyticsHelper @Inject constructor(
+class AnalyticsImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val observeRouletteFilter: ObserveRouletteFilterUseCase,
     private val observeLibraryFilter: ObserveLibraryFilterUseCase,
     observeCurrentUserSteamId: ObserveCurrentUserSteamIdUseCase,
     @AppCoScope private val appScope: CoroutineScope
-) : AnalyticsHelper {
+) : Analytics {
 
     private val analytics = FirebaseAnalytics.getInstance(context)
 
     private val currentUser = observeCurrentUserSteamId()
     private var isLoggingOut: Boolean = false
 
+    // todo refactor - move to separate usecase
     init {
         appScope.launch {
             currentUser.flatMapLatest {
@@ -73,53 +72,24 @@ class FirebaseAnalyticsHelper @Inject constructor(
         }
     }
 
-    override fun logScreenIfVisibleAndResumed(fragment: Fragment, screen: String) {
-        if (fragment.isResumed
-            && fragment.isAdded
-            && !fragment.isHidden
-            && fragment.view?.visibility == View.VISIBLE
-        ) {
-            analytics.logEvent(Event.SCREEN_VIEW) {
-                param(Param.SCREEN_CLASS, screen)
+    override fun trackScreen(screen: String?) {
+        if (screen == null) return
+
+        analytics.logEvent(Event.SCREEN_VIEW) {
+            param(Param.SCREEN_CLASS, screen)
+        }
+        Timber.d("Screen recorded: $screen")
+    }
+
+    override fun track(event: SelectContentEvent) {
+        analytics.logEvent(Event.SELECT_CONTENT) {
+            param(Param.CONTENT_TYPE, event.type)
+            param(Param.ITEM_ID, event.itemId)
+            event.params.forEach { (key, value) ->
+                param(key, value)
             }
-            Timber.d("Screen recorded: $screen")
         }
-    }
-
-    override fun logSelectContent(type: String, itemId: String) {
-        analytics.logEvent(Event.SELECT_CONTENT) {
-            param(Param.CONTENT_TYPE, type)
-            param(Param.ITEM_ID, itemId)
-        }
-        Timber.d("Event recorded for $type, $itemId")
-    }
-
-    override fun logClick(button: String) {
-        analytics.logEvent(Event.SELECT_CONTENT) {
-            param(Param.CONTENT_TYPE, "button")
-            param(Param.ITEM_ID, button)
-        }
-        Timber.d("Event recorded for click: $button")
-    }
-
-    override fun logLoginAttempt(it: LoginUseCase.Result) {
-        val loginMethod =
-            if (it.steamIdFormat != null && it.steamIdFormat != SteamId.Format.Invalid) {
-                it.steamIdFormat.name
-            } else if (it.vanityUrlFormat != null && it.vanityUrlFormat != SteamId.VanityUrlFormat.Invalid) {
-                "Vanity: ${it.vanityUrlFormat}"
-            } else {
-                "error"
-            }
-        analytics.logEvent(Event.SELECT_CONTENT) {
-            param(Param.CONTENT_TYPE, "Login attempt")
-            param(Param.ITEM_ID, loginMethod)
-            param(
-                "result",
-                if (it is LoginUseCase.Result.Success) "success" else it::class.simpleName!!
-            )
-        }
-        Timber.d("Login attempt recorded for $it")
+        Timber.d("Event recorded for ${event.type}, ${event.itemId}")
     }
 
     override fun setUserIsLoggingOut() {

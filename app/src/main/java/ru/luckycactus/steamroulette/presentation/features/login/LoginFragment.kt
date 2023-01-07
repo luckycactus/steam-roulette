@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.analytics.Events
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 
@@ -38,7 +39,7 @@ class LoginFragment : BaseFragment() {
             titleResId = R.string.supported_steamid_formats,
             messageResId = R.string.steamid_help
         ).show(childFragmentManager, null)
-        analytics.logClick("Login help")
+        analyticsNew.track(Events.Click("Login help"))
     }
 
     companion object {

@@ -8,6 +8,8 @@ import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
+import ru.luckycactus.steamroulette.domain.analytics.Events
 import ru.luckycactus.steamroulette.domain.core.CachePolicy
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoUseCase
@@ -21,7 +23,6 @@ import ru.luckycactus.steamroulette.presentation.features.game_details.model.Gam
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class GameDetailsViewModel @Inject constructor(
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase,
     private val router: Router,
-    private val analytics: AnalyticsHelper
+    private val analytics: Analytics
 ) : BaseViewModel() {
 
     val requestedId: Int
@@ -59,7 +60,7 @@ class GameDetailsViewModel @Inject constructor(
     }
 
     fun onStoreClick() {
-        analytics.logClick("Steam Store")
+        analytics.track(Events.Click("Steam Store"))
         router.navigateTo(
             Screens.ExternalBrowserFlow(
                 GameUrlUtils.storePage(appId),
@@ -69,7 +70,7 @@ class GameDetailsViewModel @Inject constructor(
     }
 
     fun onHubClick() {
-        analytics.logClick("Steam Community")
+        analytics.track(Events.Click("Steam Community"))
         router.navigateTo(
             Screens.ExternalBrowserFlow(
                 GameUrlUtils.hubPage(appId),

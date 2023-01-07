@@ -11,6 +11,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppCoScope
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
+import ru.luckycactus.steamroulette.domain.analytics.Events
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.usecase.invoke
@@ -22,9 +24,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.domain.utils.extensions.exhaustive
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.ui.compose.widget.SwipeDirection
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 
 class RouletteViewModel @AssistedInject constructor(
@@ -37,7 +37,7 @@ class RouletteViewModel @AssistedInject constructor(
     private val setAllGamesShown: SetAllGamesShownUseCase,
     private val resourceManager: ResourceManager,
     @AppCoScope private val appScope: CoroutineScope,
-    private val analytics: AnalyticsHelper
+    private val analytics: Analytics
 ) : BaseViewModel() {
 
     val games: LiveData<List<GameHeader>?>
@@ -97,11 +97,7 @@ class RouletteViewModel @AssistedInject constructor(
     }
 
     fun onGameSwiped(hide: Boolean) {
-        if (hide) {
-            analytics.logSelectContent("Game swipe", "left")
-        } else {
-            analytics.logSelectContent("Game swipe", "right")
-        }
+        analytics.track(Events.SwipeGame(hide))
 
         _gamesPagingList.value?.let {
             if (!it.isEmpty()) {

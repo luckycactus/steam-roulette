@@ -8,9 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.di.AppCoScope
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
 import ru.luckycactus.steamroulette.domain.core.Event
 import ru.luckycactus.steamroulette.domain.core.RequestState
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
@@ -26,7 +26,6 @@ import ru.luckycactus.steamroulette.domain.user.ObserveCurrentUserSteamIdUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
 import javax.inject.Inject
 
@@ -40,7 +39,7 @@ class MainViewModel @Inject constructor(
     private val resourceManager: ResourceManager,
     private val appReviewManager: AppReviewManager,
     private val router: Router,
-    private val analytics: AnalyticsHelper,
+    private val analytics: Analytics,
     @AppCoScope private val appScope: CoroutineScope
 ) : BaseViewModel(), UserViewModelDelegate {
     override val fetchGamesState: StateFlow<RequestState<Unit>>

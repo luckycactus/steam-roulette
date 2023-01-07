@@ -39,7 +39,6 @@ class RouletteFragment : BaseFragment() {
                 SteamRouletteTheme {
                     RouletteRoute(
                         viewModel = viewModel,
-                        analytics = analytics,
                         onGameClick = ::onGameClick,
                         onMenuClick = ::onMenuClick,
                         onOptionsClick = ::onOptionsClick

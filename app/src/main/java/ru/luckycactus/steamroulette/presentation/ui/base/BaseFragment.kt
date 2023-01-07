@@ -1,13 +1,14 @@
 package ru.luckycactus.steamroulette.presentation.ui.base
 
+import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
 import ru.luckycactus.steamroulette.presentation.common.App
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 
 abstract class BaseFragment : Fragment {
 
@@ -15,7 +16,7 @@ abstract class BaseFragment : Fragment {
 
     constructor(@LayoutRes contentLayoutId: Int): super(contentLayoutId)
 
-    protected val analytics: AnalyticsHelper
+    protected val analyticsNew: Analytics
 
     open val logScreenName: String? = this::class.simpleName
 
@@ -24,7 +25,7 @@ abstract class BaseFragment : Fragment {
             App.getInstance(),
             BaseFragmentEntryPoint::class.java
         )
-        analytics = entryPoint.analytics()
+        analyticsNew = entryPoint.analytics()
     }
 
     override fun onResume() {
@@ -38,14 +39,18 @@ abstract class BaseFragment : Fragment {
     }
 
     private fun logScreen() {
-        logScreenName?.let {
-            analytics.logScreenIfVisibleAndResumed(this, it)
+        if (isResumed
+            && isAdded
+            && !isHidden
+            && view?.visibility == View.VISIBLE
+        ) {
+            analyticsNew.trackScreen(logScreenName)
         }
     }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface BaseFragmentEntryPoint {
-        fun analytics(): AnalyticsHelper
+        fun analytics(): Analytics
     }
 }

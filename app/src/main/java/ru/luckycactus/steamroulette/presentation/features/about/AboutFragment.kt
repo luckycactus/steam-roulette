@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
+import ru.luckycactus.steamroulette.domain.analytics.Events
 import ru.luckycactus.steamroulette.presentation.features.main.MainActivity
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
@@ -26,7 +27,7 @@ class AboutFragment : BaseFragment() {
                         viewModel = viewModel(),
                         onBackClick = { requireActivity().onBackPressed() },
                         onRateClick = {
-                            analytics.logClick("Review app")
+                            analyticsNew.track(Events.Click("Review app"))
                             (activity as MainActivity).reviewApp()
                         }
                     )

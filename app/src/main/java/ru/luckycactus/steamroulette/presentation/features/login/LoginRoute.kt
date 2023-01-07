@@ -115,7 +115,6 @@ fun LoginScreenContent(
 private fun PrivacyHint(
     modifier: Modifier = Modifier
 ) {
-    // TODO Compose: Seems like FontWeight does not work in MdcTheme on Android 10 for some reason
     Text(
         modifier = modifier,
         text = annotatedStringResource(id = R.string.login_privacy_hint),

@@ -27,7 +27,6 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.presentation.ui.compose.Dimens
 import ru.luckycactus.steamroulette.presentation.ui.compose.widget.*
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.palette.PaletteUtils
 import ru.luckycactus.steamroulette.presentation.utils.palette.TintContext
 import ru.luckycactus.steamroulette.presentation.utils.palette.rememberPagerTintHelper

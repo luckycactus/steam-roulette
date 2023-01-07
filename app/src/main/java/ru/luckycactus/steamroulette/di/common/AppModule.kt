@@ -16,14 +16,14 @@ import ru.luckycactus.steamroulette.data.repositories.app.GamesPeriodicUpdateSch
 import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesValidator
 import ru.luckycactus.steamroulette.data.repositories.games.owned.datasource.GamesValidatorImpl
 import ru.luckycactus.steamroulette.di.AppCoScope
+import ru.luckycactus.steamroulette.domain.analytics.Analytics
 import ru.luckycactus.steamroulette.domain.app.GamesPeriodicUpdater
 import ru.luckycactus.steamroulette.domain.common.ImageCacheCleaner
 import ru.luckycactus.steamroulette.domain.common.LanguageProvider
 import ru.luckycactus.steamroulette.domain.core.Clock
 import ru.luckycactus.steamroulette.domain.core.ResourceManager
 import ru.luckycactus.steamroulette.domain.core.SystemClock
-import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
-import ru.luckycactus.steamroulette.presentation.utils.FirebaseAnalyticsHelper
+import ru.luckycactus.steamroulette.presentation.analytics.AnalyticsImpl
 import ru.luckycactus.steamroulette.presentation.utils.glide.GlideCacheCleaner
 
 @Module
@@ -37,7 +37,7 @@ abstract class AppModule {
     abstract fun bindResourceManager(androidResourceManager: AndroidResourceManager): ResourceManager
 
     @Binds
-    abstract fun bindAnalytics(firebaseAnalytics: FirebaseAnalyticsHelper): AnalyticsHelper
+    abstract fun bindAnalytics(impl: AnalyticsImpl): Analytics
 
     @Binds
     abstract fun bindGamesPeriodicFetcherManager(job: GamesPeriodicUpdateScheduler): GamesPeriodicUpdater.Scheduler
