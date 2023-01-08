@@ -16,18 +16,19 @@ import ru.luckycactus.steamroulette.presentation.ui.compose.Dimens
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 
-// todo compose refactor?
+// todo compose refactor, name?
 @Composable
 fun DataPlaceholder(
     contentState: ContentState,
     onButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit = {}
 ) {
     Box(modifier, contentAlignment = Alignment.Center) {
         when (contentState) {
             ContentState.Loading -> ProgressBar(Modifier.size(48.dp))
             is ContentState.Placeholder -> Placeholder(contentState, onButtonClick)
-            ContentState.Success -> {}
+            ContentState.Success -> content()
         }
     }
 }

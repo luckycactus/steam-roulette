@@ -14,7 +14,6 @@ import ru.luckycactus.steamroulette.presentation.features.menu.MenuFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette_options.RouletteOptionsFragment
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.ui.compose.theme.SteamRouletteTheme
-import ru.luckycactus.steamroulette.presentation.ui.widget.DataLoadingViewHolder
 import ru.luckycactus.steamroulette.presentation.utils.extensions.assistedViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.showIfNotExist
 import javax.inject.Inject

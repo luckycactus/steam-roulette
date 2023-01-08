@@ -1,11 +1,11 @@
 package ru.luckycactus.steamroulette.presentation.features.game_details
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.analytics.Analytics
@@ -36,18 +36,16 @@ class GameDetailsViewModel @Inject constructor(
     private val analytics: Analytics
 ) : BaseViewModel() {
 
-    val requestedId: Int
-        get() = requestedGame.appId
+    private val requestedGame = savedStateHandle.get<GameHeader>(ARG_GAME)!!
 
-    val state: LiveData<UiState>
-        get() = _state
+    val requestedId: Int = requestedGame.appId
+
+    private val _state = MutableStateFlow(UiState(getInitialUiModel(), ContentState.Loading))
+    val state = _state.asStateFlow()
 
     private val appId: Int
         get() = gameStoreInfo?.appId ?: requestedGame.appId
 
-    private val requestedGame = savedStateHandle.get<GameHeader>(ARG_GAME)!!
-
-    private val _state = MutableLiveData(UiState(getInitialUiModel(), ContentState.Loading))
 
     private var gameStoreInfo: GameStoreInfo? = null
 

@@ -63,11 +63,11 @@ fun GameDetailsRoute(
     tintColor: Color,
     onBackPressed: () -> Unit
 ) {
-    val state by viewModel.state.observeAsState()
+    val state by viewModel.state.collectAsState()
     GameDetailsScreen(
         requestedId = viewModel.requestedId,
         tintColor = tintColor,
-        state = state!!,
+        state = state,
         onBackPressed = onBackPressed,
         onStoreClick = viewModel::onStoreClick,
         onHubClick = viewModel::onHubClick,

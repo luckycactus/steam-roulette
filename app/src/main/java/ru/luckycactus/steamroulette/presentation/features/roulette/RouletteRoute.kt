@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -40,8 +39,8 @@ fun RouletteRoute(
     onMenuClick: () -> Unit,
     onOptionsClick: () -> Unit
 ) {
-    val items by viewModel.games.observeAsState()
-    val contentState by viewModel.contentState.observeAsState(ContentState.Loading)
+    val items by viewModel.games.collectAsState(emptyList())
+    val contentState by viewModel.contentState.collectAsState(ContentState.Loading)
 
     RouletteScreen(
         items = items ?: emptyList(),
@@ -84,7 +83,11 @@ private fun RouletteScreen(
         backgroundColor = Color.Transparent
     ) {
         AnimatedContent(targetState = contentState) { contentState ->
-            if (contentState == ContentState.Success) {
+            DataPlaceholder(
+                contentState,
+                onButtonClick = onRetryClick,
+                Modifier.fillMaxSize()
+            ) {
                 Column(
                     verticalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
@@ -139,12 +142,6 @@ private fun RouletteScreen(
                             .align(CenterHorizontally)
                     )
                 }
-            } else {
-                DataPlaceholder(
-                    contentState = contentState,
-                    onButtonClick = onRetryClick,
-                    Modifier.fillMaxSize()
-                )
             }
         }
     }

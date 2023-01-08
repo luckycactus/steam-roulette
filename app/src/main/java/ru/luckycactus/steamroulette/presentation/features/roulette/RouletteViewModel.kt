@@ -1,6 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.roulette
 
-import androidx.lifecycle.*
+import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -39,12 +39,12 @@ class RouletteViewModel @AssistedInject constructor(
     private val analytics: Analytics
 ) : BaseViewModel() {
 
-    val games: LiveData<List<GameHeader>?>
-    val contentState: LiveData<ContentState>
-        get() = _contentState.distinctUntilChanged()
+    val games: Flow<List<GameHeader>?>
+    val contentState: Flow<ContentState>
+        get() = _contentState
 
     private val _gamesPagingList = MutableStateFlow<PagingGameList?>(null)
-    private val _contentState = MutableLiveData<ContentState>()
+    private val _contentState = MutableStateFlow<ContentState>(ContentState.Loading)
     private val gamesFilter: StateFlow<GamesFilter?>
     private val topGame: Flow<GameHeader?>
 
@@ -85,7 +85,7 @@ class RouletteViewModel @AssistedInject constructor(
                 }
         }
 
-        games = _gamesPagingList.map { it?.data }.asLiveData()
+        games = _gamesPagingList.map { it?.data }
 
         topGame = _gamesPagingList
             .flatMapLatest { it?.topGameFlow ?: emptyFlow() }
