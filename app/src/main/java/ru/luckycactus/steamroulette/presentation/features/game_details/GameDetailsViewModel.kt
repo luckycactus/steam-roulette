@@ -17,18 +17,19 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.GameStoreInfo
 import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.domain.games.entity.Screenshot
-import ru.luckycactus.steamroulette.domain.utils.extensions.exhaustive
+import ru.luckycactus.steamroulette.domain.utils.extensions.cancellable
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModelMapper
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.ui.widget.ContentState
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getCommonErrorDescription
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class GameDetailsViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val gameDetailsUiModelMapper: GameDetailsUiModelMapper,
     private val resourceManager: ResourceManager,
     private val getGameStoreInfo: GetGameStoreInfoUseCase,
@@ -110,41 +111,40 @@ class GameDetailsViewModel @Inject constructor(
         renderLoading()
         viewModelScope.launch {
             val cachePolicy = if (tryCache) CachePolicy.CacheOrRemote else CachePolicy.Remote
-            val result = getGameStoreInfo(requestedGame.appId, cachePolicy)
-            when (result) {
-                is GetGameStoreInfoUseCase.Result.Success -> renderSuccess(result)
-                is GetGameStoreInfoUseCase.Result.Fail -> renderError(result)
-            }.exhaustive
+            kotlin.runCatching {
+                getGameStoreInfo(requestedGame.appId, cachePolicy)
+            }.cancellable()
+                .onSuccess { handleSuccess(it) }
+                .onFailure { handleError(it) }
         }
     }
 
-    private fun renderSuccess(result: GetGameStoreInfoUseCase.Result.Success) {
-        gameStoreInfo = result.data
-        _state.value = UiState(
-            gameDetailsUiModelMapper.mapFrom(result.data),
-            placeholder = null
+
+    private fun handleSuccess(game: GameStoreInfo?) {
+        gameStoreInfo = game
+        _state.value = if (game != null) {
+            UiState(
+                gameDetailsUiModelMapper.mapFrom(game),
+                placeholder = null
+            )
+        } else {
+            val contentState = ContentState.Placeholder(
+                resourceManager.getString(R.string.fail_steam_store_info),
+                ContentState.TitleType.DefaultError,
+                ContentState.ButtonType.None
+            )
+            UiState(getInitialUiModel(), contentState)
+        }
+    }
+
+
+    private fun handleError(throwable: Throwable) {
+        Timber.e(throwable)
+        val contentState = ContentState.Placeholder(
+            resourceManager.getCommonErrorDescription(throwable),
+            ContentState.TitleType.DefaultError,
+            ContentState.ButtonType.Default
         )
-    }
-
-    private fun renderError(fail: GetGameStoreInfoUseCase.Result.Fail) {
-        val contentState = with(resourceManager) {
-            when (fail) {
-                GetGameStoreInfoUseCase.Result.Fail.GameNotFound ->
-                    ContentState.Placeholder(
-                        getString(R.string.fail_steam_store_info),
-                        ContentState.TitleType.DefaultError,
-                        ContentState.ButtonType.None
-                    )
-                is GetGameStoreInfoUseCase.Result.Fail.Error -> {
-                    fail.cause.printStackTrace()
-                    ContentState.Placeholder(
-                        getCommonErrorDescription(fail.cause),
-                        ContentState.TitleType.DefaultError,
-                        ContentState.ButtonType.Default
-                    )
-                }
-            }
-        }
         _state.value = UiState(getInitialUiModel(), contentState)
     }
 

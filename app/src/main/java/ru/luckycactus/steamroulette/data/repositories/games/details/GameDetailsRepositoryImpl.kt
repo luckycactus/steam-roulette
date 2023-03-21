@@ -16,13 +16,13 @@ class GameDetailsRepositoryImpl @Inject constructor(
 ) : GameDetailsRepository {
 
     override suspend fun getGameStoreInfo(gameId: Int, cachePolicy: CachePolicy): GameStoreInfo? {
-        val resource = object : MemoryCacheNbr<GameStoreInfo, GameStoreInfo>(
+        val resource = object : MemoryCacheNbr<GameStoreInfo?, GameStoreInfo?>(
             memoryKey = "game_store_info_$gameId"
         ) {
-            override suspend fun fetch(): GameStoreInfo =
-                gameStoreInfoEntityMapper.mapFrom(
-                    remoteGameStoreDataSource.get(gameId)
-                )
+            override suspend fun fetch(): GameStoreInfo? {
+                val info = remoteGameStoreDataSource.get(gameId) ?: return null
+                return gameStoreInfoEntityMapper.mapFrom(info)
+            }
         }
         return resource.get(cachePolicy)
     }

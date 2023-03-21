@@ -6,7 +6,6 @@ import ru.luckycactus.steamroulette.domain.games.GetGameStoreInfoException
 interface GameStoreDataSource {
 
     interface Remote: GameStoreDataSource {
-        @Throws(GetGameStoreInfoException::class)
-        suspend fun get(appId: Int): GameStoreInfoEntity
+        suspend fun get(appId: Int): GameStoreInfoEntity?
     }
 }
