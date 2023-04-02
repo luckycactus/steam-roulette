@@ -55,4 +55,12 @@ object PreviewData {
             recommended = "<strong>Recommended:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong>Ubuntu 12.04<br>\t</li><li><strong>Processor:</strong>Intel(R) Core(TM)2 Quad 2.7 Ghz, AMD Phenom(TM)II X4 3 Ghz<br>\t</li><li><strong>Memory:</strong>4 GB RAM<br>\t</li><li><strong>Graphics:</strong>GeForce GTX 260, Radeon HD 5770, 1024 MB, Shader Model 3.0<br>\t</li><li><strong>Hard Drive:</strong>3 GB HD space<br>\t</li><li><strong>Other Requirements:</strong>Broadband Internet connection</li></ul>"
         )
     )
+
+    val games = listOf(
+        GameHeader(39140, "FINAL FANTASY VII"),
+        GameHeader(2050650, "Resident Evil 4"),
+        GameHeader(1328670, "Mass Effect™ Legendary Edition"),
+        GameHeader(990080, "Hogwarts Legacy"),
+
+    )
 }

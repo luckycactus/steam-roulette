@@ -14,10 +14,10 @@ val Fragment.viewLifecycle: Lifecycle
 fun Fragment.getLifecycleOwner(useViewLifecycle: Boolean) =
     if (useViewLifecycle) viewLifecycleOwner else this
 
-inline fun <T> Fragment.observe(
+fun <T> Fragment.observe(
     liveData: LiveData<T>,
     useViewLifecycle: Boolean = true,
-    crossinline onChanged: (T) -> Unit
+    onChanged: Observer<T>
 ) = liveData.observe(getLifecycleOwner(useViewLifecycle), onChanged)
 
 inline fun <T> Fragment.observeEvent(
@@ -28,7 +28,7 @@ inline fun <T> Fragment.observeEvent(
 
 inline fun <T> AppCompatActivity.observe(
     liveData: LiveData<T>,
-    crossinline body: (T) -> Unit
+    body: Observer<in T>
 ) = liveData.observe(this, body)
 
 inline fun <T> AppCompatActivity.observeEvent(
@@ -39,10 +39,14 @@ inline fun <T> AppCompatActivity.observeEvent(
 inline fun <T> LiveData<Event<T>>.observeEvent(
     owner: LifecycleOwner,
     crossinline onEvent: (T) -> Unit
-): Observer<Event<T>> = observe(owner) { event ->
-    event.ifNotHandled {
-        onEvent.invoke(it)
+): Observer<Event<T>> {
+    val observer = Observer<Event<T>> { event ->
+        event.ifNotHandled {
+            onEvent.invoke(it)
+        }
     }
+    observe(owner, observer)
+    return observer
 }
 
 fun <T> LiveData<T>.first(block: (T) -> Unit) {

@@ -47,6 +47,7 @@ fun MenuRoute(
         MenuScreen(
             state!!,
             viewModel::refreshProfile,
+            viewModel::onOldLibraryClick,
             viewModel::onLibraryClick,
             viewModel::onAboutClick,
             onExitClick
@@ -58,6 +59,7 @@ fun MenuRoute(
 private fun MenuScreen(
     state: MenuViewModel.UiState,
     onRefreshClick: () -> Unit,
+    onOldLibraryClick: () -> Unit,
     onLibraryClick: () -> Unit,
     onAboutAppClick: () -> Unit,
     onExitClick: () -> Unit
@@ -79,6 +81,13 @@ private fun MenuScreen(
             Spacer(modifier = Modifier.height(Dimens.spacingSmall))
 
             SteamRouletteDivider()
+
+            MenuItem(
+                text = "Библиотека (старая)",
+                icon = Icons.Filled.Apps,
+                withChevron = true,
+                onClick = onOldLibraryClick,
+            )
 
             MenuItem(
                 text = stringResource(id = R.string.my_steam_library),
@@ -207,7 +216,7 @@ fun MenuScreenPreview() {
         false
     )
     SteamRouletteTheme {
-        MenuScreen(state, {}, {}, {}, {})
+        MenuScreen(state, {}, {}, {}, {}, {})
     }
 }
 

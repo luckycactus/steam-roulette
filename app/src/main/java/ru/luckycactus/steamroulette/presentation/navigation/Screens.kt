@@ -21,6 +21,7 @@ import ru.luckycactus.steamroulette.presentation.features.about.AppLibrariesFrag
 import ru.luckycactus.steamroulette.presentation.features.detailed_description.DetailedDescriptionFragment
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.games.LibraryFragment
+import ru.luckycactus.steamroulette.presentation.features.games.OldLibraryFragment
 import ru.luckycactus.steamroulette.presentation.features.imageview.ImageGalleryPagerFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
@@ -65,12 +66,16 @@ object Screens {
         AppLibrariesFragment.newInstance()
     }
 
+    fun OldLibrary() = FragmentScreen {
+        OldLibraryFragment.newInstance()
+    }
+
     fun Library() = FragmentScreen {
         LibraryFragment.newInstance()
     }
 
     fun HiddenGames() = FragmentScreen {
-        LibraryFragment.newInstance(true)
+        OldLibraryFragment.newInstance(true)
     }
 
     fun <T : Parcelable> ImageViewer(
@@ -150,7 +155,7 @@ private fun createAnimationsOptions(): Bundle? {
 // todo compose need only for "forward"
 // override default clearContainer value to false
 interface FragmentScreen : com.github.terrakok.cicerone.androidx.FragmentScreen {
-    override val clearContainer: Boolean get() = false
+//    override val clearContainer: Boolean get() = false
 
     companion object {
         operator fun invoke(

@@ -23,11 +23,12 @@ class Event<out T>(
     fun peek(): T = data
 }
 
-inline class EventObserver<T>(
+@JvmInline
+value class EventObserver<T>(
     private inline val onEvent: (T) -> Unit
 ) : Observer<Event<T>> {
-    override fun onChanged(event: Event<T>?) {
-        event?.ifNotHandled { onEvent(it) }
+    override fun onChanged(event: Event<T>) {
+        event.ifNotHandled { onEvent(it) }
     }
 
 }

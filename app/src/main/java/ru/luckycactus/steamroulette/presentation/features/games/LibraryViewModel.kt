@@ -142,7 +142,6 @@ class LibraryViewModel @Inject constructor(
 
         maxHours = _maxHours
             .filterNotNull()
-            .take(1)
             .asLiveData()
 
         val appliedLibraryFilterFlow = appliedGamesFilter

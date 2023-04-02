@@ -6,6 +6,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -30,6 +32,7 @@ fun adaptiveIconResource(@DrawableRes id: Int): ImageBitmap {
 }
 
 @Composable
+@ReadOnlyComposable
 fun quantityStringResource(@PluralsRes id: Int, quantity: Int, vararg args: Any): String {
     val res = LocalContext.current.resources
     return res.getQuantityString(id, quantity, *args)
