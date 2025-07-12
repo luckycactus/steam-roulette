@@ -45,7 +45,7 @@ import ru.luckycactus.steamroulette.presentation.utils.*
 import ru.luckycactus.steamroulette.presentation.utils.extensions.*
 
 @AndroidEntryPoint
-class LibraryFragment : BaseFragment(R.layout.fragment_library_filter), MessageDialogFragment.Callbacks {
+class LibraryFragment : BaseFragment(R.layout.fragment_library), MessageDialogFragment.Callbacks {
 
     private val binding by viewBinding(FragmentLibraryBinding::bind)
 

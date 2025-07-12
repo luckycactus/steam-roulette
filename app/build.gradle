@@ -130,7 +130,7 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.4.0'
 
-    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.3'
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.9'
 
     implementation 'androidx.palette:palette-ktx:1.0.0'
 
@@ -163,7 +163,7 @@ dependencies {
     implementation 'androidx.hilt:hilt-work:1.2.0'
     kapt 'androidx.hilt:hilt-compiler:1.2.0'
 
-    implementation 'com.github.terrakok:cicerone:5.1.0'
+    implementation 'com.github.terrakok:cicerone:6.6'
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
 

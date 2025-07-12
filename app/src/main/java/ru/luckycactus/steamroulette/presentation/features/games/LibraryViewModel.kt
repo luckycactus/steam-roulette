@@ -25,7 +25,7 @@ import ru.luckycactus.steamroulette.domain.library.SaveLibraryScaleUseCase
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getPlaytimeFilterShortDescription
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 

@@ -1,12 +1,12 @@
 package ru.luckycactus.steamroulette.presentation.features.about
 
 import androidx.lifecycle.asLiveData
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.luckycactus.steamroulette.domain.app.AppRepository
 import ru.luckycactus.steamroulette.domain.review.AppReviewManager
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @HiltViewModel

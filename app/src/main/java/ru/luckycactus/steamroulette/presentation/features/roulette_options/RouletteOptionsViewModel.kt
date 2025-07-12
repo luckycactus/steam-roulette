@@ -13,7 +13,7 @@ import ru.luckycactus.steamroulette.domain.games_filter.entity.GamesFilter
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getPlaytimeFilterDescription
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @HiltViewModel

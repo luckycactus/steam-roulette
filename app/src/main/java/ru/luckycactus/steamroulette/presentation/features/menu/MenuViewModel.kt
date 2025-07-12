@@ -28,8 +28,7 @@ import ru.luckycactus.steamroulette.domain.user.ObserveUserSummaryUseCase
 import ru.luckycactus.steamroulette.presentation.features.user.UserViewModelDelegate
 import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
-import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import com.github.terrakok.cicerone.Router
 
 class MenuViewModel @AssistedInject constructor(
     observeOwnedGamesCount: ObserveOwnedGamesCountUseCase,

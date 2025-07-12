@@ -3,12 +3,18 @@ package ru.luckycactus.steamroulette.presentation.navigation
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.fragment.app.Fragment
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.net.toUri
+import com.github.terrakok.cicerone.androidx.ActivityScreen
+import com.github.terrakok.cicerone.androidx.Creator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
+import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.features.about.AboutFragment
 import ru.luckycactus.steamroulette.presentation.features.about.AppLibrariesFragment
 import ru.luckycactus.steamroulette.presentation.features.detailed_description.DetailedDescriptionFragment
@@ -20,110 +26,117 @@ import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqs
 import ru.luckycactus.steamroulette.presentation.utils.customtabs.CustomTabsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
-import ru.terrakok.cicerone.android.support.SupportAppScreen
-import androidx.core.net.toUri
 
-sealed class Screens : SupportAppScreen() {
+sealed class Screens {
 
-    object Login : Screens() {
-        override fun getFragment(): Fragment = LoginFragment.newInstance()
-    }
+    object Login : FragmentScreen(
+        fragmentCreator = { LoginFragment.newInstance() }
+    )
 
-    object Roulette : Screens() {
-        override fun getFragment(): Fragment = RouletteFragment.newInstance()
-    }
+    object Roulette : FragmentScreen(
+        fragmentCreator = { RouletteFragment.newInstance() }
+    )
 
     data class GameDetails(
         val game: GameHeader,
         val color: Int,
         val waitForImage: Boolean
-    ) : Screens() {
-        override fun getFragment(): Fragment =
-            GameDetailsFragment.newInstance(game, color, waitForImage)
-    }
+    ) : FragmentScreen(
+        fragmentCreator = { GameDetailsFragment.newInstance(game, color, waitForImage) }
+    )
 
     data class SystemReqs(
         val appName: String,
         val systemReqs: List<SystemRequirements>
-    ) : Screens() {
-        override fun getFragment(): Fragment = SystemReqsFragment.newInstance(appName, systemReqs)
-    }
+    ) : FragmentScreen(
+        fragmentCreator = { SystemReqsFragment.newInstance(appName, systemReqs) }
+    )
 
     data class DetailedDescription(
         val appName: String,
         val detailedDescription: String
-    ) : Screens() {
-        override fun getFragment(): Fragment =
-            DetailedDescriptionFragment.newInstance(appName, detailedDescription)
-    }
+    ) : FragmentScreen(
+        fragmentCreator = { DetailedDescriptionFragment.newInstance(appName, detailedDescription) }
+    )
 
-    object About : Screens() {
-        override fun getFragment(): Fragment = AboutFragment.newInstance()
-    }
+    object About : FragmentScreen(
+        fragmentCreator = { AboutFragment.newInstance() }
+    )
 
-    object UsedLibraries : Screens() {
-        override fun getFragment(): Fragment = AppLibrariesFragment.newInstance()
-    }
+    object UsedLibraries : FragmentScreen(
+        fragmentCreator = { AppLibrariesFragment.newInstance() }
+    )
 
-    object Library : Screens() {
-        override fun getFragment(): Fragment? = LibraryFragment.newInstance()
-    }
+    object Library : FragmentScreen(
+        fragmentCreator = { LibraryFragment.newInstance() }
+    )
 
-    object HiddenGames : Screens() {
-        override fun getFragment(): Fragment = LibraryFragment.newInstance(true)
-    }
+    object HiddenGames : FragmentScreen(
+        fragmentCreator = { LibraryFragment.newInstance(true) }
+    )
 
     data class ExternalBrowserFlow(
         val url: String,
         val trySteamApp: Boolean = false
-    ) : Screens() {
+    ) : ActivityScreen(
+        intentCreator = object : Creator<Context, Intent> {
 
-        override fun getActivityIntent(context: Context): Intent {
-            if (trySteamApp) {
-                val intent = getSteamAppIntent(context)
-                if (intent != null)
-                    return intent
-            }
-            return if (CustomTabsHelper.isCustomTabsSupported(context)) {
-                createCustomTabsIntent(context)
-            } else {
-                createDefaultIntent()
-            }
-        }
-
-        private fun createCustomTabsIntent(context: Context): Intent {
-            return CustomTabsIntent.Builder().apply {
-                val defaultParams = CustomTabColorSchemeParams.Builder()
-                    .setToolbarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
-                    .setSecondaryToolbarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
-                    .setNavigationBarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
-                    .build()
-                setDefaultColorSchemeParams(defaultParams)
-                setExitAnimations(
-                    context,
-                    R.anim.anim_fragment_pop_enter,
-                    R.anim.anim_fragment_pop_exit
-                )
-            }.build().intent.apply {
-                data = Uri.parse(url)
-            }
-        }
-
-        private fun getSteamAppIntent(context: Context): Intent? {
-            if (isAppInstalled(context, "com.valvesoftware.android.steam.community")) {
-                val intent = createDefaultIntent()
-                with(intent) {
-                    flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                    `package` = "com.valvesoftware.android.steam.community"
+            override fun create(context: Context): Intent {
+                if (trySteamApp) {
+                    val intent = getSteamAppIntent(context)
+                    if (intent != null)
+                        return intent
                 }
-                if (intent.resolveActivity(context.packageManager) != null) {
-                    return intent
+                return if (CustomTabsHelper.isCustomTabsSupported(context)) {
+                    createCustomTabsIntent(context)
+                } else {
+                    createDefaultIntent()
                 }
             }
-            return null
-        }
 
-        private fun createDefaultIntent() = Intent(Intent.ACTION_VIEW, url.toUri())
+            fun createCustomTabsIntent(context: Context): Intent {
+                return CustomTabsIntent.Builder().apply {
+                    val defaultParams = CustomTabColorSchemeParams.Builder()
+                        .setToolbarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
+                        .setSecondaryToolbarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
+                        .setNavigationBarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
+                        .build()
+                    setDefaultColorSchemeParams(defaultParams)
+                    setExitAnimations(
+                        context,
+                        R.anim.anim_fragment_pop_enter,
+                        R.anim.anim_fragment_pop_exit
+                    )
+                }.build().intent.apply {
+                    data = Uri.parse(url)
+                }
+            }
+
+            fun createDefaultIntent() = Intent(Intent.ACTION_VIEW, url.toUri())
+
+            fun getSteamAppIntent(context: Context): Intent? {
+                if (isAppInstalled(context, "com.valvesoftware.android.steam.community")) {
+                    val intent = createDefaultIntent()
+                    with(intent) {
+                        flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                        `package` = "com.valvesoftware.android.steam.community"
+                    }
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        return intent
+                    }
+
+                }
+                return null
+            }
+        }
+    ) {
+        override val startActivityOptions: Bundle?
+            get() = activityOptions
     }
 }
+private val activityOptions = ActivityOptionsCompat.makeCustomAnimation(
+    App.getInstance(),
+    R.anim.anim_fragment_enter,
+    R.anim.anim_fragment_exit
+).toBundle()

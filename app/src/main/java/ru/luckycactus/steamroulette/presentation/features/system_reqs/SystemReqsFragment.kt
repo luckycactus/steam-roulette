@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.View
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.FragmentSystemReqsBinding
 import ru.luckycactus.steamroulette.domain.games.entity.SystemRequirements
 import ru.luckycactus.steamroulette.presentation.ui.base.BaseFragment
 import ru.luckycactus.steamroulette.presentation.utils.extensions.addSystemTopPadding
 import ru.luckycactus.steamroulette.presentation.utils.extensions.argument
 
-class SystemReqsFragment : BaseFragment() {
+class SystemReqsFragment : BaseFragment(R.layout.fragment_system_reqs) {
 
     private val binding by viewBinding(FragmentSystemReqsBinding::bind)
 

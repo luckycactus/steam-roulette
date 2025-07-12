@@ -1,6 +1,5 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
@@ -8,36 +7,31 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
+import com.github.terrakok.cicerone.androidx.TransactionInfo
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.luckycactus.steamroulette.R
 import ru.luckycactus.steamroulette.databinding.ActivityMainBinding
 import ru.luckycactus.steamroulette.domain.games.entity.GameHeader
-import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.features.game_details.GameDetailsFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
-import ru.luckycactus.steamroulette.presentation.navigation.Screens
 import ru.luckycactus.steamroulette.presentation.ui.widget.MessageDialogFragment
 import ru.luckycactus.steamroulette.presentation.utils.AnalyticsHelper
 import ru.luckycactus.steamroulette.presentation.utils.PlayUtils
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observeEvent
 import ru.luckycactus.steamroulette.presentation.utils.extensions.showSnackbar
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.android.support.SupportAppScreen
-import ru.terrakok.cicerone.commands.Command
-import ru.terrakok.cicerone.commands.Forward
-import ru.terrakok.cicerone.commands.Replace
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -70,51 +64,44 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
     }
 
     private val navigator =
-        object : SupportAppNavigator(this, supportFragmentManager, R.id.container) {
+        object : AppNavigator(this, R.id.container, supportFragmentManager) {
+
             // "replace" changed to "hide" + "add"
-            override fun fragmentForward(command: Forward) {
-                val screen = command.screen as SupportAppScreen
-
-                val fragmentParams = screen.fragmentParams
-                val fragment = if (fragmentParams == null) createFragment(screen) else null
-
-                val fragmentTransaction = fragmentManager.beginTransaction()
+            override fun commitNewFragmentScreen(
+                screen: FragmentScreen,
+                type: TransactionInfo.Type,
+                addToBackStack: Boolean
+            ) {
+                val fragment = screen.createFragment(fragmentFactory)
+                val transaction = fragmentManager.beginTransaction()
+                transaction.setReorderingAllowed(true)
 
                 val currentFragment = fragmentManager.findFragmentById(containerId)
+
                 setupFragmentTransaction(
-                    command,
+                    transaction,
                     currentFragment,
-                    fragment,
-                    fragmentTransaction
+                    fragment
                 )
 
                 if (currentFragment != null) {
-                    fragmentTransaction.hide(currentFragment)
+                    transaction.hide(currentFragment)
                 }
+                transaction.add(containerId, fragment, screen.screenKey)
 
-                if (fragmentParams != null) {
-                    fragmentTransaction.add(
-                        containerId,
-                        fragmentParams.fragmentClass,
-                        fragmentParams.arguments
-                    )
-                } else {
-                    fragmentTransaction.add(containerId, fragment!!)
+                if (addToBackStack) {
+                    val transactionInfo = TransactionInfo(screen.screenKey, type)
+                    transaction.addToBackStack(transactionInfo.toString())
+                    localStackCopy.add(transactionInfo)
                 }
-
-                fragmentTransaction
-                    .addToBackStack(screen.screenKey)
-                    .commit()
-                localStackCopy.add(screen.screenKey)
+                transaction.commit()
             }
 
             override fun setupFragmentTransaction(
-                command: Command,
+                fragmentTransaction: FragmentTransaction,
                 currentFragment: Fragment?,
-                nextFragment: Fragment?,
-                fragmentTransaction: FragmentTransaction
+                nextFragment: Fragment?
             ) {
-                fragmentTransaction.setReorderingAllowed(true)
                 when (nextFragment) {
                     is LoginFragment -> {
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
@@ -149,24 +136,6 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
                         )
                     }
                 }
-            }
-
-            override fun createStartActivityOptions(
-                command: Command,
-                activityIntent: Intent
-            ): Bundle? {
-                val screen = when (command) {
-                    is Forward -> command.screen
-                    is Replace -> command.screen
-                    else -> null
-                }
-                return if (screen is Screens.ExternalBrowserFlow) {
-                    ActivityOptionsCompat.makeCustomAnimation(
-                        App.getInstance(),
-                        R.anim.anim_fragment_enter,
-                        R.anim.anim_fragment_exit
-                    ).toBundle()
-                } else null
             }
         }
 
