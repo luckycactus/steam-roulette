@@ -4,7 +4,6 @@ import android.util.SparseIntArray
 import androidx.annotation.MainThread
 import androidx.core.util.set
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import ru.luckycactus.steamroulette.presentation.utils.lazyNonThreadSafe
@@ -42,14 +41,14 @@ class PagingGameListImpl constructor(
     override val data: List<GameHeader>
         get() = _list
 
-    override val itemsInsertionsFlow by lazyNonThreadSafe { itemsInsertionsChannel.asFlow() }
-    override val itemRemovalsFlow by lazyNonThreadSafe { itemRemovalsChannel.asFlow() }
+    override val itemsInsertionsFlow by lazyNonThreadSafe { itemsInsertionsChannel.asSharedFlow() }
+    override val itemRemovalsFlow by lazyNonThreadSafe { itemRemovalsChannel.asSharedFlow() }
     override val topGameFlow: Flow<GameHeader?>
 
     override val coroutineScope = parentScope + Job(parentScope.coroutineContext[Job])
 
-    private val itemsInsertionsChannel = BroadcastChannel<Pair<Int, Int>>(Channel.BUFFERED)
-    private val itemRemovalsChannel = BroadcastChannel<Int>(Channel.BUFFERED)
+    private val itemsInsertionsChannel = MutableSharedFlow<Pair<Int, Int>>(extraBufferCapacity = Int.MAX_VALUE)
+    private val itemRemovalsChannel = MutableSharedFlow<Int>(extraBufferCapacity  = Int.MAX_VALUE)
 
     private val _list = mutableListOf<GameHeader>()
     private var nextFetchIndex = 0
@@ -86,7 +85,7 @@ class PagingGameListImpl constructor(
         check(_list.isNotEmpty())
 
         val removedItem = _list.removeAt(0)
-        itemRemovalsChannel.offer(0)
+        itemRemovalsChannel.tryEmit(0)
         if (shouldFetch())
             launchFetching()
         if (isFinished())
@@ -129,7 +128,7 @@ class PagingGameListImpl constructor(
             if (isActive) {
                 nextFetchIndex = fetchEndIndex
                 _list.addAll(games)
-                itemsInsertionsChannel.offer(_list.size - games.size to games.size)
+                itemsInsertionsChannel.tryEmit(_list.size - games.size to games.size)
                 fetching = false
             }
         }
@@ -153,8 +152,8 @@ class PagingGameListImpl constructor(
     }
 
     private fun closeChannels() {
-        itemRemovalsChannel.close()
-        itemsInsertionsChannel.close()
+//        itemRemovalsChannel.close()
+//        itemsInsertionsChannel.close()
     }
 
     private enum class State {

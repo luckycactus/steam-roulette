@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
-import kotlin.time.days
 
 @Singleton
 class GamesPeriodicUpdateScheduler @Inject constructor(
@@ -24,9 +23,9 @@ class GamesPeriodicUpdateScheduler @Inject constructor(
             .build()
 
         val work = PeriodicWorkRequestBuilder<Worker>(
-            repeatInterval.toLongMilliseconds(),
+            repeatInterval.inWholeMilliseconds,
             TimeUnit.MILLISECONDS,
-            flexInterval.toLongMilliseconds(),
+            flexInterval.inWholeMilliseconds,
             TimeUnit.MILLISECONDS
         ).setConstraints(constraints)
             .build()

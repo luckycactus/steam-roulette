@@ -44,7 +44,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
         listOf(tvExit, tvAbout).forEach {
-            it.setDrawableColorFromAttribute(R.attr.colorOnBackground)
+            it.setDrawableColorFromAttribute(com.google.android.material.R.attr.colorOnBackground)
         }
 
         tvExit.setOnClickListener {

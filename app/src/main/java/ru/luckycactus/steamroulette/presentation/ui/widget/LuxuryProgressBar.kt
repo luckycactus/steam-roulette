@@ -53,7 +53,7 @@ class LuxuryProgressBar : View {
         val a = context.obtainStyledAttributes(attrs, R.styleable.LuxuryProgressBar)
         val color = a.getColor(
             R.styleable.LuxuryProgressBar_progressColor,
-            context.getThemeColorOrThrow(R.attr.colorAccent)
+            context.getThemeColorOrThrow(com.google.android.material.R.attr.colorAccent)
         )
         val strokeWidth = a.getDimensionPixelSize(R.styleable.LuxuryProgressBar_strokeWidth, dp(4f))
         radius =

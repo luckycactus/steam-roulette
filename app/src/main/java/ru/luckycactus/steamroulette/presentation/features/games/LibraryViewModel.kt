@@ -27,7 +27,7 @@ import ru.luckycactus.steamroulette.presentation.ui.base.BaseViewModel
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getPlaytimeFilterShortDescription
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
-import kotlin.time.milliseconds
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
@@ -234,7 +234,7 @@ class LibraryViewModel @Inject constructor(
     }
 
     fun onGameSelectionChanged(appId: Long, selected: Boolean) {
-        gameSelectionChangedChannel.offer(appId to selected)
+        gameSelectionChangedChannel.trySend(appId to selected)
     }
 
     fun onSearchStateChanged(opened: Boolean) {

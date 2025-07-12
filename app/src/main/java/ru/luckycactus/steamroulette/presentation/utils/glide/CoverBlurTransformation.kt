@@ -10,7 +10,6 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import jp.wasabeef.glide.transformations.BitmapTransformation
 import jp.wasabeef.glide.transformations.internal.FastBlur
 import jp.wasabeef.glide.transformations.internal.RSBlur
-import jp.wasabeef.glide.transformations.internal.SupportRSBlur
 import java.security.MessageDigest
 
 class CoverBlurTransformation(
@@ -80,8 +79,6 @@ class CoverBlurTransformation(
     ) = try {
         FastBlur.blur(blurBitmap, radius, true)
     } catch (e: RuntimeException) {
-        SupportRSBlur.blur(context, blurBitmap, radius)
-    } catch (e: NoClassDefFoundError) {
         RSBlur.blur(context, blurBitmap, radius)
     }
 

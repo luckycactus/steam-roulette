@@ -190,7 +190,7 @@ private fun <T> SharedPreferences.flow(
     }
     val compositeListener = getCompositeListener()
     val listener = {
-        offer(prefHolder.prefValue)
+        trySend(prefHolder.prefValue)
         Unit
     }
     listener.invoke()
@@ -269,9 +269,10 @@ private class CompositePreferenceChangeListener :
     val keyListenersMultimap = ConcurrentHashMap<String, MutableSet<PrefChangeListener>>()
 
     override fun onSharedPreferenceChanged(
-        sharedPreferences: SharedPreferences?,
-        key: String
+        sharedPreferences: SharedPreferences,
+        key: String?
     ) {
+        if (key == null) return // cleared on SDK >= R
         getListenersSetForKey(key)?.forEach { it.invoke() }
     }
 

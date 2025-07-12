@@ -9,7 +9,7 @@ import ru.luckycactus.steamroulette.domain.core.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
-import kotlin.time.milliseconds
+import kotlin.time.Duration.Companion.milliseconds
 
 interface CacheHelper {
     suspend fun isCached(key: String): Boolean

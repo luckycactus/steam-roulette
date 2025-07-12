@@ -128,14 +128,14 @@ class LibraryFragment : BaseFragment(R.layout.fragment_library_filter), MessageD
             changeScaleMenuItem = menu.findItem(R.id.action_change_scale)
             searchMenuItem = menu.findItem(R.id.action_search).apply {
                 setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-                    override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                    override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                         // searchMenuItem.isActionViewExpanded changes after callback, so we postpone method call
                         viewModel.onSearchStateChanged(true)
                         post { updateOnBackPressedCallbackEnabled() }
                         return true
                     }
 
-                    override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                    override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                         viewModel.onSearchStateChanged(false)
                         post { updateOnBackPressedCallbackEnabled() }
                         return true
@@ -164,7 +164,7 @@ class LibraryFragment : BaseFragment(R.layout.fragment_library_filter), MessageD
         fab.run {
             setImageResource(R.drawable.ic_filter_list_24dp)
             backgroundTintList =
-                ColorStateList.valueOf(MaterialColors.getColor(fab, R.attr.colorPrimary))
+                ColorStateList.valueOf(MaterialColors.getColor(fab, com.google.android.material.R.attr.colorPrimary))
             setOnClickListener {
                 filtersFragment.open()
             }

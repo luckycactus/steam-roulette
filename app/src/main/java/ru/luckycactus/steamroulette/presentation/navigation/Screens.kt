@@ -21,6 +21,7 @@ import ru.luckycactus.steamroulette.presentation.utils.customtabs.CustomTabsHelp
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
 import ru.terrakok.cicerone.android.support.SupportAppScreen
+import androidx.core.net.toUri
 
 sealed class Screens : SupportAppScreen() {
 
@@ -93,9 +94,9 @@ sealed class Screens : SupportAppScreen() {
         private fun createCustomTabsIntent(context: Context): Intent {
             return CustomTabsIntent.Builder().apply {
                 val defaultParams = CustomTabColorSchemeParams.Builder()
-                    .setToolbarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
-                    .setSecondaryToolbarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
-                    .setNavigationBarColor(context.getThemeColorOrThrow(R.attr.colorSurface))
+                    .setToolbarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
+                    .setSecondaryToolbarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
+                    .setNavigationBarColor(context.getThemeColorOrThrow(com.google.android.material.R.attr.colorSurface))
                     .build()
                 setDefaultColorSchemeParams(defaultParams)
                 setExitAnimations(
@@ -123,6 +124,6 @@ sealed class Screens : SupportAppScreen() {
             return null
         }
 
-        private fun createDefaultIntent() = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        private fun createDefaultIntent() = Intent(Intent.ACTION_VIEW, url.toUri())
     }
 }

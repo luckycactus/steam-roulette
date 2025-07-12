@@ -28,7 +28,7 @@ class TintContext(
     private var currentTintColor: Int = tintColor
 
     private val colorSurface = MaterialColors.getColor(
-        context, R.attr.colorSurface, "colorSurface should be set on theme"
+        context, com.google.android.material.R.attr.colorSurface, "colorSurface should be set on theme"
     )
     private val colorBackground = MaterialColors.getColor(
         context,

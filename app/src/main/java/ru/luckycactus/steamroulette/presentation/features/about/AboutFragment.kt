@@ -37,7 +37,7 @@ class AboutFragment : BaseFragment(R.layout.fragment_about) {
 
         tvVersion.text = viewModel.version
 
-        val colorOnSurface = requireContext().getThemeColorOrThrow(R.attr.colorOnSurface)
+        val colorOnSurface = requireContext().getThemeColorOrThrow(com.google.android.material.R.attr.colorOnSurface)
         listOf(tvSourceCode, tvUsedLibraries, tvPrivacyPolicy, tvRateApp).forEach {
             it.setDrawableColor(colorOnSurface)
         }

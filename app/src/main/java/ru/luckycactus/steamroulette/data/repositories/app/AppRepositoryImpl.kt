@@ -29,7 +29,7 @@ class AppRepositoryImpl @Inject constructor(
         get() = context.packageManager.getPackageInfo(context.packageName, 0).versionName
 
     override fun observeSystemLocaleChanges() = callbackFlow {
-        val receiver = BroadcastReceiverAdapter { offer(Unit) }
+        val receiver = BroadcastReceiverAdapter { trySend(Unit) }
         context.registerReceiver(receiver, IntentFilter(Intent.ACTION_LOCALE_CHANGED))
         awaitClose { context.unregisterReceiver(receiver) }
     }

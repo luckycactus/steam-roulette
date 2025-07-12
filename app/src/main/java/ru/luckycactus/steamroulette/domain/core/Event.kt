@@ -26,8 +26,8 @@ class Event<out T>(
 inline class EventObserver<T>(
     private inline val onEvent: (T) -> Unit
 ) : Observer<Event<T>> {
-    override fun onChanged(event: Event<T>?) {
-        event?.ifNotHandled { onEvent(it) }
+    override fun onChanged(event: Event<T>) {
+        event.ifNotHandled { onEvent(it) }
     }
 
 }
