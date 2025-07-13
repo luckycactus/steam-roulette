@@ -1,6 +1,7 @@
 package ru.luckycactus.steamroulette.presentation.utils.glide
 
 import android.content.Context
+import com.bumptech.glide.Glide
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,13 +19,13 @@ class GlideCacheCleaner @Inject constructor(
 
     override suspend fun clearMemoryCache() {
         withContext(Dispatchers.Main) {
-            GlideApp.get(appContext).clearMemory()
+            Glide.get(appContext).clearMemory()
         }
     }
 
     override suspend fun clearDiskCache() {
         withContext(Dispatchers.IO) {
-            GlideApp.get(appContext).clearDiskCache()
+            Glide.get(appContext).clearDiskCache()
         }
     }
 }

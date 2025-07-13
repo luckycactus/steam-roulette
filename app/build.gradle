@@ -3,6 +3,7 @@ plugins {
     alias libs.plugins.crashlyticsPlugin
     alias libs.plugins.kotlinAndroid
     alias libs.plugins.hiltPlugin
+    alias libs.plugins.ksp
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
 }
@@ -114,7 +115,7 @@ dependencies {
 
 
     implementation libs.androidx.room.runtime
-    kapt libs.androidx.room.compiler
+    ksp libs.androidx.room.compiler
     implementation libs.androidx.room.ktx
     implementation libs.androidx.room.paging
 
@@ -140,12 +141,12 @@ dependencies {
     implementation libs.retrofit
     api libs.okhttp.logging
     implementation libs.moshi
-    kapt libs.moshi.kotlinCodegen
-    kaptTest libs.moshi.kotlinCodegen
+    ksp libs.moshi.kotlinCodegen
+    kspTest libs.moshi.kotlinCodegen
     implementation libs.retrofit.moshi
 
     implementation libs.glide
-    kapt libs.glide.compiler
+    ksp libs.glide.ksp
     implementation libs.glide.okhttp3
     implementation libs.glide.transformations
 

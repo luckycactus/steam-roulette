@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.stfalcon.imageviewer.StfalconImageViewer
@@ -14,7 +15,6 @@ import ru.luckycactus.steamroulette.domain.games.entity.Screenshot
 import ru.luckycactus.steamroulette.presentation.features.game_details.model.GameDetailsUiModel
 import ru.luckycactus.steamroulette.presentation.ui.SpaceDecoration
 import ru.luckycactus.steamroulette.presentation.utils.extensions.layoutInflater
-import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.glide.crossfade.CrossFadeFactory
 
 class GameScreenshotsViewHolder(
@@ -56,11 +56,11 @@ class GameScreenshotsViewHolder(
     }
 
     private fun loadFullScreenshot(view: ImageView, screenshot: Screenshot) {
-        val thumbnail = GlideApp.with(view)
+        val thumbnail = Glide.with(view)
             .load(screenshot.thumbnail)
             .downsample(DownsampleStrategy.CENTER_INSIDE)
 
-        GlideApp.with(view)
+        Glide.with(view)
             .load(screenshot.full)
             .thumbnail(thumbnail)
             .skipMemoryCache(true)
@@ -102,7 +102,7 @@ class GameScreenshotsViewHolder(
             }
 
             fun bind(screenshot: Screenshot): Unit = with(binding) {
-                GlideApp.with(itemView)
+                Glide.with(itemView)
                     .load(screenshot.thumbnail)
                     .downsample(DownsampleStrategy.CENTER_INSIDE)
                     .skipMemoryCache(true)

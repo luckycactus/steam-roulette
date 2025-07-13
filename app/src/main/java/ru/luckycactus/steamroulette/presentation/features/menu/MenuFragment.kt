@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +19,6 @@ import ru.luckycactus.steamroulette.presentation.utils.extensions.assistedViewMo
 import ru.luckycactus.steamroulette.presentation.utils.extensions.observe
 import ru.luckycactus.steamroulette.presentation.utils.extensions.setDrawableColorFromAttribute
 import ru.luckycactus.steamroulette.presentation.utils.extensions.visibility
-import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -97,7 +97,7 @@ class MenuFragment : BaseBottomSheetDialogFragment(),
     }
 
     private fun loadAvatar(it: UserSummary) {
-        GlideApp.with(this@MenuFragment)
+        Glide.with(this@MenuFragment)
             .load(it.avatarFull)
             .placeholder(R.drawable.avatar_placeholder)
             .signature(ObjectKey(viewModel.userSummaryLastSync))

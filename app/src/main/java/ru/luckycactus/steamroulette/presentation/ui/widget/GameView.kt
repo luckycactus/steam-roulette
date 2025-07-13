@@ -34,7 +34,6 @@ import ru.luckycactus.steamroulette.domain.games.entity.GameUrlUtils
 import ru.luckycactus.steamroulette.presentation.common.App
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverBlurTransformation
 import ru.luckycactus.steamroulette.presentation.utils.glide.CoverGlareTransformation
-import ru.luckycactus.steamroulette.presentation.utils.glide.GlideApp
 import ru.luckycactus.steamroulette.presentation.utils.onApiAtLeast
 import ru.luckycactus.steamroulette.presentation.utils.sp
 import kotlin.properties.Delegates
@@ -186,7 +185,7 @@ class GameView : MaterialCardView {
             }
         )
 
-        val headerFirstCache = GlideApp.with(view)
+        val headerFirstCache = Glide.with(view)
             .asBitmap()
             .fitCenter()
             .load(GameUrlUtils.headerImage(game.appId))
@@ -201,7 +200,7 @@ class GameView : MaterialCardView {
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .skipMemoryCache(!memoryCacheEnabled)
 
-        val portraitHd = GlideApp.with(view)
+        val portraitHd = Glide.with(view)
             .asBitmap()
             .load(GameUrlUtils.libraryPortraitImageHD(game.appId))
             .fitCenter()
@@ -211,7 +210,7 @@ class GameView : MaterialCardView {
             .skipMemoryCache(!memoryCacheEnabled)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
 
-        val portrait = GlideApp.with(view)
+        val portrait = Glide.with(view)
             .asBitmap()
             .load(GameUrlUtils.libraryPortraitImage(game.appId))
             .fitCenter()
