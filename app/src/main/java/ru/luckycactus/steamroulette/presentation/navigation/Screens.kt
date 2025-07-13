@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.presentation.navigation
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityOptionsCompat
@@ -25,58 +24,41 @@ import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqs
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
 
-sealed class Screens {
+object Screens {
 
-    object Login : FragmentScreen(
-        fragmentCreator = { LoginFragment.newInstance() }
-    )
+    fun Login() = FragmentScreen { LoginFragment.newInstance() }
 
-    object Roulette : FragmentScreen(
-        fragmentCreator = { RouletteFragment.newInstance() }
-    )
+    fun Roulette() = FragmentScreen { RouletteFragment.newInstance() }
 
-    data class GameDetails(
-        val game: GameHeader,
-        val color: Int,
-        val waitForImage: Boolean
-    ) : FragmentScreen(
-        fragmentCreator = { GameDetailsFragment.newInstance(game, color, waitForImage) }
-    )
+    fun GameDetails(
+        game: GameHeader,
+        color: Int,
+        waitForImage: Boolean
+    ) = FragmentScreen { GameDetailsFragment.newInstance(game, color, waitForImage) }
 
-    data class SystemReqs(
-        val appName: String,
-        val systemReqs: List<SystemRequirements>
-    ) : FragmentScreen(
-        fragmentCreator = { SystemReqsFragment.newInstance(appName, systemReqs) }
-    )
+    fun SystemReqs(
+        appName: String,
+        systemReqs: List<SystemRequirements>
+    ) = FragmentScreen { SystemReqsFragment.newInstance(appName, systemReqs) }
 
-    data class DetailedDescription(
-        val appName: String,
-        val detailedDescription: String
-    ) : FragmentScreen(
-        fragmentCreator = { DetailedDescriptionFragment.newInstance(appName, detailedDescription) }
-    )
+    fun DetailedDescription(
+        appName: String,
+        detailedDescription: String
+    ) = FragmentScreen { DetailedDescriptionFragment.newInstance(appName, detailedDescription) }
 
-    object About : FragmentScreen(
-        fragmentCreator = { AboutFragment.newInstance() }
-    )
+    fun About() = FragmentScreen { AboutFragment.newInstance() }
 
-    object UsedLibraries : FragmentScreen(
-        fragmentCreator = { AppLibrariesFragment.newInstance() }
-    )
+    fun UsedLibraries() = FragmentScreen { AppLibrariesFragment.newInstance() }
 
-    object Library : FragmentScreen(
-        fragmentCreator = { LibraryFragment.newInstance() }
-    )
+    fun Library() = FragmentScreen { LibraryFragment.newInstance() }
 
-    object HiddenGames : FragmentScreen(
-        fragmentCreator = { LibraryFragment.newInstance(true) }
-    )
+    fun HiddenGames() = FragmentScreen { LibraryFragment.newInstance(true) }
 
-    data class ExternalBrowserFlow(
-        val url: String,
-        val trySteamApp: Boolean = false
-    ) : ActivityScreen(
+    fun ExternalBrowserFlow(
+        url: String,
+        trySteamApp: Boolean = false
+    ) = ActivityScreen(
+        startActivityOptions = activityOptions,
         intentCreator = object : Creator<Context, Intent> {
 
             override fun create(argument: Context): Intent {
@@ -122,11 +104,9 @@ sealed class Screens {
                 return null
             }
         }
-    ) {
-        override val startActivityOptions: Bundle?
-            get() = activityOptions
-    }
+    )
 }
+
 private val activityOptions = ActivityOptionsCompat.makeCustomAnimation(
     App.getInstance(),
     R.anim.anim_fragment_enter,

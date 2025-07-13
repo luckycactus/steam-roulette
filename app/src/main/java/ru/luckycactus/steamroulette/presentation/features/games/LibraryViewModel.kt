@@ -173,7 +173,7 @@ class LibraryViewModel @Inject constructor(
             hiddenGamesCountFlow.collectLatest {
                 if (it == 0 && _libraryFilter.value == LibraryFilter.Hidden) {
                     if (onlyHidden) {
-                        router.backTo(Screens.Roulette)
+                        router.backTo(Screens.Roulette())
                     } else {
                         onFilterSelectionChanged(LibraryFilter.All)
                         saveSelectedFilter()

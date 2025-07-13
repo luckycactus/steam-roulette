@@ -1,5 +1,6 @@
 package ru.luckycactus.steamroulette.presentation.features.main
 
+import android.R.attr.type
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
@@ -17,7 +18,6 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.github.terrakok.cicerone.androidx.FragmentScreen
-import com.github.terrakok.cicerone.androidx.TransactionInfo
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -69,7 +69,6 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
             // "replace" changed to "hide" + "add"
             override fun commitNewFragmentScreen(
                 screen: FragmentScreen,
-                type: TransactionInfo.Type,
                 addToBackStack: Boolean
             ) {
                 val fragment = screen.createFragment(fragmentFactory)
@@ -79,6 +78,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
                 val currentFragment = fragmentManager.findFragmentById(containerId)
 
                 setupFragmentTransaction(
+                    screen,
                     transaction,
                     currentFragment,
                     fragment
@@ -90,17 +90,17 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.Callbacks {
                 transaction.add(containerId, fragment, screen.screenKey)
 
                 if (addToBackStack) {
-                    val transactionInfo = TransactionInfo(screen.screenKey, type)
-                    transaction.addToBackStack(transactionInfo.toString())
-                    localStackCopy.add(transactionInfo)
+                    transaction.addToBackStack(screen.screenKey)
+                    localStackCopy.add(screen.screenKey)
                 }
                 transaction.commit()
             }
 
             override fun setupFragmentTransaction(
+                screen: FragmentScreen,
                 fragmentTransaction: FragmentTransaction,
                 currentFragment: Fragment?,
-                nextFragment: Fragment?
+                nextFragment: Fragment
             ) {
                 when (nextFragment) {
                     is LoginFragment -> {

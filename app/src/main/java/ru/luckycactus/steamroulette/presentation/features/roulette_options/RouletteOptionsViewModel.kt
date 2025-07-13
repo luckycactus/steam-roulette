@@ -40,7 +40,7 @@ class RouletteOptionsViewModel @Inject constructor(
     }
 
     fun onHiddenGamesClick() {
-        router.navigateTo(Screens.HiddenGames)
+        router.navigateTo(Screens.HiddenGames())
         close()
     }
 

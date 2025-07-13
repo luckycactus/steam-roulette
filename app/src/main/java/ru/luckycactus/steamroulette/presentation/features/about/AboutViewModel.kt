@@ -27,7 +27,7 @@ class AboutViewModel @Inject constructor(
     }
 
     fun onUsedLibrariesClick() {
-        router.navigateTo(Screens.UsedLibraries)
+        router.navigateTo(Screens.UsedLibraries())
     }
 
     fun onPrivacyPolicyClick() {

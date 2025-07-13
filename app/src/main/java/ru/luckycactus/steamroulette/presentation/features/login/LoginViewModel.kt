@@ -42,7 +42,7 @@ class LoginViewModel @Inject constructor(
             _progressState.value = true
             login(id.trim()).let {
                 when (it) {
-                    is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette)
+                    is LoginUseCase.Result.Success -> router.newRootScreen(Screens.Roulette())
                     is LoginUseCase.Result.Fail -> renderFail(it)
                 }
                 analytics.logLoginAttempt(it)

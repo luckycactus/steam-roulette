@@ -82,12 +82,12 @@ class MenuViewModel @AssistedInject constructor(
     }
 
     fun onAboutClick() {
-        router.navigateTo(Screens.About)
+        router.navigateTo(Screens.About())
         close()
     }
 
     fun onLibraryClick() {
-        router.navigateTo(Screens.Library)
+        router.navigateTo(Screens.Library())
         close()
     }
 
