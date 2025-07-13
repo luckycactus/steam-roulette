@@ -2,7 +2,6 @@ package ru.luckycactus.steamroulette.presentation.navigation
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -23,7 +22,6 @@ import ru.luckycactus.steamroulette.presentation.features.games.LibraryFragment
 import ru.luckycactus.steamroulette.presentation.features.login.LoginFragment
 import ru.luckycactus.steamroulette.presentation.features.roulette.RouletteFragment
 import ru.luckycactus.steamroulette.presentation.features.system_reqs.SystemReqsFragment
-import ru.luckycactus.steamroulette.presentation.utils.customtabs.CustomTabsHelper
 import ru.luckycactus.steamroulette.presentation.utils.extensions.getThemeColorOrThrow
 import ru.luckycactus.steamroulette.presentation.utils.isAppInstalled
 
@@ -81,17 +79,13 @@ sealed class Screens {
     ) : ActivityScreen(
         intentCreator = object : Creator<Context, Intent> {
 
-            override fun create(context: Context): Intent {
+            override fun create(argument: Context): Intent {
                 if (trySteamApp) {
-                    val intent = getSteamAppIntent(context)
+                    val intent = getSteamAppIntent(argument)
                     if (intent != null)
                         return intent
                 }
-                return if (CustomTabsHelper.isCustomTabsSupported(context)) {
-                    createCustomTabsIntent(context)
-                } else {
-                    createDefaultIntent()
-                }
+                return createCustomTabsIntent(argument)
             }
 
             fun createCustomTabsIntent(context: Context): Intent {
@@ -108,15 +102,13 @@ sealed class Screens {
                         R.anim.anim_fragment_pop_exit
                     )
                 }.build().intent.apply {
-                    data = Uri.parse(url)
+                    data = url.toUri()
                 }
             }
 
-            fun createDefaultIntent() = Intent(Intent.ACTION_VIEW, url.toUri())
-
             fun getSteamAppIntent(context: Context): Intent? {
                 if (isAppInstalled(context, "com.valvesoftware.android.steam.community")) {
-                    val intent = createDefaultIntent()
+                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                     with(intent) {
                         flags =
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED

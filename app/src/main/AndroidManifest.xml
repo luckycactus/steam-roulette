@@ -42,5 +42,11 @@
         </provider>
     </application>
 
+    <queries>
+        <package android:name="string" />
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+        </intent>
+    </queries>
 
 </manifest>
