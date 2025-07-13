@@ -26,7 +26,7 @@ class AppRepositoryImpl @Inject constructor(
         get() = context.packageManager.getPackageInfo(context.packageName, 0).versionCode
 
     override val currentVersionName: String
-        get() = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        get() = context.packageManager.getPackageInfo(context.packageName, 0).versionName!!
 
     override fun observeSystemLocaleChanges() = callbackFlow {
         val receiver = BroadcastReceiverAdapter { trySend(Unit) }
