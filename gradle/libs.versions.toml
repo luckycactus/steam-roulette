@@ -3,21 +3,21 @@
 androidGradlePlugin = "8.11.1"
 crashlyticsPlugin = "3.0.4"
 googleServices = "4.4.3"
-hilt = "2.51.1"
-kotlin = "1.9.21"
-ksp = "1.9.21-1.0.16"
+hiltPlugin = "2.56.2"
+kotlin = "2.1.0"
+ksp = "2.1.0-1.0.29"
 
 appcompat = "1.7.1"
 browser = "1.8.0"
 cicerone = "7.1"
 constraintLayout = "2.2.1"
-coroutines = "1.8.1"
+coroutines = "1.10.2"
 dynamicAnimation = "1.1.0"
 firebaseAnalytics = "20.0.2"
 firebaseCrashlytics = "18.2.7"
 glide = "4.16.0"
 glideTransformations = "4.3.0"
-hiltAndroidX = "1.2.0"
+hilt = "1.2.0"
 ktx = "1.7.0"
 lifecycle = "2.4.0"
 lifecycleExtensions = "2.2.0"
@@ -29,7 +29,7 @@ palette = "1.0.0"
 play = "1.8.1"
 recyclerViewSelection = "1.2.0"
 retrofit = "2.9.0"
-room = "2.6.1"
+room = "2.7.2"
 stfalconImageViewer = "1.0.1"
 timber = "5.0.1"
 viewBindingDelegates = "1.5.9"
@@ -98,10 +98,10 @@ glide-ksp = { group = "com.github.bumptech.glide", name = "compiler", version.re
 glide-okhttp3 = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
 glide-transformations = { group = "jp.wasabeef", name = "glide-transformations", version.ref = "glideTransformations" }
 
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltAndroidX" }
-hilt-compilerAndroidX = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltAndroidX" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltPlugin" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltPlugin" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt" }
+hilt-compilerAndroidX = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt" }
 
 viewBindingDelegates = { group = "com.github.kirich1409", name = "viewbindingpropertydelegate-noreflection", version.ref = "viewBindingDelegates" }
 stfalconImageViewer = { group = "com.github.stfalcon-studio", name = "StfalconImageViewer", version.ref = "stfalconImageViewer" }
@@ -128,6 +128,6 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 crashlyticsPlugin = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
-hiltPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+hiltPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
